@@ -29,7 +29,7 @@ public class ItemsAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView
     private SharedPreferences sharedPreferences;
     private String savedLanguage = null;
 
-    
+
 
 
 
