@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">Tablet App</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string name="please_enter_your_phone_number">اپنا فون نمبر درج کریں</string>
+    <string name="or_scan_qr_code">یا QR کوڈ اسکین کریں</string>
+
+    <string name="save">محفوظ کریں</string>
+
+
+
+    <string name="please_select_your_language">اپنی زبان منتخب کریں</string>
+    <string name="englishLang">English</string>
+    <string name="arabicLang">العربية</string>
+    <string name="philippineLang">తెలుగు</string>
+    <string name="indiaLang">اردو</string>
+
+    <string name="choose_from_the_list_below" >نیچے کی فہرست سے منتخب کریں</string>
+
+
+</resources>

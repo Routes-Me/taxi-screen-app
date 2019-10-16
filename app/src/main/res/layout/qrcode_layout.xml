@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:cardElevation="2dp"
+    app:cardUseCompatPadding="true">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="97dp"
+        android:padding="3dp"
+        android:orientation="horizontal"
+        android:background="@drawable/grad_bg"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center">
+
+
+        <ImageView
+            android:id="@+id/QRCode_Logo"
+            android:layout_width="80dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:layout_marginRight="2dp"
+            android:src="@drawable/ic_qrcode" />
+
+        <LinearLayout
+            android:layout_weight="5"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginLeft="7dp"
+            android:layout_gravity="center"
+            android:layout_margin="4dp"
+            android:gravity="center">
+
+
+
+            <TextView
+                android:id="@+id/QRCode_Title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textStyle="bold"
+                android:layout_marginBottom="3dp"
+                android:maxLines="2"
+                android:textSize="18dp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:gravity="center"
+                />
+
+
+            <TextView
+                android:id="@+id/QRCode_Discount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Discount"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textStyle="bold"
+                android:layout_marginBottom="3dp"
+                android:maxLines="1"
+                android:textSize="12dp"
+                android:textColor="@color/white"
+                android:layout_gravity="center"
+                android:gravity="center"/>
+
+        </LinearLayout>
+
+
+
+
+        <ImageView
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_qrcode"
+            android:layout_marginRight="5dp"
+            android:layout_gravity="right"/>
+
+
+    </LinearLayout>
+
+
+
+</androidx.cardview.widget.CardView>

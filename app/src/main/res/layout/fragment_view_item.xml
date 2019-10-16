@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".View.Fragment.ViewItemFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        >
+
+
+
+    <RelativeLayout
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_color"
+        android:padding="3dp">
+
+        <ImageView
+            android:id="@+id/btnAddToProfile"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_add"
+            android:layout_alignParentRight="true"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/btnBackToRecyclerViewFragment"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ic_back"
+            android:layout_alignParentLeft="true"/>
+
+    </RelativeLayout>
+    
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar">
+
+
+        <!--Link Layout-->
+        <RelativeLayout
+            android:id="@+id/Link_Layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <WebView
+                android:id="@+id/webView_Link"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="WebViewLayout" />
+
+        </RelativeLayout>
+
+        <!--Map Layout-->
+        <RelativeLayout
+            android:id="@+id/Map_Layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <WebView
+                android:id="@+id/webView_Map"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="WebViewLayout" />
+
+        </RelativeLayout>
+
+        <!--News Layout-->
+        <RelativeLayout
+            android:id="@+id/News_Layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+
+            <WebView
+                android:id="@+id/webView_News"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                tools:ignore="WebViewLayout" />
+
+        </RelativeLayout>
+
+        <!--QRCode Layout-->
+        <LinearLayout
+            android:id="@+id/QRCode_Layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+
+
+            <TextView
+                android:id="@+id/QRCodeTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QRCode Title"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textSize="18dp"
+                android:textColor="@color/colorPrimary"
+                android:layout_marginBottom="10dp"/>
+
+            <ImageView
+                android:id="@+id/QRCode_Pic"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:src="@drawable/qrcode"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:id="@+id/QRCodeDiscountAmount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="QRCode Discount Amount"
+                android:textSize="16dp"
+                android:textAppearance="@style/TextAppearance.AppCompat.Large"
+                android:textColor="@color/colorPrimary"/>
+
+
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <Button
+                android:id="@+id/btnGetData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="get Data"
+                />
+
+            <TextView
+                android:id="@+id/txtViewData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Data Here..."/>
+
+        </LinearLayout>
+
+
+
+    </RelativeLayout>
+
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
