@@ -45,10 +45,11 @@ public class ItemsAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView
     Context mCtx;
     List<ItemsModel> itemsList;
 
-    
+
 
     private OnItemClickListener listener;
 
+    
     private Operations operations;
 
 
