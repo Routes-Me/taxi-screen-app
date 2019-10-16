@@ -38,7 +38,7 @@ public class ItemsAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView
     private static final int ITEM_News = 4;
 
 
-    
+
 
     Context mCtx;
     List<ItemsModel> itemsList;
