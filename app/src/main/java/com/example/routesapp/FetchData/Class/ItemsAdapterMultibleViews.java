@@ -32,7 +32,7 @@ public class ItemsAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView
 
 
 
-    
+
     private static final int ITEM_QRCode = 1;
     private static final int ITEM_Map = 2;
     private static final int ITEM_Web = 3;
@@ -45,6 +45,7 @@ public class ItemsAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView
     Context mCtx;
     List<ItemsModel> itemsList;
 
+    
 
     private OnItemClickListener listener;
 
