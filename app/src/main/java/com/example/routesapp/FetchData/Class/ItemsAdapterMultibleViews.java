@@ -48,7 +48,7 @@ public class ItemsAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView
 
 
 
-    
+
     private OnItemClickListener listener;
 
 
