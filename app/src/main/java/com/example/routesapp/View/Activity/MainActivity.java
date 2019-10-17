@@ -163,8 +163,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     ////////////////////for Time Clock....
     private Time mTime;
-    private Handler handlerTime;
-    private Runnable runnableTime;
+    private Handler handlerTime, handlerTime_locationUpdate;
+    private Runnable runnableTime, runnableTime_locationUpdate;
 
     private TextView timeClock, DateClock, DayClock;
 
@@ -235,7 +235,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
        // updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), false);
 
-      //  tabletLocation(false);
+       tabletLocation(false);
 
         //   scrollingTextView_Money();
         //scrollingTextView_News();
@@ -254,7 +254,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
 
-        //tabletLocation(true);
+        tabletLocation(true);
 
         tablet_isActive = true;
         tabletCurrentData.setActive(true);
@@ -287,6 +287,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         handler.removeCallbacks(r);
 
+
        // ADS_VideoView.pause();
        // operations.exoPlayer.setPlayWhenReady(false);
 
@@ -302,6 +303,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy() {
         super.onDestroy();
+
+        handlerTime_locationUpdate.removeCallbacks(runnableTime_locationUpdate);
 
         tablet_isActive = false;
         tabletCurrentData.setActive(false);
@@ -420,6 +423,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ////////////////////for Time Clock....
         setUpClockTime();
+        //////////////// Update location every 20 Min ( 1200000 Milli Second )
+        locationUpdateTimer();
 
     }
 
@@ -1334,9 +1339,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    public void tabletLocation(boolean IsActive){
+    private void tabletLocation(boolean IsActive){
         updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), IsActive);
        // Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+    }
+
+
+    private void locationUpdateTimer(){
+
+        runnableTime_locationUpdate = new Runnable() {
+            @Override
+            public void run() {
+
+                tabletLocation(true);
+
+
+
+                 //20 Min = 20 Min * 60 Sec * 60 Milli Second = 1200000
+                handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
+
+            }
+        };
+
+        handlerTime_locationUpdate = new Handler();
+        handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
+
     }
 
 }

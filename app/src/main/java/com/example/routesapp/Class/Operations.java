@@ -86,7 +86,7 @@ public class Operations {
     private RequestOptions options;
 
     private Activity activity;
-    private MainActivity mainActivity;
+
 
     //sharedPreference Storage
     private SharedPreferences sharedPreferences;
@@ -151,7 +151,7 @@ public class Operations {
         this.ADS_VideoView_defaultImage = ADS_VideoView_defaultImage;
         this.ADS_ImageView = ADS_ImageView;
         this.scrollingtextMoney = scrollingtextMoney;
-        this.mainActivity = new MainActivity();
+
 
 
         okHttpClient = new OkHttpClient.Builder().connectTimeout(1, TimeUnit.MINUTES).readTimeout(30, TimeUnit.SECONDS).writeTimeout(15, TimeUnit.SECONDS).build();
@@ -299,7 +299,7 @@ public class Operations {
 
         } else {
 
-            mainActivity.tabletLocation(true);
+           // mainActivity.tabletLocation(true);
 
             repeatVideoList++;
             currentVideoIndex = 0;
