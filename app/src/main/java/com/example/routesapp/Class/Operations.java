@@ -192,18 +192,21 @@ public class Operations {
 
         if (currentVideoIndex < VideosList.size()) {
 
-            videoVisibility(true);
+
 
             try {
+
+               // videoVisibility(false);
+                //get Uri of Link(URL)
+                Uri uri = Uri.parse(VideosList.get(currentVideoIndex));
+                Increase_Video_View_Times(videoViewId.get(currentVideoIndex));
+
+/*
                 bandwidthMeter = new DefaultBandwidthMeter();
 
                 trackSelector = new DefaultTrackSelector(new AdaptiveTrackSelection.Factory(bandwidthMeter));
 
                 exoPlayer = ExoPlayerFactory.newSimpleInstance(activity, trackSelector);
-                //get Uri of Link(URL)
-                Uri uri = Uri.parse(VideosList.get(currentVideoIndex));
-                Increase_Video_View_Times(videoViewId.get(currentVideoIndex));
-
               //  Toast.makeText(activity, "Video Index: " + currentVideoIndex, Toast.LENGTH_SHORT).show();
                 mediaSource = new ExtractorMediaSource(uri, dataSourceFactory, extractorsFactory, null, null);
 
@@ -258,10 +261,11 @@ public class Operations {
 
                     }
                 });
+*/
 
 
-/*
                 videoView.setVideoURI(uri);
+
                 //when video complete nothing do
                 videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                     @Override
@@ -280,17 +284,25 @@ public class Operations {
                         //mp.setLooping(true);
 
 
+
+                        videoView.setDrawingCacheEnabled(true);
+
                         MediaController mediaController = new MediaController(activity);
                         mediaController.setAnchorView(videoView);
 
                         videoView.setMediaController(mediaController);
 
+
                         videoView.requestFocus();
 
-                        videoView.start();
+
+
+
                     }
                 });
-                */
+                videoVisibility(true);
+                videoView.start();
+
 
             } catch (Exception ex) {
             }
@@ -908,14 +920,14 @@ public class Operations {
 
         if (isRunning){
 
-           // ADS_VideoView.setVisibility(View.VISIBLE);
-            ADS_exoPlayer_VideoView.setVisibility(View.VISIBLE);
+            ADS_VideoView.setVisibility(View.VISIBLE);
+           // ADS_exoPlayer_VideoView.setVisibility(View.VISIBLE);
             ADS_VideoView_defaultImage.setVisibility(View.INVISIBLE);
 
         }else {
 
-          //  ADS_VideoView.setVisibility(View.INVISIBLE);
-            ADS_exoPlayer_VideoView.setVisibility(View.INVISIBLE);
+            ADS_VideoView.setVisibility(View.INVISIBLE);
+          //  ADS_exoPlayer_VideoView.setVisibility(View.INVISIBLE);
             ADS_VideoView_defaultImage.setVisibility(View.VISIBLE);
 
         }

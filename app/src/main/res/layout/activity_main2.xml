@@ -95,7 +95,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
                         android:visibility="invisible"
-                        app:use_controller="true"
+                        app:use_controller="false"
                        >
                     </com.google.android.exoplayer2.ui.SimpleExoPlayerView>
 
