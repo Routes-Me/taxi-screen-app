@@ -20,7 +20,7 @@ import retrofit2.http.Query;
 
 public interface RoutesApi {
 
-    String BASE_URL = "http://api.routesdashboard.com/api/";
+    String BASE_URL = "http://api.test.routesdashboard.com/api/";
 
 
     // @GET("Channels?channelidvideolist=2")

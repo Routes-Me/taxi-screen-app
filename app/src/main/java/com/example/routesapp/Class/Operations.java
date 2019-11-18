@@ -29,6 +29,9 @@ import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
+import com.danikula.videocache.HttpProxyCacheServer;
+import com.example.routesapp.AndroidVideoCache.App;
+import com.example.routesapp.AndroidVideoCache.Main3Activity;
 import com.example.routesapp.FetchData.Interface.RoutesApi;
 import com.example.routesapp.FetchData.Model.BannerModel;
 import com.example.routesapp.FetchData.Model.BannersViewModel;
@@ -190,6 +193,8 @@ public class Operations {
     //To play VideoModel of Product with MediaController..
     public void PlayVideo(List<Integer> videoViewId, final List<String> VideosList, final VideoView videoView) {
 
+        //App.deleteCache(activity);
+
         if (currentVideoIndex < VideosList.size()) {
 
 
@@ -263,8 +268,22 @@ public class Operations {
                 });
 */
 
+                HttpProxyCacheServer proxy = App.getProxy(activity);
+                String proxyUrl = proxy.getProxyUrl(String.valueOf(uri));
+                videoView.setVideoPath(proxyUrl);
 
-                videoView.setVideoURI(uri);
+             //   videoView.setVideoURI(uri);
+
+                MediaController mediaController = new MediaController(activity);
+                mediaController.setAnchorView(videoView);
+
+                videoView.setMediaController(mediaController);
+
+
+                videoView.requestFocus();
+
+                videoVisibility(true);
+                videoView.start();
 
                 //when video complete nothing do
                 videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
@@ -277,6 +296,7 @@ public class Operations {
                     }
                 });
 
+/*
                 videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
                     public void onPrepared(MediaPlayer mp) {
@@ -285,7 +305,7 @@ public class Operations {
 
 
 
-                        videoView.setDrawingCacheEnabled(true);
+                        //videoView.setDrawingCacheEnabled(true);
 
                         MediaController mediaController = new MediaController(activity);
                         mediaController.setAnchorView(videoView);
@@ -300,8 +320,7 @@ public class Operations {
 
                     }
                 });
-                videoVisibility(true);
-                videoView.start();
+            */
 
 
             } catch (Exception ex) {

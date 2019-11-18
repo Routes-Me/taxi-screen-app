@@ -60,6 +60,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.BandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
 
 import java.util.List;
@@ -76,6 +77,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, MenuItem.OnMenuItemClickListener {
+
+
+
 
     private LocationManager locationManager;
     private String provider;
@@ -187,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         // getTabletCurrentLocation();
+
 
 
     }
@@ -463,6 +468,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //////////////////////////////////////////////////////////////////////////
     @Override
     public void onClick(View v) {
+
 
         switch (v.getId()) {
 

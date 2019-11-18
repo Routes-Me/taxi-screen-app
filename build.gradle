@@ -20,6 +20,7 @@ buildscript {
         // in the individual module build.gradle files
 
         classpath 'com.novoda:bintray-release:0.9'
+        classpath 'com.google.gms:google-services:4.2.0'
     }
 }
 
