@@ -1,13 +1,12 @@
-package com.example.routesapp.FetchData.Model;
+package com.example.routesapp.Model;
 
 import android.content.Context;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.routesapp.FetchData.Interface.RoutesApi;
+import com.example.routesapp.Interface.RoutesApi;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

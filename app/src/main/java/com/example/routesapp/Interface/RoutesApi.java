@@ -1,21 +1,18 @@
-package com.example.routesapp.FetchData.Interface;
+package com.example.routesapp.Interface;
 
-import com.example.routesapp.FetchData.Model.BannerModel;
-import com.example.routesapp.FetchData.Model.CurrenciesModel;
-import com.example.routesapp.FetchData.Model.ItemsModel;
-import com.example.routesapp.FetchData.Model.TabletChannelModel;
-import com.example.routesapp.FetchData.Model.TabletPasswordModel;
-import com.example.routesapp.FetchData.Model.VideoModel;
+import com.example.routesapp.Model.BannerModel;
+import com.example.routesapp.Model.CurrenciesModel;
+import com.example.routesapp.Model.ItemsModel;
+import com.example.routesapp.Model.TabletChannelModel;
+import com.example.routesapp.Model.TabletPasswordModel;
+import com.example.routesapp.Model.VideoModel;
 
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Response;
-import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.PUT;
-import retrofit2.http.Path;
 import retrofit2.http.Query;
 
 public interface RoutesApi {

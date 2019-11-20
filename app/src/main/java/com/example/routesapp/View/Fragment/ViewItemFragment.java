@@ -6,9 +6,7 @@ import android.os.Build;
 import android.os.Bundle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,25 +22,17 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.routesapp.Class.Operations;
-import com.example.routesapp.GooglePlaceDataApi.model.Place;
+
 import com.example.routesapp.R;
 import com.example.routesapp.View.Activity.MainActivity;
-import com.example.routesapp.api.ApiClient;
-import com.example.routesapp.api.ApiServices;
-import com.google.gson.JsonObject;
 
-import java.util.Objects;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 
 public class ViewItemFragment extends Fragment implements View.OnClickListener {
 
 
 
-    private Place place;
+ //   private Place place;
 
 
     //call Operations.java class
@@ -106,7 +96,7 @@ public class ViewItemFragment extends Fragment implements View.OnClickListener {
 
 
 
-        place = new Place("ChIJuR4vWYKEzz8RyFxE34vuWXQ");
+//        place = new Place("ChIJuR4vWYKEzz8RyFxE34vuWXQ");
 
 
         //To Test Retrofit...
@@ -117,7 +107,7 @@ public class ViewItemFragment extends Fragment implements View.OnClickListener {
             public void onClick(View v) {
                // getRetrofitData();
 
-                Toast.makeText(getActivity(), "name: "+place.getName()  +  "  , rating: "+place.getRating(), Toast.LENGTH_SHORT).show();
+             //   Toast.makeText(getActivity(), "name: "+place.getName()  +  "  , rating: "+place.getRating(), Toast.LENGTH_SHORT).show();
 
                // Toast.makeText(getActivity(), "height: "+place.getHeight() + " , width: "+place.getWidth() + " ,photo_reference: "+ place.getPhoto_reference(), Toast.LENGTH_SHORT).show();
             }

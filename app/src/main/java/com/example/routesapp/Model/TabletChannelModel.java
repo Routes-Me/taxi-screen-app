@@ -1,4 +1,4 @@
-package com.example.routesapp.FetchData.Model;
+package com.example.routesapp.Model;
 
 public class TabletChannelModel {
 

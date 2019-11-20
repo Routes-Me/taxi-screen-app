@@ -1,4 +1,4 @@
-package com.example.routesapp.FetchData.Class;
+package com.example.routesapp.Class;
 
 import android.app.Activity;
 import android.content.Context;
@@ -12,12 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.example.routesapp.Class.Operations;
-import com.example.routesapp.FetchData.Model.ItemsModel;
+import com.example.routesapp.Model.ItemsModel;
 import com.example.routesapp.R;
 
 import java.util.List;

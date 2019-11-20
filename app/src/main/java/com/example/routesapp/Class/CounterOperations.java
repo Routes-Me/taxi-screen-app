@@ -1,26 +1,14 @@
 package com.example.routesapp.Class;
 
-import android.Manifest;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.PackageManager;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationManager;
 import android.os.BatteryManager;
 import android.text.format.Time;
 import android.widget.TextView;
 
-import androidx.core.app.ActivityCompat;
-
-import com.example.routesapp.View.Activity.MainActivity;
-
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static android.content.Context.LOCATION_SERVICE;
 
 public class CounterOperations {
 

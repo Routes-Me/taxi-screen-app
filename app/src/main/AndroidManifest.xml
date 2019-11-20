@@ -10,7 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
     <application
-        android:name=".AndroidVideoCache.App"
+        android:name=".Class.App"
         android:allowBackup="true"
         android:icon="@drawable/app_icon"
         android:keepScreenOn="true"
@@ -21,16 +21,8 @@
         android:theme="@style/noActionBar"
         android:usesCleartextTraffic="true"
         tools:replace="android:supportsRtl">
-        <activity android:name=".AndroidVideoCache.Main3Activity"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing">
 
 
-
-        </activity>
-        <activity android:name=".AccelerometerSensor.SpeedSensor" />
-        <activity android:name=".CalculateSpeedOfDevice" />
         <activity
             android:name=".View.Activity.MainActivity"
             android:screenOrientation="landscape"

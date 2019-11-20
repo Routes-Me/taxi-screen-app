@@ -1,14 +1,12 @@
-package com.example.routesapp.FetchData.Model;
+package com.example.routesapp.Model;
 
-import android.app.Activity;
 import android.content.Context;
-import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.example.routesapp.FetchData.Interface.RoutesApi;
+import com.example.routesapp.Interface.RoutesApi;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -20,33 +18,41 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class TabletChannelsViewModel extends ViewModel {
+public class BannersViewModel extends ViewModel {
 
     //this is the data that we will fetch asynchronously
-    private MutableLiveData<List<TabletChannelModel>> TabletChannelList;
+    private MutableLiveData<List<BannerModel>> bannersList;
 
     //we will call this method to get the data
-    public LiveData<List<TabletChannelModel>> getTabletChannel(String tablet_sNo, Activity activity) {
+    public LiveData<List<BannerModel>> getBanners(int ch_ID, Context context) {
         //if the list is null
-        if (TabletChannelList == null) {
-            TabletChannelList = new MutableLiveData<List<TabletChannelModel>>();
+      /*
+        if (bannersList == null) {
+            bannersList = new MutableLiveData<List<BannerModel>>();
             //we will load it asynchronously from server in this method
-            loadTabletChannelList(tablet_sNo,activity);
+            loadBannersList(ch_ID,context);
         }
+*/
+
+        bannersList = new MutableLiveData<List<BannerModel>>();
+        //we will load it asynchronously from server in this method
+        loadBannersList(ch_ID,context);
 
         //finally we will return the list
-        return TabletChannelList;
+        return bannersList;
     }
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadTabletChannelList(String tablet_sNo,final Activity activity) {
+    private void loadBannersList(int ch_ID, final Context context) {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .build();
+
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(RoutesApi.BASE_URL)
@@ -55,27 +61,29 @@ public class TabletChannelsViewModel extends ViewModel {
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<TabletChannelModel>> call = api.getTabletData(tablet_sNo);
+        Call<List<BannerModel>> call = api.getBanners(ch_ID);
 
 
-        call.enqueue(new Callback<List<TabletChannelModel>>() {
+        call.enqueue(new Callback<List<BannerModel>>() {
             @Override
-            public void onResponse(Call<List<TabletChannelModel>> call, Response<List<TabletChannelModel>> response) {
+            public void onResponse(Call<List<BannerModel>> call, Response<List<BannerModel>> response) {
 
+                 try {
                 //finally we are setting the list to our MutableLiveData
-                try {
-                TabletChannelList.setValue(response.body());
-            }catch (Exception e){
-               // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                bannersList.setValue(response.body());
+                    }catch (Exception e){
+                   //  Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+
+
             }
 
             @Override
-            public void onFailure(Call<List<TabletChannelModel>> call, Throwable t) {
-               // Toast.makeText(activity, "Tablet Data....  " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                activity.recreate();
+            public void onFailure(Call<List<BannerModel>> call, Throwable t) {
+               // Toast.makeText(context, "Banners....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
 
             }
         });
     }
 }
+

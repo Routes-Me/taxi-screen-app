@@ -28,6 +28,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
@@ -43,24 +44,15 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
-import com.example.routesapp.FetchData.Interface.RoutesApi;
-import com.example.routesapp.FetchData.Model.TabletCurrentData;
-import com.example.routesapp.FetchData.Model.TabletPasswordModel;
-import com.example.routesapp.FetchData.Model.TabletPasswordViewModel;
+import com.example.routesapp.Interface.RoutesApi;
+import com.example.routesapp.Model.TabletCurrentData;
+import com.example.routesapp.Model.TabletPasswordModel;
+import com.example.routesapp.Model.TabletPasswordViewModel;
 import com.example.routesapp.R;
-import com.example.routesapp.FetchData.Model.TabletChannelModel;
-import com.example.routesapp.FetchData.Model.TabletChannelsViewModel;
+import com.example.routesapp.Model.TabletChannelModel;
+import com.example.routesapp.Model.TabletChannelsViewModel;
 import com.example.routesapp.View.Fragment.RecyclerViewFragment;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
-import com.google.android.exoplayer2.upstream.BandwidthMeter;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
 
 import java.util.List;
@@ -144,6 +136,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     //For ADS Images
+    int finalHeight, finalWidth;
     private ImageView ADS_ImageView;
 
 
@@ -381,6 +374,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ADS_VideoView_defaultImage = findViewById(R.id.ADS_VideoView_defaultImage);
         ADS_ImageView = findViewById(R.id.ADS_ImageView);
+
+       //To get imageView Size ....
+        ViewTreeObserver vto = ADS_ImageView.getViewTreeObserver();
+        vto.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                ADS_ImageView.getViewTreeObserver().removeOnPreDrawListener(this);
+                finalHeight = ADS_ImageView.getMeasuredHeight();
+                finalWidth = ADS_ImageView.getMeasuredWidth();
+                Toast.makeText(MainActivity.this, "ImageView .... Height:   " + finalHeight + "  , Width:   "+ finalWidth, Toast.LENGTH_SHORT).show();
+               // tv.setText("Height: " + finalHeight + " Width: " + finalWidth);
+                return true;
+            }
+        });
         // ADS_ImageView.setOnClickListener(this);
 
         scrollingtextMoney = (TextView) findViewById(R.id.scrollingtextMoney);
@@ -1193,7 +1199,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     //    Toast.makeText(MainActivity.this, "Put Successfully!", Toast.LENGTH_SHORT).show();
                     //   Toast.makeText(getApplicationContext(), "Post Updated Title: "+response.body().getTitle()+" Body: "+response.body().getBody()+" PostId: "+response.body().getId(), Toast.LENGTH_LONG).show();
 
-                    Toast.makeText(MainActivity.this, "  Latitude: " + Lat + "  ,Longitude: " +  Long + " ,Active: " + isActive, Toast.LENGTH_LONG).show();
+                   // Toast.makeText(MainActivity.this, "  Latitude: " + Lat + "  ,Longitude: " +  Long + " ,Active: " + isActive, Toast.LENGTH_LONG).show();
                 }
             }
 

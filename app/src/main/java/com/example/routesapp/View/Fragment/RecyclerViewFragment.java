@@ -8,8 +8,6 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -22,16 +20,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
-import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
-import android.widget.Toast;
 
 import com.example.routesapp.Class.Operations;
-import com.example.routesapp.FetchData.Class.ItemsAdapterMultibleViews;
-import com.example.routesapp.FetchData.Model.ItemsModel;
-import com.example.routesapp.FetchData.Model.ItemsViewModel;
-import com.example.routesapp.GooglePlaceDataApi.model.Place;
+import com.example.routesapp.Class.ItemsAdapterMultibleViews;
+import com.example.routesapp.Model.ItemsModel;
+import com.example.routesapp.Model.ItemsViewModel;
+
 import com.example.routesapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
@@ -71,7 +67,7 @@ public class RecyclerViewFragment extends Fragment implements View.OnClickListen
 
 
     //To showing rating of Map Place....
-    private Place place;
+   // private Place place;
     //private Double placeRating = 0.0;
     private RatingBar mapRatingBar;
 
@@ -190,12 +186,12 @@ public class RecyclerViewFragment extends Fragment implements View.OnClickListen
 
 
         //To showing rating of Map Place....
-        place = new Place("ChIJuR4vWYKEzz8RyFxE34vuWXQ");
+        //place = new Place("ChIJuR4vWYKEzz8RyFxE34vuWXQ");
       //  placeRating = place.getRating();
         mapRatingBar = nMainView.findViewById(R.id.mapRatingBar);
 
         try {
-            mapRatingBar.setRating(Float.valueOf(String.valueOf(place.getRating())));
+         //   mapRatingBar.setRating(Float.valueOf(String.valueOf(place.getRating())));
         }catch (Exception e){
 
         }
