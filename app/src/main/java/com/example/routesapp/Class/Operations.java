@@ -27,7 +27,9 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.signature.ObjectKey;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Interface.RoutesApi;
@@ -341,8 +343,7 @@ public class Operations {
     public void showADSImages(final List<Integer> bannerViewList, final List<String> BannersList, final ImageView ADSImageView) {
 
        // currentImageIndex = 0;
-        options = new RequestOptions();
-        options.centerCrop().fitCenter();
+
         r = new Runnable() {
             public void run() {
 
@@ -351,6 +352,8 @@ public class Operations {
                     Uri uri = Uri.parse(BannersList.get(currentImageIndex));
                     Increase_Banner_View_Times(bannerViewList.get(currentImageIndex));
                     try {
+                        options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true);
+                        options.centerCrop().fitCenter();
                         Glide.with(activity).load(uri).apply(options).into(ADSImageView);
                     } catch (Exception e) {
                     }
@@ -381,7 +384,7 @@ public class Operations {
 
             }
         };
-        ADSImageView.postDelayed(r, 15000);
+        ADSImageView.postDelayed(r, 1);
     }
 
 
@@ -629,50 +632,7 @@ public class Operations {
     }
 
 
-    //To change Language
-    public void setAppLocale(String language) {
 
-        String localeCode = "en";
-
-        switch (language) {
-
-            case "English":
-                localeCode = "en";
-                break;
-
-            case "Arabic":
-                localeCode = "ar";
-                break;
-
-            case "Tagalog":
-                localeCode = "phi";
-                break;
-
-            case "Urdu":
-                localeCode = "hi";
-                break;
-        }
-
-        try {
-
-            Resources res = activity.getResources();
-            DisplayMetrics dm = res.getDisplayMetrics();
-            Configuration conf = res.getConfiguration();
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-                conf.setLocale(new Locale(localeCode.toLowerCase()));
-            } else {
-                conf.locale = new Locale(localeCode.toLowerCase());
-            }
-            res.updateConfiguration(conf, dm);
-
-
-            //  activity.recreate();
-
-        } catch (Exception e) {
-           // Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
-
-    }
 
 
     //to get data by tablet Language..
@@ -681,33 +641,22 @@ public class Operations {
 
             case "English":
                 btn_selectLang.setImageResource(R.drawable.english_flag);
-
-                get_dataId_of_selectedLang(Lang);
-
                 break;
 
             case "Arabic":
                 btn_selectLang.setImageResource(R.drawable.kuwait_flag);
-
-                get_dataId_of_selectedLang(Lang);
-
                 break;
 
             case "Tagalog":
                 btn_selectLang.setImageResource(R.drawable.philippines_flag);
-
-                get_dataId_of_selectedLang(Lang);
-
                 break;
 
             case "Urdu":
                 btn_selectLang.setImageResource(R.drawable.india_flag);
-
-                get_dataId_of_selectedLang(Lang);
-
                 break;
 
         }
+        get_dataId_of_selectedLang(Lang);
      //   mainActivity.showingLayout("counterLayout");
     }
 
@@ -741,9 +690,10 @@ public class Operations {
         //get data from server
 
         try {
-            getVideosList();
             getBannersList();
             scrollingTextView_Money();
+            getVideosList();
+
         }catch (Exception e){}
 
 

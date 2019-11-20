@@ -14,6 +14,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -24,6 +26,7 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.Time;
 import android.text.method.PasswordTransformationMethod;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -56,6 +59,7 @@ import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.hbb20.CountryCodePicker;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 
@@ -68,7 +72,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener, MenuItem.OnMenuItemClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
 
 
@@ -118,8 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-    private MenuItem txtLanguage, English_Lang, Arabic_Lang, tagalog_Lang, Urdu_Lang;
-    private TextView txtLanguageView;
+
 
 
     //For ADS Videos
@@ -177,16 +180,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        savedLanguage = sharedPreferences.getString("Language", "English");
+        setAppLocale(savedLanguage);
+
         setContentView(R.layout.activity_main2);
 
 
         initialize();
 
-
         // getTabletCurrentLocation();
-
-
-
     }
 
 
@@ -399,16 +404,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //To Set Language ... Default Language is [English]
         //sharedPreference Storage
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        savedLanguage = sharedPreferences.getString("Language", "English");
+      //  sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+      //  editor = sharedPreferences.edit();
+      //  savedLanguage = sharedPreferences.getString("Language", "English");
 
         //123321123321
 
         //For Tablet Serial Number...
         tabletSerialNumber();
 
-        operations.setAppLocale(savedLanguage);
+
 
 
         // mainLayoutID & AddItemLayoutID
@@ -875,120 +880,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_toolbar, menu);
-        //selectLanguage = menu.findItem(R.id.menu_language);
-
-        English_Lang = menu.findItem(R.id.English_Lang);
-        English_Lang.setOnMenuItemClickListener(this);
-        Arabic_Lang = menu.findItem(R.id.Arabic_Lang);
-        Arabic_Lang.setOnMenuItemClickListener(this);
-        tagalog_Lang = menu.findItem(R.id.Tagalog_Lang);
-        tagalog_Lang.setOnMenuItemClickListener(this);
-        Urdu_Lang = menu.findItem(R.id.Urdu_Lang);
-        Urdu_Lang.setOnMenuItemClickListener(this);
-
-
-        txtLanguage = menu.findItem(R.id.txt_lang_menu_item);
-
-        View actionView = txtLanguage.getActionView();
-
-        if (actionView != null) {
-            txtLanguageView = actionView.findViewById(R.id.txtLang);
-        }
-
-        switch (savedLanguage) {
-            case "en":
-                txtLanguageView.setText("English");
-                break;
-            case "ar":
-                txtLanguageView.setText("العربية");
-                break;
-            case "phi":
-                txtLanguageView.setText("తెలుగు");
-                break;
-            case "hi":
-                txtLanguageView.setText("اردو");
-                break;
-
-        }
-
-
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onMenuItemClick(MenuItem item) {
-
-        switch (item.getItemId()) {
-
-            case R.id.English_Lang:
-                changeLanguage("en");
-                break;
-            case R.id.Arabic_Lang:
-                changeLanguage("ar");
-                break;
-            case R.id.Tagalog_Lang:
-                changeLanguage("phi");
-                break;
-            case R.id.Urdu_Lang:
-                changeLanguage("hi");
-                break;
-
-        }
-
-        return false;
-    }
-
-
-    private void changeLanguage(String language) {
-
-      //  Toast.makeText(this, "Selected Language: " + language, Toast.LENGTH_SHORT).show();
-
-        //To save Language into sharedPreference Storage
-        editor.putString("Language", language);
-        editor.apply();
-        operations.setAppLocale(language);
-
-
-        switch (language) {
-
-            case "en":
-                txtLanguageView.setText("English");
-                break;
-
-            case "ar":
-                txtLanguageView.setText("العربية");
-                break;
-
-            case "phi":
-                txtLanguageView.setText("తెలుగు");
-                break;
-
-            case "hi":
-                txtLanguageView.setText("اردو");
-                break;
-        }
-
-
-        // recreate();
-        // getVideosList();
-        // setADSImages();
-        // scrollingTextView_Money();
-        //scrollingTextView_News();
 
 
 
-
-        /*
-        scrollMoney.postDelayed(new Runnable() {
-            public void run() {
-                scrollMoney.fullScroll(HorizontalScrollView.FOCUS_RIGHT);
-            }
-        }, 100L);
-*/
-    }
 
 
     //TO Make Keyboard Of Enter Phone Number Is Numbers Only ......
@@ -1375,6 +1269,51 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         handlerTime_locationUpdate = new Handler();
         handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
+
+    }
+
+    //To change Language
+    private void setAppLocale(String language) {
+
+        String localeCode = "en";
+
+        switch (language) {
+
+            case "English":
+                localeCode = "en";
+                break;
+
+            case "Arabic":
+                localeCode = "ar";
+                break;
+
+            case "Tagalog":
+                localeCode = "phi";
+                break;
+
+            case "Urdu":
+                localeCode = "hi";
+                break;
+        }
+
+        try {
+
+            Resources res = getResources();
+            DisplayMetrics dm = res.getDisplayMetrics();
+            Configuration conf = res.getConfiguration();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                conf.setLocale(new Locale(localeCode.toLowerCase()));
+            } else {
+                conf.locale = new Locale(localeCode.toLowerCase());
+            }
+            res.updateConfiguration(conf, dm);
+
+
+            //  activity.recreate();
+
+        } catch (Exception e) {
+            // Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
 
     }
 
