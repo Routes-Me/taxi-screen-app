@@ -387,7 +387,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 ADS_ImageView.getViewTreeObserver().removeOnPreDrawListener(this);
                 finalHeight = ADS_ImageView.getMeasuredHeight();
                 finalWidth = ADS_ImageView.getMeasuredWidth();
-                Toast.makeText(MainActivity.this, "ImageView .... Height:   " + finalHeight + "  , Width:   "+ finalWidth, Toast.LENGTH_SHORT).show();
+               // Toast.makeText(MainActivity.this, "ImageView .... Height:   " + finalHeight + "  , Width:   "+ finalWidth, Toast.LENGTH_SHORT).show();
                // tv.setText("Height: " + finalHeight + " Width: " + finalWidth);
                 return true;
             }
