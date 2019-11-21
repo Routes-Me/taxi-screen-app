@@ -21,20 +21,17 @@
         android:theme="@style/noActionBar"
         android:usesCleartextTraffic="true"
         tools:replace="android:supportsRtl">
-        <activity android:name=".View.Activity.SplachScreen"
+        <activity android:name=".View.Login.Activity.LearnMoreScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing">
-
-
+            android:windowSoftInputMode="adjustPan">
 
         </activity>
         <activity
-            android:name=".View.Activity.MainActivity"
+            android:name=".View.Login.Activity.LoginScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing">
-
+            android:windowSoftInputMode="adjustPan">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,8 +39,12 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
+        <activity
+            android:name=".View.Activity.MainActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="adjustNothing"></activity>
     </application>
 
 </manifest>
