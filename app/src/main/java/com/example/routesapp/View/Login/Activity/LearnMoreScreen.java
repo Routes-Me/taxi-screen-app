@@ -23,6 +23,7 @@ public class LearnMoreScreen extends AppCompatActivity implements View.OnClickLi
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.learn_more_screen);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
         initialize();
 
