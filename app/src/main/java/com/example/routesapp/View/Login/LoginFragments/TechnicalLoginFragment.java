@@ -1,8 +1,10 @@
 package com.example.routesapp.View.Login.LoginFragments;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 
+import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
 import android.text.Editable;
@@ -14,10 +16,22 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.example.routesapp.Class.AES;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.Activity.LearnMoreScreen;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
+
+import java.security.spec.KeySpec;
+import java.util.Base64;
+
+import javax.crypto.Cipher;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.SecretKeySpec;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -25,6 +39,9 @@ import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 public class TechnicalLoginFragment extends Fragment implements View.OnClickListener {
 
 
+    private static  String originalString = "Abdullah Soubeih";
+
+    private AES aes;
 
     private View nMainView;
 
@@ -39,6 +56,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     }
 
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
@@ -46,7 +64,19 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
         initialize();
 
+
+        //Using AES 256 To Encryption & Decryption ...
+       // Toast.makeText(getActivity(), "encrypt:   "+ AES.encrypt(originalString)    +  "   ,decrypt:  " + AES.decrypt(AES.encrypt(originalString)), Toast.LENGTH_SHORT).show();
+
         return nMainView;
+
+
+       // aes = new AES(getActivity());
+
+
+
+        //String decryptedString = AES.decrypt(encryptedString, secretKey) ;
+
 
     }
 
@@ -160,6 +190,14 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
 
     }
+
+
+
+
+
+
+
+
 
 
 }

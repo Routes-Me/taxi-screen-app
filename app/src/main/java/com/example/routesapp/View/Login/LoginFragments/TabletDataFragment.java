@@ -1,5 +1,6 @@
 package com.example.routesapp.View.Login.LoginFragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,8 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.example.routesapp.R;
+import com.example.routesapp.View.Activity.MainActivity;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -21,6 +24,7 @@ public class TabletDataFragment extends Fragment implements View.OnClickListener
     private View nMainView;
 
     private ImageView btn_back;
+    private TextView btn_done;
 
     public TabletDataFragment() {
         // Required empty public constructor
@@ -40,6 +44,9 @@ public class TabletDataFragment extends Fragment implements View.OnClickListener
     private void initialize() {
         btn_back = nMainView.findViewById(R.id.btn_back);
         btn_back.setOnClickListener(this);
+
+        btn_done = nMainView.findViewById(R.id.btn_done);
+        btn_done.setOnClickListener(this);
     }
 
     @Override
@@ -50,7 +57,16 @@ public class TabletDataFragment extends Fragment implements View.OnClickListener
                 openTechnicalLoginFragment();
                 break;
 
+            case R.id.btn_done:
+                openMainActivity();
+                break;
+
         }
+    }
+
+    private void openMainActivity() {
+        startActivity(new Intent(getActivity(), MainActivity.class));
+        getActivity().finish();
     }
 
     private void openTechnicalLoginFragment() {
