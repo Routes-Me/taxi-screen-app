@@ -48,7 +48,8 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private TextView btn_next;
     private LinearLayout btn_learnMore;
 
-    private EditText email_et, password_et;
+    private EditText email_et;
+    private ShowHidePasswordEditText password_et;
     private TextView email_error_tv, password_error_tv;
 
     public TechnicalLoginFragment() {
@@ -66,7 +67,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
 
         //Using AES 256 To Encryption & Decryption ...
-       // Toast.makeText(getActivity(), "encrypt:   "+ AES.encrypt(originalString)    +  "   ,decrypt:  " + AES.decrypt(AES.encrypt(originalString)), Toast.LENGTH_SHORT).show();
+      //  Toast.makeText(getActivity(), "encrypt:   "+ AES.encrypt(originalString)    +  "   ,decrypt:  " + AES.decrypt(AES.encrypt(originalString)), Toast.LENGTH_SHORT).show();
 
         return nMainView;
 
@@ -90,6 +91,12 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         email_error_tv = nMainView.findViewById(R.id.email_error_tv);
         password_et = nMainView.findViewById(R.id.password_et);
         password_error_tv = nMainView.findViewById(R.id.password_error_tv);
+        editTextListener();
+
+
+    }
+
+    private void editTextListener() {
         email_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -111,7 +118,6 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             @Override
             public void afterTextChanged(Editable s) { }
         });
-
     }
 
     @Override

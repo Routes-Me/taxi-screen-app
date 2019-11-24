@@ -83,7 +83,6 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:textColorHint="#8a000000"
             android:textSize="18sp"
             android:textStyle="normal"
-            android:nextFocusDown="@id/password_et"
             />
 
         <TextView
@@ -99,7 +98,10 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:layout_gravity="center"
             android:visibility="invisible"/>
 
-        <EditText
+
+
+
+        <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
             android:id="@+id/password_et"
             android:layout_width="500dp"
             android:layout_height="60dp"
@@ -115,7 +117,10 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:layout_marginBottom="3dp"
             android:layout_gravity="center"
             android:ems="10"
-            android:inputType="textPassword"/>
+            android:inputType="textPassword"
+            app:tint_color="@color/headings"
+            app:drawable_show="@drawable/ic_visibility_on"
+            app:drawable_hide="@drawable/ic_visibility_off"/>
 
 
 
