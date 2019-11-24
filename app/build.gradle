@@ -123,4 +123,7 @@ dependencies {
     //GIF Image Library....
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.15'
 
+    //Showhidepasswordedittext Library
+    implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
+
 }

@@ -75,7 +75,7 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:layout_gravity="center"
             android:layout_marginLeft="136dp"
             android:layout_marginRight="136dp"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="3dp"
             android:background="@drawable/grey_border"
             android:fontFamily="sans-serif"
             android:hint="Email"
@@ -84,7 +84,20 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:textSize="18sp"
             android:textStyle="normal"
             android:nextFocusDown="@id/password_et"
-            android:imeOptions="actionNext"/>
+            />
+
+        <TextView
+            android:id="@+id/email_error_tv"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:textColor="@color/red"
+            android:gravity="start"
+            android:text="Email Error"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
+            android:visibility="invisible"/>
 
         <EditText
             android:id="@+id/password_et"
@@ -99,8 +112,25 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:textColorHint="#8a000000"
             android:hint="Password"
             android:textSize="18sp"
-            android:layout_marginBottom="70dp"
-            android:layout_gravity="center"/>
+            android:layout_marginBottom="3dp"
+            android:layout_gravity="center"
+            android:ems="10"
+            android:inputType="textPassword"/>
+
+
+
+        <TextView
+            android:id="@+id/password_error_tv"
+            android:layout_width="500dp"
+            android:layout_height="wrap_content"
+            android:textStyle="normal"
+            android:textColor="@color/red"
+            android:gravity="start"
+            android:text="Password Error"
+            android:textSize="16sp"
+            android:layout_marginBottom="20dp"
+            android:layout_gravity="center"
+            android:visibility="invisible"/>
 
 
         <LinearLayout

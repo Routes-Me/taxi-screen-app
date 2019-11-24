@@ -20,7 +20,8 @@
         android:supportsRtl="false"
         android:theme="@style/noActionBar"
         android:usesCleartextTraffic="true"
-        tools:replace="android:supportsRtl">
+        tools:replace="android:supportsRtl"
+        android:windowSoftInputMode="adjustResize|stateHidden">
         <activity android:name=".View.Login.Activity.LearnMoreScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
@@ -31,7 +32,8 @@
             android:name=".View.Login.Activity.LoginScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustPan">
+
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
