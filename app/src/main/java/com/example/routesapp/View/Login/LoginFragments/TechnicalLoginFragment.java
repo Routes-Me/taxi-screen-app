@@ -19,6 +19,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.routesapp.Class.AES;
+import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.Activity.LearnMoreScreen;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
@@ -67,8 +68,14 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
 
         //Using AES 256 To Encryption & Decryption ...
-       Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
-       // email_et.setText(AES.encrypt(getActivity(),originalString));
+       //Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
+      //  email_et.setText(AES.encrypt(getActivity(),originalString));
+
+        AesBase64Wrapper aesBase64Wrapper = new AesBase64Wrapper();
+
+        Toast.makeText(getActivity(), "encrypt:  " + aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih") + "   , Original is:  Abdullah Soubeih" , Toast.LENGTH_SHORT).show();
+        email_et.setText(aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih"));
+
         return nMainView;
 
 
@@ -146,40 +153,24 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         String email = email_et.getText().toString().trim();
         String password = password_et.getText().toString().trim();
 
-
-
         if (email.isEmpty()){
-           // email_et.setError("Email Address Required");
-          //  email_et.requestFocus();
-
             showErrorMessage(email_et, email_error_tv,"* Email Address Required",true);
-
             return;
         }
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-          //  email_et.setError("Enter Valid Email");
-          //  email_et.requestFocus();
             showErrorMessage(email_et, email_error_tv,"* Enter Valid Email",true);
             return;
         }
 
         if (password.isEmpty()){
-           // password_et.setError("Password Required");
-           // password_et.requestFocus();
-
             showErrorMessage(password_et, password_error_tv,"* Password Required",true);
-
             return;
         }
-
         if (password.length() < 8){
-          //  password_et.setError("Minimum Password is 8 digit");
-          //  password_et.requestFocus();
-
             showErrorMessage(password_et, password_error_tv,"* Minimum Password is 8 digit",true);
-
             return;
         }
+
 
 
         getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
