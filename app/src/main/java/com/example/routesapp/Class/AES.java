@@ -1,15 +1,13 @@
 package com.example.routesapp.Class;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Build;
-import android.widget.Toast;
-
 import androidx.annotation.RequiresApi;
+
+import com.example.routesapp.Model.EncryptModel;
 
 import java.security.spec.KeySpec;
 import java.util.Base64;
-
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
@@ -19,26 +17,30 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AES {
 
-    private static String secretKey = "boooooooooom!!!!";
-    private static String salt = "ssshhhhhhhhhhh!!!!";
+   // private static String secretKey = "boooooooooom!!!!";
+  //  private static String salt = "ssshhhhhhhhhhh!!!!";
 
 
+    private static EncryptModel encryptModel;
 
+    public AES(Activity activity) {
+        this.encryptModel = new EncryptModel(activity);
+    }
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String encrypt(String strToEncrypt) {
+    public static String encrypt(Activity activity, String strToEncrypt) {
         try {
             byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             IvParameterSpec ivspec = new IvParameterSpec(iv);
 
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), salt.getBytes(), 65536, 256);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(encryptModel.getFactory());
+            KeySpec spec = new PBEKeySpec(encryptModel.getSecretKey().toCharArray(), encryptModel.getSalt().getBytes(), encryptModel.getIterationCount(), encryptModel.getKeyLength());
             SecretKey tmp = factory.generateSecret(spec);
-            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
+            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), encryptModel.getAlgorithm());
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            Cipher cipher = Cipher.getInstance(encryptModel.getCipher());
             cipher.init(Cipher.ENCRYPT_MODE, secretKey, ivspec);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes("UTF-8")));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(encryptModel.getCharsetName())));
         }
         catch (Exception e)
         {
@@ -50,17 +52,17 @@ public class AES {
 
 
     @RequiresApi(api = Build.VERSION_CODES.O)
-    public static String decrypt(String strToDecrypt) {
+    public static String decrypt(Activity activity, String strToDecrypt) {
         try {
             byte[] iv = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             IvParameterSpec ivspec = new IvParameterSpec(iv);
 
-            SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA256");
-            KeySpec spec = new PBEKeySpec(secretKey.toCharArray(), salt.getBytes(), 65536, 256);
+            SecretKeyFactory factory = SecretKeyFactory.getInstance(encryptModel.getFactory());
+            KeySpec spec = new PBEKeySpec(encryptModel.getSecretKey().toCharArray(), encryptModel.getSalt().getBytes(), encryptModel.getIterationCount(), encryptModel.getKeyLength());
             SecretKey tmp = factory.generateSecret(spec);
-            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), "AES");
+            SecretKeySpec secretKey = new SecretKeySpec(tmp.getEncoded(), encryptModel.getAlgorithm());
 
-            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5PADDING");
+            Cipher cipher = Cipher.getInstance(encryptModel.getCipher());
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivspec);
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
         }

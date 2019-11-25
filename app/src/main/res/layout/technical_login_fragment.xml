@@ -41,7 +41,7 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginBottom="20dp"
+            android:layout_marginBottom="15dp"
             android:layout_gravity="center"
            >
 
@@ -67,75 +67,86 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
 
         </LinearLayout>
 
-
-        <EditText
-            android:id="@+id/email_et"
-            android:layout_width="500dp"
-            android:layout_height="60dp"
-            android:layout_gravity="center"
-            android:layout_marginLeft="136dp"
-            android:layout_marginRight="136dp"
-            android:layout_marginBottom="3dp"
-            android:background="@drawable/grey_border"
-            android:fontFamily="sans-serif"
-            android:hint="Email"
-            android:textColor="#8a000000"
-            android:textColorHint="#8a000000"
-            android:textSize="18sp"
-            android:textStyle="normal"
-            />
-
-        <TextView
-            android:id="@+id/email_error_tv"
+        <LinearLayout
             android:layout_width="500dp"
             android:layout_height="wrap_content"
-            android:textStyle="normal"
-            android:textColor="@color/red"
-            android:gravity="start"
-            android:text="Email Error"
-            android:textSize="16sp"
-            android:layout_marginBottom="20dp"
-            android:layout_gravity="center"
-            android:visibility="invisible"/>
-
-
-
-
-        <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
-            android:id="@+id/password_et"
-            android:layout_width="500dp"
-            android:layout_height="60dp"
-            android:layout_marginRight="136dp"
+            android:orientation="vertical"
             android:layout_marginLeft="136dp"
-            android:background="@drawable/grey_border"
-            android:fontFamily="sans-serif"
-            android:textStyle="normal"
-            android:textColor="#8a000000"
-            android:textColorHint="#8a000000"
-            android:hint="Password"
-            android:textSize="18sp"
-            android:layout_marginBottom="3dp"
-            android:layout_gravity="center"
-            android:ems="10"
-            android:inputType="textPassword"
-            app:tint_color="@color/headings"
-            app:drawable_show="@drawable/ic_visibility_on"
-            app:drawable_hide="@drawable/ic_visibility_off"/>
-
-
-
-        <TextView
-            android:id="@+id/password_error_tv"
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:textStyle="normal"
-            android:textColor="@color/red"
-            android:gravity="start"
-            android:text="Password Error"
-            android:textSize="16sp"
+            android:layout_marginRight="136dp"
             android:layout_marginBottom="20dp"
-            android:layout_gravity="center"
-            android:visibility="invisible"/>
+            android:padding="10dp">
+
+            <EditText
+                android:id="@+id/email_et"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+
+                android:layout_marginBottom="3dp"
+                android:background="@drawable/grey_border"
+                android:fontFamily="sans-serif"
+                android:hint="Email"
+                android:textColor="#8a000000"
+                android:textColorHint="#8a000000"
+                android:textSize="18sp"
+                android:textStyle="normal"
+                />
+
+            <TextView
+                android:id="@+id/email_error_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:textColor="@color/red"
+                android:gravity="start"
+                android:text="Email Error"
+                android:textSize="16sp"
+                android:layout_marginBottom="5dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
+
+
+
+
+            <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+                android:id="@+id/password_et"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+
+                android:background="@drawable/grey_border"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="#8a000000"
+                android:textColorHint="#8a000000"
+                android:hint="Password"
+                android:textSize="18sp"
+                android:layout_marginBottom="3dp"
+                android:layout_gravity="center"
+                android:ems="10"
+                android:inputType="textPassword"
+                app:tint_color="@color/grey"
+                app:drawable_show="@drawable/ic_visibility_on"
+                app:drawable_hide="@drawable/ic_visibility_off"/>
+
+
+
+            <TextView
+                android:id="@+id/password_error_tv"
+                android:layout_width="500dp"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:textColor="@color/red"
+                android:gravity="start"
+                android:text="Password Error"
+                android:textSize="16sp"
+
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
+
+        </LinearLayout>
+
+
+
 
 
         <LinearLayout

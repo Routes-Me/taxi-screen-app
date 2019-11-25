@@ -67,8 +67,8 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
 
         //Using AES 256 To Encryption & Decryption ...
-      //  Toast.makeText(getActivity(), "encrypt:   "+ AES.encrypt(originalString)    +  "   ,decrypt:  " + AES.decrypt(AES.encrypt(originalString)), Toast.LENGTH_SHORT).show();
-
+       Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
+       // email_et.setText(AES.encrypt(getActivity(),originalString));
         return nMainView;
 
 
@@ -82,6 +82,10 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     }
 
     private void initialize() {
+
+        aes = new AES(getActivity());
+
+
         btn_next = nMainView.findViewById(R.id.btn_next);
         btn_next.setOnClickListener(this);
         btn_learnMore = nMainView.findViewById(R.id.btn_learnMore);
