@@ -66,25 +66,32 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
         initialize();
 
+        encryptUserName();
 
-        //Using AES 256 To Encryption & Decryption ...
-       //Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
-      //  email_et.setText(AES.encrypt(getActivity(),originalString));
-
-        AesBase64Wrapper aesBase64Wrapper = new AesBase64Wrapper();
-
-        Toast.makeText(getActivity(), "encrypt:  " + aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih") + "   , Original is:  Abdullah Soubeih" , Toast.LENGTH_SHORT).show();
-        email_et.setText(aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih"));
 
         return nMainView;
 
 
        // aes = new AES(getActivity());
 
-
-
         //String decryptedString = AES.decrypt(encryptedString, secretKey) ;
 
+
+    }
+
+    private void encryptUserName() {
+        //Using AES 256 To Encryption & Decryption ...
+        //Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
+        //  email_et.setText(AES.encrypt(getActivity(),originalString));
+
+        AesBase64Wrapper aesBase64Wrapper = new AesBase64Wrapper();
+
+        try {
+            Toast.makeText(getActivity(), "Encrypt:  " + aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih") + "   , Decrypt:  " + aesBase64Wrapper.decodeAndDecrypt(aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih")) +"   , Original is:  Abdullah Soubeih" , Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        // email_et.setText(aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih"));
 
     }
 

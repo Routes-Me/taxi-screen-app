@@ -25,7 +25,7 @@ public class AesBase64Wrapper {
     public String encryptAndEncode(String raw) {
         try {
             Cipher c = getCipher(Cipher.ENCRYPT_MODE);
-            byte[] encryptedVal = c.doFinal(getBytes(raw));
+           // byte[] encryptedVal = c.doFinal(getBytes(raw));
            // String s = getString(Base64.encodeBase64(encryptedVal));
             //return s;
             return java.util.Base64.getEncoder().encodeToString(c.doFinal(raw.getBytes()));
@@ -33,14 +33,16 @@ public class AesBase64Wrapper {
             throw new RuntimeException(t);
         }
     }
-/*
+
+    @SuppressLint("NewApi")
     public String decodeAndDecrypt(String encrypted) throws Exception {
-        byte[] decodedValue = Base64.decodeBase64(getBytes(encrypted));
+       // byte[] decodedValue = Base64.decodeBase64(getBytes(encrypted));
         Cipher c = getCipher(Cipher.DECRYPT_MODE);
-        byte[] decValue = c.doFinal(decodedValue);
-        return new String(decValue);
+       // byte[] decValue = c.doFinal(decodedValue);
+        return new String(c.doFinal(java.util.Base64.getDecoder().decode(encrypted)));
+       // return new String(decValue);
     }
-*/
+
     private String getString(byte[] bytes) throws UnsupportedEncodingException {
         return new String(bytes, "UTF-8");
     }
