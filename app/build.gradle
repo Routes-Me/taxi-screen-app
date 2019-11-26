@@ -127,3 +127,5 @@ dependencies {
     implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
 
 }
+
+apply plugin: 'com.google.gms.google-services'

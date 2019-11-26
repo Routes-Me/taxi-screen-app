@@ -6,6 +6,10 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,6 +24,9 @@ import android.widget.Toast;
 
 import com.example.routesapp.Class.AES;
 import com.example.routesapp.Class.AesBase64Wrapper;
+import com.example.routesapp.Model.AuthCredentials;
+import com.example.routesapp.Model.AuthCredentialsViewModel;
+import com.example.routesapp.Model.BannersViewModel;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.Activity.LearnMoreScreen;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
@@ -42,7 +49,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
     private static  String originalString = "Abdullah Soubeih";
 
-    private AES aes;
+    private AuthCredentialsViewModel authCredentialsViewModel;
 
     private View nMainView;
 
@@ -52,6 +59,8 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private EditText email_et;
     private ShowHidePasswordEditText password_et;
     private TextView email_error_tv, password_error_tv;
+
+
 
     public TechnicalLoginFragment() {
         // Required empty public constructor
@@ -66,15 +75,10 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
         initialize();
 
-        encryptUserName();
+       // encryptUserName();
 
 
         return nMainView;
-
-
-       // aes = new AES(getActivity());
-
-        //String decryptedString = AES.decrypt(encryptedString, secretKey) ;
 
 
     }
@@ -97,7 +101,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
     private void initialize() {
 
-        aes = new AES(getActivity());
+
 
 
         btn_next = nMainView.findViewById(R.id.btn_next);
@@ -178,9 +182,16 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             return;
         }
 
+        authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
+        authCredentialsViewModel.getToken(new AuthCredentials(email,password),getActivity()).observe((LifecycleOwner) getActivity(), new Observer<String>() {
+            @Override
+            public void onChanged(String s) {
+                Toast.makeText(getActivity(), "response:  " + s, Toast.LENGTH_SHORT).show();
+            }
+        });
 
 
-        getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+      //  getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
     }
 
 

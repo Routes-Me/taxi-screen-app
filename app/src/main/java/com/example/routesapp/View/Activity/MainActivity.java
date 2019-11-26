@@ -48,6 +48,7 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Interface.RoutesApi;
+import com.example.routesapp.Model.ItemAnalytics;
 import com.example.routesapp.Model.TabletCurrentData;
 import com.example.routesapp.Model.TabletPasswordModel;
 import com.example.routesapp.Model.TabletPasswordViewModel;
@@ -56,6 +57,7 @@ import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletChannelsViewModel;
 import com.example.routesapp.View.Fragment.RecyclerViewFragment;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
 
 import java.util.List;
@@ -169,6 +171,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView timeClock, DateClock, DayClock;
 
     ///////////////////////////////////////////
+
+
+    //Using Firebase Analytics ...
+    private FirebaseAnalytics firebaseAnalytics;
 
 
     //Activity Life Cycle .......
@@ -347,6 +353,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @SuppressLint("SimpleDateFormat")
     private void initialize() {
 
+        //Using Firebase Analytics ...
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+
 
         tabletCurrentData = new TabletCurrentData();
 
@@ -379,6 +389,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ADS_VideoView_defaultImage = findViewById(R.id.ADS_VideoView_defaultImage);
         ADS_ImageView = findViewById(R.id.ADS_ImageView);
+        ADS_ImageView.setOnClickListener(this);
 
        //To get imageView Size ....
         ViewTreeObserver vto = ADS_ImageView.getViewTreeObserver();
@@ -538,6 +549,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.ADS_VideoView:
 
+                updateFirebaseAnalystics(new ItemAnalytics(1,"VideoView"));
+
                 /*
                 Uri mUri = null;
                 try {
@@ -565,6 +578,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.ADS_ImageView:
+                updateFirebaseAnalystics(new ItemAnalytics(3,"ImageView"));
 /*
                 //get index of current Image...
                 Toast.makeText(this, "ADS Banner Clicked ! +  " + operations.getCurrentImageIndex(), Toast.LENGTH_SHORT).show();
@@ -624,6 +638,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         }
 
+    }
+
+    private void updateFirebaseAnalystics(ItemAnalytics itemAnalytics) {
+        Bundle bundle = new Bundle();
+        bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, itemAnalytics.getId());
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemAnalytics.getName());
+
+        //Logs an app event.
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+
+        //Sets whether analytics collection is enabled for this app on this device.
+        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+
+        //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
+        firebaseAnalytics.setMinimumSessionDuration(20000);
+
+        //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
+        firebaseAnalytics.setSessionTimeoutDuration(500);
+
+        //Sets the user ID property.
+        firebaseAnalytics.setUserId(String.valueOf(itemAnalytics.getId()));
+
+        //Sets a user property to a given value.
+        firebaseAnalytics.setUserProperty("Routes_Items_New", itemAnalytics.getName());
     }
 
 

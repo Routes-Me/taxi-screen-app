@@ -1,5 +1,6 @@
 package com.example.routesapp.Interface;
 
+import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.BannerModel;
 import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.ItemsModel;
@@ -11,7 +12,9 @@ import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
 
@@ -19,6 +22,9 @@ public interface RoutesApi {
 
     String BASE_URL = "http://api.test.routesdashboard.com/api/";
 
+
+    @POST("token")
+    Call<ResponseBody> loginUser(@Body AuthCredentials authCredentials);
 
     // @GET("Channels?channelidvideolist=2")
     // Call<List<VideoModel>> getVideos();
@@ -93,5 +99,7 @@ public interface RoutesApi {
     //Get Tablet Password
     @GET("Tablets")
     Call<List<TabletPasswordModel>> getTabletPassword(@Query("tabletserialno") String tablet_sNo);
+
+
 
 }
