@@ -1,7 +1,9 @@
 package com.example.routesapp.Class;
 
 import android.annotation.SuppressLint;
-import android.util.Base64;
+import android.app.Activity;
+
+import com.example.routesapp.Model.EncryptModel;
 
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
@@ -17,9 +19,16 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AesBase64Wrapper {
 
-    private static String IV = "IV_VALUE_16_BYTE";
-    private static String PASSWORD = "PASSWORD_VALUE";
-    private static String SALT = "SALT_VALUE";
+   // private static String IV = "IV_VALUE_16_BYTE";
+   // private static String PASSWORD = "PASSWORD_VALUE";
+   // private static String SALT = "SALT_VALUE";
+
+    private static EncryptModel encrypt;
+
+    public AesBase64Wrapper(Activity activity) {
+        this.encrypt = new EncryptModel(activity);
+    }
+
 
     @SuppressLint("NewApi")
     public String encryptAndEncode(String raw) {
@@ -44,28 +53,30 @@ public class AesBase64Wrapper {
     }
 
     private String getString(byte[] bytes) throws UnsupportedEncodingException {
-        return new String(bytes, "UTF-8");
+        return new String(bytes, encrypt.getCharsetName());
     }
 
     private byte[] getBytes(String str) throws UnsupportedEncodingException {
-        return str.getBytes("UTF-8");
+        return str.getBytes(encrypt.getCharsetName());
     }
 
     private Cipher getCipher(int mode) throws Exception {
-        Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        byte[] iv = getBytes(IV);
+      //  Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        Cipher c = Cipher.getInstance(encrypt.getCipher());
+        byte[] iv = getBytes(encrypt.getIv());
         c.init(mode, generateKey(), new IvParameterSpec(iv));
         return c;
     }
 
     private Key generateKey() throws Exception {
-        SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
-        char[] password = PASSWORD.toCharArray();
-        byte[] salt = getBytes(SALT);
+       // SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
+        SecretKeyFactory factory = SecretKeyFactory.getInstance(encrypt.getFactory());
+        char[] password = encrypt.getPassword().toCharArray();
+        byte[] salt = getBytes(encrypt.getSalt());
 
-        KeySpec spec = new PBEKeySpec(password, salt, 65536, 128);
+        KeySpec spec = new PBEKeySpec(password, salt, encrypt.getIterationCount(), encrypt.getKeyLength());
         SecretKey tmp = factory.generateSecret(spec);
         byte[] encoded = tmp.getEncoded();
-        return new SecretKeySpec(encoded, "AES");
+        return new SecretKeySpec(encoded, encrypt.getAlgorithm());
     }
 }

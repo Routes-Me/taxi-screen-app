@@ -84,14 +84,14 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         //Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
         //  email_et.setText(AES.encrypt(getActivity(),originalString));
 
-        AesBase64Wrapper aesBase64Wrapper = new AesBase64Wrapper();
+        AesBase64Wrapper aesBase64Wrapper = new AesBase64Wrapper(getActivity());
 
         try {
-            Toast.makeText(getActivity(), "Encrypt:  " + aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih") + "   , Decrypt:  " + aesBase64Wrapper.decodeAndDecrypt(aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih")) +"   , Original is:  Abdullah Soubeih" , Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(), "Encrypt:  " + aesBase64Wrapper.encryptAndEncode(originalString) + "   , Decrypt:  " + aesBase64Wrapper.decodeAndDecrypt(aesBase64Wrapper.encryptAndEncode(originalString)) +"   , Original is:  " + originalString , Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        // email_et.setText(aesBase64Wrapper.encryptAndEncode("Abdullah Soubeih"));
+        // email_et.setText(aesBase64Wrapper.encryptAndEncode(originalString));
 
     }
 

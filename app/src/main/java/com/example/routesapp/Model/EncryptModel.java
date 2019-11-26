@@ -6,7 +6,7 @@ import com.example.routesapp.Class.Helper;
 
 public class EncryptModel {
 
-    private String secretKey, salt, cipher, factory, iterationCount, keyLength, algorithm , charsetName;
+    private String secretKey, iv, password, salt, cipher, factory, iterationCount, keyLength, algorithm , charsetName;
 
  //   private Activity activity;
 
@@ -14,6 +14,8 @@ public class EncryptModel {
        // this.activity = activity;
 
         this.secretKey = Helper.getConfigValue(activity, "secretKey");
+        this.iv = Helper.getConfigValue(activity, "iv");
+        this.password = Helper.getConfigValue(activity, "password");
         this.salt = Helper.getConfigValue(activity, "salt");
         this.cipher = Helper.getConfigValue(activity, "cipher");
         this.factory = Helper.getConfigValue(activity, "factory");
@@ -27,6 +29,14 @@ public class EncryptModel {
 
     public String getSecretKey() {
         return secretKey;
+    }
+
+    public String getIv() {
+        return iv;
+    }
+
+    public String getPassword() {
+        return password;
     }
 
     public String getSalt() {
