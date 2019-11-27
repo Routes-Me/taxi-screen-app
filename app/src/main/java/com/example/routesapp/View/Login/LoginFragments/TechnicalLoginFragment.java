@@ -24,6 +24,7 @@ import android.widget.Toast;
 
 import com.example.routesapp.Class.AES;
 import com.example.routesapp.Class.AesBase64Wrapper;
+import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.AuthCredentialsViewModel;
 import com.example.routesapp.Model.BannersViewModel;
@@ -33,6 +34,7 @@ import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 
 import java.security.spec.KeySpec;
 import java.util.Base64;
+import java.util.concurrent.TimeUnit;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -40,6 +42,14 @@ import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import okhttp3.OkHttpClient;
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -60,7 +70,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private ShowHidePasswordEditText password_et;
     private TextView email_error_tv, password_error_tv;
 
-
+    private AesBase64Wrapper aesBase64Wrapper;
 
     public TechnicalLoginFragment() {
         // Required empty public constructor
@@ -115,6 +125,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         password_error_tv = nMainView.findViewById(R.id.password_error_tv);
         editTextListener();
 
+        aesBase64Wrapper = new AesBase64Wrapper(getActivity());
 
     }
 
@@ -168,11 +179,12 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             showErrorMessage(email_et, email_error_tv,"* Email Address Required",true);
             return;
         }
+        /*
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
             showErrorMessage(email_et, email_error_tv,"* Enter Valid Email",true);
             return;
         }
-
+*/
         if (password.isEmpty()){
             showErrorMessage(password_et, password_error_tv,"* Password Required",true);
             return;
@@ -182,16 +194,47 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             return;
         }
 
+        /*
         authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
-        authCredentialsViewModel.getToken(new AuthCredentials(email,password),getActivity()).observe((LifecycleOwner) getActivity(), new Observer<String>() {
+        authCredentialsViewModel.getToken(new AuthCredentials(aesBase64Wrapper.encryptAndEncode(email),aesBase64Wrapper.encryptAndEncode(password)),getActivity()).observe((LifecycleOwner) getActivity(), new Observer<String>() {
             @Override
             public void onChanged(String s) {
                 Toast.makeText(getActivity(), "response:  " + s, Toast.LENGTH_SHORT).show();
             }
         });
+*/
+
+        OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .connectTimeout(1, TimeUnit.MINUTES)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .writeTimeout(15, TimeUnit.SECONDS)
+                .build();
 
 
-       getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(RoutesApi.BASE_URL)
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        RoutesApi api = retrofit.create(RoutesApi.class);
+        Call<String> call = api.loginUser("application/json",2.0,new AuthCredentials(aesBase64Wrapper.encryptAndEncode(email),aesBase64Wrapper.encryptAndEncode(password)));
+
+
+        call.enqueue(new Callback<String>() {
+            @Override
+            public void onResponse(Call<String> call, Response<String> response) {
+                Toast.makeText(getActivity(), "res:   " + response, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<String> call, Throwable t) {
+                Toast.makeText(getActivity(), "error:   " + t.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+     //  getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
     }
 
 

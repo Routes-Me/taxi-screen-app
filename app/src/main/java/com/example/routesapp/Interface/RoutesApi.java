@@ -14,6 +14,8 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Query;
@@ -23,8 +25,11 @@ public interface RoutesApi {
     String BASE_URL = "http://api.test.routesdashboard.com/api/";
 
 
-    @POST("token")
-    Call<ResponseBody> loginUser(@Body AuthCredentials authCredentials);
+    @POST("auth")
+   // @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
+    Call<String> loginUser(@Header("Content-Type") String ContentType,
+                           @Header("DataServiceVersion") Double DataServiceVersion,
+                           @Body AuthCredentials authCredentials);
 
     // @GET("Channels?channelidvideolist=2")
     // Call<List<VideoModel>> getVideos();

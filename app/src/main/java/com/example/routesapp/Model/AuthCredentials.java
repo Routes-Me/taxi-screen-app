@@ -2,36 +2,41 @@ package com.example.routesapp.Model;
 
 public class AuthCredentials {
 
-    private String username, password;
+    private String Username, Password;
 
 
     //Constructor....
     public AuthCredentials() {
     }
 
+
     public AuthCredentials(String username, String password) {
-        this.username = username;
-        this.password = password;
+        Username = username;
+        Password = password;
     }
+
 
 
 
     //Getter....
     public String getUsername() {
-        return username;
+        return Username;
     }
 
     public String getPassword() {
-        return password;
+        return Password;
     }
+
+
+
 
 
     //Setter....
     public void setUsername(String username) {
-        this.username = username;
+        Username = username;
     }
 
     public void setPassword(String password) {
-        this.password = password;
+        Password = password;
     }
 }

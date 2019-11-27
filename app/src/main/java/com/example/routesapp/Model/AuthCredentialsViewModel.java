@@ -40,13 +40,13 @@ public class AuthCredentialsViewModel extends ViewModel {
 
         token = new MutableLiveData<String>();
 
-        fetchTabletToken(authCredentials,context);
+    //    fetchTabletToken(authCredentials,context);
 
         //finally we will return the list
         return token;
     }
 
-
+/*
     //This method is using Retrofit to get the JSON data from URL
     private void fetchTabletToken(AuthCredentials authCredentials, final Context context) {
 
@@ -71,7 +71,8 @@ public class AuthCredentialsViewModel extends ViewModel {
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
-                token.setValue(String.valueOf(response.body()));
+              //  token.setValue(String.valueOf(response.body()));
+
             }
 
             @Override
@@ -81,5 +82,6 @@ public class AuthCredentialsViewModel extends ViewModel {
             }
         });
     }
+    */
 }
 
