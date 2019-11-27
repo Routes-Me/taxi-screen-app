@@ -649,19 +649,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
         //Sets whether analytics collection is enabled for this app on this device.
-        firebaseAnalytics.setAnalyticsCollectionEnabled(true);
+     //   firebaseAnalytics.setAnalyticsCollectionEnabled(true);
 
         //Sets the minimum engagement time required before starting a session. The default value is 10000 (10 seconds). Let's make it 20 seconds just for the fun
-        firebaseAnalytics.setMinimumSessionDuration(20000);
+       // firebaseAnalytics.setMinimumSessionDuration(20000);
 
         //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
-        firebaseAnalytics.setSessionTimeoutDuration(500);
+      //  firebaseAnalytics.setSessionTimeoutDuration(500);
 
-        //Sets the user ID property.
-        firebaseAnalytics.setUserId(String.valueOf(itemAnalytics.getId()));
 
-        //Sets a user property to a given value.
-        firebaseAnalytics.setUserProperty("Routes_Items_New", itemAnalytics.getName());
     }
 
 
@@ -748,7 +744,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_addTabletSerialNo.setOnClickListener(this);
 
         if (!tabletSerialNo.equals("") && !tabletSerialNo.isEmpty() && !tabletSerialNo.equals(null)) {
-            getTabletData_And_Channels();
+            //getTabletData_And_Channels();
             // operations.hideKeyboard(this);
         } else {
             Admin_User_layoutVisibility("adminSerialNoView");
