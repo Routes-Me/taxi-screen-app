@@ -1,6 +1,12 @@
 package com.example.routesapp.Model;
 
+import android.app.Activity;
+
+import com.example.routesapp.Class.AesBase64Wrapper;
+
 public class AuthCredentials {
+
+    private AesBase64Wrapper aesBase64Wrapper;
 
     private String Username, Password;
 
@@ -10,9 +16,12 @@ public class AuthCredentials {
     }
 
 
-    public AuthCredentials(String username, String password) {
-        Username = username;
-        Password = password;
+    public AuthCredentials(Activity activity, String username, String password) {
+
+        aesBase64Wrapper = new AesBase64Wrapper(activity);
+
+        Username = aesBase64Wrapper.encryptAndEncode(username);
+        Password = aesBase64Wrapper.encryptAndEncode(password);
     }
 
 

@@ -6,7 +6,11 @@ import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.ItemsModel;
 import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletPasswordModel;
+import com.example.routesapp.Model.Token;
 import com.example.routesapp.Model.VideoModel;
+import com.google.gson.JsonObject;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -24,15 +28,15 @@ public interface RoutesApi {
 
     String BASE_URL = "http://api.test.routesdashboard.com/api/";
 
+   // http://api.test.routesdashboard.com/api/auth
 
     @POST("auth")
-   // @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
-    Call<String> loginUser(@Header("Content-Type") String ContentType,
-                           @Header("DataServiceVersion") Double DataServiceVersion,
-                           @Body AuthCredentials authCredentials);
+    @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
+    Call<Token> loginUser(@Body AuthCredentials authCredentials);
 
     // @GET("Channels?channelidvideolist=2")
     // Call<List<VideoModel>> getVideos();
+
 
     //Tablet Data
     @GET("Channels")

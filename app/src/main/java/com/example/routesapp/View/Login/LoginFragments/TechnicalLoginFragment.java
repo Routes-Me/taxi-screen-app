@@ -6,14 +6,9 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,29 +17,18 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.routesapp.Class.AES;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.AuthCredentialsViewModel;
-import com.example.routesapp.Model.BannersViewModel;
+import com.example.routesapp.Model.Token;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.Activity.LearnMoreScreen;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 
-import java.security.spec.KeySpec;
-import java.util.Base64;
 import java.util.concurrent.TimeUnit;
 
-import javax.crypto.Cipher;
-import javax.crypto.SecretKey;
-import javax.crypto.SecretKeyFactory;
-import javax.crypto.spec.IvParameterSpec;
-import javax.crypto.spec.PBEKeySpec;
-import javax.crypto.spec.SecretKeySpec;
-
 import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -66,11 +50,11 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private TextView btn_next;
     private LinearLayout btn_learnMore;
 
-    private EditText email_et;
+    private EditText userName_et;
     private ShowHidePasswordEditText password_et;
-    private TextView email_error_tv, password_error_tv;
+    private TextView userName_error_tv, password_error_tv;
 
-    private AesBase64Wrapper aesBase64Wrapper;
+  //  private AesBase64Wrapper aesBase64Wrapper;
 
     public TechnicalLoginFragment() {
         // Required empty public constructor
@@ -119,23 +103,23 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         btn_learnMore = nMainView.findViewById(R.id.btn_learnMore);
         btn_learnMore.setOnClickListener(this);
 
-        email_et = nMainView.findViewById(R.id.email_et);
-        email_error_tv = nMainView.findViewById(R.id.email_error_tv);
+        userName_et = nMainView.findViewById(R.id.email_et);
+        userName_error_tv = nMainView.findViewById(R.id.userName_error_tv);
         password_et = nMainView.findViewById(R.id.password_et);
         password_error_tv = nMainView.findViewById(R.id.password_error_tv);
         editTextListener();
 
-        aesBase64Wrapper = new AesBase64Wrapper(getActivity());
+     //   aesBase64Wrapper = new AesBase64Wrapper(getActivity());
 
     }
 
     private void editTextListener() {
-        email_et.addTextChangedListener(new TextWatcher() {
+        userName_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                showErrorMessage(email_et, email_error_tv,"",false);
+                showErrorMessage(userName_et, userName_error_tv,"",false);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -172,16 +156,16 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private void openTabletDataFragment() {
 
 
-        String email = email_et.getText().toString().trim();
-        String password = password_et.getText().toString().trim();
+       String userName = userName_et.getText().toString().trim();
+       String password = password_et.getText().toString().trim();
 
-        if (email.isEmpty()){
-            showErrorMessage(email_et, email_error_tv,"* Email Address Required",true);
+        if (userName.isEmpty()){
+            showErrorMessage(userName_et, userName_error_tv,"* userName Required",true);
             return;
         }
-        /*
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()){
-            showErrorMessage(email_et, email_error_tv,"* Enter Valid Email",true);
+/*
+        if (!Patterns.EMAIL_ADDRESS.matcher(userName).matches()){
+            showErrorMessage(email_et, email_error_tv,"* Enter Valid userName",true);
             return;
         }
 */
@@ -204,6 +188,10 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         });
 */
 
+        AuthCredentials authCredentials = new AuthCredentials(getActivity(), userName, password);
+      //  authCredentials.setUsername("Tevu5gmGAJFFmcO9dMdYWw==");
+     //   authCredentials.setPassword("kjn3aW+SqtA3lPiErEyzyQ==");
+
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -219,22 +207,42 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<String> call = api.loginUser("application/json",2.0,new AuthCredentials(aesBase64Wrapper.encryptAndEncode(email),aesBase64Wrapper.encryptAndEncode(password)));
+        Call<Token> call = api.loginUser(authCredentials);
 
 
-        call.enqueue(new Callback<String>() {
+        call.enqueue(new Callback<Token>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
-                Toast.makeText(getActivity(), "res:   " + response, Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<Token> call, Response<Token> response) {
+
+              //  String token = null;
+
+             //  Token token = new Gson().fromJson(response.toString(),Token.class);
+
+                if (response.code() == 401) {
+                    // launch login activity using `this.context`
+                    Toast.makeText(getActivity(), "error code:  " + 401, Toast.LENGTH_SHORT).show();
+                } else {
+                   // onSuccess(response.body());
+                    try {
+                        Toast.makeText(getActivity(), "tt:   " +  response.body().getAccess_token(), Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+
+
+
             }
 
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<Token> call, Throwable t) {
                 Toast.makeText(getActivity(), "error:   " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
 
-     //  getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+   //  getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
     }
 
 

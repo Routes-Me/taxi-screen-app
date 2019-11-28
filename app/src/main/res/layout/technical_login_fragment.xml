@@ -93,7 +93,7 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
                 />
 
             <TextView
-                android:id="@+id/email_error_tv"
+                android:id="@+id/userName_error_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="normal"
