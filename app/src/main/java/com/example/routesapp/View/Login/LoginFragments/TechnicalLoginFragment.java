@@ -6,6 +6,10 @@ import android.os.Bundle;
 
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -20,12 +24,14 @@ import android.widget.Toast;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.Model.AuthCredentials;
+import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.AuthCredentialsViewModel;
 import com.example.routesapp.Model.Token;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.Activity.LearnMoreScreen;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -119,7 +125,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                showErrorMessage(userName_et, userName_error_tv,"",false);
+                showErrorMessage(1,"",false);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -130,7 +136,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                showErrorMessage(password_et, password_error_tv,"",false);
+                showErrorMessage(2,"",false);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -158,17 +164,11 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
        String userName = userName_et.getText().toString().trim();
        String password = password_et.getText().toString().trim();
-
+/*
         if (userName.isEmpty()){
             showErrorMessage(userName_et, userName_error_tv,"* userName Required",true);
             return;
         }
-/*
-        if (!Patterns.EMAIL_ADDRESS.matcher(userName).matches()){
-            showErrorMessage(email_et, email_error_tv,"* Enter Valid userName",true);
-            return;
-        }
-*/
         if (password.isEmpty()){
             showErrorMessage(password_et, password_error_tv,"* Password Required",true);
             return;
@@ -177,7 +177,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             showErrorMessage(password_et, password_error_tv,"* Minimum Password is 8 digit",true);
             return;
         }
-
+*/
         /*
         authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
         authCredentialsViewModel.getToken(new AuthCredentials(aesBase64Wrapper.encryptAndEncode(email),aesBase64Wrapper.encryptAndEncode(password)),getActivity()).observe((LifecycleOwner) getActivity(), new Observer<String>() {
@@ -188,15 +188,28 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         });
 */
 
-        AuthCredentials authCredentials = new AuthCredentials(getActivity(), userName, password);
-      //  authCredentials.setUsername("Tevu5gmGAJFFmcO9dMdYWw==");
-     //   authCredentials.setPassword("kjn3aW+SqtA3lPiErEyzyQ==");
+        AuthCredentials authCredentials = new AuthCredentials(userName, password);
+        authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
+        authCredentialsViewModel.getToken(authCredentials,getActivity()).observe((LifecycleOwner) getActivity(), new Observer<List<AuthCredentialsError>>() {
+                    @Override
+                    public void onChanged(List<AuthCredentialsError> authCredentialsErrors) {
+                        for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
+                          //  Toast.makeText(getActivity(), "no. of errors:   " + authCredentialsErrors.size(), Toast.LENGTH_SHORT).show();
+                            showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
 
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .build();
+                        }
+                    }
+                });
+
+
+                //  authCredentials.setUsername("Tevu5gmGAJFFmcO9dMdYWw==");
+                //   authCredentials.setPassword("kjn3aW+SqtA3lPiErEyzyQ==");
+/*
+                OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                        .connectTimeout(1, TimeUnit.MINUTES)
+                        .readTimeout(30, TimeUnit.SECONDS)
+                        .writeTimeout(15, TimeUnit.SECONDS)
+                        .build();
 
 
 
@@ -242,20 +255,41 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
                 Toast.makeText(getActivity(), "error:   " + t.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+        */
+
+
 
    //  getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
     }
 
 
-    private void showErrorMessage(EditText editText,TextView errorTv, String errorStr, boolean show){
+    private void showErrorMessage(int errorId , String errorStr, boolean show){
+
+        EditText editText = null;
+        TextView textView = null;
+
+        switch (errorId){
+
+            case 1 :
+                editText = userName_et;
+                textView = userName_error_tv;
+                break;
+
+            case 2 :
+                editText = password_et;
+                textView = password_error_tv;
+                break;
+        }
+
 
         if (show){
             editText.setBackgroundResource(R.drawable.red_border);
-            errorTv.setText(errorStr);
-            errorTv.setVisibility(View.VISIBLE);
+            textView.setText(errorStr);
+            textView.setVisibility(View.VISIBLE);
+            return;
         }else {
             editText.setBackgroundResource(R.drawable.grey_border);
-            errorTv.setVisibility(View.INVISIBLE);
+            textView.setVisibility(View.INVISIBLE);
         }
 
 

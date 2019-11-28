@@ -6,7 +6,6 @@ import com.example.routesapp.Class.AesBase64Wrapper;
 
 public class AuthCredentials {
 
-    private AesBase64Wrapper aesBase64Wrapper;
 
     private String Username, Password;
 
@@ -16,12 +15,12 @@ public class AuthCredentials {
     }
 
 
-    public AuthCredentials(Activity activity, String username, String password) {
+    public AuthCredentials( String username, String password) {
 
-        aesBase64Wrapper = new AesBase64Wrapper(activity);
 
-        Username = aesBase64Wrapper.encryptAndEncode(username);
-        Password = aesBase64Wrapper.encryptAndEncode(password);
+
+        this.Username = username;
+        this.Password = password;
     }
 
 

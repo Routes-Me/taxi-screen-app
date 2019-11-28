@@ -129,17 +129,16 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
                 app:drawable_hide="@drawable/ic_visibility_off"/>
 
 
-
             <TextView
                 android:id="@+id/password_error_tv"
-                android:layout_width="500dp"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textStyle="normal"
                 android:textColor="@color/red"
                 android:gravity="start"
                 android:text="Password Error"
                 android:textSize="16sp"
-
+                android:layout_marginBottom="5dp"
                 android:layout_gravity="center"
                 android:visibility="invisible"/>
 

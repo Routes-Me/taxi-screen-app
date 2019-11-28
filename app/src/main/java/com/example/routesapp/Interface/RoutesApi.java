@@ -1,6 +1,7 @@
 package com.example.routesapp.Interface;
 
 import com.example.routesapp.Model.AuthCredentials;
+import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.BannerModel;
 import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.ItemsModel;
@@ -32,7 +33,13 @@ public interface RoutesApi {
 
     @POST("auth")
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
-    Call<Token> loginUser(@Body AuthCredentials authCredentials);
+    Call<Token> loginUserSuccess(@Body AuthCredentials authCredentials);
+
+    //Currencies List [Money Strip]
+    @POST("auth")
+    @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
+    Call<List<AuthCredentialsError>> loginUserFailed(@Body AuthCredentials authCredentials);
+
 
     // @GET("Channels?channelidvideolist=2")
     // Call<List<VideoModel>> getVideos();
