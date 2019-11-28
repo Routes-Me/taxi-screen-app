@@ -134,6 +134,7 @@ public class AuthCredentialsViewModel extends ViewModel {
                        public void onResponse(Call<List<AuthCredentialsError>> call, Response<List<AuthCredentialsError>> response) {
                           // Toast.makeText(context, "m:  " + response.body().get(0).getErrorMasseg(), Toast.LENGTH_SHORT).show();
 
+                           
                            authCredentialsErrors.setValue(response.body());
                        }
 
