@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "495874817653",
+    "firebase_url": "https://routesapp-a3b64.firebaseio.com",
+    "project_id": "routesapp-a3b64",
+    "storage_bucket": "routesapp-a3b64.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:495874817653:android:8847b246838e2fab5f423c",
+        "android_client_info": {
+          "package_name": "com.example.routesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "495874817653-c6k6mjl6ol427bfgpponuh84b7ievf98.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.routesapp",
+            "certificate_hash": "205650018b43beb132d4434c4f05495d5a24768c"
+          }
+        },
+        {
+          "client_id": "495874817653-44rif72s2ok9p4uldaj58btq7j30tojs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDVH64gCcVjT4uNH4JDL6fUFmBUxkaqj0w"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "495874817653-44rif72s2ok9p4uldaj58btq7j30tojs.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
