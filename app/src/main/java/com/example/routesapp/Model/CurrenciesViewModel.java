@@ -55,7 +55,6 @@ public class CurrenciesViewModel extends ViewModel {
 
 
 
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(RoutesApi.BASE_URL)
                 .client(okHttpClient)
