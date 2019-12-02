@@ -46,6 +46,7 @@ public class RecyclerViewFragment extends Fragment implements View.OnClickListen
     //sharedPreference Storage
     private SharedPreferences sharedPreferences;
     private String savedLanguage = null;
+    private String savedToken = null;
 
     Bundle itemBundle;
 
@@ -124,7 +125,7 @@ public class RecyclerViewFragment extends Fragment implements View.OnClickListen
         //sharedPreference Storage
         sharedPreferences = getActivity().getSharedPreferences("userData", Activity.MODE_PRIVATE);
         savedLanguage = sharedPreferences.getString("Language", "English");
-
+        savedToken = "Bearer " + sharedPreferences.getString("tabToken", null);
 
 
 
@@ -265,7 +266,7 @@ try {
 
     final ItemsViewModel model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
-    model.getItems(1, getActivity()).observe(this, new Observer<List<ItemsModel>>() {
+    model.getItems(1, getActivity(), savedToken).observe(this, new Observer<List<ItemsModel>>() {
         @Override
         public void onChanged(@Nullable final List<ItemsModel> itemsList) {
 

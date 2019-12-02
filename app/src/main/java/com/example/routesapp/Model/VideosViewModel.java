@@ -24,19 +24,19 @@ public class VideosViewModel extends ViewModel {
     private MutableLiveData<List<VideoModel>> videosList;
 
     //we will call this method to get the data
-    public LiveData<List<VideoModel>> getVideos(int ch_ID, Context context) {
+    public LiveData<List<VideoModel>> getVideos(int ch_ID, Context context, String savedToken) {
         //if the list is null
-      /*
+
         if (videosList == null) {
             videosList = new MutableLiveData<List<VideoModel>>();
             //we will load it asynchronously from server in this method
-            loadVideosList(ch_ID);
+            loadVideosList(ch_ID, context, savedToken);
         }
-*/
 
-        videosList = new MutableLiveData<List<VideoModel>>();
+
+        //videosList = new MutableLiveData<List<VideoModel>>();
         //we will load it asynchronously from server in this method
-        loadVideosList(ch_ID,context);
+       // loadVideosList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return videosList;
@@ -44,7 +44,7 @@ public class VideosViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadVideosList(int ch_ID ,final Context context) {
+    private void loadVideosList(int ch_ID ,final Context context, String savedToken) {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -59,7 +59,7 @@ public class VideosViewModel extends ViewModel {
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<VideoModel>> call = api.getVideos(ch_ID);
+        Call<List<VideoModel>> call = api.getVideos(ch_ID, savedToken);
 
         call.enqueue(new Callback<List<VideoModel>>() {
             @Override

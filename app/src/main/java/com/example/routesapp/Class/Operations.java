@@ -83,6 +83,7 @@ public class Operations {
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     // private String savedLanguage = null;
+    private String savedToken = null;
     private int Channel_Id = 2;
 
 
@@ -154,6 +155,7 @@ public class Operations {
         //sharedPreference Storage
         this.sharedPreferences = activity.getSharedPreferences("userData", Activity.MODE_PRIVATE);
         this.editor = sharedPreferences.edit();
+        savedToken = "Bearer " + sharedPreferences.getString("tabToken", null);
         // this.savedLanguage = sharedPreferences.getString("Language", "English");
 
 
@@ -712,7 +714,7 @@ public class Operations {
 
             bannersViewModel = ViewModelProviders.of((FragmentActivity) activity).get(BannersViewModel.class);
 
-            bannersViewModel.getBanners(Channel_Id, activity).observe((LifecycleOwner) activity, new Observer<List<BannerModel>>() {
+            bannersViewModel.getBanners(Channel_Id, activity,savedToken).observe((LifecycleOwner) activity, new Observer<List<BannerModel>>() {
                 @Override
                 public void onChanged(@Nullable List<BannerModel> BannersList) {
 
@@ -749,7 +751,7 @@ public class Operations {
 
         videosViewModel = ViewModelProviders.of((FragmentActivity) activity).get(VideosViewModel.class);
 
-        videosViewModel.getVideos(Channel_Id,activity).observe((LifecycleOwner) activity, new Observer<List<VideoModel>>() {
+        videosViewModel.getVideos(Channel_Id,activity, savedToken).observe((LifecycleOwner) activity, new Observer<List<VideoModel>>() {
             @Override
             public void onChanged(@Nullable List<VideoModel> VideosList) {
 
@@ -797,7 +799,7 @@ public class Operations {
 
             currenciesViewModel = ViewModelProviders.of((FragmentActivity) activity).get(CurrenciesViewModel.class);
 
-            currenciesViewModel.getCurrencies(1, activity).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
+            currenciesViewModel.getCurrencies(1, activity, savedToken).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
                 @Override
                 public void onChanged(@Nullable List<CurrenciesModel> currenciesList) {
 

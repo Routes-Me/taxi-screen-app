@@ -113,7 +113,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //sharedPreference Storage
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private String savedLanguage = null;
+    private String savedLanguage = null, savedToken = null;
     private String tabletSerialNo = "" , tabletPassword = "";
 
     //For Tablet Serial Number...
@@ -190,6 +190,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         savedLanguage = sharedPreferences.getString("Language", "English");
+        savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
         setAppLocale(savedLanguage);
 
         setContentView(R.layout.activity_main2);
@@ -738,17 +739,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private void tabletSerialNumber() {
         tabletSerialNo = sharedPreferences.getString("tabletSerialNo", "").trim();
+        tabletSerialNo = "123321123321";
         editText_addTabletSerialNo = findViewById(R.id.editText_addTabletSerialNo);
         editText_addTabletSerialNo.setTransformationMethod(new NumberKeyBoardTransformationMethod());
         button_addTabletSerialNo = findViewById(R.id.button_addTabletSerialNo);
         button_addTabletSerialNo.setOnClickListener(this);
 
         if (!tabletSerialNo.equals("") && !tabletSerialNo.isEmpty() && !tabletSerialNo.equals(null)) {
-            //getTabletData_And_Channels();
+            getTabletData_And_Channels();
             // operations.hideKeyboard(this);
         } else {
             Admin_User_layoutVisibility("adminSerialNoView");
         }
+
     }
 
     private void initializeLayouts() {
@@ -996,7 +999,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             tabletChannelsViewModel = ViewModelProviders.of(this).get(TabletChannelsViewModel.class);
 
-            tabletChannelsViewModel.getTabletChannel(tabletSerialNo, MainActivity.this).observe(this, new Observer<List<TabletChannelModel>>() {
+          //  tabletChannelsViewModel.getTabletChannel(tabletSerialNo, MainActivity.this).observe(this, new Observer<List<TabletChannelModel>>() {
+            tabletChannelsViewModel.getTabletChannel(tabletSerialNo, MainActivity.this, savedToken).observe(this, new Observer<List<TabletChannelModel>>() {
                 @Override
                 public void onChanged(@Nullable List<TabletChannelModel> channelModelList) {
 
@@ -1055,11 +1059,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             operations.selectLang(savedLanguage, btn_selectLang);
 
-            getTabletPassword();
+          //  getTabletPassword();
 
             mainFragmentToShow();
 
-            getTabletCurrentLocation();
+           // getTabletCurrentLocation();
 
 
         } catch (Exception e) {
@@ -1072,7 +1076,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void tabletSerialNoChecker(final String SerialNo) {
 
 
-        ViewModelProviders.of(this).get(TabletChannelsViewModel.class).getTabletChannel(SerialNo, MainActivity.this).observe(this, new Observer<List<TabletChannelModel>>() {
+        ViewModelProviders.of(this).get(TabletChannelsViewModel.class).getTabletChannel("123321123321", MainActivity.this, "Bearer " +savedToken).observe(this, new Observer<List<TabletChannelModel>>() {
             @Override
             public void onChanged(@Nullable List<TabletChannelModel> channelModelList) {
 
@@ -1099,6 +1103,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
+    //Authorization
+    //Bearer Hm_1AL12HnXBFRPIkm8RHPZMcL1O0pX94NYxv6bptIW893CyPMJN5wCDEzeIhYQZ-NFQfQBgVqWgDqNK3Ijsgbo9CpCwy2rcDw5Z0SkX5ArAGKJahRc3tHGqv6xaMq85xvaxX5cpvCyL9lOcPluXZ7ZNHjuM6vV_J6dWCOpdVSCH8lZQpsS_E5elloE-xFuyil1pwTkAb82ODuIjlxuZDoyu_5z7NUCLXh92iEo89BBQ8LPxLZDpIlUE5O4QIzXTlo5w6OxCtxEgjw5U-bg9tlKk-zVfv2COe9xt-veYyOvysLa1b2t4jgAKy_98_N2NFqzj3QVD03yTS5bHQNApsF_5J2NgRiZl9ruECLHUWQzld3VxgIDSbU8zGrHkKIj8Tua6aPejhnRSDqw_2oaoMqzm2rxy3KtUsJT0B8sUj7EXy0nWPDsBfYlLXdSIc2dWtlFdi8Kaeai4CUdD3G2e8ZAn4QkFLX24Ft3bgeNYwe36qWtg9BzlDZpn5qkSELJu
 
     private void updateTablet_Location_Status(final double Lat , final double Long , final boolean isActive) {
 

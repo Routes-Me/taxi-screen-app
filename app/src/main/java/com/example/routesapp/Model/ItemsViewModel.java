@@ -24,7 +24,7 @@ public class ItemsViewModel  extends ViewModel {
     private MutableLiveData<List<ItemsModel>> itemsList;
 
     //we will call this method to get the data
-    public LiveData<List<ItemsModel>> getItems(int ch_ID, Context context) {
+    public LiveData<List<ItemsModel>> getItems(int ch_ID, Context context, String savedToken) {
         //if the list is null
       /*
         if (bannersList == null) {
@@ -36,7 +36,7 @@ public class ItemsViewModel  extends ViewModel {
 
         itemsList = new MutableLiveData<List<ItemsModel>>();
         //we will load it asynchronously from server in this method
-        loadItemsList(ch_ID,context);
+        loadItemsList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return itemsList;
@@ -44,7 +44,7 @@ public class ItemsViewModel  extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadItemsList(int ch_ID, final Context context) {
+    private void loadItemsList(int ch_ID, final Context context, String savedToken) {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -61,7 +61,7 @@ public class ItemsViewModel  extends ViewModel {
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<ItemsModel>> call = api.getItems(ch_ID);
+        Call<List<ItemsModel>> call = api.getItems(ch_ID,savedToken);
 
 
         call.enqueue(new Callback<List<ItemsModel>>() {

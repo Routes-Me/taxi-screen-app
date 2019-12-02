@@ -1,5 +1,6 @@
 package com.example.routesapp.View.Login.LoginFragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
@@ -60,6 +61,8 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private ShowHidePasswordEditText password_et;
     private TextView userName_error_tv, password_error_tv;
 
+    private ProgressDialog dialog;
+
   //  private AesBase64Wrapper aesBase64Wrapper;
 
     public TechnicalLoginFragment() {
@@ -102,7 +105,9 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private void initialize() {
 
 
-
+        dialog = new ProgressDialog(getActivity());
+        dialog.setMessage("Please Wait...");
+        dialog.setCancelable(false);
 
         btn_next = nMainView.findViewById(R.id.btn_next);
         btn_next.setOnClickListener(this);
@@ -162,6 +167,9 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     private void openTabletDataFragment() {
 
 
+        dialog.show();
+
+
        String userName = userName_et.getText().toString().trim();
        String password = password_et.getText().toString().trim();
 /*
@@ -190,14 +198,26 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
         AuthCredentials authCredentials = new AuthCredentials(userName, password);
         authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
-        authCredentialsViewModel.getToken(authCredentials,getActivity()).observe((LifecycleOwner) getActivity(), new Observer<List<AuthCredentialsError>>() {
+        authCredentialsViewModel.getToken(authCredentials,getActivity(), dialog).observe((LifecycleOwner) getActivity(), new Observer<List<AuthCredentialsError>>() {
                     @Override
                     public void onChanged(List<AuthCredentialsError> authCredentialsErrors) {
-                        for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
-                          //  Toast.makeText(getActivity(), "no. of errors:   " + authCredentialsErrors.size(), Toast.LENGTH_SHORT).show();
-                            showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
 
-                        }
+                        dialog.dismiss();
+
+                     //  if (authCredentialsErrors.size() > 0){
+                            for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
+                                //  Toast.makeText(getActivity(), "no. of errors:   " + authCredentialsErrors.size(), Toast.LENGTH_SHORT).show();
+                                if (authCredentialsErrors.get(e).getErrorNumber() == 1 || authCredentialsErrors.get(e).getErrorNumber() == 2){
+                                    showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
+                                }else {
+                                    Toast.makeText(getActivity(), "Error:  " + authCredentialsErrors.get(e).getErrorMasseg(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                     //   }else {
+                        //    getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+                     //   }
+
+
                     }
                 });
 

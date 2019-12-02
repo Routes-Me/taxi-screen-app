@@ -41,18 +41,19 @@ public interface RoutesApi {
     Call<List<AuthCredentialsError>> loginUserFailed(@Body AuthCredentials authCredentials);
 
 
-    // @GET("Channels?channelidvideolist=2")
-    // Call<List<VideoModel>> getVideos();
+
+
+
 
 
     //Tablet Data
     @GET("Channels")
-    Call<List<TabletChannelModel>> getTabletData(@Query("tabletserialno") String tablet_sNo);
+    Call<List<TabletChannelModel>> getTabletData(@Query("tabletserialno") String tablet_sNo, @Header("Authorization") String token);
 
 
     //Videos List
     @GET("Channels")
-    Call<List<VideoModel>> getVideos(@Query("channelidvideolist") int ch_ID_Videos);
+    Call<List<VideoModel>> getVideos(@Query("channelidvideolist") int ch_ID_Videos, @Header("Authorization") String token);
 
 
     //Increase Video View Times ...
@@ -65,7 +66,7 @@ public interface RoutesApi {
 
     //Banners List
     @GET("Channels")
-    Call<List<BannerModel>> getBanners(@Query("channelidadvlist") int ch_ID_Banners);
+    Call<List<BannerModel>> getBanners(@Query("channelidadvlist") int ch_ID_Banners, @Header("Authorization") String token);
 
 
     //Increase Banner View Times ...
@@ -77,12 +78,12 @@ public interface RoutesApi {
 
     //Banners List
     @GET("List_Items")
-    Call<List<ItemsModel>> getItems(@Query("getlistitems") int ItemsListId);
+    Call<List<ItemsModel>> getItems(@Query("getlistitems") int ItemsListId, @Header("Authorization") String token);
 
 
     //Currencies List [Money Strip]
     @GET("Currencies")
-    Call<List<CurrenciesModel>> getCurrencies(@Query("getMyCurrencies") int CurrenciesListId);
+    Call<List<CurrenciesModel>> getCurrencies(@Query("getMyCurrencies") int CurrenciesListId, @Header("Authorization") String token);
 
 
 

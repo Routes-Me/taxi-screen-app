@@ -24,7 +24,7 @@ public class BannersViewModel extends ViewModel {
     private MutableLiveData<List<BannerModel>> bannersList;
 
     //we will call this method to get the data
-    public LiveData<List<BannerModel>> getBanners(int ch_ID, Context context) {
+    public LiveData<List<BannerModel>> getBanners(int ch_ID, Context context, String token) {
         //if the list is null
       /*
         if (bannersList == null) {
@@ -36,7 +36,7 @@ public class BannersViewModel extends ViewModel {
 
         bannersList = new MutableLiveData<List<BannerModel>>();
         //we will load it asynchronously from server in this method
-        loadBannersList(ch_ID,context);
+        loadBannersList(ch_ID,context,token);
 
         //finally we will return the list
         return bannersList;
@@ -44,7 +44,7 @@ public class BannersViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadBannersList(int ch_ID, final Context context) {
+    private void loadBannersList(int ch_ID, final Context context, String token) {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -61,7 +61,7 @@ public class BannersViewModel extends ViewModel {
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<BannerModel>> call = api.getBanners(ch_ID);
+        Call<List<BannerModel>> call = api.getBanners(ch_ID, token);
 
 
         call.enqueue(new Callback<List<BannerModel>>() {

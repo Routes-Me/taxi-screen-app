@@ -24,12 +24,12 @@ public class TabletChannelsViewModel extends ViewModel {
     private MutableLiveData<List<TabletChannelModel>> TabletChannelList;
 
     //we will call this method to get the data
-    public LiveData<List<TabletChannelModel>> getTabletChannel(String tablet_sNo, Activity activity) {
+    public LiveData<List<TabletChannelModel>> getTabletChannel(String tablet_sNo, Activity activity, String token) {
         //if the list is null
         if (TabletChannelList == null) {
             TabletChannelList = new MutableLiveData<List<TabletChannelModel>>();
             //we will load it asynchronously from server in this method
-            loadTabletChannelList(tablet_sNo,activity);
+            loadTabletChannelList(tablet_sNo,activity, token);
         }
 
         //finally we will return the list
@@ -38,7 +38,7 @@ public class TabletChannelsViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadTabletChannelList(String tablet_sNo,final Activity activity) {
+    private void loadTabletChannelList(String tablet_sNo,final Activity activity, String token) {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
@@ -53,7 +53,7 @@ public class TabletChannelsViewModel extends ViewModel {
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<TabletChannelModel>> call = api.getTabletData(tablet_sNo);
+        Call<List<TabletChannelModel>> call = api.getTabletData(tablet_sNo, token);
 
 
         call.enqueue(new Callback<List<TabletChannelModel>>() {

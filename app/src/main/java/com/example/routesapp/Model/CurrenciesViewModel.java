@@ -24,19 +24,19 @@ public class CurrenciesViewModel extends ViewModel {
     private MutableLiveData<List<CurrenciesModel>> currenciesList;
 
     //we will call this method to get the data
-    public LiveData<List<CurrenciesModel>> getCurrencies(int ch_ID, Context context) {
+    public LiveData<List<CurrenciesModel>> getCurrencies(int ch_ID, Context context, String savedToken) {
         //if the list is null
-      /*
+
         if (currenciesList == null) {
             currenciesList = new MutableLiveData<List<CurrenciesModel>>();
             //we will load it asynchronously from server in this method
-             loadCurrenciesList(ch_ID,context);
+             loadCurrenciesList(ch_ID,context, savedToken);
         }
-*/
 
-        currenciesList = new MutableLiveData<List<CurrenciesModel>>();
+
+       // currenciesList = new MutableLiveData<List<CurrenciesModel>>();
         //we will load it asynchronously from server in this method
-        loadCurrenciesList(ch_ID,context);
+      //  loadCurrenciesList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return currenciesList;
@@ -44,13 +44,16 @@ public class CurrenciesViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadCurrenciesList(int ch_ID, final Context context) {
+    private void loadCurrenciesList(int ch_ID, final Context context, String savedToken) {
 
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .build();
+
+
+
 
 
 
@@ -61,7 +64,7 @@ public class CurrenciesViewModel extends ViewModel {
                 .build();
 
         RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<CurrenciesModel>> call = api.getCurrencies(ch_ID);
+        Call<List<CurrenciesModel>> call = api.getCurrencies(ch_ID, savedToken);
 
 
         call.enqueue(new Callback<List<CurrenciesModel>>() {
