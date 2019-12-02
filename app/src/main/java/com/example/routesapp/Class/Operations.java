@@ -258,6 +258,7 @@ public class Operations {
                 });
 */
 
+
                 HttpProxyCacheServer proxy = App.getProxy(activity);
                 String proxyUrl = proxy.getProxyUrl(String.valueOf(uri));
                 videoView.setVideoPath(proxyUrl);
