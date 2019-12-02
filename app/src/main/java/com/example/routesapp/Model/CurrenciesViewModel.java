@@ -52,7 +52,7 @@ public class CurrenciesViewModel extends ViewModel {
                 .writeTimeout(15, TimeUnit.SECONDS)
                 .build();
 
-        
+
 
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl(RoutesApi.BASE_URL)
