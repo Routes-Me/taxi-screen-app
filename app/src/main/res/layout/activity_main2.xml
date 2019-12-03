@@ -70,7 +70,7 @@
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
                         android:background="@drawable/routeslabel"
-                        android:visibility="visible"/>
+                        android:visibility="gone"/>
 
 
                     <VideoView
@@ -83,7 +83,7 @@
                         android:layout_alignParentTop="true"
                         android:layout_alignParentRight="true"
                         android:layout_alignParentBottom="true"
-                        android:visibility="gone"/>
+                        android:visibility="visible"/>
 
                     <com.google.android.exoplayer2.ui.SimpleExoPlayerView
                         android:id="@+id/ADS_exoPlayer_VideoView"

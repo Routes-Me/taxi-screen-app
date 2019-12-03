@@ -557,7 +557,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.ADS_VideoView:
 
-                updateFirebaseAnalystics(new ItemAnalytics(1,"VideoView"));
+                updateFirebaseAnalystics(new ItemAnalytics(1,"click_video"));
 
                 /*
                 Uri mUri = null;
@@ -586,7 +586,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
 
             case R.id.ADS_ImageView:
-                updateFirebaseAnalystics(new ItemAnalytics(3,"ImageView"));
+                updateFirebaseAnalystics(new ItemAnalytics(3,"click_banner"));
 /*
                 //get index of current Image...
                 Toast.makeText(this, "ADS Banner Clicked ! +  " + operations.getCurrentImageIndex(), Toast.LENGTH_SHORT).show();
@@ -667,12 +667,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       //  firebaseAnalytics.setSessionTimeoutDuration(500);
 
 */
+        /*
+        //save into ( SELECT_CONTENT Event )
         Bundle bundle = new Bundle();
         bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(itemAnalytics.getId()));
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemAnalytics.getName());
         bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, itemAnalytics.getName());
         firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
+*/
 
+        //save into ( Custom Item Event )
+        Bundle params = new Bundle();
+        //params.putString("image_name", name);
+       // params.putString("full_text", text);
+        firebaseAnalytics.logEvent(itemAnalytics.getName(), params);
 
     }
 
