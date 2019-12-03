@@ -78,12 +78,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
+/*
     private LocationManager locationManager;
     private String provider;
     private MyLocationListener mylistener;
     private Criteria criteria;
-
+*/
 
     private TabletCurrentData tabletCurrentData;
 
@@ -190,6 +190,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         savedLanguage = sharedPreferences.getString("Language", "English");
+
+        //For testing only we add token manually ...
+        editor.putString("tabToken", "SBHSlmTBsZrwKiY25LYN-QqfEPSzvhfU5Fv7RTYxOqFI0vLAZZGA6CRog5i6aMv5BwxIPQe7B4v8_Tl6gQ5-Nw5SbqcTDDbWORjwwaw-a4Yw64Sdt0ubQzGNDfYLO72uIMiH_2fQ-wY_3dA9Sc7RLH6S8PgdikxDq7EJRKMr8dYJpOQW4bKwVthKTO_kV4ETGSt5DICRWR7rPyajxX1PdzBTGrqA-GwIXu90cEtvnbm8l76dj3oH_Vkdtql8ie54KGjcRNWRbFe6rEBIH_t_i7tIyX3dJadDS9aF1Ku91qKfZhBoPPmj--6QeidVLG0p2Wwmww_2nWEO1ggA5wZt2EK55CV5r8Qbwza4TswDMOuvf0qVtSxxfxbNGlj_UCQyGRnwgEcHdXX9jDSIN-2I4OfRWy10kFTwNx7jDxbh-63PcyHib5ARGBL2DaFViQRZYScSIikZqwo1eCm35ddxvrjBMwNQ9t3v8xJLoMsTtIfzy0db-kc7ouFj6oVoL4ea");
+        editor.apply();
+
         savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
         setAppLocale(savedLanguage);
 
@@ -240,12 +245,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onPause() {
         super.onPause();
 
-        tablet_isActive = false;
-        tabletCurrentData.setActive(false);
+      //  tablet_isActive = false;
+       // tabletCurrentData.setActive(false);
        // updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), false);
 
-       tabletLocation(false);
+      // tabletLocation(false);
 
         //   scrollingTextView_Money();
         //scrollingTextView_News();
@@ -254,7 +259,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       //  ADS_VideoView.pause();
       //    operations.exoPlayer.setPlayWhenReady(false);
 
-        pausePlayer();
+       // pausePlayer();
 
         // stop location updates (saves battery)
         // location.endUpdates();
@@ -264,10 +269,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onResume() {
         super.onResume();
 
-        tabletLocation(true);
+      //  tabletLocation(true);
 
-        tablet_isActive = true;
-        tabletCurrentData.setActive(true);
+      //  tablet_isActive = true;
+      //  tabletCurrentData.setActive(true);
       //  updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), true);
 
@@ -279,7 +284,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
      //   ADS_VideoView.resume();
         //operations.exoPlayer.setPlayWhenReady(true);
 
-        startPlayer();
+      //  startPlayer();
 
         // make the device update its location
         //     location.beginUpdates();
@@ -290,18 +295,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onStop() {
         super.onStop();
 
-        tablet_isActive = false;
-        tabletCurrentData.setActive(false);
+      //  tablet_isActive = false;
+       // tabletCurrentData.setActive(false);
       //  updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), false);
 
-        handler.removeCallbacks(r);
+       // handler.removeCallbacks(r);
 
 
        // ADS_VideoView.pause();
        // operations.exoPlayer.setPlayWhenReady(false);
 
-        pausePlayer();
+      //  pausePlayer();
 
 
         //  recreate();
@@ -314,14 +319,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onDestroy() {
         super.onDestroy();
 
-        handlerTime_locationUpdate.removeCallbacks(runnableTime_locationUpdate);
+     //   handlerTime_locationUpdate.removeCallbacks(runnableTime_locationUpdate);
 
-        tablet_isActive = false;
-        tabletCurrentData.setActive(false);
+     //   tablet_isActive = false;
+      //  tabletCurrentData.setActive(false);
       //  updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), false);
 
-        tabletLocation(false);
+      //  tabletLocation(false);
 
        // ADS_VideoView.pause();
 
@@ -353,6 +358,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @SuppressLint("SimpleDateFormat")
     private void initialize() {
+
+
 
         //Using Firebase Analytics ...
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
@@ -452,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         ////////////////////for Time Clock....
         setUpClockTime();
         //////////////// Update location every 20 Min ( 1200000 Milli Second )
-        locationUpdateTimer();
+      //  locationUpdateTimer();
 
     }
 
@@ -642,6 +649,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void updateFirebaseAnalystics(ItemAnalytics itemAnalytics) {
+        /*
         Bundle bundle = new Bundle();
         bundle.putInt(FirebaseAnalytics.Param.ITEM_ID, itemAnalytics.getId());
         bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemAnalytics.getName());
@@ -657,6 +665,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Sets the duration of inactivity that terminates the current session. The default value is 1800000 (30 minutes).
       //  firebaseAnalytics.setSessionTimeoutDuration(500);
+
+*/
+        Bundle bundle = new Bundle();
+        bundle.putString(FirebaseAnalytics.Param.ITEM_ID, String.valueOf(itemAnalytics.getId()));
+        bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, itemAnalytics.getName());
+        bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, itemAnalytics.getName());
+        firebaseAnalytics.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT, bundle);
 
 
     }
@@ -1106,6 +1121,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Authorization
     //Bearer Hm_1AL12HnXBFRPIkm8RHPZMcL1O0pX94NYxv6bptIW893CyPMJN5wCDEzeIhYQZ-NFQfQBgVqWgDqNK3Ijsgbo9CpCwy2rcDw5Z0SkX5ArAGKJahRc3tHGqv6xaMq85xvaxX5cpvCyL9lOcPluXZ7ZNHjuM6vV_J6dWCOpdVSCH8lZQpsS_E5elloE-xFuyil1pwTkAb82ODuIjlxuZDoyu_5z7NUCLXh92iEo89BBQ8LPxLZDpIlUE5O4QIzXTlo5w6OxCtxEgjw5U-bg9tlKk-zVfv2COe9xt-veYyOvysLa1b2t4jgAKy_98_N2NFqzj3QVD03yTS5bHQNApsF_5J2NgRiZl9ruECLHUWQzld3VxgIDSbU8zGrHkKIj8Tua6aPejhnRSDqw_2oaoMqzm2rxy3KtUsJT0B8sUj7EXy0nWPDsBfYlLXdSIc2dWtlFdi8Kaeai4CUdD3G2e8ZAn4QkFLX24Ft3bgeNYwe36qWtg9BzlDZpn5qkSELJu
 
+    /*
     private void updateTablet_Location_Status(final double Lat , final double Long , final boolean isActive) {
 
 
@@ -1146,8 +1162,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
-
-
     private void getTabletCurrentLocation() {
 
         RequestPermission();
@@ -1214,9 +1228,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
 
     }
-
-
-
     private class MyLocationListener implements LocationListener {
 
 
@@ -1257,7 +1268,31 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
     }
+    private void tabletLocation(boolean IsActive){
+        updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), IsActive);
+        // Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
+    }
+    private void locationUpdateTimer(){
 
+        runnableTime_locationUpdate = new Runnable() {
+            @Override
+            public void run() {
+
+                tabletLocation(true);
+
+
+
+                //20 Min = 20 Min * 60 Sec * 60 Milli Second = 1200000
+                handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
+
+            }
+        };
+
+        handlerTime_locationUpdate = new Handler();
+        handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
+
+    }
+    */
 
 
     //for Request Permissions
@@ -1285,32 +1320,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
 
-    private void tabletLocation(boolean IsActive){
-        updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), IsActive);
-       // Toast.makeText(this, "", Toast.LENGTH_SHORT).show();
-    }
-
-
-    private void locationUpdateTimer(){
-
-        runnableTime_locationUpdate = new Runnable() {
-            @Override
-            public void run() {
-
-                tabletLocation(true);
-
-
-
-                 //20 Min = 20 Min * 60 Sec * 60 Milli Second = 1200000
-                handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
-
-            }
-        };
-
-        handlerTime_locationUpdate = new Handler();
-        handlerTime_locationUpdate.postDelayed(runnableTime_locationUpdate, 1200000);
-
-    }
 
     //To change Language
     private void setAppLocale(String language) {

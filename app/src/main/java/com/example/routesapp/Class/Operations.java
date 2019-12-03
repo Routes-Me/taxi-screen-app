@@ -268,7 +268,7 @@ public class Operations {
                 MediaController mediaController = new MediaController(activity);
                 mediaController.setAnchorView(videoView);
 
-                videoView.setMediaController(mediaController);
+             //   videoView.setMediaController(mediaController);
 
 
                 videoView.requestFocus();
