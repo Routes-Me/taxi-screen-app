@@ -761,7 +761,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_addTabletSerialNo.setOnClickListener(this);
 
         if (!tabletSerialNo.equals("") && !tabletSerialNo.isEmpty() && !tabletSerialNo.equals(null)) {
-            getTabletData_And_Channels();
+           // getTabletData_And_Channels();
             // operations.hideKeyboard(this);
         } else {
             Admin_User_layoutVisibility("adminSerialNoView");
@@ -1064,7 +1064,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         }
 
                         editor.apply();
-
+                        operations.selectLang(savedLanguage, btn_selectLang);
                     }
 
 
@@ -1072,7 +1072,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
 
 
-            operations.selectLang(savedLanguage, btn_selectLang);
+
 
           //  getTabletPassword();
 

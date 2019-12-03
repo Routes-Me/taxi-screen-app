@@ -37,7 +37,7 @@ import java.util.List;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class RecyclerViewFragment extends Fragment implements View.OnClickListener , SwipeRefreshLayout.OnRefreshListener{
+public class RecyclerViewFragment extends Fragment implements View.OnClickListener {
 
 
 
@@ -51,7 +51,6 @@ public class RecyclerViewFragment extends Fragment implements View.OnClickListen
     Bundle itemBundle;
 
 
-    private FloatingActionButton fab_recreate;
 
 
     private RecyclerView.SmoothScroller smoothScroller;
@@ -133,39 +132,8 @@ public class RecyclerViewFragment extends Fragment implements View.OnClickListen
 
 
 
-        fab_recreate = nMainView.findViewById(R.id.fab_recreate);
-        fab_recreate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //loadRecyclerViewData();
-                getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecyclerViewFragment()).commit();
-            }
-        });
 
-        mSwipeRefreshLayout = nMainView.findViewById(R.id.mSwipeRefreshLayout);
-        mSwipeRefreshLayout.setOnRefreshListener(this);
-        mSwipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary, android.R.color.holo_green_dark, android.R.color.holo_orange_dark, android.R.color.holo_blue_dark);
-
-        /**
-         * Showing Swipe Refresh animation on activity create
-         * As animation won't start on onCreate, post runnable is used..
-         */
-        mSwipeRefreshLayout.post(new Runnable() {
-
-            @Override
-            public void run() {
-
-                if(mSwipeRefreshLayout != null) {
-                    mSwipeRefreshLayout.setRefreshing(true);
-                }
-
-                // Fetching data from server
-                loadRecyclerViewData();
-            }
-        });
-
-
-
+        loadRecyclerViewData();
         recyclerView = nMainView.findViewById(R.id.recyclerview);
         recyclerView.setHasFixedSize(true);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -354,14 +322,14 @@ try {
 
     }
 
-
+/*
     @Override
     public void onRefresh() {
         // Fetching data from server
        // loadRecyclerViewData();
         getActivity().getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecyclerViewFragment()).commit();
     }
-
+*/
 
 
 

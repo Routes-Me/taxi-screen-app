@@ -18,6 +18,7 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
@@ -726,7 +727,9 @@ public class Operations {
 
                         BannerList.add(BannersList.get(Bno).getAdv_URL());
                         BannerViewList.add(BannersList.get(Bno).getAdv_ID());
+                        Toast.makeText(activity, "no of banner:  " + BannerViewList.size(), Toast.LENGTH_SHORT).show();
                     }
+
                     showADSImages(BannerViewList, BannerList, ADS_ImageView);
 
                 }

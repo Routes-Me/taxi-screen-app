@@ -1,6 +1,7 @@
 package com.example.routesapp.Model;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -26,17 +27,17 @@ public class BannersViewModel extends ViewModel {
     //we will call this method to get the data
     public LiveData<List<BannerModel>> getBanners(int ch_ID, Context context, String token) {
         //if the list is null
-      /*
+
         if (bannersList == null) {
             bannersList = new MutableLiveData<List<BannerModel>>();
             //we will load it asynchronously from server in this method
-            loadBannersList(ch_ID,context);
+            loadBannersList(ch_ID,context,token);
         }
-*/
 
-        bannersList = new MutableLiveData<List<BannerModel>>();
+
+       // bannersList = new MutableLiveData<List<BannerModel>>();
         //we will load it asynchronously from server in this method
-        loadBannersList(ch_ID,context,token);
+        //loadBannersList(ch_ID,context,token);
 
         //finally we will return the list
         return bannersList;
@@ -72,7 +73,7 @@ public class BannersViewModel extends ViewModel {
                 //finally we are setting the list to our MutableLiveData
                 bannersList.setValue(response.body());
                     }catch (Exception e){
-                   //  Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
 
 
