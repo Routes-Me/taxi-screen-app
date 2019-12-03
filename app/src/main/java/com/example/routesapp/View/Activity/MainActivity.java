@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAnalytics firebaseAnalytics;
 
 
-    
+
     //Activity Life Cycle .......
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedLanguage = sharedPreferences.getString("Language", "English");
 
         //For testing only we add token manually ...
-       // editor.putString("tabToken", "SBHSlmTBsZrwKiY25LYN-QqfEPSzvhfU5Fv7RTYxOqFI0vLAZZGA6CRog5i6aMv5BwxIPQe7B4v8_Tl6gQ5-Nw5SbqcTDDbWORjwwaw-a4Yw64Sdt0ubQzGNDfYLO72uIMiH_2fQ-wY_3dA9Sc7RLH6S8PgdikxDq7EJRKMr8dYJpOQW4bKwVthKTO_kV4ETGSt5DICRWR7rPyajxX1PdzBTGrqA-GwIXu90cEtvnbm8l76dj3oH_Vkdtql8ie54KGjcRNWRbFe6rEBIH_t_i7tIyX3dJadDS9aF1Ku91qKfZhBoPPmj--6QeidVLG0p2Wwmww_2nWEO1ggA5wZt2EK55CV5r8Qbwza4TswDMOuvf0qVtSxxfxbNGlj_UCQyGRnwgEcHdXX9jDSIN-2I4OfRWy10kFTwNx7jDxbh-63PcyHib5ARGBL2DaFViQRZYScSIikZqwo1eCm35ddxvrjBMwNQ9t3v8xJLoMsTtIfzy0db-kc7ouFj6oVoL4ea");
-       // editor.apply();
+    //    editor.putString("tabToken", "oELUfBTlWJjWRuTtyGgF26aRN_DQV8lzoth42sQqnkjnuoq0kUZowT7nEQQQa8bx2hrnAnHsEBjnJb5XMd7EFw64VBadNJFToe8WDMtl7r6qgzjSXwsDHzb2GTTqdOgjaWWC5vP3zv_9JYlooq1Eb1etnH2B3N-wIXqDadSBqr2C-GtPA3NycRtLeLU5ExJa0kruIH36g6xKdCuMJVN5md3os4nVpzwHMkvKakp8kuKAGt3TrXTtSMW8WRf0J-RvpjKZB_FNZz8k0AsTdLNE4jziKU6OO80zp0Qw6vn907D2cADbwANYzUlimNUagseaxP4nxgk8ihh9zpf5BNRPxMwX3aLIDZt91gjgGZHHD8FyEimxdB7fWzKZ0gG4MMczWylNKH98EEH6_55e7KsBCZarAMb15A3NGFNQ9mYl5B4fHuiVOlz0NL_T6iv6V1H4F8jTgkgl5MFHaTcmEFZPygmWlBQ2th3Cfn-fdOz1GvWK7vVsoDIhxcKJC71eSYdh");
+     //   editor.apply();
 
         savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
         setAppLocale(savedLanguage);
