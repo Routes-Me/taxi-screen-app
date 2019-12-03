@@ -192,8 +192,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedLanguage = sharedPreferences.getString("Language", "English");
 
         //For testing only we add token manually ...
-        editor.putString("tabToken", "SBHSlmTBsZrwKiY25LYN-QqfEPSzvhfU5Fv7RTYxOqFI0vLAZZGA6CRog5i6aMv5BwxIPQe7B4v8_Tl6gQ5-Nw5SbqcTDDbWORjwwaw-a4Yw64Sdt0ubQzGNDfYLO72uIMiH_2fQ-wY_3dA9Sc7RLH6S8PgdikxDq7EJRKMr8dYJpOQW4bKwVthKTO_kV4ETGSt5DICRWR7rPyajxX1PdzBTGrqA-GwIXu90cEtvnbm8l76dj3oH_Vkdtql8ie54KGjcRNWRbFe6rEBIH_t_i7tIyX3dJadDS9aF1Ku91qKfZhBoPPmj--6QeidVLG0p2Wwmww_2nWEO1ggA5wZt2EK55CV5r8Qbwza4TswDMOuvf0qVtSxxfxbNGlj_UCQyGRnwgEcHdXX9jDSIN-2I4OfRWy10kFTwNx7jDxbh-63PcyHib5ARGBL2DaFViQRZYScSIikZqwo1eCm35ddxvrjBMwNQ9t3v8xJLoMsTtIfzy0db-kc7ouFj6oVoL4ea");
-        editor.apply();
+       // editor.putString("tabToken", "SBHSlmTBsZrwKiY25LYN-QqfEPSzvhfU5Fv7RTYxOqFI0vLAZZGA6CRog5i6aMv5BwxIPQe7B4v8_Tl6gQ5-Nw5SbqcTDDbWORjwwaw-a4Yw64Sdt0ubQzGNDfYLO72uIMiH_2fQ-wY_3dA9Sc7RLH6S8PgdikxDq7EJRKMr8dYJpOQW4bKwVthKTO_kV4ETGSt5DICRWR7rPyajxX1PdzBTGrqA-GwIXu90cEtvnbm8l76dj3oH_Vkdtql8ie54KGjcRNWRbFe6rEBIH_t_i7tIyX3dJadDS9aF1Ku91qKfZhBoPPmj--6QeidVLG0p2Wwmww_2nWEO1ggA5wZt2EK55CV5r8Qbwza4TswDMOuvf0qVtSxxfxbNGlj_UCQyGRnwgEcHdXX9jDSIN-2I4OfRWy10kFTwNx7jDxbh-63PcyHib5ARGBL2DaFViQRZYScSIikZqwo1eCm35ddxvrjBMwNQ9t3v8xJLoMsTtIfzy0db-kc7ouFj6oVoL4ea");
+       // editor.apply();
 
         savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
         setAppLocale(savedLanguage);
@@ -769,7 +769,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_addTabletSerialNo.setOnClickListener(this);
 
         if (!tabletSerialNo.equals("") && !tabletSerialNo.isEmpty() && !tabletSerialNo.equals(null)) {
-           // getTabletData_And_Channels();
+            getTabletData_And_Channels();
             // operations.hideKeyboard(this);
         } else {
             Admin_User_layoutVisibility("adminSerialNoView");
