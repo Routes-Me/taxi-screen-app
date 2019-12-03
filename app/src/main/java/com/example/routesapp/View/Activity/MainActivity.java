@@ -177,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private FirebaseAnalytics firebaseAnalytics;
 
 
+    
     //Activity Life Cycle .......
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
