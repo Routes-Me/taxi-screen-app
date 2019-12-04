@@ -57,6 +57,7 @@ import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletChannelsViewModel;
 import com.example.routesapp.View.Fragment.RecyclerViewFragment;
 import com.example.routesapp.View.Fragment.ViewItemFragment;
+import com.example.routesapp.View.Login.Activity.LoginScreen;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
@@ -194,16 +195,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedLanguage = sharedPreferences.getString("Language", "English");
 
         //For testing only we add token manually ...
-        editor.putString("tabToken", "rD2VDohllkL5k61kcW3ElR4LeMEzPkYey96KKFt_C7JIOEIkJi-UoPxd0snNTXMEW-rMhFNetOhe-ednfrtiPKz6A0Bw8AlYh3kmInDknsNU5uy3x0iUYcw07r-cdCp1DE-OQ__ozQdXh7-gGFwTYpQiV9FtSfrnT_5xli81WRPXXakMq9hjw7KrsokjgBaAijgGCGROpu_V3Q2DTamF133l9FHt9fbiGeE7eFfpKxtWasEc8Mzh_ogy9XFuUsIt2MXOBbcoOpyzEoHebJyhPUIgrn0-hcrpacT8wajwJS8MiPQBTL4CsntpmFMaVkiXhP6ZNz6uQFt4pEaw8APF1NQxy6sgKxj0ttBVkzDjo66QperMB-nDxxwZE80yiw7dgZsuWalhzwiebdsAy0MkPk-HpknzoPezb9LwhxncOMj0qOt1kKpHDiJb64sXcXLRMqrg6MO0W0_e5G40iZqAWkJ04G2sMeutQlglR4xCchIqZdG2tEdUdpi4h6oGjjYK");
-        editor.apply();
-
-        savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
-        setAppLocale(savedLanguage);
-
-        setContentView(R.layout.activity_main2);
+     //  editor.putString("tabToken", "bqB-VITYQnB3nvAXNH-oKQ9Pj1IblrFErzNQZDnGT5it9iXpezZTKuSRxwn6ap1EzJpHl8lwIces0VDXkqxOQ4T7YEvSkTbssqnBGJKB0-C_HXNqwB8KsVYU7syZkWWhmwiYeccuLMGiTsxj_LpQzwGOrlT4pgddZl9-uPlVm3cGjQKHeBnanNhoGYKy1IP3oQHq5A5OlkVglCw9w9Zy7aK27j4S0oV9e2FsRwQLgXHXw7mqeR5Nu-isTqRF-j4aw-ab0EkevxhQkr3TDVYI_5-0ma2WviMLoW35LOcHjyx0vKG8c0E1zNMu5ROA7ZRI62Zi3mTh7ssczaVtlCgJg_NFXSJig3lh150rkNFcFxYfkRzpYFsCLqT2uSLuj3pO7sDfppJsF5d1Jail25fm3iCsx7BHsDdX3BNUZzFAfIEKa3v_EF4rUQj8IRGBjh4V_otpq9RSpjMGu2Oq7KiV-KCFVuPp1huH7xPIiFkx5Csar32CBXgTz6ZDt7NoIH3j");
+     // editor.apply();
 
 
-        initialize();
+            if (sharedPreferences.getString("tabToken", null) != null){
+                savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
+                setAppLocale(savedLanguage);
+
+                setContentView(R.layout.activity_main2);
+
+
+                initialize();
+
+                mainFragmentToShow();
+            }else {
+                startActivity(new Intent(MainActivity.this, LoginScreen.class));
+                finish();
+            }
+
+
 
         // getTabletCurrentLocation();
     }
@@ -771,7 +782,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         button_addTabletSerialNo.setOnClickListener(this);
 
         if (!tabletSerialNo.equals("") && !tabletSerialNo.isEmpty() && !tabletSerialNo.equals(null)) {
+            /*
+            if (savedToken != null){
+                getTabletData_And_Channels();
+            }else {
+                startActivity(new Intent(MainActivity.this, LoginScreen.class));
+                finish();
+            }
+            */
             getTabletData_And_Channels();
+
             // operations.hideKeyboard(this);
         } else {
             Admin_User_layoutVisibility("adminSerialNoView");
@@ -909,7 +929,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             return;
         }
 
-        tabletSerialNoChecker(tabletSerialNo);
+
+
 
         // tabletSerialNoChecker(editText_addTabletSerialNo.getText().toString());
         /*
@@ -1087,7 +1108,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
           //  getTabletPassword();
 
-            mainFragmentToShow();
+
 
            // getTabletCurrentLocation();
 

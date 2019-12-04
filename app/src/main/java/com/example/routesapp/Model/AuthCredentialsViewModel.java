@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
@@ -15,6 +16,7 @@ import androidx.lifecycle.ViewModel;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.R;
+import com.example.routesapp.View.Activity.MainActivity;
 import com.example.routesapp.View.Login.LoginFragments.TabletDataFragment;
 
 import java.util.ArrayList;
@@ -132,7 +134,10 @@ public class AuthCredentialsViewModel extends ViewModel {
                             editor.apply();
 
                             dialog.dismiss();
-                            ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+                           // ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+
+                            activity.startActivity(new Intent(activity, MainActivity.class));
+                            activity.finish();
 
                         } catch (Exception e) {
                             e.printStackTrace();

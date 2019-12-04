@@ -1,12 +1,15 @@
 package com.example.routesapp.Model;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.routesapp.Interface.RoutesApi;
+import com.example.routesapp.View.Login.Activity.LoginScreen;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -60,12 +63,20 @@ public class TabletChannelsViewModel extends ViewModel {
             @Override
             public void onResponse(Call<List<TabletChannelModel>> call, Response<List<TabletChannelModel>> response) {
 
-                //finally we are setting the list to our MutableLiveData
-                try {
-                TabletChannelList.setValue(response.body());
-            }catch (Exception e){
-               // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-            }
+                if (response.isSuccessful()){
+                    //finally we are setting the list to our MutableLiveData
+                    try {
+                        TabletChannelList.setValue(response.body());
+                    }catch (Exception e){
+                        // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
+                    activity.startActivity(new Intent(activity, LoginScreen.class));
+                    activity.finish();
+                }
+
+
             }
 
             @Override
