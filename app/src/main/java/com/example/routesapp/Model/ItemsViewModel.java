@@ -26,17 +26,17 @@ public class ItemsViewModel  extends ViewModel {
     //we will call this method to get the data
     public LiveData<List<ItemsModel>> getItems(int ch_ID, Context context, String savedToken) {
         //if the list is null
-      /*
-        if (bannersList == null) {
-            bannersList = new MutableLiveData<List<BannerModel>>();
-            //we will load it asynchronously from server in this method
-            loadVideosList(ch_ID);
-        }
-*/
 
-        itemsList = new MutableLiveData<List<ItemsModel>>();
+        if (itemsList == null) {
+            itemsList = new MutableLiveData<List<ItemsModel>>();
+            //we will load it asynchronously from server in this method
+            loadItemsList(ch_ID,context, savedToken);
+        }
+
+
+       // itemsList = new MutableLiveData<List<ItemsModel>>();
         //we will load it asynchronously from server in this method
-        loadItemsList(ch_ID,context, savedToken);
+       // loadItemsList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return itemsList;

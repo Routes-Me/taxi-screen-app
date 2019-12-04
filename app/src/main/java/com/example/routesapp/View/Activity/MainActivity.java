@@ -56,6 +56,7 @@ import com.example.routesapp.R;
 import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletChannelsViewModel;
 import com.example.routesapp.View.Fragment.RecyclerViewFragment;
+import com.example.routesapp.View.Fragment.ViewItemFragment;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
@@ -85,10 +86,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Criteria criteria;
 */
 
-    private TabletCurrentData tabletCurrentData;
+   // private TabletCurrentData tabletCurrentData;
 
 
-    private boolean tablet_isActive = false;
+  //  private boolean tablet_isActive = false;
 
     private CounterOperations counterOperations;
 
@@ -159,14 +160,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView tvEnterPhoneNumber, tvScanQRCode;
 
 
-    private Handler handler;
-    private Runnable r;
+   // private Handler handler;
+   // private Runnable r;
 
 
     ////////////////////for Time Clock....
     private Time mTime;
-    private Handler handlerTime, handlerTime_locationUpdate;
-    private Runnable runnableTime, runnableTime_locationUpdate;
+    private Handler handlerTime;
+    private Runnable runnableTime;
 
     private TextView timeClock, DateClock, DayClock;
 
@@ -193,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedLanguage = sharedPreferences.getString("Language", "English");
 
         //For testing only we add token manually ...
-    //    editor.putString("tabToken", "oELUfBTlWJjWRuTtyGgF26aRN_DQV8lzoth42sQqnkjnuoq0kUZowT7nEQQQa8bx2hrnAnHsEBjnJb5XMd7EFw64VBadNJFToe8WDMtl7r6qgzjSXwsDHzb2GTTqdOgjaWWC5vP3zv_9JYlooq1Eb1etnH2B3N-wIXqDadSBqr2C-GtPA3NycRtLeLU5ExJa0kruIH36g6xKdCuMJVN5md3os4nVpzwHMkvKakp8kuKAGt3TrXTtSMW8WRf0J-RvpjKZB_FNZz8k0AsTdLNE4jziKU6OO80zp0Qw6vn907D2cADbwANYzUlimNUagseaxP4nxgk8ihh9zpf5BNRPxMwX3aLIDZt91gjgGZHHD8FyEimxdB7fWzKZ0gG4MMczWylNKH98EEH6_55e7KsBCZarAMb15A3NGFNQ9mYl5B4fHuiVOlz0NL_T6iv6V1H4F8jTgkgl5MFHaTcmEFZPygmWlBQ2th3Cfn-fdOz1GvWK7vVsoDIhxcKJC71eSYdh");
-     //   editor.apply();
+       // editor.putString("tabToken", "oELUfBTlWJjWRuTtyGgF26aRN_DQV8lzoth42sQqnkjnuoq0kUZowT7nEQQQa8bx2hrnAnHsEBjnJb5XMd7EFw64VBadNJFToe8WDMtl7r6qgzjSXwsDHzb2GTTqdOgjaWWC5vP3zv_9JYlooq1Eb1etnH2B3N-wIXqDadSBqr2C-GtPA3NycRtLeLU5ExJa0kruIH36g6xKdCuMJVN5md3os4nVpzwHMkvKakp8kuKAGt3TrXTtSMW8WRf0J-RvpjKZB_FNZz8k0AsTdLNE4jziKU6OO80zp0Qw6vn907D2cADbwANYzUlimNUagseaxP4nxgk8ihh9zpf5BNRPxMwX3aLIDZt91gjgGZHHD8FyEimxdB7fWzKZ0gG4MMczWylNKH98EEH6_55e7KsBCZarAMb15A3NGFNQ9mYl5B4fHuiVOlz0NL_T6iv6V1H4F8jTgkgl5MFHaTcmEFZPygmWlBQ2th3Cfn-fdOz1GvWK7vVsoDIhxcKJC71eSYdh");
+       // editor.apply();
 
         savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
         setAppLocale(savedLanguage);
@@ -214,15 +215,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
        // tabletLocation(true);
 
-        tablet_isActive = true;
-        tabletCurrentData.setActive(true);
+      //  tablet_isActive = true;
+      //  tabletCurrentData.setActive(true);
        // updateTablet_Location_Status();
      //   updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), true);
 
       //  ADS_VideoView.start();
 
 
-        hideSoftKeyboard_closeAllDialog();
+       // hideSoftKeyboard_closeAllDialog();
 
         // location.beginUpdates();
 
@@ -232,12 +233,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onRestart() {
         super.onRestart();
 
-        tablet_isActive = true;
-        tabletCurrentData.setActive(true);
+       // tablet_isActive = true;
+       // tabletCurrentData.setActive(true);
      //   updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), true);
 
-        hideSoftKeyboard_closeAllDialog();
+        //hideSoftKeyboard_closeAllDialog();
 
         //   location.beginUpdates();
     }
@@ -277,7 +278,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
       //  updateTablet_Location_Status();
        // updateTablet_Location_Status(tabletCurrentData.getLat(), tabletCurrentData.getLng(), true);
 
-        hideSoftKeyboard_closeAllDialog();
+       // hideSoftKeyboard_closeAllDialog();
         //for scrolling textView [Money & News].....
         //scrollingTextView_Money();
         // scrollingTextView_News();
@@ -367,7 +368,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-        tabletCurrentData = new TabletCurrentData();
+      //  tabletCurrentData = new TabletCurrentData();
 
         counterOperations = new CounterOperations(MainActivity.this);
 
@@ -820,6 +821,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Fragment To Show [ RecyclerViewFragment    or    ViewItemFragment ]
     private void mainFragmentToShow() {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecyclerViewFragment()).commit();
+      //  operations.showHideFragment(getSupportFragmentManager(), new RecyclerViewFragment(), new ViewItemFragment(), true, true);
     }
 
 
@@ -956,7 +958,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 //////////////////////////////////////////////////////
-
+/*
     private void hideSoftKeyboard_closeAllDialog() {
 
 
@@ -987,7 +989,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         } catch (Exception e) {
         }
     }
-
+*/
 
     private void getTabletPassword(){
 

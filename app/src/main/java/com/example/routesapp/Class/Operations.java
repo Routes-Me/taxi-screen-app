@@ -22,7 +22,10 @@ import android.widget.Toast;
 import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -38,6 +41,8 @@ import com.example.routesapp.Model.BannerModel;
 import com.example.routesapp.Model.BannersViewModel;
 import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.CurrenciesViewModel;
+import com.example.routesapp.Model.ItemsModel;
+import com.example.routesapp.Model.ItemsViewModel;
 import com.example.routesapp.R;
 import com.example.routesapp.Model.VideoModel;
 import com.example.routesapp.Model.VideosViewModel;
@@ -75,7 +80,7 @@ public class Operations {
     private Runnable r;
     private int currentImageIndex = 0;
     private int repeatImageList = 0;
-    private RequestOptions options;
+    private RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true).centerCrop().fitCenter();
 
     private Activity activity;
 
@@ -123,6 +128,10 @@ public class Operations {
     private String CurrenciesString = "";
     private CurrenciesViewModel currenciesViewModel;
     private TextView scrollingtextMoney;
+
+
+    //For clickAble Items ....
+    private List<ItemsModel> itemList;
 
 
 
@@ -182,7 +191,7 @@ public class Operations {
 
 
     //To play VideoModel of Product with MediaController..
-    public void PlayVideo(List<Integer> videoViewId, final List<String> VideosList, final VideoView videoView) {
+    public void PlayVideo(final List<Integer> videoViewId, final List<String> VideosList, final VideoView videoView) {
 
         //App.deleteCache(activity);
 
@@ -195,7 +204,7 @@ public class Operations {
                // videoVisibility(false);
                 //get Uri of Link(URL)
                 Uri uri = Uri.parse(VideosList.get(currentVideoIndex));
-                Increase_Video_View_Times(videoViewId.get(currentVideoIndex));
+             //   Increase_Video_View_Times(videoViewId.get(currentVideoIndex));
 
 /*
                 bandwidthMeter = new DefaultBandwidthMeter();
@@ -266,8 +275,8 @@ public class Operations {
 
              //   videoView.setVideoURI(uri);
 
-                MediaController mediaController = new MediaController(activity);
-                mediaController.setAnchorView(videoView);
+              //  MediaController mediaController = new MediaController(activity);
+              //  mediaController.setAnchorView(videoView);
 
              //   videoView.setMediaController(mediaController);
 
@@ -284,7 +293,7 @@ public class Operations {
                         // Toast.makeText(activity, "VideoModel Finished !", Toast.LENGTH_SHORT).show();
 
                         currentVideoIndex++;
-                        PlayVideo(VideoViewList, VideosList, videoView);
+                        PlayVideo(videoViewId, VideosList, videoView);
                     }
                 });
 
@@ -324,12 +333,13 @@ public class Operations {
 
            // mainActivity.tabletLocation(true);
 
-            repeatVideoList++;
+           // repeatVideoList++;
             currentVideoIndex = 0;
+            PlayVideo(videoViewId, VideosList, videoView);
             //PlayVideo(VideosList, videoView);
 
             //Toast.makeText(activity, "Videos Finished!... Repeated : " + repeatVideoList + " times...", Toast.LENGTH_SHORT).show();
-
+/*
             //read data from API again...
             if (repeatVideoList < 5){
                 PlayVideo(VideoViewList, VideosList, videoView);
@@ -337,7 +347,7 @@ public class Operations {
                 repeatVideoList = 0;
                 getVideosList();
             }
-
+*/
         }
 
     }
@@ -354,10 +364,9 @@ public class Operations {
                 if (currentImageIndex < BannersList.size()) {
 
                     Uri uri = Uri.parse(BannersList.get(currentImageIndex));
-                    Increase_Banner_View_Times(bannerViewList.get(currentImageIndex));
+                   // Increase_Banner_View_Times(bannerViewList.get(currentImageIndex));
                     try {
-                        options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true);
-                        options.centerCrop().fitCenter();
+
                         Glide.with(activity).load(uri).apply(options).into(ADSImageView);
                     } catch (Exception e) {
                     }
@@ -367,13 +376,14 @@ public class Operations {
 
                 }else {
 
-                    repeatImageList++;
+                   // repeatImageList++;
 
                     currentImageIndex = 0;
+                    showADSImages(bannerViewList, BannersList, ADSImageView);
 
                    // Toast.makeText(activity, "Banners Finished!... Repeated : " + repeatImageList + " times...", Toast.LENGTH_SHORT).show();
 
-
+/*
                     //read data from API again...
                     if (repeatImageList < 5){
                         showADSImages(BannerViewList, BannersList, ADSImageView);
@@ -381,7 +391,7 @@ public class Operations {
                         repeatImageList = 0;
                         getBannersList();
                     }
-
+*/
 
                 }
 
@@ -457,7 +467,8 @@ public class Operations {
 
         if (image != null) {
             if (image.contains("http://")) {
-                Glide.with(activity).load(image).into(imageView);
+                Glide.with(activity).load(image).apply(options).into(imageView);
+
                // Glide.with(activity).load(image).apply(options).into(imageView);
             } else {
                // Glide.with(activity).load(image).apply(options).into(imageView);
@@ -697,6 +708,7 @@ public class Operations {
             getBannersList();
             scrollingTextView_Money();
             getVideosList();
+            getClickAbleListItems(1);
 
         }catch (Exception e){}
 
@@ -895,5 +907,58 @@ public class Operations {
 
     }
 
+
+    private void getClickAbleListItems(int channel_Id){
+        try {
+
+            final ItemsViewModel model = ViewModelProviders.of((FragmentActivity) activity).get(ItemsViewModel.class);
+
+            model.getItems(channel_Id, activity, savedToken).observe((LifecycleOwner) activity, new Observer<List<ItemsModel>>() {
+                @Override
+                public void onChanged(@Nullable final List<ItemsModel> itemsList) {
+
+                    //  itemsList.get(new Random().nextInt(itemsList.size()));
+
+                    itemList = new ArrayList<ItemsModel>();
+                    itemList.addAll(itemsList);
+/*
+                    adapter = new ItemsAdapterMultibleViews(getActivity(), itemsList);
+                    recyclerView.setAdapter(adapter);
+
+                    // runLayoutAnimation(recyclerView);
+
+                    recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
+
+
+                    // OnItemClickListener on Item
+                    adapter.setOnItemClickListener(new ItemsAdapterMultibleViews.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+                            //
+                            //
+                            //   Toast.makeText(getActivity(), "Title: " + itemsList.get(position).getItemList_Title_En() + " ,Type: " + itemsList.get(position).getItem_Type(), Toast.LENGTH_SHORT).show();
+
+                            viewItem(position, itemsList.get(position).getItem_Type(), itemsList.get(position).getItemList_Title_En(), itemsList.get(position).getItemList_Title_Ar(), itemsList.get(position).getItemList_Title_Or(), itemsList.get(position).getItemList_Title_Ta(), itemsList.get(position).getItemList_Discount_Amount(), itemsList.get(position).getItemList_Page_URL(), itemsList.get(position).getItemList_Pic_URL());
+
+                        }
+                    });
+*/
+
+                }
+            });
+
+
+            // Stopping swipe refresh
+            // mSwipeRefreshLayout.setRefreshing(false);
+        }catch (Exception e){}
+    }
+
+
+    public List<ItemsModel> getItemsList(){
+        if (itemList == null){
+            getClickAbleListItems(1);
+        }
+       return itemList;
+    }
 
 }

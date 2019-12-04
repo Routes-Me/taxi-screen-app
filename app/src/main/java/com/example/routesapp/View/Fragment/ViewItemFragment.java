@@ -305,7 +305,7 @@ public class ViewItemFragment extends Fragment implements View.OnClickListener {
 
                 getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations(android.R.anim.slide_in_left, android.R.anim.slide_out_right).replace(R.id.fragment_container, recyclerViewFragment).commit();
 
-
+             //   replaceFragment(recyclerViewFragment);
 
                 break;
 
@@ -323,6 +323,17 @@ public class ViewItemFragment extends Fragment implements View.OnClickListener {
 
         }
 
+    }
+
+    private void replaceFragment(Fragment fragment) {
+     //   getActivity().getSupportFragmentManager().beginTransaction().apply {
+            if (fragment.isAdded()) {
+                getActivity().getSupportFragmentManager().beginTransaction().show(fragment).commit();
+            } else {
+                getActivity().getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment).commit();
+            }
+
+        getActivity().getSupportFragmentManager().beginTransaction().hide(new ViewItemFragment()).commit();
     }
 
     private void saveItemIntoUserProfile() {
