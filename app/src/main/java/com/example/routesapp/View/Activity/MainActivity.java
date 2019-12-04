@@ -194,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedLanguage = sharedPreferences.getString("Language", "English");
 
         //For testing only we add token manually ...
-       // editor.putString("tabToken", "oELUfBTlWJjWRuTtyGgF26aRN_DQV8lzoth42sQqnkjnuoq0kUZowT7nEQQQa8bx2hrnAnHsEBjnJb5XMd7EFw64VBadNJFToe8WDMtl7r6qgzjSXwsDHzb2GTTqdOgjaWWC5vP3zv_9JYlooq1Eb1etnH2B3N-wIXqDadSBqr2C-GtPA3NycRtLeLU5ExJa0kruIH36g6xKdCuMJVN5md3os4nVpzwHMkvKakp8kuKAGt3TrXTtSMW8WRf0J-RvpjKZB_FNZz8k0AsTdLNE4jziKU6OO80zp0Qw6vn907D2cADbwANYzUlimNUagseaxP4nxgk8ihh9zpf5BNRPxMwX3aLIDZt91gjgGZHHD8FyEimxdB7fWzKZ0gG4MMczWylNKH98EEH6_55e7KsBCZarAMb15A3NGFNQ9mYl5B4fHuiVOlz0NL_T6iv6V1H4F8jTgkgl5MFHaTcmEFZPygmWlBQ2th3Cfn-fdOz1GvWK7vVsoDIhxcKJC71eSYdh");
-       // editor.apply();
+        editor.putString("tabToken", "rD2VDohllkL5k61kcW3ElR4LeMEzPkYey96KKFt_C7JIOEIkJi-UoPxd0snNTXMEW-rMhFNetOhe-ednfrtiPKz6A0Bw8AlYh3kmInDknsNU5uy3x0iUYcw07r-cdCp1DE-OQ__ozQdXh7-gGFwTYpQiV9FtSfrnT_5xli81WRPXXakMq9hjw7KrsokjgBaAijgGCGROpu_V3Q2DTamF133l9FHt9fbiGeE7eFfpKxtWasEc8Mzh_ogy9XFuUsIt2MXOBbcoOpyzEoHebJyhPUIgrn0-hcrpacT8wajwJS8MiPQBTL4CsntpmFMaVkiXhP6ZNz6uQFt4pEaw8APF1NQxy6sgKxj0ttBVkzDjo66QperMB-nDxxwZE80yiw7dgZsuWalhzwiebdsAy0MkPk-HpknzoPezb9LwhxncOMj0qOt1kKpHDiJb64sXcXLRMqrg6MO0W0_e5G40iZqAWkJ04G2sMeutQlglR4xCchIqZdG2tEdUdpi4h6oGjjYK");
+        editor.apply();
 
         savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
         setAppLocale(savedLanguage);

@@ -31,7 +31,6 @@ import com.example.routesapp.Model.ItemsViewModel;
 import com.example.routesapp.R;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -60,8 +59,7 @@ public class RecyclerViewFragment extends Fragment  {
     private RecyclerView recyclerView;
     private ItemsAdapterMultibleViews adapter;
 
-    //For clickAble Items ....
-    private List<ItemsModel> itemList;
+
     private int itemPosition = 0;
 
 
@@ -171,11 +169,11 @@ public class RecyclerViewFragment extends Fragment  {
 
 
 
-      //  BtnViewNewsItem = nMainView.findViewById(R.id.BtnViewNewsItem);
+        BtnViewNewsItem = nMainView.findViewById(R.id.BtnViewNewsItem);
       //  BtnViewNewsItem.setOnClickListener(this);
 
-       // BtnViewQRCodeItem = nMainView.findViewById(R.id.BtnViewQRCodeItem);
-       // BtnViewQRCodeItem.setOnClickListener(this);
+        BtnViewQRCodeItem = nMainView.findViewById(R.id.BtnViewQRCodeItem);
+      //  BtnViewQRCodeItem.setOnClickListener(this);
 
 
 
@@ -231,21 +229,19 @@ public class RecyclerViewFragment extends Fragment  {
 */
     private void loadRecyclerViewData() {
 
-        itemList = new ArrayList<ItemsModel>();
-        itemList.addAll(operations.getItemsList());
+
 try {
 
-   // final ItemsViewModel model = ViewModelProviders.of(this).get(ItemsViewModel.class);
+    final ItemsViewModel model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
-  //  model.getItems(1, getActivity(), savedToken).observe(this, new Observer<List<ItemsModel>>() {
-    //    @Override
-    //    public void onChanged(@Nullable final List<ItemsModel> itemsList) {
+    model.getItems(1, getActivity(), savedToken).observe(this, new Observer<List<ItemsModel>>() {
+        @Override
+        public void onChanged(@Nullable final List<ItemsModel> itemsList) {
 
             //  itemsList.get(new Random().nextInt(itemsList.size()));
 
 
-
-            adapter = new ItemsAdapterMultibleViews(getActivity(), itemList);
+            adapter = new ItemsAdapterMultibleViews(getActivity(), itemsList);
             recyclerView.setAdapter(adapter);
 
             // runLayoutAnimation(recyclerView);
@@ -261,18 +257,18 @@ try {
                     //
                     //   Toast.makeText(getActivity(), "Title: " + itemsList.get(position).getItemList_Title_En() + " ,Type: " + itemsList.get(position).getItem_Type(), Toast.LENGTH_SHORT).show();
 
-                    viewItem(position, itemList.get(position).getItem_Type(), itemList.get(position).getItemList_Title_En(), itemList.get(position).getItemList_Title_Ar(), itemList.get(position).getItemList_Title_Or(), itemList.get(position).getItemList_Title_Ta(), itemList.get(position).getItemList_Discount_Amount(), itemList.get(position).getItemList_Page_URL(), itemList.get(position).getItemList_Pic_URL());
+                    viewItem(position, itemsList.get(position).getItem_Type(), itemsList.get(position).getItemList_Title_En(), itemsList.get(position).getItemList_Title_Ar(), itemsList.get(position).getItemList_Title_Or(), itemsList.get(position).getItemList_Title_Ta(), itemsList.get(position).getItemList_Discount_Amount(), itemsList.get(position).getItemList_Page_URL(), itemsList.get(position).getItemList_Pic_URL());
 
                 }
             });
 
 
-      //  }
-  //  });
+        }
+    });
 
 
     // Stopping swipe refresh
-   // mSwipeRefreshLayout.setRefreshing(false);
+    mSwipeRefreshLayout.setRefreshing(false);
 }catch (Exception e){}
     }
 

@@ -708,7 +708,7 @@ public class Operations {
             getBannersList();
             scrollingTextView_Money();
             getVideosList();
-            getClickAbleListItems(1);
+
 
         }catch (Exception e){}
 
@@ -739,7 +739,7 @@ public class Operations {
 
                         BannerList.add(BannersList.get(Bno).getAdv_URL());
                         BannerViewList.add(BannersList.get(Bno).getAdv_ID());
-                        Toast.makeText(activity, "no of banner:  " + BannerViewList.size(), Toast.LENGTH_SHORT).show();
+                      //  Toast.makeText(activity, "no of banner:  " + BannerViewList.size(), Toast.LENGTH_SHORT).show();
                     }
 
                     showADSImages(BannerViewList, BannerList, ADS_ImageView);
@@ -908,57 +908,9 @@ public class Operations {
     }
 
 
-    private void getClickAbleListItems(int channel_Id){
-        try {
-
-            final ItemsViewModel model = ViewModelProviders.of((FragmentActivity) activity).get(ItemsViewModel.class);
-
-            model.getItems(channel_Id, activity, savedToken).observe((LifecycleOwner) activity, new Observer<List<ItemsModel>>() {
-                @Override
-                public void onChanged(@Nullable final List<ItemsModel> itemsList) {
-
-                    //  itemsList.get(new Random().nextInt(itemsList.size()));
-
-                    itemList = new ArrayList<ItemsModel>();
-                    itemList.addAll(itemsList);
-/*
-                    adapter = new ItemsAdapterMultibleViews(getActivity(), itemsList);
-                    recyclerView.setAdapter(adapter);
-
-                    // runLayoutAnimation(recyclerView);
-
-                    recyclerView.getLayoutManager().startSmoothScroll(smoothScroller);
 
 
-                    // OnItemClickListener on Item
-                    adapter.setOnItemClickListener(new ItemsAdapterMultibleViews.OnItemClickListener() {
-                        @Override
-                        public void onItemClick(int position) {
-                            //
-                            //
-                            //   Toast.makeText(getActivity(), "Title: " + itemsList.get(position).getItemList_Title_En() + " ,Type: " + itemsList.get(position).getItem_Type(), Toast.LENGTH_SHORT).show();
-
-                            viewItem(position, itemsList.get(position).getItem_Type(), itemsList.get(position).getItemList_Title_En(), itemsList.get(position).getItemList_Title_Ar(), itemsList.get(position).getItemList_Title_Or(), itemsList.get(position).getItemList_Title_Ta(), itemsList.get(position).getItemList_Discount_Amount(), itemsList.get(position).getItemList_Page_URL(), itemsList.get(position).getItemList_Pic_URL());
-
-                        }
-                    });
-*/
-
-                }
-            });
 
 
-            // Stopping swipe refresh
-            // mSwipeRefreshLayout.setRefreshing(false);
-        }catch (Exception e){}
-    }
-
-
-    public List<ItemsModel> getItemsList(){
-        if (itemList == null){
-            getClickAbleListItems(1);
-        }
-       return itemList;
-    }
 
 }
