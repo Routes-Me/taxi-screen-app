@@ -8,8 +8,16 @@
     android:background="@color/white">
 
 
+    <ImageView
+        android:id="@+id/btnOpenLoginScreen"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:src="@drawable/login_routes_background"
+        android:visibility="visible"/>
+
 
 <androidx.cardview.widget.CardView
+    android:id="@+id/loginCardView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_marginTop="135dp"
@@ -17,7 +25,8 @@
     android:layout_marginLeft="265dp"
     android:layout_marginRight="265dp"
     app:cardCornerRadius="4dp"
-    android:outlineSpotShadowColor="@color/white">
+    android:outlineSpotShadowColor="@color/white"
+    android:visibility="gone">
 
 
     <FrameLayout

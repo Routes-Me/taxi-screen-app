@@ -82,8 +82,11 @@ public class ItemsViewModel  extends ViewModel {
                     }
                 }else {
                     Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
-                    activity.startActivity(new Intent(activity, LoginScreen.class));
-                    activity.finish();
+
+                    if (response.code() == 401) {
+                        activity.startActivity(new Intent(activity, LoginScreen.class));
+                        activity.finish();
+                    }
                 }
 
 
