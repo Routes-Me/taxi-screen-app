@@ -185,7 +185,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @SuppressLint("NewApi")
 
-    
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -196,7 +195,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedLanguage = sharedPreferences.getString("Language", "English");
 
         //For testing only we add token manually ...
-     //  editor.putString("tabToken", "bqB-VITYQnB3nvAXNH-oKQ9Pj1IblrFErzNQZDnGT5it9iXpezZTKuSRxwn6ap1EzJpHl8lwIces0VDXkqxOQ4T7YEvSkTbssqnBGJKB0-C_HXNqwB8KsVYU7syZkWWhmwiYeccuLMGiTsxj_LpQzwGOrlT4pgddZl9-uPlVm3cGjQKHeBnanNhoGYKy1IP3oQHq5A5OlkVglCw9w9Zy7aK27j4S0oV9e2FsRwQLgXHXw7mqeR5Nu-isTqRF-j4aw-ab0EkevxhQkr3TDVYI_5-0ma2WviMLoW35LOcHjyx0vKG8c0E1zNMu5ROA7ZRI62Zi3mTh7ssczaVtlCgJg_NFXSJig3lh150rkNFcFxYfkRzpYFsCLqT2uSLuj3pO7sDfppJsF5d1Jail25fm3iCsx7BHsDdX3BNUZzFAfIEKa3v_EF4rUQj8IRGBjh4V_otpq9RSpjMGu2Oq7KiV-KCFVuPp1huH7xPIiFkx5Csar32CBXgTz6ZDt7NoIH3j");
+     // editor.putString("tabToken", "dy_W6xCrb0Nmi2GrIbp0AI_QCgDjxvkf8ec-RKAZ8TNCLQw9gU2xiLPvP2gZurwIl4NK2y66j84h9nYbN8K6mQyC2pz5nEQrujM0KAR92PteinZcsAOgXI9RM20ayE9EYLggKIMuDTsdwcgQvgfcR4ur_JBTSBMacFmtKaie0cT3HtsP_1YgRDbQ34S_5MiWm2v9-cyigfXCblcrUaADiDBM0vUSbnieaGMc8K7BbyET5jApCaMhsQQDclR0FnI_AxGFbNutaP2sEf297bo5AQPcx1IDEWm2YV-no32cXZ88P-abOdAf3E1pwMs9LmIyyXRGurlC1_eM48esTsJNr3MFry7bJunnOG_kHK2taZ3NUkIhSZjVItHb9XAg-Ha0cRRsVKEk_wQcSmpgL493Motj6rIw5On0m21gbo9MlsxEY85DrU-Bn9nnuTKyUhndclEB9ZvNIuzODY1r3o0fF4out9iFn_vxkiKN8gu06rmO_0f_bkmjUrfGU0eWtvyF");
      // editor.apply();
 
 
