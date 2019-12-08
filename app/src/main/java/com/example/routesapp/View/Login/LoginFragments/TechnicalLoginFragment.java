@@ -111,6 +111,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
         btn_next = nMainView.findViewById(R.id.btn_next);
         btn_next.setOnClickListener(this);
+        enableNextButton(true);
         btn_learnMore = nMainView.findViewById(R.id.btn_learnMore);
         btn_learnMore.setOnClickListener(this);
 
@@ -131,6 +132,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 showErrorMessage(1,"",false);
+                enableNextButton(true);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -142,6 +144,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 showErrorMessage(2,"",false);
+                enableNextButton(true);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -152,7 +155,8 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     public void onClick(View v) {
         switch (v.getId()){
             case R.id.btn_next:
-                 openTabletDataFragment();
+                enableNextButton(false);
+                openTabletDataFragment();
                 break;
             case R.id.btn_learnMore:
                 openLearnMoreScreen();
@@ -203,6 +207,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
                     public void onChanged(List<AuthCredentialsError> authCredentialsErrors) {
 
                         dialog.dismiss();
+
 
                      //  if (authCredentialsErrors.size() > 0){
                             for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
@@ -304,7 +309,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
         if (show){
             editText.setBackgroundResource(R.drawable.red_border);
-            textView.setText(errorStr);
+            textView.setText("* " + errorStr);
             textView.setVisibility(View.VISIBLE);
             return;
         }else {
@@ -319,7 +324,17 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
 
 
+   private void enableNextButton(boolean enable){
 
+        if (enable){
+            btn_next.setBackgroundResource(R.drawable.next_button_border_enable);
+            btn_next.setEnabled(true);
+        }else {
+            btn_next.setBackgroundResource(R.drawable.next_button_border_disable);
+            btn_next.setEnabled(false);
+        }
+
+   }
 
 
 

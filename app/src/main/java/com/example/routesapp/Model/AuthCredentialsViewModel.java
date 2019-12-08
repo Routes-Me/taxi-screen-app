@@ -64,17 +64,17 @@ public class AuthCredentialsViewModel extends ViewModel {
         String userName = authCredentials.getUsername();
         String password = authCredentials.getPassword();
 
-        if (userName.isEmpty() || password.isEmpty() || password.length() < 8) {
+        if (userName.isEmpty() || password.isEmpty() || password.length() < 6) {
 
             if (userName.isEmpty()) {
 
-                authCredentialsErrorsList.add(new AuthCredentialsError(1, "* userName Required"));
+                authCredentialsErrorsList.add(new AuthCredentialsError(1, "userName Required"));
 
             }else if (password.isEmpty()) {
-                authCredentialsErrorsList.add(new AuthCredentialsError(2, "* Password Required"));
+                authCredentialsErrorsList.add(new AuthCredentialsError(2, "Password Required"));
 
-            } else if (password.length() < 8) {
-                authCredentialsErrorsList.add(new AuthCredentialsError(2, "* Minimum Password is 8 digit"));
+            } else if (password.length() < 6) {
+                authCredentialsErrorsList.add(new AuthCredentialsError(2, "Minimum Password is 6 digit"));
 
             }
             authCredentialsErrors.postValue(authCredentialsErrorsList);

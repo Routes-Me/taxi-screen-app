@@ -45,6 +45,7 @@ import android.widget.VideoView;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Interface.RoutesApi;
@@ -600,6 +601,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.ADS_ImageView:
                 updateFirebaseAnalystics(new ItemAnalytics(3,"click_banner"));
+                Crashlytics.getInstance().crash();
 /*
                 //get index of current Image...
                 Toast.makeText(this, "ADS Banner Clicked ! +  " + operations.getCurrentImageIndex(), Toast.LENGTH_SHORT).show();
