@@ -788,7 +788,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         tabletSerialNo = sharedPreferences.getString("tabletSerialNo", "").trim();
         tabletSerialNo = "123321123321";
         Crashlytics.setUserIdentifier(tabletSerialNo);
-        firebaseAnalytics.setUserId("123321123321");
+        firebaseAnalytics.setUserId(tabletSerialNo);
 
         editText_addTabletSerialNo = findViewById(R.id.editText_addTabletSerialNo);
         editText_addTabletSerialNo.setTransformationMethod(new NumberKeyBoardTransformationMethod());
