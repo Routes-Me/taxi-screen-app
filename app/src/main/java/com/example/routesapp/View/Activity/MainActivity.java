@@ -575,6 +575,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 updateFirebaseAnalystics(new ItemAnalytics(1,"click_video"));
 
+              //  Crashlytics.getInstance().crash();
+
                 /*
                 Uri mUri = null;
                 try {
@@ -603,6 +605,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.ADS_ImageView:
                 updateFirebaseAnalystics(new ItemAnalytics(3,"click_banner"));
+
+               // Crashlytics.getInstance().crash();
 
 /*
                 //get index of current Image...
@@ -697,7 +701,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Bundle params = new Bundle();
         //params.putString("image_name", name);
        // params.putString("full_text", text);
+
         firebaseAnalytics.logEvent(itemAnalytics.getName(), params);
+
 
     }
 
@@ -781,6 +787,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void tabletSerialNumber() {
         tabletSerialNo = sharedPreferences.getString("tabletSerialNo", "").trim();
         tabletSerialNo = "123321123321";
+        Crashlytics.setUserIdentifier(tabletSerialNo);
+        firebaseAnalytics.setUserId("123321123321");
+
         editText_addTabletSerialNo = findViewById(R.id.editText_addTabletSerialNo);
         editText_addTabletSerialNo.setTransformationMethod(new NumberKeyBoardTransformationMethod());
         button_addTabletSerialNo = findViewById(R.id.button_addTabletSerialNo);
