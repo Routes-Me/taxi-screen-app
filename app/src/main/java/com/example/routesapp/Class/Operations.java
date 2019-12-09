@@ -34,6 +34,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.signature.ObjectKey;
+import com.crashlytics.android.Crashlytics;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Interface.RoutesApi;
@@ -325,6 +326,7 @@ public class Operations {
 
 
             } catch (Exception ex) {
+                Crashlytics.logException(ex);
             }
 
             //videoView.requestFocus();
@@ -369,6 +371,7 @@ public class Operations {
 
                         Glide.with(activity).load(uri).apply(options).into(ADSImageView);
                     } catch (Exception e) {
+                        Crashlytics.logException(e);
                     }
                     currentImageIndex++;
 
@@ -642,7 +645,9 @@ public class Operations {
         try {
             InputMethodManager imm = (InputMethodManager) activity.getSystemService(Activity.INPUT_METHOD_SERVICE);
             imm.toggleSoftInput(InputMethodManager.HIDE_IMPLICIT_ONLY, 0);
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
     }
 
@@ -710,7 +715,9 @@ public class Operations {
             getVideosList();
 
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
 
     }
@@ -750,7 +757,9 @@ public class Operations {
             });
 
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
     }
     private void getVideosList() {
@@ -800,7 +809,9 @@ public class Operations {
 
         });
 
-    }catch (Exception e){}
+    }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
     }
 
@@ -840,7 +851,9 @@ public class Operations {
             });
 
 
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
 
 

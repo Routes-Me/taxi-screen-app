@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Interface.RoutesApi;
 
 import java.util.List;
@@ -69,6 +70,7 @@ public class VideosViewModel extends ViewModel {
                     //finally we are setting the list to our MutableLiveData
                     videosList.setValue(response.body());
             }catch (Exception e){
+                    Crashlytics.logException(e);
               //  Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 

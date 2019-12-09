@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.os.Build;
 import androidx.annotation.RequiresApi;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Model.EncryptModel;
 
 import java.security.spec.KeySpec;
@@ -44,6 +45,7 @@ public class AES {
         }
         catch (Exception e)
         {
+            Crashlytics.logException(e);
            // System.out.println("Error while encrypting: " + e.toString());
           //  Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
@@ -67,6 +69,7 @@ public class AES {
             return new String(cipher.doFinal(Base64.getDecoder().decode(strToDecrypt)));
         }
         catch (Exception e) {
+            Crashlytics.logException(e);
           //  System.out.println("Error while decrypting: " + e.toString());
             //Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         }

@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.Activity.LoginScreen;
 
@@ -68,6 +69,7 @@ public class TabletChannelsViewModel extends ViewModel {
                     try {
                         TabletChannelList.setValue(response.body());
                     }catch (Exception e){
+                        Crashlytics.logException(e);
                         // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }else {

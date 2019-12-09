@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.LoginFragments.TabletDataFragment;
 import com.example.routesapp.View.Login.LoginFragments.TechnicalLoginFragment;
@@ -93,6 +94,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
             PressedTime = System.currentTimeMillis();
         } catch (Exception e) {
+            Crashlytics.logException(e);
         }
 
 

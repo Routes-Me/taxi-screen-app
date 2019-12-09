@@ -100,62 +100,10 @@ public class CounterOperations {
 
 
 
-/*
-    //Speed Of Taxi ...
-    private void getSpeedOfTaxiNew() {
-        try {
-            // Get the location manager
-            double lat;
-            double lon;
-            double speed = 0;
-            LocationManager locationManager = (LocationManager)
-                    activity.getSystemService(LOCATION_SERVICE);
-            Criteria criteria = new Criteria();
-            String bestProvider = locationManager.getBestProvider(criteria, false);
-            if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
-                return;
-            }
-            Location location = locationManager.getLastKnownLocation(bestProvider);
-            try {
-                lat = location.getLatitude();
-                lon = location.getLongitude();
-                speed = location.getSpeed();
-            } catch (NullPointerException e) {
-                lat = -1.0;
-                lon = -1.0;
-            }
-
-            // mTxt_lat.setText("" + lat);
-            //mTxt_speed.setText("" + speed);
-
-            // Toast.makeText(this, "Speed: "+speed, Toast.LENGTH_SHORT).show();
 
 
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-*/
 
 
-    //Battery Level ...
-    public float getBatteryLevel() {
-        Intent batteryIntent = activity.registerReceiver(null, new IntentFilter(Intent.ACTION_BATTERY_CHANGED));
-        int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-        int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-
-        if (level == -1 || scale == -1) {
-            return 50.0f;
-        }
-        return ((float) level / (float) scale) * 100.0f;
-    }
 
 
 }

@@ -23,6 +23,7 @@ import android.view.animation.LayoutAnimationController;
 import android.widget.LinearLayout;
 import android.widget.RatingBar;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Class.ItemsAdapterMultibleViews;
 import com.example.routesapp.Model.ItemsModel;
@@ -269,7 +270,9 @@ try {
 
     // Stopping swipe refresh
     mSwipeRefreshLayout.setRefreshing(false);
-}catch (Exception e){}
+}catch (Exception e){
+    Crashlytics.logException(e);
+}
     }
 
     private void viewItem(int itemPosition,String item_type, String itemList_title_en, String itemList_title_ar, String itemList_title_or, String itemList_title_ta, int itemList_discount_amount, String itemList_page_url, String itemList_pic_url) {

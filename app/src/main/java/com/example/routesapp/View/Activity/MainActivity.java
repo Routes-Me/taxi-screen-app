@@ -355,6 +355,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             operations.exoPlayer.setPlayWhenReady(false);
             operations.exoPlayer.getPlaybackState();
         }catch (Exception e){
+            Crashlytics.logException(e);
          //   Toast.makeText(this, "Pause Player..." + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
@@ -365,6 +366,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             operations.exoPlayer.setPlayWhenReady(true);
             operations.exoPlayer.getPlaybackState();
         }catch (Exception e){
+            Crashlytics.logException(e);
             //Toast.makeText(this, "Start Player..." + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
@@ -601,7 +603,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             case R.id.ADS_ImageView:
                 updateFirebaseAnalystics(new ItemAnalytics(3,"click_banner"));
-                Crashlytics.getInstance().crash();
+
 /*
                 //get index of current Image...
                 Toast.makeText(this, "ADS Banner Clicked ! +  " + operations.getCurrentImageIndex(), Toast.LENGTH_SHORT).show();
@@ -741,6 +743,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
             } catch (Exception e) {
+                Crashlytics.logException(e);
              //   Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
@@ -1035,7 +1038,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             });
 
         } catch (Exception e) {
-
+            Crashlytics.logException(e);
         }
 
     }
@@ -1116,7 +1119,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
         } catch (Exception e) {
-
+            Crashlytics.logException(e);
         }
     }
 
@@ -1395,6 +1398,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             //  activity.recreate();
 
         } catch (Exception e) {
+            Crashlytics.logException(e);
             // Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 

@@ -13,6 +13,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.R;
@@ -142,6 +143,7 @@ public class AuthCredentialsViewModel extends ViewModel {
                         } catch (Exception e) {
                             e.printStackTrace();
                             Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            Crashlytics.logException(e);
                         }
                     }
                 }else {
@@ -167,8 +169,15 @@ public class AuthCredentialsViewModel extends ViewModel {
             @Override
             public void onResponse(Call<List<AuthCredentialsError>> call, Response<List<AuthCredentialsError>> response) {
 
-                authCredentialsErrorsList.addAll(response.body());
-                authCredentialsErrors.postValue(authCredentialsErrorsList);
+                if (response.isSuccessful()){
+                    try {
+                        authCredentialsErrorsList.addAll(response.body());
+                        authCredentialsErrors.postValue(authCredentialsErrorsList);
+                    }catch (Exception e){
+                        Crashlytics.logException(e);
+                    }
+                }
+
 
             }
 

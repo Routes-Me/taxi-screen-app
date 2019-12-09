@@ -22,6 +22,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.Model.AuthCredentials;
@@ -96,6 +97,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         try {
             Toast.makeText(getActivity(), "Encrypt:  " + aesBase64Wrapper.encryptAndEncode(originalString) + "   , Decrypt:  " + aesBase64Wrapper.decodeAndDecrypt(aesBase64Wrapper.encryptAndEncode(originalString)) +"   , Original is:  " + originalString , Toast.LENGTH_SHORT).show();
         } catch (Exception e) {
+            Crashlytics.logException(e);
             e.printStackTrace();
         }
         // email_et.setText(aesBase64Wrapper.encryptAndEncode(originalString));
