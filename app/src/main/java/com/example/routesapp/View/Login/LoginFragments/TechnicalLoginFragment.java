@@ -22,26 +22,14 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.crashlytics.android.Crashlytics;
-import com.example.routesapp.Class.AesBase64Wrapper;
-import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.AuthCredentialsViewModel;
-import com.example.routesapp.Model.Token;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Login.Activity.LearnMoreScreen;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-
-import okhttp3.OkHttpClient;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -49,7 +37,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 public class TechnicalLoginFragment extends Fragment implements View.OnClickListener {
 
 
-    private static  String originalString = "Abdullah Soubeih";
+
 
     private AuthCredentialsViewModel authCredentialsViewModel;
 
@@ -64,7 +52,6 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
     private ProgressDialog dialog;
 
-  //  private AesBase64Wrapper aesBase64Wrapper;
 
     public TechnicalLoginFragment() {
         // Required empty public constructor
@@ -75,11 +62,10 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     // Inflate the layout for this fragment
-        nMainView = inflater.inflate(R.layout.technical_login_fragment, container, false);
+        nMainView = inflater.inflate(R.layout.technical_login_layout, container, false);
 
         initialize();
 
-       // encryptUserName();
 
 
         return nMainView;
@@ -87,22 +73,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
     }
 
-    private void encryptUserName() {
-        //Using AES 256 To Encryption & Decryption ...
-        //Toast.makeText(getActivity(), "encrypt:   "+ aes.encrypt(getActivity(),originalString)    +  "   ,decrypt:  " + aes.decrypt(getActivity(),aes.encrypt(getActivity(),originalString)), Toast.LENGTH_SHORT).show();
-        //  email_et.setText(AES.encrypt(getActivity(),originalString));
 
-        AesBase64Wrapper aesBase64Wrapper = new AesBase64Wrapper(getActivity());
-
-        try {
-            Toast.makeText(getActivity(), "Encrypt:  " + aesBase64Wrapper.encryptAndEncode(originalString) + "   , Decrypt:  " + aesBase64Wrapper.decodeAndDecrypt(aesBase64Wrapper.encryptAndEncode(originalString)) +"   , Original is:  " + originalString , Toast.LENGTH_SHORT).show();
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-            e.printStackTrace();
-        }
-        // email_et.setText(aesBase64Wrapper.encryptAndEncode(originalString));
-
-    }
 
     private void initialize() {
 
@@ -123,7 +94,6 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
         password_error_tv = nMainView.findViewById(R.id.password_error_tv);
         editTextListener();
 
-     //   aesBase64Wrapper = new AesBase64Wrapper(getActivity());
 
     }
 
@@ -178,29 +148,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
 
        String userName = userName_et.getText().toString().trim();
        String password = password_et.getText().toString().trim();
-/*
-        if (userName.isEmpty()){
-            showErrorMessage(userName_et, userName_error_tv,"* userName Required",true);
-            return;
-        }
-        if (password.isEmpty()){
-            showErrorMessage(password_et, password_error_tv,"* Password Required",true);
-            return;
-        }
-        if (password.length() < 8){
-            showErrorMessage(password_et, password_error_tv,"* Minimum Password is 8 digit",true);
-            return;
-        }
-*/
-        /*
-        authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
-        authCredentialsViewModel.getToken(new AuthCredentials(aesBase64Wrapper.encryptAndEncode(email),aesBase64Wrapper.encryptAndEncode(password)),getActivity()).observe((LifecycleOwner) getActivity(), new Observer<String>() {
-            @Override
-            public void onChanged(String s) {
-                Toast.makeText(getActivity(), "response:  " + s, Toast.LENGTH_SHORT).show();
-            }
-        });
-*/
+
 
         AuthCredentials authCredentials = new AuthCredentials(userName, password);
         authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) getActivity()).get(AuthCredentialsViewModel.class);
@@ -211,82 +159,19 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
                         dialog.dismiss();
 
 
-                     //  if (authCredentialsErrors.size() > 0){
                             for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
-                                //  Toast.makeText(getActivity(), "no. of errors:   " + authCredentialsErrors.size(), Toast.LENGTH_SHORT).show();
                                 if (authCredentialsErrors.get(e).getErrorNumber() == 1 || authCredentialsErrors.get(e).getErrorNumber() == 2){
                                     showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
                                 }else {
                                     Toast.makeText(getActivity(), "Error:  " + authCredentialsErrors.get(e).getErrorMasseg(), Toast.LENGTH_SHORT).show();
                                 }
                             }
-                     //   }else {
-                        //    getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
-                     //   }
+
 
 
                     }
                 });
 
-
-                //  authCredentials.setUsername("Tevu5gmGAJFFmcO9dMdYWw==");
-                //   authCredentials.setPassword("kjn3aW+SqtA3lPiErEyzyQ==");
-/*
-                OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                        .connectTimeout(1, TimeUnit.MINUTES)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .writeTimeout(15, TimeUnit.SECONDS)
-                        .build();
-
-
-
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RoutesApi.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-
-        RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<Token> call = api.loginUser(authCredentials);
-
-
-        call.enqueue(new Callback<Token>() {
-            @Override
-            public void onResponse(Call<Token> call, Response<Token> response) {
-
-              //  String token = null;
-
-
-             //  Token token = new Gson().fromJson(response.toString(),Token.class);
-
-                if (response.code() == 401) {
-                    // launch login activity using `this.context`
-                    Toast.makeText(getActivity(), "error code:  " + 401, Toast.LENGTH_SHORT).show();
-                } else {
-                   // onSuccess(response.body());
-                    try {
-                        Toast.makeText(getActivity(), "tt:   " +  response.body().getAccess_token(), Toast.LENGTH_SHORT).show();
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Toast.makeText(getActivity(), e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-
-
-
-
-            }
-
-            @Override
-            public void onFailure(Call<Token> call, Throwable t) {
-                Toast.makeText(getActivity(), "error:   " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
-        */
-
-
-
-   //  getActivity().getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
     }
 
 
@@ -315,7 +200,7 @@ public class TechnicalLoginFragment extends Fragment implements View.OnClickList
             textView.setVisibility(View.VISIBLE);
             return;
         }else {
-            editText.setBackgroundResource(R.drawable.grey_border);
+            editText.setBackgroundResource(R.drawable.grey_border_edit_text);
             textView.setVisibility(View.INVISIBLE);
         }
 

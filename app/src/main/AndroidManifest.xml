@@ -20,29 +20,34 @@
         android:supportsRtl="false"
         android:theme="@style/noActionBar"
         android:usesCleartextTraffic="true"
-        tools:replace="android:supportsRtl"
+        android:windowSoftInputMode="adjustResize|stateHidden"
+        tools:replace="android:supportsRtl">
 
 
-        android:windowSoftInputMode="adjustResize|stateHidden">
-        <activity android:name=".View.Login.Activity.LearnMoreScreen"
+
+
+        <activity android:name=".View.Login.Activity.TaxiInformationScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+
+        <activity android:name=".View.Login.TaxiInformationOfficeListScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+
+        <activity
+            android:name=".View.Login.Activity.LearnMoreScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustPan">
-
-        </activity>
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".View.Login.Activity.LoginScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
-
-
-        </activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name=".View.Activity.MainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,8 +55,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
-
         </activity>
     </application>
 

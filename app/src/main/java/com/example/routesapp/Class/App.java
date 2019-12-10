@@ -10,6 +10,9 @@ import java.io.File;
 public class App extends Application {
 
     private HttpProxyCacheServer proxy;
+    private String technicalSupportName;
+
+
 
     public static HttpProxyCacheServer getProxy(Context context) {
         App app = (App) context.getApplicationContext();
@@ -55,4 +58,11 @@ public class App extends Application {
     }
 
 
+    public String getTechnicalSupportName() {
+        return technicalSupportName;
+    }
+
+    public void setTechnicalSupportName(String technicalSupportName) {
+        this.technicalSupportName = technicalSupportName;
+    }
 }

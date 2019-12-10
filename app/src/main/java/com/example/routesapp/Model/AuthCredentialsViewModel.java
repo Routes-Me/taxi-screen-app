@@ -15,9 +15,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.AesBase64Wrapper;
+import com.example.routesapp.Class.App;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.R;
 import com.example.routesapp.View.Activity.MainActivity;
+import com.example.routesapp.View.Login.Activity.TaxiInformationScreen;
 import com.example.routesapp.View.Login.LoginFragments.TabletDataFragment;
 
 import java.util.ArrayList;
@@ -34,11 +36,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthCredentialsViewModel extends ViewModel {
 
+    private App app;
+
     private RoutesApi api;
     private OkHttpClient okHttpClient;
     private Retrofit retrofit;
 
     private AesBase64Wrapper aesBase64Wrapper;
+
+    AuthCredentials encryptAuthCredentials1;
 
     //this is the data that we will fetch asynchronously
     private List<AuthCredentialsError> authCredentialsErrorsList;
@@ -52,6 +58,9 @@ public class AuthCredentialsViewModel extends ViewModel {
 
     //we will call this method to get the data
     public LiveData<List<AuthCredentialsError>> getToken(final AuthCredentials authCredentials, final Activity activity, ProgressDialog dialog) {
+
+        app = (App) activity.getApplicationContext();
+
 
         this.dialog = dialog;
 
@@ -69,7 +78,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
             if (userName.isEmpty()) {
 
-                authCredentialsErrorsList.add(new AuthCredentialsError(1, "userName Required"));
+                authCredentialsErrorsList.add(new AuthCredentialsError(1, "User Name Required"));
 
             }else if (password.isEmpty()) {
                 authCredentialsErrorsList.add(new AuthCredentialsError(2, "Password Required"));
@@ -101,7 +110,7 @@ public class AuthCredentialsViewModel extends ViewModel {
             api = retrofit.create(RoutesApi.class);
 
 
-           loadAuthCredentialsErrors(new AuthCredentials(aesBase64Wrapper.encryptAndEncode(userName), aesBase64Wrapper.encryptAndEncode(password)),activity);
+           loadAuthCredentialsErrors(new AuthCredentials(userName, password),activity);
 
              return authCredentialsErrors;
 
@@ -116,9 +125,10 @@ public class AuthCredentialsViewModel extends ViewModel {
     private void loadAuthCredentialsErrors(final AuthCredentials authCredentials, final Activity activity) {
 
 
+         encryptAuthCredentials1 = new AuthCredentials(aesBase64Wrapper.encryptAndEncode(authCredentials.getUsername()), aesBase64Wrapper.encryptAndEncode(authCredentials.getPassword()));
 
 
-        Call<Token> call_success = api.loginUserSuccess(authCredentials);
+        Call<Token> call_success = api.loginUserSuccess(encryptAuthCredentials1);
 
 
         call_success.enqueue(new Callback<Token>() {
@@ -128,6 +138,7 @@ public class AuthCredentialsViewModel extends ViewModel {
                 if (response_success.isSuccessful()){
                     if (response_success.body().getAccess_token() != null) {
                         try {
+                            app.setTechnicalSupportName(authCredentials.getUsername());
                             Toast.makeText(activity, "token:   " +  response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
                             //Save Tablet token into sharedPref. ...
@@ -137,7 +148,12 @@ public class AuthCredentialsViewModel extends ViewModel {
                             dialog.dismiss();
                            // ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
 
-                            activity.startActivity(new Intent(activity, MainActivity.class));
+                         //   activity.startActivity(new Intent(activity, MainActivity.class));
+
+
+                          //  Toast.makeText(activity, "MVVM ... userName:  " + app.getTechnicalSupportName() + "  ,Token:  " + response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
+
+                            activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
                             activity.finish();
 
                         } catch (Exception e) {
@@ -155,7 +171,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
             @Override
             public void onFailure(Call<Token> call_success, Throwable t) {
-                loadError(authCredentials);
+                loadError(encryptAuthCredentials1);
             }
         });
 

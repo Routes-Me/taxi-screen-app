@@ -46,6 +46,7 @@ import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
+import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Interface.RoutesApi;
@@ -79,7 +80,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-
+  //  private App app;
 
 /*
     private LocationManager locationManager;
@@ -191,6 +192,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
+
+
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         editor = sharedPreferences.edit();
         savedLanguage = sharedPreferences.getString("Language", "English");
@@ -215,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
 
+    //    app = (App) getApplicationContext();
+     //   Toast.makeText(this, "From App Class:    " + app.getTechnicalSupportName(), Toast.LENGTH_SHORT).show();
 
 
         // getTabletCurrentLocation();

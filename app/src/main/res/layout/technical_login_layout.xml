@@ -4,7 +4,6 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
 >
 
 
@@ -81,16 +80,9 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
-
                 android:layout_marginBottom="3dp"
-                android:background="@drawable/grey_border"
-                android:fontFamily="sans-serif"
                 android:hint="Email"
-                android:textColor="#8a000000"
-                android:textColorHint="#8a000000"
-                android:textSize="18sp"
-                android:textStyle="normal"
-                />
+                style="@style/AppTheme.CustomEditText"/>
 
             <TextView
                 android:id="@+id/userName_error_tv"
@@ -112,19 +104,12 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
                 android:id="@+id/password_et"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-
-                android:background="@drawable/grey_border"
-                android:fontFamily="sans-serif"
-                android:textStyle="normal"
-                android:textColor="#8a000000"
-                android:textColorHint="#8a000000"
+                style="@style/AppTheme.CustomEditText"
                 android:hint="Password"
-                android:textSize="18sp"
                 android:layout_marginBottom="3dp"
                 android:layout_gravity="center"
                 android:ems="10"
                 android:inputType="textPassword"
-                app:tint_color="@color/grey"
                 app:drawable_show="@drawable/ic_visibility_on"
                 app:drawable_hide="@drawable/ic_visibility_off"/>
 
@@ -174,14 +159,9 @@ tools:context=".View.Login.LoginFragments.TechnicalLoginFragment"
                 android:id="@+id/btn_next"
                 android:layout_width="119dp"
                 android:layout_height="38dp"
-                android:fontFamily="sans-serif-medium"
-                android:textStyle="normal"
-                android:textColor="@color/white"
                 android:text="Next"
-                android:background="@drawable/next_button_border_enable"
-                android:gravity="center"
                 android:layout_gravity="end"
-                android:textSize="18sp" />
+                style="@style/AppTheme.CustomButton"/>
 
 
 
