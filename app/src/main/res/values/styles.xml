@@ -69,5 +69,26 @@
 
     </style>
 
+    <style name="AppTheme.CustomTextViewTitle"    >
+        //...
+
+       <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+
+    </style>
+
+    <style name="AppTheme.CustomTextViewToolbar"     >
+        //...
+
+      <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:background">@color/white</item>
+
+    </style>
+
 
 </resources>
