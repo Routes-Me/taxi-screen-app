@@ -1,12 +1,17 @@
 package com.example.routesapp.View.Login.Activity;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 
 import android.Manifest;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.view.View;
 import android.widget.TextView;
@@ -24,6 +29,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private TelephonyManager telephonyManager;
 
     private TextView deviceSerialNumber_et;
+
+    private boolean showRationale = true, getTabletSerialNumber = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,10 +52,19 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         deviceSerialNumber_et = findViewById(R.id.deviceSerialNumber_et);
         deviceSerialNumber_et.setOnClickListener(this);
 
-        getDeviceId();
+
+        //Get tablet serial number ...
+        telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
+        getTabletSerialNumber();
 
     }
 
+
+    @Override
+    protected void onRestart() {
+        getTabletSerialNumber();
+        super.onRestart();
+    }
 
     private void ToolbarSetUp() {
         //Toolbar..
@@ -70,24 +86,24 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
 
-    private void getDeviceId() {
+    private void getTabletSerialNumber() {
         try {
-            telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
                 return;
             }else {
-                //Toast.makeText(TaxiInformationScreen.this,telephonyManager.getDeviceId(),Toast.LENGTH_LONG).show();
-
                 deviceSerialNumber_et.setText(telephonyManager.getDeviceId());
-                deviceSerialNumber_et.setError(null);//removes error
-                deviceSerialNumber_et.clearFocus();
+                showTabletSerialNumberError(false);
             }
         }catch (Exception e){
-         //   Toast.makeText(this, "Device ID Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
     }
+
+
+
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         switch (requestCode) {
@@ -97,21 +113,19 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
                         return;
                     }
-                   // Toast.makeText(TaxiInformationScreen.this,telephonyManager.getDeviceId(),Toast.LENGTH_LONG).show();
                     deviceSerialNumber_et.setText(telephonyManager.getDeviceId());
-                    deviceSerialNumber_et.setError(null);//removes error
-                    deviceSerialNumber_et.clearFocus();
-                } else {
-                   // Toast.makeText(TaxiInformationScreen.this,"Without permission we check",Toast.LENGTH_LONG).show();
-
-                  //  if (Link.isEmpty()){
-                    deviceSerialNumber_et.setError("Click here to get serial number");
-                    deviceSerialNumber_et.requestFocus();
-                        return;
-                  //  }
-
-                   // deviceSerialNumber_et.setText("Get Tablet Serial Number");
+                    showTabletSerialNumberError(false);
                 }
+                else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                // user rejected the permission
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        showRationale = shouldShowRequestPermissionRationale( Manifest.permission.READ_PHONE_STATE );
+
+                        showTabletSerialNumberError(true);
+                    }
+            }
+
                 break;
             default:
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
@@ -124,10 +138,62 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         switch (v.getId()){
 
             case R.id.deviceSerialNumber_et:
-                    getDeviceId();
+                clickOnGetDeviceSerialNumber();
                 break;
 
         }
 
     }
+
+    private void clickOnGetDeviceSerialNumber() {
+        if (! showRationale && !getTabletSerialNumber) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Phone Permission required")
+                    .setMessage("Enable phone permission from app settings is required to get the serial number")
+
+                    .setPositiveButton("Open settings", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            try {
+
+                                showTabletSerialNumberError(false);
+                                startActivity( new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", getPackageName(), null)));
+
+                            }catch (Exception e){}
+
+                        }
+                    })
+
+                    .setNegativeButton("Later", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            showTabletSerialNumberError(true);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false)
+                    .show();
+
+        }else if (!getTabletSerialNumber){
+            getTabletSerialNumber();
+        }
+    }
+
+
+    private void showTabletSerialNumberError(boolean show){
+        if (show){
+            deviceSerialNumber_et.setError("Click here to get serial number");
+            deviceSerialNumber_et.requestFocus();
+            getTabletSerialNumber = false;
+            return;
+        }else {
+            deviceSerialNumber_et.setError(null);
+            deviceSerialNumber_et.clearFocus();
+            getTabletSerialNumber = true;
+        }
+    }
+
+
+
 }
