@@ -10,7 +10,8 @@ import java.io.File;
 public class App extends Application {
 
     private HttpProxyCacheServer proxy;
-    private String technicalSupportName;
+    private String technicalSupportUserName, technicalSupportPassword;
+    private boolean newLogin = false;
 
 
 
@@ -58,11 +59,30 @@ public class App extends Application {
     }
 
 
-    public String getTechnicalSupportName() {
-        return technicalSupportName;
+
+    //Getter...
+    public String getTechnicalSupportUserName() {
+        return technicalSupportUserName;
     }
 
-    public void setTechnicalSupportName(String technicalSupportName) {
-        this.technicalSupportName = technicalSupportName;
+    public String getTechnicalSupportPassword() {
+        return technicalSupportPassword;
+    }
+
+    public boolean isNewLogin() {
+        return newLogin;
+    }
+
+    //Setter...
+    public void setTechnicalSupportUserName(String technicalSupportUserName) {
+        this.technicalSupportUserName = technicalSupportUserName;
+    }
+
+    public void setTechnicalSupportPassword(String technicalSupportPassword) {
+        this.technicalSupportPassword = technicalSupportPassword;
+    }
+
+    public void setNewLogin(boolean newLogin) {
+        this.newLogin = newLogin;
     }
 }

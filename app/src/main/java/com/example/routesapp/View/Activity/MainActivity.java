@@ -80,7 +80,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
-  //  private App app;
+    private App app;
 
 /*
     private LocationManager locationManager;
@@ -192,6 +192,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        //Delete Technical Support Authentication Credentials ....
+        app = (App) getApplicationContext();
+        app.setNewLogin(false);
+        app.setTechnicalSupportUserName(null);
+        app.setTechnicalSupportPassword(null);
 
 
 
@@ -219,8 +224,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 finish();
             }
 
-    //    app = (App) getApplicationContext();
-     //   Toast.makeText(this, "From App Class:    " + app.getTechnicalSupportName(), Toast.LENGTH_SHORT).show();
+
 
 
         // getTabletCurrentLocation();

@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
+import com.example.routesapp.Class.App;
 import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.AuthCredentialsViewModel;
@@ -31,7 +32,7 @@ import java.util.List;
 public class LoginScreen extends AppCompatActivity implements View.OnClickListener {
 
 
-   // private App app;
+    private App app;
 
 
 
@@ -44,6 +45,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
 
     //For Login Layout...
+    private String userName = null, password = null;
     View technical_login_screen ;
     private AuthCredentialsViewModel authCredentialsViewModel;
     private TextView btn_next;
@@ -63,17 +65,15 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
 
-       //  app = (App) getApplicationContext();
-       //  app.setTechnicalSupportName("Hi Every Body.... :)");
-
         initialize();
-
-
 
     }
 
 
     private void initialize() {
+        app = (App) getApplicationContext();
+
+
 
         btnOpenLoginScreen = findViewById(R.id.btnOpenLoginScreen);
         btnOpenLoginScreen.setOnClickListener(this);
@@ -81,6 +81,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
         initializeLoginLayout();
 
+        openLoginLayout(app.isNewLogin());
     }
 
     private void initializeLoginLayout() {
@@ -100,6 +101,9 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         password_et = technical_login_screen.findViewById(R.id.password_et);
         password_error_tv = technical_login_screen.findViewById(R.id.password_error_tv);
         editTextListener();
+
+
+
     }
 
 
@@ -162,16 +166,15 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             clickTimes++;
             //if user Click on Back button Two Times
             if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 5) {
-                pressedTimesToast.cancel();
+              //  pressedTimesToast.cancel();
 
-                btnOpenLoginScreen.setVisibility(View.GONE);
-                loginLayout.setVisibility(View.VISIBLE);
+                openLoginLayout(true);
 
             }
             //if user Click on Back button One Times
             else {
-                pressedTimesToast = pressedTimesToast.makeText(getBaseContext(), "Clicked Times:  " + clickTimes, pressedTimesToast.LENGTH_SHORT);
-                pressedTimesToast.show();
+               // pressedTimesToast = pressedTimesToast.makeText(getBaseContext(), "Clicked Times:  " + clickTimes, pressedTimesToast.LENGTH_SHORT);
+              //  pressedTimesToast.show();
             }
 
             PressedTime = System.currentTimeMillis();
@@ -255,5 +258,25 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
     private void openLearnMoreScreen() {
         startActivity(new Intent(this, LearnMoreScreen.class));
+    }
+
+    private void openLoginLayout(boolean show){
+        if (show) {
+            btnOpenLoginScreen.setVisibility(View.GONE);
+            loginLayout.setVisibility(View.VISIBLE);
+
+            userName = app.getTechnicalSupportUserName().trim();
+            password = app.getTechnicalSupportPassword().trim();
+            if (userName != null && !userName.isEmpty()){
+                userName_et.setText(userName);
+            }
+            if (password != null && !password.isEmpty()){
+                password_et.setText(password);
+            }
+
+        }else{
+            btnOpenLoginScreen.setVisibility(View.VISIBLE);
+            loginLayout.setVisibility(View.GONE);
+        }
     }
 }

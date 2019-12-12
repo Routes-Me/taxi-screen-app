@@ -138,8 +138,12 @@ public class AuthCredentialsViewModel extends ViewModel {
                 if (response_success.isSuccessful()){
                     if (response_success.body().getAccess_token() != null) {
                         try {
-                            app.setTechnicalSupportName(authCredentials.getUsername());
-                            Toast.makeText(activity, "token:   " +  response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
+                            String username = authCredentials.getUsername().trim();
+                            String password = authCredentials.getPassword().trim();
+                            app.setTechnicalSupportUserName(username);
+                            app.setTechnicalSupportPassword(password);
+
+                           // Toast.makeText(activity, "token:   " +  response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
                             //Save Tablet token into sharedPref. ...
                             editor.putString("tabToken", response_success.body().getAccess_token());
@@ -153,6 +157,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
                           //  Toast.makeText(activity, "MVVM ... userName:  " + app.getTechnicalSupportName() + "  ,Token:  " + response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
+                            app.setNewLogin(true);
                             activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
                             activity.finish();
 

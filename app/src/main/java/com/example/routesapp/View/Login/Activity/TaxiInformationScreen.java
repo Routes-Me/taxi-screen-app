@@ -13,12 +13,15 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.routesapp.Class.App;
 import com.example.routesapp.R;
+import com.example.routesapp.View.Activity.MainActivity;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -29,6 +32,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private TelephonyManager telephonyManager;
 
     private TextView deviceSerialNumber_et;
+    private Button register_btn;
 
     private boolean showRationale = true, getTabletSerialNumber = false;
 
@@ -36,10 +40,11 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.taxi_information_screen);
+        overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
 
         app = (App) getApplicationContext();
-        app.setTechnicalSupportName("Abdullah Soubeih");
+        //app.setTechnicalSupportName("Abdullah Soubeih");
 
         ToolbarSetUp();
 
@@ -51,6 +56,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         deviceSerialNumber_et = findViewById(R.id.deviceSerialNumber_et);
         deviceSerialNumber_et.setOnClickListener(this);
+        register_btn = findViewById(R.id.register_btn);
+        register_btn.setOnClickListener(this);
 
 
         //Get tablet serial number ...
@@ -73,7 +80,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         setSupportActionBar(myToolbar);
 
-        getSupportActionBar().setTitle("Welcome,  " + app.getTechnicalSupportName());
+        String username = app.getTechnicalSupportUserName();
+        if (username != null && !username.isEmpty()){
+            getSupportActionBar().setTitle("Welcome,  " + username.substring(0, 1).toUpperCase() + username.substring(1));
+        }else {
+            getSupportActionBar().setTitle("Welcome,");
+        }
+
 
 
         // add back arrow to toolbar
@@ -141,8 +154,17 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 clickOnGetDeviceSerialNumber();
                 break;
 
+            case R.id.register_btn:
+                 openHomeScreen();
+                break;
+
         }
 
+    }
+
+    private void openHomeScreen() {
+        startActivity(new Intent(this, MainActivity.class));
+        finish();
     }
 
     private void clickOnGetDeviceSerialNumber() {
@@ -195,5 +217,17 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+
+            startActivity(new Intent(this,LoginScreen.class));
+            finish();
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
 
 }
