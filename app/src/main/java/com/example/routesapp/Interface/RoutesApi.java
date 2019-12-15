@@ -7,6 +7,7 @@ import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.ItemsModel;
 import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletPasswordModel;
+import com.example.routesapp.Model.TaxiOfficeList;
 import com.example.routesapp.Model.Token;
 import com.example.routesapp.Model.VideoModel;
 import com.google.gson.JsonObject;
@@ -42,6 +43,9 @@ public interface RoutesApi {
 
 
 
+    //Taxi Office List
+    @GET("TaxiOffices")
+    Call<TaxiOfficeList> getTaxiOfficeList(@Header("Authorization") String token);
 
 
 

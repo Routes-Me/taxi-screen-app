@@ -34,39 +34,10 @@ android:background="@color/white"    >
             android:layout_marginBottom="20dp"
             style="@style/AppTheme.CustomTextViewToolbar"
             android:layout_marginTop="31dp"
-            >
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-
-                >
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="Welcome,  "
-                    android:layout_gravity="center"
-                    style="@style/AppTheme.CustomTextViewToolbar"
-                    android:visibility="gone"/>
+            />
 
 
-                <TextView
-                    android:id="@+id/tv_TechnicalSupportName"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:gravity="center_horizontal"
-                    android:text="Technical Support Name"
-                    android:layout_gravity="center"
-                    style="@style/AppTheme.CustomTextViewToolbar"
-                    android:visibility="gone"/>
 
-            </LinearLayout>
-
-
-        </androidx.appcompat.widget.Toolbar>
 
 
         <LinearLayout
@@ -96,7 +67,7 @@ android:background="@color/white"    >
 
 
                 <TextView
-                    android:id="@+id/taxiOffice_et"
+                    android:id="@+id/taxiOffice_tv"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
@@ -108,7 +79,7 @@ android:background="@color/white"    >
 
 
                 <TextView
-                    android:id="@+id/taxiPlateNumber_et"
+                    android:id="@+id/taxiPlateNumber_tv"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="40dp"
@@ -128,7 +99,7 @@ android:background="@color/white"    >
 
 
                 <TextView
-                    android:id="@+id/deviceSerialNumber_et"
+                    android:id="@+id/deviceSerialNumber_tv"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
                     android:hint="Tablet Serial Number"
