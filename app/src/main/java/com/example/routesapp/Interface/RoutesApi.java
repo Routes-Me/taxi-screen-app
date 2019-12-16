@@ -5,6 +5,7 @@ import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.BannerModel;
 import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.ItemsModel;
+import com.example.routesapp.Model.OfficePlatesList;
 import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletPasswordModel;
 import com.example.routesapp.Model.TaxiOfficeList;
@@ -45,7 +46,11 @@ public interface RoutesApi {
 
     //Taxi Office List
     @GET("TaxiOffices")
-    Call<TaxiOfficeList> getTaxiOfficeList(@Header("Authorization") String token);
+    Call<TaxiOfficeList> getTaxiOfficeList(@Header("Authorization") String token, @Query("include") String include);
+
+    //Taxi Offic plates list
+    @GET("Tablets")
+    Call<OfficePlatesList> getOfficePlatesList(@Header("Authorization") String token, @Query("taxiOfficeId") int taxiOfficeId, @Query("include") String include);
 
 
 

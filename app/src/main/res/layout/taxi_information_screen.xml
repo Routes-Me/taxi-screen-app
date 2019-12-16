@@ -70,24 +70,53 @@ android:background="@color/white"    >
                     android:id="@+id/taxiOffice_tv"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
+                    android:layout_marginBottom="5dp"
                     android:hint="Taxi office"
                     android:nextFocusDown="@id/password_et"
                     style="@style/AppTheme.CustomEditText"
-                    android:drawableRight="@drawable/ic_right_arrow" />
+                    android:background="@drawable/tab_text_selector"
+                    android:drawableRight="@drawable/ic_right_arrow"
+                    />
 
+
+            <TextView
+                android:id="@+id/taxiOffice_error_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:textColor="@color/red"
+                android:gravity="start"
+                android:text="* Select taxi office"
+                android:textSize="16sp"
+                android:layout_marginBottom="15dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
 
 
                 <TextView
                     android:id="@+id/taxiPlateNumber_tv"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="40dp"
+                    android:layout_marginBottom="5dp"
                     android:hint="Taxi plate number"
                     android:nextFocusDown="@id/password_et"
                     style="@style/AppTheme.CustomEditText"
-                    android:drawableRight="@drawable/ic_right_arrow" />
+                    android:background="@drawable/tab_text_selector"
+                    android:drawableRight="@drawable/ic_right_arrow"
+                    />
 
+            <TextView
+                android:id="@+id/taxiPlateNumber_error_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textStyle="normal"
+                android:textColor="@color/red"
+                android:gravity="start"
+                android:text="* Select taxi plate number"
+                android:textSize="16sp"
+                android:layout_marginBottom="40dp"
+                android:layout_gravity="center"
+                android:visibility="invisible"/>
 
                 <TextView
                     android:layout_width="match_parent"

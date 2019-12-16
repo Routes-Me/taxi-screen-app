@@ -20,6 +20,13 @@ public class ItemType {
         this.officeId = officeId;
     }
 
+    public ItemType(String itemName, boolean isHeader, boolean isNormalItem) {
+        this.itemName = itemName;
+        this.isHeader = isHeader;
+        this.isNormalItem = isNormalItem;
+    }
+
+
 
     public String getItemName() {
         return itemName;

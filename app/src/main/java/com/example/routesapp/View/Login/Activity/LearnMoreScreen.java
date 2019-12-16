@@ -10,10 +10,12 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
+import com.example.routesapp.Class.App;
 import com.example.routesapp.R;
 
 public class LearnMoreScreen extends AppCompatActivity implements View.OnClickListener {
 
+    private App app;
 
     private ImageView btn_back;
     private WebView webView_routesWebsite;
@@ -30,6 +32,9 @@ public class LearnMoreScreen extends AppCompatActivity implements View.OnClickLi
     }
 
     private void initialize() {
+
+        app = (App) getApplicationContext();
+
         btn_back = findViewById(R.id.btn_back);
         btn_back.setOnClickListener(this);
 
@@ -50,6 +55,7 @@ public class LearnMoreScreen extends AppCompatActivity implements View.OnClickLi
     }
 
     private void backToLoginScreen() {
+        app.setNewLogin(true);
         startActivity(new Intent(LearnMoreScreen.this, LoginScreen.class));
     }
 }

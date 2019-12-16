@@ -265,8 +265,8 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             btnOpenLoginScreen.setVisibility(View.GONE);
             loginLayout.setVisibility(View.VISIBLE);
 
-            userName = app.getTechnicalSupportUserName().trim();
-            password = app.getTechnicalSupportPassword().trim();
+            userName = app.getTechnicalSupportUserName();
+            password = app.getTechnicalSupportPassword();
             if (userName != null && !userName.isEmpty()){
                 userName_et.setText(userName);
             }

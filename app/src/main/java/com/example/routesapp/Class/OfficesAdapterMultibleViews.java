@@ -1,9 +1,11 @@
 package com.example.routesapp.Class;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.recyclerview.widget.RecyclerView;
@@ -14,6 +16,8 @@ import com.example.routesapp.R;
 import java.util.ArrayList;
 
 public class OfficesAdapterMultibleViews extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+
+    private int row_index = -1;
 
     private static final int LAYOUT_HEADER= 0, LAYOUT_ITEM_NORMAL = 1, LAYOUT_ITEM_MOST_RECENT = 2;
 
@@ -72,14 +76,38 @@ public class OfficesAdapterMultibleViews extends RecyclerView.Adapter<RecyclerVi
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
 
+
+
         if(holder.getItemViewType()== LAYOUT_HEADER) {
             MyViewHolderHeader vaultItemHolder = (MyViewHolderHeader) holder;
             vaultItemHolder.headerTitle.setText(listItemArrayList.get(position).getItemName());
         }
         else {
 
-            MyViewHolderChild vaultItemHolder = (MyViewHolderChild) holder;
+
+
+            final MyViewHolderChild vaultItemHolder = (MyViewHolderChild) holder;
             vaultItemHolder.itemName.setText(listItemArrayList.get(position).getItemName());
+
+            vaultItemHolder.rowLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    row_index=position;
+                    notifyDataSetChanged();
+                    listener.onItemClick(position);
+                }
+            });
+
+            if(row_index==position){
+                vaultItemHolder.rowLayout.setBackgroundColor(Color.parseColor("#d8d8d8"));
+               // holder.tv1.setTextColor(Color.parseColor("#ffffff"));
+            }
+            else
+            {
+                vaultItemHolder.rowLayout.setBackgroundColor(Color.parseColor("#ffffff"));
+               // holder.tv1.setTextColor(Color.parseColor("#000000"));
+            }
+
 
         }
 
@@ -101,12 +129,14 @@ public class OfficesAdapterMultibleViews extends RecyclerView.Adapter<RecyclerVi
     class MyViewHolderChild extends RecyclerView.ViewHolder{
 
         TextView itemName;
+        LinearLayout rowLayout;
 
         public MyViewHolderChild(View itemView) {
             super(itemView);
 
-            itemName = (TextView) itemView.findViewById(R.id.itemName);
-
+            itemName =  itemView.findViewById(R.id.itemName);
+            rowLayout = itemView.findViewById(R.id.rowLayout);
+/*
             //handel OnClickListener on Item
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -118,9 +148,13 @@ public class OfficesAdapterMultibleViews extends RecyclerView.Adapter<RecyclerVi
 
                         listener.onItemClick(position);
 
+                        notifyDataSetChanged();
+
                     }
                 }
             });
+        */
+
 
         }
 

@@ -33,8 +33,12 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     private TelephonyManager telephonyManager;
 
-    private TextView deviceSerialNumber_tv, taxiOffice_tv, taxiPlateNumber_tv;
+    private TextView deviceSerialNumber_tv, taxiOffice_tv, taxiOffice_error_tv, taxiPlateNumber_tv, taxiPlateNumber_error_tv;
     private Button register_btn;
+
+    private int taxiOfficeId = 0;
+    private String taxiOfficeName = null, taxiPlateNumber = null;
+
 
     private boolean showRationale = true, getTabletSerialNumber = false;
 
@@ -60,10 +64,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         deviceSerialNumber_tv.setOnClickListener(this);
         taxiOffice_tv = findViewById(R.id.taxiOffice_tv);
         taxiOffice_tv.setOnClickListener(this);
+        taxiOffice_error_tv = findViewById(R.id.taxiOffice_error_tv);
         taxiPlateNumber_tv = findViewById(R.id.taxiPlateNumber_tv);
         taxiPlateNumber_tv.setOnClickListener(this);
+        taxiPlateNumber_error_tv = findViewById(R.id.taxiPlateNumber_error_tv);
         register_btn = findViewById(R.id.register_btn);
         register_btn.setOnClickListener(this);
+
 
 
         //Get tablet serial number ...
@@ -76,6 +83,22 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     @Override
     protected void onRestart() {
         getTabletSerialNumber();
+
+        taxiOfficeId = app.getTaxiOfficeId();
+        taxiOfficeName = app.getTaxiOfficeName();
+        taxiPlateNumber = app.getTaxiPlateNumber();
+
+        if (taxiOfficeName != null && !taxiOfficeName.isEmpty()){
+            taxiOffice_tv.setText(taxiOfficeName);
+        }else {
+            taxiOffice_tv.setText(null);
+        }
+        if (taxiPlateNumber != null && !taxiPlateNumber.isEmpty()){
+            taxiPlateNumber_tv.setText(taxiPlateNumber);
+        }else {
+            taxiPlateNumber_tv.setText(null);
+        }
+
         super.onRestart();
     }
 
@@ -161,11 +184,20 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
 
             case R.id.taxiOffice_tv:
+                showInputError(false,0);
                  openTaxiOfficesList(Offices_STR);
                 break;
 
             case R.id.taxiPlateNumber_tv:
-                openTaxiOfficesList(Office_Plates_STR);
+                showInputError(false,0);
+                if (taxiOfficeId > 0) {
+                    openTaxiOfficesList(Office_Plates_STR);
+                }else {
+                    showInputError(true,1);
+                    return;
+                }
+
+
                 break;
 
             case R.id.register_btn:
@@ -243,12 +275,37 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
 
+            app.setNewLogin(true);
             startActivity(new Intent(this,LoginScreen.class));
             finish();
 
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+
+    private void showInputError(boolean show,int requireField){
+
+        if (show){
+            switch (requireField){
+                case 1:
+                    taxiOffice_error_tv.setVisibility(View.VISIBLE);
+                    taxiPlateNumber_error_tv.setVisibility(View.INVISIBLE);
+                    break;
+                case 2:
+                    taxiOffice_error_tv.setVisibility(View.INVISIBLE);
+                    taxiPlateNumber_error_tv.setVisibility(View.VISIBLE);
+                    break;
+            }
+        }else {
+            taxiOffice_error_tv.setVisibility(View.INVISIBLE);
+            taxiPlateNumber_error_tv.setVisibility(View.INVISIBLE);
+        }
+
+
+
+
     }
 
 }

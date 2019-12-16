@@ -13,6 +13,9 @@ public class App extends Application {
     private String technicalSupportUserName, technicalSupportPassword;
     private boolean newLogin = false;
 
+    private int taxiOfficeId = 0;
+    private String taxiPlateNumber = null, taxiOfficeName = null;
+
 
 
     public static HttpProxyCacheServer getProxy(Context context) {
@@ -73,6 +76,20 @@ public class App extends Application {
         return newLogin;
     }
 
+    public int getTaxiOfficeId() {
+        return taxiOfficeId;
+    }
+
+    public String getTaxiOfficeName() {
+        return taxiOfficeName;
+    }
+
+    public String getTaxiPlateNumber() {
+        return taxiPlateNumber;
+    }
+
+
+
     //Setter...
     public void setTechnicalSupportUserName(String technicalSupportUserName) {
         this.technicalSupportUserName = technicalSupportUserName;
@@ -84,5 +101,17 @@ public class App extends Application {
 
     public void setNewLogin(boolean newLogin) {
         this.newLogin = newLogin;
+    }
+
+    public void setTaxiOfficeId(int taxiOfficeId) {
+        this.taxiOfficeId = taxiOfficeId;
+    }
+
+    public void setTaxiOfficeName(String taxiOfficeName) {
+        this.taxiOfficeName = taxiOfficeName;
+    }
+
+    public void setTaxiPlateNumber(String taxiPlateNumber) {
+        this.taxiPlateNumber = taxiPlateNumber;
     }
 }

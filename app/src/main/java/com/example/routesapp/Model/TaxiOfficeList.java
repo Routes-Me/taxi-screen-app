@@ -7,46 +7,45 @@ import java.util.List;
 
 public class TaxiOfficeList {
 
-    @SerializedName("offices")
+    @SerializedName("data")
     @Expose
-    private List<Office> offices;
+    private List<Office> officesData;
 
 
-    @SerializedName("recentOffices")
-    @Expose
-    private List<Office> recentOffices;
+    @SerializedName("included")
+    public IncludedOffices officesIncluded;
+
 
 
     //Constructors...
 
-
     public TaxiOfficeList() {
     }
 
-    public TaxiOfficeList(List<Office> offices, List<Office> recentOffices) {
-        this.offices = offices;
-        this.recentOffices = recentOffices;
+    public TaxiOfficeList(List<Office> officesData) {
+        this.officesData = officesData;
     }
 
 
 
     //Getter...
-    public List<Office> getOffices() {
-        return offices;
+
+    public List<Office> getOfficesData() {
+        return officesData;
     }
 
-    public List<Office> getRecentOffices() {
-        return recentOffices;
+    public IncludedOffices getOfficesIncluded() {
+        return officesIncluded;
     }
 
 
     //Setter...
 
-    public void setOffices(List<Office> offices) {
-        this.offices = offices;
+    public void setOfficesData(List<Office> officesData) {
+        this.officesData = officesData;
     }
 
-    public void setRecentOffices(List<Office> recentOffices) {
-        this.recentOffices = recentOffices;
+    public void setOfficesIncluded(IncludedOffices officesIncluded) {
+        this.officesIncluded = officesIncluded;
     }
 }

@@ -197,6 +197,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         app.setNewLogin(false);
         app.setTechnicalSupportUserName(null);
         app.setTechnicalSupportPassword(null);
+        app.setTaxiOfficeId(0);
+        app.setTaxiOfficeName(null);
+        app.setTaxiPlateNumber(null);
 
 
 
