@@ -7,6 +7,8 @@ import com.example.routesapp.Model.CurrenciesModel;
 import com.example.routesapp.Model.ItemsModel;
 import com.example.routesapp.Model.OfficePlatesList;
 import com.example.routesapp.Model.TabletChannelModel;
+import com.example.routesapp.Model.TabletCredentials;
+import com.example.routesapp.Model.TabletInfo;
 import com.example.routesapp.Model.TabletPasswordModel;
 import com.example.routesapp.Model.TaxiOfficeList;
 import com.example.routesapp.Model.Token;
@@ -52,6 +54,11 @@ public interface RoutesApi {
     @GET("Tablets")
     Call<OfficePlatesList> getOfficePlatesList(@Header("Authorization") String token, @Query("taxiOfficeId") int taxiOfficeId, @Query("include") String include);
 
+
+    //Tablet Register
+    @POST("Tablets")
+    @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
+    Call<TabletInfo> tabletRegister(@Header("Authorization") String token, @Body TabletCredentials tabletCredentials);
 
 
 

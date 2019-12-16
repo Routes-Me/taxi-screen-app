@@ -1073,7 +1073,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             tabletChannelsViewModel = ViewModelProviders.of(this).get(TabletChannelsViewModel.class);
 
-          //  tabletChannelsViewModel.getTabletChannel(tabletSerialNo, MainActivity.this).observe(this, new Observer<List<TabletChannelModel>>() {
+          //  tabletChannelsViewModel.getTabletInfo(tabletSerialNo, MainActivity.this).observe(this, new Observer<List<TabletChannelModel>>() {
             tabletChannelsViewModel.getTabletChannel(tabletSerialNo, MainActivity.this, savedToken).observe(this, new Observer<List<TabletChannelModel>>() {
                 @Override
                 public void onChanged(@Nullable List<TabletChannelModel> channelModelList) {

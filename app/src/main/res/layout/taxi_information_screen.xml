@@ -92,7 +92,7 @@ android:background="@color/white"    >
                 android:layout_gravity="center"
                 android:visibility="invisible"/>
 
-            
+
 
                 <TextView
                     android:id="@+id/taxiPlateNumber_tv"

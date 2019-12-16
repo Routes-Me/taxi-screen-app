@@ -4,10 +4,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.lifecycle.LifecycleOwner;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -17,10 +24,13 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.routesapp.Class.App;
+import com.example.routesapp.Model.TabletCredentials;
+import com.example.routesapp.Model.TabletInfo;
+import com.example.routesapp.Model.TabletInfoViewModel;
 import com.example.routesapp.R;
-import com.example.routesapp.View.Activity.MainActivity;
 import com.example.routesapp.View.Login.TaxiInformationListScreen;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
@@ -28,6 +38,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private static final String   List_Type_STR = "List_Type_Key", Offices_STR = "Offices", Office_Plates_STR = "Office_Plates";
 
     private App app;
+
+    //sharedPreference Storage
+
+    private String savedToken = null;
+
+
+    private TabletInfoViewModel tabletInfoViewModel;
 
     private Toolbar myToolbar;
 
@@ -37,10 +54,12 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private Button register_btn;
 
     private int taxiOfficeId = 0;
-    private String taxiOfficeName = null, taxiPlateNumber = null;
+    private String tabletSerialNumber = null, taxiOfficeName = null, taxiPlateNumber = null;
 
 
     private boolean showRationale = true, getTabletSerialNumber = false;
+
+    private ProgressDialog dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,6 +89,11 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         taxiPlateNumber_error_tv = findViewById(R.id.taxiPlateNumber_error_tv);
         register_btn = findViewById(R.id.register_btn);
         register_btn.setOnClickListener(this);
+
+
+        dialog = new ProgressDialog(this);
+        dialog.setMessage("Please Wait...");
+        dialog.setCancelable(false);
 
 
 
@@ -136,6 +160,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 return;
             }else {
                 deviceSerialNumber_tv.setText(telephonyManager.getDeviceId());
+                tabletSerialNumber = telephonyManager.getDeviceId();
                 showTabletSerialNumberError(false);
             }
         }catch (Exception e){
@@ -201,7 +226,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
 
             case R.id.register_btn:
-               //  openHomeScreen();
+                 openHomeScreen();
                 break;
 
         }
@@ -216,8 +241,40 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
     private void openHomeScreen() {
-        startActivity(new Intent(this, MainActivity.class));
-        finish();
+
+        if (taxiOfficeId <= 0) {
+            showInputError(true, 1);
+            return;
+        }
+
+        if (taxiPlateNumber == null || taxiPlateNumber.isEmpty()){
+            showInputError(true, 2);
+            return;
+        }
+
+        if (tabletSerialNumber == null || tabletSerialNumber.isEmpty()){
+            showTabletSerialNumberError(true);
+
+        }
+
+        dialog.show();
+
+        TabletCredentials tabletCredentials = new TabletCredentials(taxiOfficeId, taxiPlateNumber, tabletSerialNumber);
+
+        savedToken = "Bearer " + getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabToken", null);
+
+        tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
+        tabletInfoViewModel.getTabletInfo(this,savedToken,tabletCredentials, dialog).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
+            @Override
+            public void onChanged(TabletInfo tabletInfo) {
+                Toast.makeText(TaxiInformationScreen.this, "Password:  " + tabletInfo.getTabletPassword() + "  ,Channel ID: " + tabletInfo.getTabletChannelId() , Toast.LENGTH_SHORT).show();
+                dialog.dismiss();
+            }
+        });
+
+
+        //startActivity(new Intent(this, MainActivity.class));
+       // finish();
     }
 
     private void clickOnGetDeviceSerialNumber() {
