@@ -1,7 +1,6 @@
 package com.example.routesapp.Model;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
@@ -9,11 +8,9 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Interface.RoutesApi;
-import com.example.routesapp.View.Login.Activity.LoginScreen;
+import com.example.routesapp.View.Login.LoginScreen;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;

@@ -76,12 +76,12 @@ android:layout_height="match_parent"
             android:padding="10dp">
 
             <EditText
-                android:id="@+id/email_et"
+                android:id="@+id/userName_et"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="3dp"
-                android:hint="Email"
+                android:hint="User Name"
                 style="@style/AppTheme.CustomEditText"
                 android:imeOptions="actionNext"/>
 
@@ -157,7 +157,7 @@ android:layout_height="match_parent"
 
 
 
-            <TextView
+            <Button
                 android:id="@+id/btn_next"
                 android:layout_width="119dp"
                 android:layout_height="38dp"

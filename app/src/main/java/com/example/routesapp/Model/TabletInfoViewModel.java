@@ -3,6 +3,7 @@ package com.example.routesapp.Model;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.widget.Button;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -10,8 +11,9 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
+import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Interface.RoutesApi;
-import com.example.routesapp.View.Login.Activity.LoginScreen;
+import com.example.routesapp.View.Login.LoginScreen;
 
 import java.util.concurrent.TimeUnit;
 
@@ -24,13 +26,21 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TabletInfoViewModel extends ViewModel {
 
+
+
+
     //this is the data that we will fetch asynchronously
     private MutableLiveData<TabletInfo> tabletInfo;
+
+    private Operations operations;
     private ProgressDialog dialog;
+    private Button register_btn;
 
     //we will call this method to get the data
-    public LiveData<TabletInfo> getTabletInfo(Activity activity, String token, TabletCredentials tabletCredentials, ProgressDialog dialog) {
+    public LiveData<TabletInfo> getTabletInfo(Activity activity, String token, TabletCredentials tabletCredentials, ProgressDialog dialog, Button register_btn) {
+        operations = new Operations(activity);
         this.dialog = dialog;
+        this.register_btn = register_btn;
         //if the list is null
         if (tabletInfo == null) {
             tabletInfo = new MutableLiveData<TabletInfo>();
@@ -39,6 +49,10 @@ public class TabletInfoViewModel extends ViewModel {
         }
 
         //finally we will return the list
+
+      //  operations.enableNextButton(register_btn,true);
+      //  this.dialog.dismiss();
+
         return tabletInfo;
     }
 
@@ -65,6 +79,7 @@ public class TabletInfoViewModel extends ViewModel {
             public void onResponse(Call<TabletInfo> call, Response<TabletInfo> response) {
                 if (response.isSuccessful()){
                     dialog.dismiss();
+                   // operations.enableNextButton(register_btn,true);
                     if (response.body() != null) {
 
                         try {
@@ -78,6 +93,7 @@ public class TabletInfoViewModel extends ViewModel {
                     }
 
                 }else {
+                    operations.enableNextButton(register_btn,true);
                     dialog.dismiss();
 
                     Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();

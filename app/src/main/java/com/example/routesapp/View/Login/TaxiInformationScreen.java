@@ -1,4 +1,4 @@
-package com.example.routesapp.View.Login.Activity;
+package com.example.routesapp.View.Login;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -27,19 +27,24 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.routesapp.Class.App;
+import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Model.TabletCredentials;
 import com.example.routesapp.Model.TabletInfo;
 import com.example.routesapp.Model.TabletInfoViewModel;
 import com.example.routesapp.R;
-import com.example.routesapp.View.Login.TaxiInformationListScreen;
+import com.example.routesapp.View.Activity.MainActivity;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
+
+    private Operations operations;
 
     private static final String   List_Type_STR = "List_Type_Key", Offices_STR = "Offices", Office_Plates_STR = "Office_Plates";
 
     private App app;
 
     //sharedPreference Storage
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
 
     private String savedToken = null;
 
@@ -67,13 +72,17 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         setContentView(R.layout.taxi_information_screen);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
+        operations = new Operations(this);
 
         app = (App) getApplicationContext();
         //app.setTechnicalSupportName("Abdullah Soubeih");
 
         ToolbarSetUp();
 
+        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
 
+        savedToken = "Bearer " + sharedPreferences.getString("tabToken", null);
 
      //   startActivity(new Intent(this, MainActivity.class));
        // finish();
@@ -106,6 +115,9 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onRestart() {
+
+        operations.enableNextButton(register_btn,true);
+
         getTabletSerialNumber();
 
         taxiOfficeId = app.getTaxiOfficeId();
@@ -254,27 +266,43 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         if (tabletSerialNumber == null || tabletSerialNumber.isEmpty()){
             showTabletSerialNumberError(true);
-
+            return;
         }
 
+        operations.enableNextButton(register_btn,false);
         dialog.show();
 
         TabletCredentials tabletCredentials = new TabletCredentials(taxiOfficeId, taxiPlateNumber, tabletSerialNumber);
 
-        savedToken = "Bearer " + getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabToken", null);
+
 
         tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
-        tabletInfoViewModel.getTabletInfo(this,savedToken,tabletCredentials, dialog).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
+        tabletInfoViewModel.getTabletInfo(this,savedToken,tabletCredentials, dialog,register_btn).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
             @Override
             public void onChanged(TabletInfo tabletInfo) {
                 Toast.makeText(TaxiInformationScreen.this, "Password:  " + tabletInfo.getTabletPassword() + "  ,Channel ID: " + tabletInfo.getTabletChannelId() , Toast.LENGTH_SHORT).show();
-                dialog.dismiss();
+
+
+
+
+                editor.putString("tabletPassword", tabletInfo.getTabletPassword());
+                editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
+                editor.apply();
+
+                startActivity(new Intent(TaxiInformationScreen.this, MainActivity.class));
+                finish();
+
+
+
+               // operations.enableNextButton(register_btn,true);
+             //   dialog.dismiss();
             }
         });
 
 
-        //startActivity(new Intent(this, MainActivity.class));
-       // finish();
+
+
+
     }
 
     private void clickOnGetDeviceSerialNumber() {
@@ -355,14 +383,20 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                     taxiPlateNumber_error_tv.setVisibility(View.VISIBLE);
                     break;
             }
+           // enableNextButton(false);
         }else {
             taxiOffice_error_tv.setVisibility(View.INVISIBLE);
             taxiPlateNumber_error_tv.setVisibility(View.INVISIBLE);
+          //  enableNextButton(true);
         }
 
 
 
 
     }
+
+
+
+
 
 }

@@ -15,6 +15,7 @@ import android.text.style.ImageSpan;
 import android.util.DisplayMetrics;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.TextView;
@@ -922,7 +923,17 @@ public class Operations {
 
 
 
+    public void enableNextButton(Button button, boolean enable){
 
+        if (enable){
+            button.setBackgroundResource(R.drawable.next_button_border_enable);
+            button.setEnabled(true);
+        }else {
+            button.setBackgroundResource(R.drawable.next_button_border_disable);
+            button.setEnabled(false);
+        }
+
+    }
 
 
 

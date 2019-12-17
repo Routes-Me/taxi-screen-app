@@ -1,10 +1,11 @@
-package com.example.routesapp.View.Login.Activity;
+package com.example.routesapp.View.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -13,9 +14,11 @@ import android.widget.ImageView;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.R;
 
-public class LearnMoreScreen extends AppCompatActivity implements View.OnClickListener {
+public class LearnMoreScreen extends AppCompatActivity {
 
     private App app;
+
+    private Toolbar myToolbar;
 
     private ImageView btn_back;
     private WebView webView_routesWebsite;
@@ -33,10 +36,9 @@ public class LearnMoreScreen extends AppCompatActivity implements View.OnClickLi
 
     private void initialize() {
 
-        app = (App) getApplicationContext();
+        ToolbarSetUp();
 
-        btn_back = findViewById(R.id.btn_back);
-        btn_back.setOnClickListener(this);
+        app = (App) getApplicationContext();
 
         webView_routesWebsite = findViewById(R.id.webView_routesWebsite);
         webView_routesWebsite.setWebViewClient(new WebViewClient());
@@ -45,17 +47,48 @@ public class LearnMoreScreen extends AppCompatActivity implements View.OnClickLi
         webSettings.setJavaScriptEnabled(true);
     }
 
-    @Override
-    public void onClick(View v) {
-        switch (v.getId()){
-            case R.id.btn_back:
-                backToLoginScreen();
-                break;
-        }
-    }
+
 
     private void backToLoginScreen() {
         app.setNewLogin(true);
         startActivity(new Intent(LearnMoreScreen.this, LoginScreen.class));
     }
+
+
+    private void ToolbarSetUp() {
+        //Toolbar..
+        myToolbar = findViewById(R.id.MyToolBar);
+
+        setSupportActionBar(myToolbar);
+
+
+            getSupportActionBar().setTitle("Learn more");
+
+
+
+
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_grey);
+        }
+
+    }
+
+
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle arrow click here
+        if (item.getItemId() == android.R.id.home) {
+
+            backToLoginScreen();
+
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+
 }

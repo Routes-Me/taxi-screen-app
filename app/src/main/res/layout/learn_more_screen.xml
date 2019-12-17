@@ -4,46 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.Login.Activity.LearnMoreScreen">
+    tools:context=".View.Login.LearnMoreScreen">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:background="@color/white">
 
-
-
-        <LinearLayout
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/MyToolBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_marginTop="21dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
-            android:layout_marginBottom="31dp"
-            >
+            android:layout_marginBottom="20dp"
+            style="@style/AppTheme.CustomTextViewToolbar"
+            android:layout_marginTop="31dp"
+            />
 
-
-            <ImageView
-                android:id="@+id/btn_back"
-                android:layout_width="18.5dp"
-                android:layout_height="match_parent"
-                android:layout_marginRight="27.5dp"
-                android:src="@drawable/ic_back_grey"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textStyle="normal"
-                android:textColor="@color/grey"
-                android:gravity="center_horizontal"
-                android:text="Learn more"
-                android:textSize="18sp"
-                android:layout_gravity="center"
-                android:fontFamily="sans-serif-medium" />
-
-        </LinearLayout>
 
 
 

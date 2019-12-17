@@ -16,10 +16,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
-import android.location.Criteria;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -28,8 +25,6 @@ import android.text.format.Time;
 import android.text.method.PasswordTransformationMethod;
 import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
@@ -39,7 +34,6 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.andrognito.patternlockview.PatternLockView;
@@ -49,33 +43,20 @@ import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
-import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.Model.ItemAnalytics;
-import com.example.routesapp.Model.TabletCurrentData;
 import com.example.routesapp.Model.TabletPasswordModel;
 import com.example.routesapp.Model.TabletPasswordViewModel;
 import com.example.routesapp.R;
 import com.example.routesapp.Model.TabletChannelModel;
 import com.example.routesapp.Model.TabletChannelsViewModel;
 import com.example.routesapp.View.Fragment.RecyclerViewFragment;
-import com.example.routesapp.View.Fragment.ViewItemFragment;
-import com.example.routesapp.View.Login.Activity.LoginScreen;
+import com.example.routesapp.View.Login.LoginScreen;
 import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.hbb20.CountryCodePicker;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.TimeUnit;
-
-
-import okhttp3.OkHttpClient;
-import okhttp3.ResponseBody;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
@@ -194,9 +175,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         //Delete Technical Support Authentication Credentials ....
         app = (App) getApplicationContext();
-        app.setNewLogin(false);
+
         app.setTechnicalSupportUserName(null);
         app.setTechnicalSupportPassword(null);
+        app.setNewLogin(false);
         app.setTaxiOfficeId(0);
         app.setTaxiOfficeName(null);
         app.setTaxiPlateNumber(null);

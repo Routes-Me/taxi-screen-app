@@ -10,7 +10,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Interface.RoutesApi;
-import com.example.routesapp.View.Login.Activity.LoginScreen;
+import com.example.routesapp.View.Login.LoginScreen;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;

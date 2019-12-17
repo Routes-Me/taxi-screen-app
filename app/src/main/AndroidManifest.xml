@@ -25,17 +25,11 @@
 
 
 
-        <activity android:name=".View.Login.Activity.TaxiInformationScreen"
+        <activity android:name=".View.Login.TaxiInformationScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen">
 
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
 
         </activity>
 
@@ -44,14 +38,15 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
 
         <activity
-            android:name=".View.Login.Activity.LearnMoreScreen"
+            android:name=".View.Login.LearnMoreScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".View.Login.Activity.LoginScreen"
+            android:name=".View.Login.LoginScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" >
+
 
 
 
@@ -63,8 +58,13 @@
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
 
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
     </application>
 

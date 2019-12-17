@@ -3,12 +3,10 @@ package com.example.routesapp.Model;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.widget.Toast;
 
-import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
@@ -17,14 +15,10 @@ import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Interface.RoutesApi;
-import com.example.routesapp.R;
-import com.example.routesapp.View.Activity.MainActivity;
-import com.example.routesapp.View.Login.Activity.TaxiInformationScreen;
-import com.example.routesapp.View.Login.LoginFragments.TabletDataFragment;
+import com.example.routesapp.View.Login.TaxiInformationScreen;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;

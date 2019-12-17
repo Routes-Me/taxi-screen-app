@@ -9,7 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.example.routesapp.Interface.RoutesApi;
-import com.example.routesapp.View.Login.Activity.LoginScreen;
+import com.example.routesapp.View.Login.LoginScreen;
 
 import java.util.concurrent.TimeUnit;
 

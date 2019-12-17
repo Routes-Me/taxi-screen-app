@@ -12,7 +12,6 @@ import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
-import android.widget.Toast;
 
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Model.Office;

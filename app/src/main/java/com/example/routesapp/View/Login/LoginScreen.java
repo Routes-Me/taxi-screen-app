@@ -1,4 +1,4 @@
-package com.example.routesapp.View.Login.Activity;
+package com.example.routesapp.View.Login;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentActivity;
@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
+import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.AuthCredentialsViewModel;
@@ -31,6 +33,7 @@ import java.util.List;
 
 public class LoginScreen extends AppCompatActivity implements View.OnClickListener {
 
+    private Operations operations;
 
     private App app;
 
@@ -48,7 +51,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     private String userName = null, password = null;
     View technical_login_screen ;
     private AuthCredentialsViewModel authCredentialsViewModel;
-    private TextView btn_next;
+    private Button btn_next;
     private LinearLayout btn_learnMore;
     private EditText userName_et;
     private ShowHidePasswordEditText password_et;
@@ -71,6 +74,9 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
 
     private void initialize() {
+
+        operations = new Operations(this);
+
         app = (App) getApplicationContext();
 
 
@@ -92,11 +98,11 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
         btn_next = technical_login_screen.findViewById(R.id.btn_next);
         btn_next.setOnClickListener(this);
-        enableNextButton(true);
+        operations.enableNextButton(btn_next,true);
         btn_learnMore = technical_login_screen.findViewById(R.id.btn_learnMore);
         btn_learnMore.setOnClickListener(this);
 
-        userName_et = technical_login_screen.findViewById(R.id.email_et);
+        userName_et = technical_login_screen.findViewById(R.id.userName_et);
         userName_error_tv = technical_login_screen.findViewById(R.id.userName_error_tv);
         password_et = technical_login_screen.findViewById(R.id.password_et);
         password_error_tv = technical_login_screen.findViewById(R.id.password_error_tv);
@@ -114,11 +120,12 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                 showLoginView();
                 break;
             case R.id.btn_next:
-                enableNextButton(false);
-
+                operations.enableNextButton(btn_next,false);
+                saveAuthCredentials();
                 openTaxiInformationScreen();
                 break;
             case R.id.btn_learnMore:
+                saveAuthCredentials();
                 openLearnMoreScreen();
                 break;
         }
@@ -185,18 +192,6 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
     }
 
-    private void enableNextButton(boolean enable){
-
-        if (enable){
-            btn_next.setBackgroundResource(R.drawable.next_button_border_enable);
-            btn_next.setEnabled(true);
-        }else {
-            btn_next.setBackgroundResource(R.drawable.next_button_border_disable);
-            btn_next.setEnabled(false);
-        }
-
-    }
-
     private void editTextListener() {
         userName_et.addTextChangedListener(new TextWatcher() {
             @Override
@@ -204,7 +199,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 showErrorMessage(1,"",false);
-                enableNextButton(true);
+                operations.enableNextButton(btn_next,true);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -216,7 +211,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
                 showErrorMessage(2,"",false);
-                enableNextButton(true);
+                operations.enableNextButton(btn_next,true);
             }
             @Override
             public void afterTextChanged(Editable s) { }
@@ -279,4 +274,21 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             loginLayout.setVisibility(View.GONE);
         }
     }
+
+
+    private void saveAuthCredentials(){
+
+        String userName = userName_et.getText().toString().trim();
+        String password = password_et.getText().toString().trim();
+       // if (!userName.equals(null) && !userName.isEmpty()){
+            app.setTechnicalSupportUserName(userName);
+      //  }
+     //   if (!password.equals(null) && !password.isEmpty()){
+            app.setTechnicalSupportPassword(password);
+      //  }
+        app.setNewLogin(true);
+
+
+    }
+
 }
