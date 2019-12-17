@@ -66,6 +66,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     private ProgressDialog dialog;
 
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
