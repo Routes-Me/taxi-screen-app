@@ -289,7 +289,7 @@ public class ViewItemFragment extends Fragment implements View.OnClickListener {
                   // showAddToProfileDialog();
 
 
-                ((MainActivity)getActivity()).VisibleLayout("AddItemLayout");
+              //  ((MainActivity)getActivity()).VisibleLayout("AddItemLayout");
 
                   // onPause();
                 break;

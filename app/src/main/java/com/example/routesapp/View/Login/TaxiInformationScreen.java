@@ -66,7 +66,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     private ProgressDialog dialog;
 
-    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +119,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         operations.enableNextButton(register_btn,true);
 
         getTabletSerialNumber();
+
+
 
         taxiOfficeId = app.getTaxiOfficeId();
         taxiOfficeName = app.getTaxiOfficeName();
@@ -270,6 +271,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             return;
         }
 
+
         operations.enableNextButton(register_btn,false);
         dialog.show();
 
@@ -288,6 +290,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
                 editor.putString("tabletPassword", tabletInfo.getTabletPassword());
                 editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
+                editor.putString("tabletSerialNo", tabletSerialNumber);
                 editor.apply();
 
                 startActivity(new Intent(TaxiInformationScreen.this, MainActivity.class));
