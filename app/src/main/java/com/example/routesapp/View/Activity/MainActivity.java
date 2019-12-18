@@ -1,42 +1,21 @@
 package com.example.routesapp.View.Activity;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.FragmentActivity;
-import androidx.lifecycle.LifecycleOwner;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 
-import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
 import android.text.format.Time;
-import android.text.method.PasswordTransformationMethod;
-import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.View;
-import android.view.ViewTreeObserver;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.andrognito.patternlockview.PatternLockView;
@@ -46,34 +25,31 @@ import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
-import com.example.routesapp.Model.Advertisement;
-import com.example.routesapp.Model.BannerModel;
-import com.example.routesapp.Model.BannersViewModel;
 import com.example.routesapp.Model.ItemAnalytics;
-import com.example.routesapp.Model.TabletPasswordModel;
-import com.example.routesapp.Model.TabletPasswordViewModel;
 import com.example.routesapp.R;
-import com.example.routesapp.Model.TabletChannelModel;
-import com.example.routesapp.Model.TabletChannelsViewModel;
 import com.example.routesapp.View.Fragment.RecyclerViewFragment;
 import com.example.routesapp.View.Login.LoginScreen;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.firebase.analytics.FirebaseAnalytics;
-import com.hbb20.CountryCodePicker;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, View.OnLongClickListener {
 
     private App app;
 
+    private Operations operations;
 
     private CounterOperations counterOperations;
 
+    //sharedPreference Storage
+    private SharedPreferences sharedPreferences;
+   // private SharedPreferences.Editor editor;
+    private String  savedTabletToken = null,savedTabletSerialNo = "" , savedTabletPassword = "";
+    private int savedTabletChannelId = 0;
 
+    //Using Firebase Analytics ...
+    private FirebaseAnalytics firebaseAnalytics;
 
     //To disable launcher app...
     private LinearLayout userView, adminPatternView;
@@ -82,40 +58,18 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView app_logo;
 
 
-    //sharedPreference Storage
-    private SharedPreferences sharedPreferences;
-    private SharedPreferences.Editor editor;
-    private String savedLanguage = null, savedToken = null;
-    private String tabletSerialNo = "" , tabletPassword = "";
 
-
-
-    private Operations operations;
-
-    //For ADS Videos
+    //Define Advertisement Items
     private VideoView ADS_VideoView;
-
-    //For ADS Images
     private ImageView ADS_ImageView;
+    private TextView scrollingCurrencies;
 
 
-    //for scrolling textView [Money & News]......
-    private TextView scrollingtextMoney;
-
-
-    ////////////////////for Time Clock....
+    //for Time Counter....
     private Time mTime;
     private Handler handlerTime;
     private Runnable runnableTime;
-
     private TextView timeClock, DateClock, DayClock;
-
-    ///////////////////////////////////////////
-
-
-    //Using Firebase Analytics ...
-    private FirebaseAnalytics firebaseAnalytics;
-
 
 
 
@@ -128,7 +82,68 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
 
+        initialize();
+
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    private void initialize() {
+
+        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+
         //Delete Technical Support Authentication Credentials ....
+        deleteAuthenticationCredentialsFromAppClass();
+
+        counterOperations = new CounterOperations(MainActivity.this);
+
+        //Using Firebase Analytics ...
+        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+
+        //Initialize Advertisement Items
+        adminPatternView = findViewById(R.id.adminPatternView);
+        userView = findViewById(R.id.userView);
+        showTechnicalExsitingPattern(false);
+
+        pattern_lock_view_admin = findViewById(R.id.pattern_lock_view_admin);
+        app_logo = findViewById(R.id.app_logo);
+        app_logo.setOnLongClickListener(this);
+
+        ADS_VideoView = findViewById(R.id.ADS_VideoView);
+        ADS_VideoView.setOnClickListener(this);
+
+        ADS_ImageView = findViewById(R.id.ADS_ImageView);
+        ADS_ImageView.setOnClickListener(this);
+
+        scrollingCurrencies = (TextView) findViewById(R.id.scrollingtextMoney);
+        scrollingCurrencies.setSelected(true);
+
+
+
+        //For testing only .. we add expired token manually ...
+       // editor = sharedPreferences.edit();
+       // editor.putString("tabToken", "dy_W6xCrb0Nmi2GrIbp0AI_QCgDjxvkf8ec-RKAZ8TNCLQw9gU2xiLPvP2gZurwIl4NK2y66j84h9nYbN8K6mQyC2pz5nEQrujM0KAR92PteinZcsAOgXI9RM20ayE9EYLggKIMuDTsdwcgQvgfcR4ur_JBTSBMacFmtKaie0cT3HtsP_1YgRDbQ34S_5MiWm2v9-cyigfXCblcrUaADiDBM0vUSbnieaGMc8K7BbyET5jApCaMhsQQDclR0FnI_AxGFbNutaP2sEf297bo5AQPcx1IDEWm2YV-no32cXZ88P-abOdAf3E1pwMs9LmIyyXRGurlC1_eM48esTsJNr3MFry7bJunnOG_kHK2taZ3NUkIhSZjVItHb9XAg-Ha0cRRsVKEk_wQcSmpgL493Motj6rIw5On0m21gbo9MlsxEY85DrU-Bn9nnuTKyUhndclEB9ZvNIuzODY1r3o0fF4out9iFn_vxkiKN8gu06rmO_0f_bkmjUrfGU0eWtvyF");
+       // editor.apply();
+
+
+        //Check authorization of tablet before fetch advertisement data from server to display it ..
+        if (isAuthorized()){
+            setUpTimeCounter();
+            IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
+
+            operations = new Operations(this, ADS_VideoView, ADS_ImageView, scrollingCurrencies);
+            operations.fetchAdvertisementData();
+
+            mainFragmentToShow();
+        }else {
+            startActivity(new Intent(MainActivity.this, LoginScreen.class));
+            finish();
+        }
+
+
+    }
+
+
+    private void deleteAuthenticationCredentialsFromAppClass() {
         app = (App) getApplicationContext();
 
         app.setTechnicalSupportUserName(null);
@@ -137,93 +152,78 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         app.setTaxiOfficeId(0);
         app.setTaxiOfficeName(null);
         app.setTaxiPlateNumber(null);
+    }
 
-        //Using Firebase Analytics ...
-        firebaseAnalytics = FirebaseAnalytics.getInstance(this);
+    private boolean isAuthorized() {
+        //Initialize sharedPreference Storage , and fetch data that saved into it ...
+        fetchSharedPreferenceData();
 
-        counterOperations = new CounterOperations(MainActivity.this);
+        if (savedTabletToken != null && savedTabletSerialNo != null && savedTabletPassword != null && savedTabletChannelId > 0){
+            // Bearer_TabletToken = "Bearer " +savedTabletToken;
 
-        adminPatternView = findViewById(R.id.adminPatternView);
-        userView = findViewById(R.id.userView);
-        Admin_User_layoutVisibility("userView");
-
-        pattern_lock_view_admin = findViewById(R.id.pattern_lock_view_admin);
-        app_logo = findViewById(R.id.app_logo);
-        app_logo.setOnLongClickListener(this);
-
-
-        ADS_VideoView = findViewById(R.id.ADS_VideoView);
-        ADS_VideoView.setOnClickListener(this);
-
-
-
-        ADS_ImageView = findViewById(R.id.ADS_ImageView);
-        ADS_ImageView.setOnClickListener(this);
-
-
-
-        scrollingtextMoney = (TextView) findViewById(R.id.scrollingtextMoney);
-        scrollingtextMoney.setSelected(true);
-
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        savedLanguage = sharedPreferences.getString("Language", "English");
-
-        //For testing only we add token manually ...
-       //  editor.putString("tabToken", "dy_W6xCrb0Nmi2GrIbp0AI_QCgDjxvkf8ec-RKAZ8TNCLQw9gU2xiLPvP2gZurwIl4NK2y66j84h9nYbN8K6mQyC2pz5nEQrujM0KAR92PteinZcsAOgXI9RM20ayE9EYLggKIMuDTsdwcgQvgfcR4ur_JBTSBMacFmtKaie0cT3HtsP_1YgRDbQ34S_5MiWm2v9-cyigfXCblcrUaADiDBM0vUSbnieaGMc8K7BbyET5jApCaMhsQQDclR0FnI_AxGFbNutaP2sEf297bo5AQPcx1IDEWm2YV-no32cXZ88P-abOdAf3E1pwMs9LmIyyXRGurlC1_eM48esTsJNr3MFry7bJunnOG_kHK2taZ3NUkIhSZjVItHb9XAg-Ha0cRRsVKEk_wQcSmpgL493Motj6rIw5On0m21gbo9MlsxEY85DrU-Bn9nnuTKyUhndclEB9ZvNIuzODY1r3o0fF4out9iFn_vxkiKN8gu06rmO_0f_bkmjUrfGU0eWtvyF");
-        // editor.apply();
-
-
-        if (sharedPreferences.getString("tabToken", null) != null){
-            savedToken = "Bearer " +sharedPreferences.getString("tabToken", null);
-
-
-
-            initialize();
-
-            mainFragmentToShow();
+           return true;
         }else {
-            startActivity(new Intent(MainActivity.this, LoginScreen.class));
-            finish();
+           return false;
         }
+    }
+
+    private void fetchSharedPreferenceData() {
+
+        savedTabletToken = sharedPreferences.getString("tabToken", null);
+        savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
+        savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
+        savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
+    }
+
+    private void setUpTimeCounter() {
+
+        timeClock = findViewById(R.id.timeClock);
+        DateClock = findViewById(R.id.DateClock);
+        DayClock = findViewById(R.id.DayClock);
+
+        mTime = new Time();
+
+        runnableTime = new Runnable() {
+            @Override
+            public void run() {
+
+                mTime.setToNow();
+
+                counterOperations.getCurrentTime(mTime, timeClock, DateClock, DayClock);
+
+
+                handlerTime.postDelayed(runnableTime, 1000);
+
+            }
+        };
+
+        handlerTime = new Handler();
+        handlerTime.postDelayed(runnableTime, 1000);
 
     }
 
-    @SuppressLint("SimpleDateFormat")
-    private void initialize() {
 
-        operations = new Operations(this, ADS_VideoView, ADS_ImageView, scrollingtextMoney);
+    private void IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics() {
 
-
-
-        //For Tablet Serial Number...
-        tabletSerialNumber();
-
-
-        ////////////////////for Time Clock....
-        setUpClockTime();
-
+        Crashlytics.setUserIdentifier(savedTabletSerialNo);
+        firebaseAnalytics.setUserId(savedTabletSerialNo);
 
     }
 
-    public void Admin_User_layoutVisibility(String layoutName) {
+    public void showTechnicalExsitingPattern(boolean show) {
 
-        switch (layoutName) {
-            case "userView":
-                userView.setVisibility(View.VISIBLE);
-                adminPatternView.setVisibility(View.GONE);
-                break;
-
-            case "adminPatternView":
-                userView.setVisibility(View.GONE);
-                adminPatternView.setVisibility(View.VISIBLE);
-                break;
+        if (show){
+            userView.setVisibility(View.GONE);
+            adminPatternView.setVisibility(View.VISIBLE);
+        }else {
+            userView.setVisibility(View.VISIBLE);
+            adminPatternView.setVisibility(View.GONE);
         }
 
         Operations.hideKeyboard(this);
     }
 
-    //////////////////////////////////////////////////////////////////////////
+
     @Override
     public void onClick(View v) {
 
@@ -283,91 +283,40 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     }
 
-
-
-
-
-
-    private void setUpClockTime() {
-
-        timeClock = findViewById(R.id.timeClock);
-        DateClock = findViewById(R.id.DateClock);
-        DayClock = findViewById(R.id.DayClock);
-
-        mTime = new Time();
-
-        runnableTime = new Runnable() {
-            @Override
-            public void run() {
-
-                mTime.setToNow();
-
-                counterOperations.getCurrentTime(mTime, timeClock, DateClock, DayClock);
-
-
-                handlerTime.postDelayed(runnableTime, 1000);
-
-            }
-        };
-
-        handlerTime = new Handler();
-        handlerTime.postDelayed(runnableTime, 1000);
-
-    }
-
-
-    private void tabletSerialNumber() {
-        tabletSerialNo = sharedPreferences.getString("tabletSerialNo", "").trim();
-
-        Crashlytics.setUserIdentifier(tabletSerialNo);
-        firebaseAnalytics.setUserId(tabletSerialNo);
-
-
-        if (!tabletSerialNo.equals("") && !tabletSerialNo.isEmpty() && !tabletSerialNo.equals(null)) {
-
-           // getTabletData_And_Channels();
-            operations.get_dataId_of_selectedLang();
-
-        } else {
+    @Override
+    public boolean onLongClick(View v) {
+        switch (v.getId()) {
+            case R.id.app_logo:
+                showTechnicalExsitingPattern(true);
+                readPatternFromTechnicalSupport();
+                break;
         }
 
+        return true;
     }
 
 
-
-    //Fragment To Show [ RecyclerViewFragment    or    ViewItemFragment ]
-    private void mainFragmentToShow() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecyclerViewFragment()).commit();
-        //  operations.showHideFragment(getSupportFragmentManager(), new RecyclerViewFragment(), new ViewItemFragment(), true, true);
-    }
-
-
-    public void resetPreferredLauncherAndOpenChooser() {
-
+    public void readPatternFromTechnicalSupport() {
 
         pattern_lock_view_admin.addPatternLockListener(new PatternLockViewListener() {
             @Override
             public void onStarted() {
-
-                //   Toast.makeText(MainActivity.this, "onStarted", Toast.LENGTH_SHORT).show();
-
             }
 
             @Override
             public void onProgress(List<PatternLockView.Dot> progressPattern) {
-                // Toast.makeText(MainActivity.this, "onProgress", Toast.LENGTH_SHORT).show();
             }
 
             @Override
             public void onComplete(List<PatternLockView.Dot> pattern) {
                 final_pattern = PatternLockUtils.patternToString(pattern_lock_view_admin, pattern);
-                tabletPassword = sharedPreferences.getString("tabletPassword", "0124678");
+                savedTabletPassword = sharedPreferences.getString("tabletPassword", "0124678");
 
-                if (final_pattern.equals(tabletPassword)) {
+                if (final_pattern.equals(savedTabletPassword)) {
                     openSettings();
                 } else {
                     pattern_lock_view_admin.clearPattern();
-                    Admin_User_layoutVisibility("userView");
+                    showTechnicalExsitingPattern(false);
                 }
 
             }
@@ -377,7 +326,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
             }
         });
-
 
     }
 
@@ -398,52 +346,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-
-
-    @Override
-    public boolean onLongClick(View v) {
-        switch (v.getId()) {
-            case R.id.app_logo:
-                Admin_User_layoutVisibility("adminPatternView");
-
-                // Operations.hideKeyboard(MainActivity.this);
-
-                resetPreferredLauncherAndOpenChooser();
-                break;
-        }
-
-        return true;
+    //Fragment To Show [ RecyclerViewFragment    or    ViewItemFragment ]
+    private void mainFragmentToShow() {
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecyclerViewFragment()).commit();
+        //  operations.showHideFragment(getSupportFragmentManager(), new RecyclerViewFragment(), new ViewItemFragment(), true, true);
     }
 
-
-
-//////////////////////////////////////////////////////
-
-
-
-    private void getTabletPassword(){
-
-        try {
-
-
-            ViewModelProviders.of(this).get(TabletPasswordViewModel.class).getTabPassword(tabletSerialNo, MainActivity.this).observe(this, new Observer<List<TabletPasswordModel>>() {
-                @Override
-                public void onChanged(@Nullable List<TabletPasswordModel> tabletPasswordModel) {
-
-                    //Get Tablet Password...
-                    if (tabletPasswordModel != null) {
-                        tabletPassword = tabletPasswordModel.get(0).getTabletData_Password();
-                        editor.putString("tabletPassword", tabletPassword);
-                        editor.apply();
-                        //  Toast.makeText(MainActivity.this, "Password: " + tabletPassword, Toast.LENGTH_SHORT).show();
-                    }
-
-                }
-            });
-
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
-    }
 }

@@ -283,7 +283,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         tabletInfoViewModel.getTabletInfo(this,savedToken,tabletCredentials, dialog,register_btn).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
             @Override
             public void onChanged(TabletInfo tabletInfo) {
-                Toast.makeText(TaxiInformationScreen.this, "Password:  " + tabletInfo.getTabletPassword() + "  ,Channel ID: " + tabletInfo.getTabletChannelId() , Toast.LENGTH_SHORT).show();
+               // Toast.makeText(TaxiInformationScreen.this, "Password:  " + tabletInfo.getTabletPassword() + "  ,Channel ID: " + tabletInfo.getTabletChannelId() , Toast.LENGTH_SHORT).show();
 
 
 
