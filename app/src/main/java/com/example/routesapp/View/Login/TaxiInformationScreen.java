@@ -24,7 +24,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.Operations;
@@ -32,7 +31,7 @@ import com.example.routesapp.Model.TabletCredentials;
 import com.example.routesapp.Model.TabletInfo;
 import com.example.routesapp.Model.TabletInfoViewModel;
 import com.example.routesapp.R;
-import com.example.routesapp.View.Activity.MainActivity;
+import com.example.routesapp.View.LastHomeScreen.Activity.MainActivity;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -223,18 +222,18 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
 
             case R.id.taxiOffice_tv:
+                openTaxiOfficesList(Offices_STR);
                 showInputError(false,0);
-                 openTaxiOfficesList(Offices_STR);
                 break;
 
             case R.id.taxiPlateNumber_tv:
-                showInputError(false,0);
                 if (taxiOfficeId > 0) {
                     openTaxiOfficesList(Office_Plates_STR);
                 }else {
                     showInputError(true,1);
                     return;
                 }
+                showInputError(false,0);
 
 
                 break;

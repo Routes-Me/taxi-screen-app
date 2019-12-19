@@ -1,4 +1,4 @@
-package com.example.routesapp.View.Activity;
+package com.example.routesapp.View.LastHomeScreen.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -27,7 +27,7 @@ import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Model.ItemAnalytics;
 import com.example.routesapp.R;
-import com.example.routesapp.View.Fragment.RecyclerViewFragment;
+import com.example.routesapp.View.LastHomeScreen.Fragment.RecyclerViewFragment;
 import com.example.routesapp.View.Login.LoginScreen;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
@@ -58,21 +58,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private ImageView app_logo;
 
 
-
     //Define Advertisement Items
     private VideoView ADS_VideoView;
     private ImageView ADS_ImageView;
     private TextView scrollingCurrencies;
-
 
     //for Time Counter....
     private Time mTime;
     private Handler handlerTime;
     private Runnable runnableTime;
     private TextView timeClock, DateClock, DayClock;
-
-
-
 
 
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)

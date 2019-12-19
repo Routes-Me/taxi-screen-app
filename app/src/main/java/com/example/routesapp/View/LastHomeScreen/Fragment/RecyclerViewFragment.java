@@ -1,4 +1,4 @@
-package com.example.routesapp.View.Fragment;
+package com.example.routesapp.View.LastHomeScreen.Fragment;
 
 
 import android.app.Activity;
@@ -30,7 +30,6 @@ import com.example.routesapp.Model.ItemsModel;
 import com.example.routesapp.Model.ItemsViewModel;
 
 import com.example.routesapp.R;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import java.util.List;
 

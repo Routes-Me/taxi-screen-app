@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="false"
-    tools:context=".View.Activity.MainActivity"
-    >
+    tools:context=".View.LastHomeScreen.Activity.MainActivity"
+    android:id="@+id/tabletLayout">
 
 
     <LinearLayout
@@ -63,13 +63,12 @@
                         android:id="@+id/ADS_VideoView"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:scaleType="fitXY"
                         android:layout_alignParentStart="true"
                         android:layout_alignParentLeft="true"
                         android:layout_alignParentTop="true"
                         android:layout_alignParentRight="true"
-                        android:layout_alignParentBottom="true"
-                        android:visibility="visible"/>
+                        android:scaleType="fitXY"
+                        android:visibility="visible" />
 
 
 

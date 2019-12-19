@@ -1,4 +1,4 @@
-package com.example.routesapp.View.Fragment;
+package com.example.routesapp.View.LastHomeScreen.Fragment;
 
 
 
@@ -24,8 +24,6 @@ import android.widget.Toast;
 import com.example.routesapp.Class.Operations;
 
 import com.example.routesapp.R;
-import com.example.routesapp.View.Activity.MainActivity;
-
 
 
 public class ViewItemFragment extends Fragment implements View.OnClickListener {

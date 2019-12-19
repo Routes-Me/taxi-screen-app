@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".View.Fragment.RecyclerViewFragment"
+    tools:context=".View.LastHomeScreen.Fragment.RecyclerViewFragment"
     android:orientation="vertical"
     android:padding="3dp">
 
