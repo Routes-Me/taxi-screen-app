@@ -7,34 +7,53 @@
     tools:context=".View.NewHomeScreen.Activity.HomeScreen"
     android:id="@+id/tabletLayout">
 
-
-    <LinearLayout
-        android:id="@+id/homeScreenLayout"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal"
-        android:weightSum="100"
-        android:background="@color/white">
+        android:layout_height="match_parent">
 
 
 
 
 
-        <FrameLayout
-            android:id="@+id/contentFragment_container"
+        <LinearLayout
+            android:id="@+id/homeScreenLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_weight="13.4"/>
+            android:orientation="horizontal"
+            android:weightSum="100"
+            android:background="@color/white">
 
-        <FrameLayout
-            android:id="@+id/sideMenuFragment_container"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="visible"
-            android:layout_weight="86.6"/>
 
-    </LinearLayout>
+
+
+
+            <FrameLayout
+                android:id="@+id/contentFragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:layout_weight="13.4"/>
+
+            <FrameLayout
+                android:id="@+id/sideMenuFragment_container"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="visible"
+                android:layout_weight="86.6"/>
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/openPattern"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentTop="true"
+            android:background="@color/white"
+            />
+
+    </RelativeLayout>
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

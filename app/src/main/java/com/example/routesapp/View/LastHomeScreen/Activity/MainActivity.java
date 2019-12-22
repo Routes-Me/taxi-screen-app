@@ -350,4 +350,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //  operations.showHideFragment(getSupportFragmentManager(), new RecyclerViewFragment(), new ViewItemFragment(), true, true);
     }
 
+
+
 }

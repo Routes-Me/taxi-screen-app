@@ -32,6 +32,7 @@ import com.example.routesapp.Model.TabletInfo;
 import com.example.routesapp.Model.TabletInfoViewModel;
 import com.example.routesapp.R;
 import com.example.routesapp.View.LastHomeScreen.Activity.MainActivity;
+import com.example.routesapp.View.NewHomeScreen.Activity.HomeScreen;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -292,7 +293,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 editor.putString("tabletSerialNo", tabletSerialNumber);
                 editor.apply();
 
-                startActivity(new Intent(TaxiInformationScreen.this, MainActivity.class));
+                startActivity(new Intent(TaxiInformationScreen.this, HomeScreen.class));
                 finish();
 
 
