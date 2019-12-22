@@ -114,4 +114,14 @@
     </style>
 
 
+    <style name="AppTheme.counterText"     >
+        //...
+
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+
+    </style>
+
+
 </resources>

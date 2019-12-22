@@ -105,7 +105,13 @@ public class Operations {
             try {
 
                 fetchAdvertisementBannerList();
-                fetchAdvertisementCurrenciesList();
+
+                //Old scrolling text
+                //fetchAdvertisementCurrenciesList();
+
+                //New scrolling text
+                fetchAdvertisementScrollingText();
+
                 fetchAdvertisementVideoList();
 
             }catch (Exception e){
@@ -189,6 +195,32 @@ public class Operations {
                         String cur =   currenciesList.get(Cno).getCurrency_Name(activity) + " ( " +  currenciesList.get(Cno).getCurrency_Code() + " ) : " +  currenciesList.get(Cno).getCurrency_Eexchange_Rate() + " $   " + new String(Character.toChars(currenciesUnicode)) ;
 
                         CurrenciesString  +=  cur   + "      ";
+                    }
+                    displayAdvertisementCurrenciesList(CurrenciesString);
+                }
+
+
+            });
+
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private void fetchAdvertisementScrollingText() {
+        try {
+            currenciesViewModel = ViewModelProviders.of((FragmentActivity) activity).get(CurrenciesViewModel.class);
+
+            currenciesViewModel.getCurrencies(1, activity, Bearer_TabletToken).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
+                @Override
+                public void onChanged(@Nullable List<CurrenciesModel> currenciesList) {
+
+                    for (int Cno = 0; Cno < currenciesList.size(); Cno++) {
+                       // String cur =   currenciesList.get(Cno).getCurrency_Name(activity) + " ( " +  currenciesList.get(Cno).getCurrency_Code() + " ) : " +  currenciesList.get(Cno).getCurrency_Eexchange_Rate() + " $   " + new String(Character.toChars(currenciesUnicode)) ;
+
+                        CurrenciesString  +=  currenciesList.get(Cno).getCurrency_Name(activity)   + "        ";
                     }
                     displayAdvertisementCurrenciesList(CurrenciesString);
                 }

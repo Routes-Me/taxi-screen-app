@@ -187,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
                 mTime.setToNow();
 
-                counterOperations.getCurrentTime(mTime, timeClock, DateClock, DayClock);
+                counterOperations.getCurrentTime_oldView(mTime, timeClock, DateClock, DayClock);
 
 
                 handlerTime.postDelayed(runnableTime, 1000);

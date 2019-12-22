@@ -13,7 +13,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"
-        android:weightSum="1"
+        android:weightSum="100"
         android:background="@color/white">
 
 
@@ -25,14 +25,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"
-            android:layout_weight="0.134"/>
+            android:layout_weight="13.4"/>
 
         <FrameLayout
             android:id="@+id/sideMenuFragment_container"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:visibility="visible"
-            android:layout_weight="0.866"/>
+            android:layout_weight="86.6"/>
 
     </LinearLayout>
 

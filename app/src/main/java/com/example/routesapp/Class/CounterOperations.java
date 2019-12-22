@@ -1,9 +1,6 @@
 package com.example.routesapp.Class;
 
 import android.app.Activity;
-import android.content.Intent;
-import android.content.IntentFilter;
-import android.os.BatteryManager;
 import android.text.format.Time;
 import android.widget.TextView;
 
@@ -20,17 +17,17 @@ public class CounterOperations {
     public CounterOperations(Activity activity) {
         this.activity = activity;
 
-        monthName = new ArrayList<String>(Arrays.asList("Jan.", "Feb.", "Mar.", "Apr.","May.","June.","July.","Aug.","Sept.","Oct.","Nov.","Dec."));
+        monthName = new ArrayList<String>(Arrays.asList("Jan", "Feb", "Mar", "Apr","May","June","July","Aug","Sept","Oct","Nov","Dec"));
     }
 
 
 
 
-    public void getCurrentTime(Time mTime, TextView timeClock, TextView DateClock, TextView DayClock) {
+    public void getCurrentTime_oldView(Time mTime, TextView timeClock, TextView DateClock, TextView DayClock) {
 
 
         //Time..
-        timeClock.setText(getTime(mTime));
+        timeClock.setText(getTimeClock(mTime));
 
         //Name of [ Day of week ] ...
         DayClock.setText(getDayOfWeek(mTime));
@@ -46,10 +43,12 @@ public class CounterOperations {
     }
 
 
+
     //Time ...
-    private String getTime(Time mTime) {
+    public String getTimeClock(Time mTime) {
 
         int cur_hour = mTime.hour;
+
         String cur_ampm = "AM";
         if (cur_hour == 0) {
             cur_hour = 12;
@@ -59,30 +58,32 @@ public class CounterOperations {
             cur_ampm = "PM";
         }
 
-        String Time = String.format("%02d:%02d:%02d", cur_hour, mTime.minute, mTime.second);
+      //  String Time = String.format("%02d:%02d:%02d", cur_hour, mTime.minute, mTime.second);
+       String Time = String.format("%02d:%02d", cur_hour, mTime.minute);
 
-       return Time + " " + cur_ampm;
+      // return Time + " " + cur_ampm;
+        return Time;
 
     }
 
     //Day Of Week ...
-    private String getDayOfWeek(Time mTime) {
+    public String getDayOfWeek(Time mTime) {
 
         String day_of_week = "";
         if (mTime.weekDay == 1) {
-            day_of_week = "MON";
+            day_of_week = "Monday";
         } else if (mTime.weekDay == 2) {
-            day_of_week = "TUE";
+            day_of_week = "Tuesday";
         } else if (mTime.weekDay == 3) {
-            day_of_week = "WED";
+            day_of_week = "Wednesday";
         } else if (mTime.weekDay == 4) {
-            day_of_week = "THU";
+            day_of_week = "Thursday";
         } else if (mTime.weekDay == 5) {
-            day_of_week = "FRI";
+            day_of_week = "Friday";
         } else if (mTime.weekDay == 6) {
-            day_of_week = "SAT";
+            day_of_week = "Saturday";
         } else if (mTime.weekDay == 0) {
-            day_of_week = "SUN";
+            day_of_week = "Sunday";
         }
 
         return day_of_week;
@@ -90,9 +91,10 @@ public class CounterOperations {
     }
 
     //Date Of Day ...
-    private String getDate(Time mTime) {
+    public String getDate(Time mTime) {
 
-        String todayDate = mTime.monthDay + " " +monthName.get(mTime.month) + " " +  mTime.year;
+       // String todayDate = mTime.monthDay + " " +monthName.get(mTime.month) + " " +  mTime.year;
+         String todayDate = monthName.get(mTime.month) + " " + mTime.monthDay;
 
         return todayDate;
     }
