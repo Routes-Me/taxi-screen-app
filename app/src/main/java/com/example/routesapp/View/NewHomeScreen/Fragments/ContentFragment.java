@@ -1,24 +1,31 @@
 package com.example.routesapp.View.NewHomeScreen.Fragments;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Model.ItemAnalytics;
 import com.example.routesapp.R;
 import com.google.firebase.analytics.FirebaseAnalytics;
+
+import io.netopen.hotbitmapgg.library.view.RingProgressBar;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -36,11 +43,14 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
     //Define Advertisement Items ...
     private ImageView AD_Banner_ImageView;
+    private CardView Advertisement_Video_CardView;
     private VideoView AD_Video_VideoView;
+    private RingProgressBar videoRingProgressBar;
     private TextView AD_Currencies_TextView;
 
     //Using Firebase Analytics ...
     private FirebaseAnalytics firebaseAnalytics;
+
 
 
     private View nMainView;
@@ -72,15 +82,17 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
 
         //Initialize Advertisement Items ...
+        Advertisement_Video_CardView = nMainView.findViewById(R.id.Advertisement_Video_CardView);
         AD_Video_VideoView = nMainView.findViewById(R.id.AD_Video_VideoView);
         AD_Video_VideoView.setOnClickListener(this);
+        videoRingProgressBar = nMainView.findViewById(R.id.videoRingProgressBar);
         AD_Banner_ImageView = nMainView.findViewById(R.id.AD_Banner_ImageView);
         AD_Banner_ImageView.setOnClickListener(this);
         AD_Currencies_TextView = nMainView.findViewById(R.id.AD_Currencies_TextView);
         AD_Currencies_TextView.setSelected(true);
 
 
-        operations = new Operations(getActivity(), AD_Video_VideoView, AD_Banner_ImageView, AD_Currencies_TextView);
+        operations = new Operations(getActivity(),Advertisement_Video_CardView, videoRingProgressBar, AD_Video_VideoView, AD_Banner_ImageView, AD_Currencies_TextView);
         operations.fetchAdvertisementData();
 
 
@@ -88,17 +100,17 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
     @Override
     public void onClick(View v) {
-      switch (v.getId()){
+        switch (v.getId()) {
 
-          case R.id.AD_Video_VideoView:
-              updateFirebaseAnalystics(new ItemAnalytics(1,"click_video"));
-              break;
+            case R.id.AD_Video_VideoView:
+                updateFirebaseAnalystics(new ItemAnalytics(1, "click_video"));
+                break;
 
-          case R.id.AD_Banner_ImageView:
-              updateFirebaseAnalystics(new ItemAnalytics(2,"click_banner"));
-              break;
+            case R.id.AD_Banner_ImageView:
+                updateFirebaseAnalystics(new ItemAnalytics(2, "click_banner"));
+                break;
 
-      }
+        }
     }
 
 
@@ -109,5 +121,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
         firebaseAnalytics.logEvent(itemAnalytics.getName(), params);
 
     }
+
+
 
 }

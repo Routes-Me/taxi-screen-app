@@ -136,6 +136,10 @@ dependencies {
     //Showhidepasswordedittext Library
     implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
 
+
+    //Ring Progress Bar Library ...
+    implementation 'com.github.HotBitmapGG:RingProgressBar:V1.2.3'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

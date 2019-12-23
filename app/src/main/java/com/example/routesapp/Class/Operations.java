@@ -6,21 +6,27 @@ import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.View;
+import android.view.animation.BounceInterpolator;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
+import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.crashlytics.android.Crashlytics;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.routesapp.Model.Advertisement;
@@ -34,6 +40,12 @@ import com.example.routesapp.Model.VideosViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import io.netopen.hotbitmapgg.library.view.RingProgressBar;
+
+import static com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions.withCrossFade;
 
 public class Operations {
 
@@ -51,14 +63,20 @@ public class Operations {
     private ImageView ADS_ImageView;
     private Runnable r;
     private int currentImageIndex = 0;
+
     private RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true).centerCrop().fitCenter();
 
 
     //For Advertisement Video ...
+    private CardView Advertisement_Video_CardView;
     private List<Advertisement> adVideoList;
     private VideosViewModel videosViewModel;
     private VideoView ADS_VideoView;
-    int currentVideoIndex = 0;
+    private RingProgressBar videoRingProgressBar;
+    private int currentVideoIndex = 0;
+   // private MyAsync myAsync;
+    private int duration = 0;
+    private Timer timer;
 
 
     //For Advertisement Currencies...
@@ -70,12 +88,14 @@ public class Operations {
 
 
    //Constructor....
-    public Operations(Activity activity, VideoView ADS_VideoView, ImageView ADS_ImageView, TextView scrollingCurrencies_tv) {
+    public Operations(Activity activity,CardView Advertisement_Video_CardView , RingProgressBar videoRingProgressBar, VideoView ADS_VideoView, ImageView ADS_ImageView, TextView scrollingCurrencies_tv) {
 
 
         this.activity = activity;
 
+        this.Advertisement_Video_CardView = Advertisement_Video_CardView;
         this.ADS_VideoView = ADS_VideoView;
+        this.videoRingProgressBar = videoRingProgressBar;
 
         this.ADS_ImageView = ADS_ImageView;
         this.scrollingCurrencies_tv = scrollingCurrencies_tv;
@@ -140,7 +160,7 @@ public class Operations {
                         adBannerList.add(new Advertisement(BannersList.get(Bno).getAdv_ID(),BannersList.get(Bno).getAdv_URL()));
                     }
 
-                    displayAdvertisementBannerList(adBannerList, ADS_ImageView);
+                    displayAdvertisementBannerList(adBannerList);
 
                 }
 
@@ -170,7 +190,7 @@ public class Operations {
 
                         adVideoList.add(new Advertisement(VideosList.get(Vno).getVideo_ID(),VideosList.get(Vno).getVideo_URL()));
                     }
-                    displayAdvertisementVideoList(adVideoList, ADS_VideoView);
+                    displayAdvertisementVideoList(adVideoList);
 
                 }
 
@@ -236,7 +256,15 @@ public class Operations {
 
 
     //Display advertisement data from server and display it ...
-    private void displayAdvertisementVideoList(final List<Advertisement> adVideoList, final VideoView videoView) {
+
+    //Display Advertisement Video with RingProgressBar
+    private void displayAdvertisementVideoList(final List<Advertisement> adVideoList) {
+
+
+
+      //  ADS_VideoView.getHolder().addCallback(activity);
+       // Advertisement_Video_CardView.addView(ADS_VideoView);
+// load video data in pvv.
 
         if (currentVideoIndex < adVideoList.size()) {
 
@@ -245,40 +273,83 @@ public class Operations {
 
                 HttpProxyCacheServer proxy = App.getProxy(activity);
                 String proxyUrl = proxy.getProxyUrl(String.valueOf(uri));
-                videoView.setVideoPath(proxyUrl);
+                ADS_VideoView.setVideoPath(proxyUrl);
 
-                videoView.requestFocus();
-                videoView.start();
+                ADS_VideoView.requestFocus();
 
-                //when video complete nothing do
-                videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                //SetUp MediaController for VideoView ...
+               // MediaController mediaController = new MediaController(activity);
+               // mediaController.setAnchorView(ADS_VideoView);
+               // ADS_VideoView.setMediaController(mediaController);
+
+                videoRingProgressBar.setProgress(0);
+                videoRingProgressBar.setMax(100);
+
+                ADS_VideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @Override
-                    public void onCompletion(MediaPlayer mediaPlayer) {
+                    public void onPrepared(MediaPlayer mp) {
+                       // Advertisement_Video_CardView.animate().xBy(25).setDuration(500).setInterpolator(new BounceInterpolator());
+                       // Advertisement_Video_CardView.animate().rotation(15);
 
-                        currentVideoIndex++;
-                        displayAdvertisementVideoList(adVideoList, videoView);
+                        ADS_VideoView.start();
+                        setDuration_videoRingProgressBar();
+                        timerCounter_videoRingProgressBar();
                     }
                 });
 
-
-
+                //when video complete
+                ADS_VideoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mediaPlayer) {
+                        currentVideoIndex++;
+                        displayAdvertisementVideoList(adVideoList);
+                    }
+                });
 
 
             } catch (Exception ex) {
                 Crashlytics.logException(ex);
             }
 
-
         } else {
 
             currentVideoIndex = 0;
-            displayAdvertisementVideoList(adVideoList, videoView);
+            displayAdvertisementVideoList(adVideoList);
 
         }
 
     }
-    private void displayAdvertisementBannerList(final List<Advertisement> adBannerList, final ImageView ADSImageView) {
+    private void timerCounter_videoRingProgressBar(){
+        timer = new Timer();
+        TimerTask task = new TimerTask() {
+            @Override
+            public void run() {
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        updateUI_videoRingProgressBar();
+                    }
+                });
+            }
+        };
+        timer.schedule(task, 0, 1000);
+    }
+    private void setDuration_videoRingProgressBar(){
+        duration = ADS_VideoView.getDuration();
+    }
+    private void updateUI_videoRingProgressBar(){
+        if (videoRingProgressBar.getProgress() >= 100) {
+            timer.cancel();
+        }
+        int current = ADS_VideoView.getCurrentPosition();
+        int progress = current * 100 / duration;
+        videoRingProgressBar.setProgress(progress);
+    }
 
+    //Display Advertisement Banner
+    private void displayAdvertisementBannerList(final List<Advertisement> adBannerList) {
+
+       // final DrawableCrossFadeFactory factory = new DrawableCrossFadeFactory.Builder().setCrossFadeEnabled(true).build();
 
         r = new Runnable() {
             public void run() {
@@ -288,30 +359,35 @@ public class Operations {
                     Uri uri = Uri.parse(adBannerList.get(currentImageIndex).getAdvertisement_URL());
                     try {
 
-                        Glide.with(activity).load(uri).apply(options).into(ADSImageView);
+                        Glide.with(activity).load(uri).transition(GenericTransitionOptions.with(R.anim.anim_marquee_in)).apply(options).into(ADS_ImageView);
+
                     } catch (Exception e) {
                         Crashlytics.logException(e);
                     }
                     currentImageIndex++;
 
-                    ADSImageView.postDelayed(r, 15000);
+                    ADS_ImageView.postDelayed(r, 15000);
 
                 }else {
 
 
                     currentImageIndex = 0;
-                    displayAdvertisementBannerList(adBannerList, ADSImageView);
+                    displayAdvertisementBannerList(adBannerList);
 
                 }
 
 
             }
         };
-        ADSImageView.postDelayed(r, 1);
+        ADS_ImageView.postDelayed(r, 1);
     }
+
+    //Display Advertisement Currencies
     private void displayAdvertisementCurrenciesList(String currenciesString){
         scrollingCurrencies_tv.setText(currenciesString );
     }
+
+
 
 
 

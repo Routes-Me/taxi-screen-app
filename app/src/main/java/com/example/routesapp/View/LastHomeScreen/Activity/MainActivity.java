@@ -128,8 +128,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             setUpTimeCounter();
             IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
 
-            operations = new Operations(this, ADS_VideoView, ADS_ImageView, scrollingCurrencies);
-            operations.fetchAdvertisementData();
+         //   operations = new Operations(this, ADS_VideoView, ADS_ImageView, scrollingCurrencies);
+           // operations.fetchAdvertisementData();
 
             mainFragmentToShow();
         }else {
