@@ -1,17 +1,23 @@
 package com.example.routesapp.Class;
 
+import android.animation.Animator;
+import android.animation.AnimatorListenerAdapter;
+import android.animation.ObjectAnimator;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.view.View;
-import android.view.animation.BounceInterpolator;
+import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.animation.AccelerateInterpolator;
+import android.view.animation.AlphaAnimation;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.view.animation.DecelerateInterpolator;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.AbsoluteLayout;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.MediaController;
 import android.widget.TextView;
 import android.widget.VideoView;
 
@@ -26,7 +32,6 @@ import com.bumptech.glide.GenericTransitionOptions;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
-import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.crashlytics.android.Crashlytics;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.example.routesapp.Model.Advertisement;
@@ -64,7 +69,7 @@ public class Operations {
     private Runnable r;
     private int currentImageIndex = 0;
 
-    private RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true).centerCrop().fitCenter();
+    private RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true);
 
 
     //For Advertisement Video ...
@@ -356,23 +361,27 @@ public class Operations {
 
                 if (currentImageIndex < adBannerList.size()) {
 
-                    Uri uri = Uri.parse(adBannerList.get(currentImageIndex).getAdvertisement_URL());
-                    try {
 
-                        Glide.with(activity).load(uri).transition(GenericTransitionOptions.with(R.anim.anim_marquee_in)).apply(options).into(ADS_ImageView);
+                   // fadeOutImageView(ADS_ImageView);
 
-                    } catch (Exception e) {
-                        Crashlytics.logException(e);
-                    }
+                    final Uri uri = Uri.parse(adBannerList.get(currentImageIndex).getAdvertisement_URL());
+
+                    showBannerIntoImageView(uri);
+
+
                     currentImageIndex++;
 
-                    ADS_ImageView.postDelayed(r, 15000);
+                    if (currentImageIndex >= adBannerList.size()){
+                        currentImageIndex = 0;
+                    }
+
+
+                    ADS_ImageView.postDelayed(r, 15100);
 
                 }else {
 
-
-                    currentImageIndex = 0;
-                    displayAdvertisementBannerList(adBannerList);
+                   // currentImageIndex = 0;
+                  //  displayAdvertisementBannerList(adBannerList);
 
                 }
 
@@ -381,6 +390,40 @@ public class Operations {
         };
         ADS_ImageView.postDelayed(r, 1);
     }
+
+    private void fadeOutImageView(final ImageView img)
+    {
+
+        Animation fadeOut = AnimationUtils.loadAnimation(activity,R.anim.fade_out);
+        img.startAnimation(fadeOut);
+
+
+    }
+
+    private void showBannerIntoImageView(final Uri uri) {
+        try {
+
+            final ObjectAnimator animation1 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 1f, 0f).setDuration(50);
+            final ObjectAnimator oa2 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 0f, 1f).setDuration(50);
+
+            animation1.setInterpolator(new DecelerateInterpolator());
+            oa2.setInterpolator(new AccelerateDecelerateInterpolator());
+
+            animation1.addListener(new AnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(Animator animation) {
+                    super.onAnimationEnd(animation);
+                    Glide.with(activity).load(uri).apply(options).into(ADS_ImageView);
+                    oa2.start();
+                }
+            });
+            animation1.start();
+
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
+    }
+
 
     //Display Advertisement Currencies
     private void displayAdvertisementCurrenciesList(String currenciesString){

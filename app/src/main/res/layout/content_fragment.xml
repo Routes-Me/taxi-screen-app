@@ -42,6 +42,7 @@
                 android:layout_height="match_parent"
                 android:layout_alignParentTop="true"
                 android:scaleType="fitXY"
+                android:adjustViewBounds="true"
                 android:background="#0f000000"/>
 
 
