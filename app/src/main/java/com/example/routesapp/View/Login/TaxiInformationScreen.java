@@ -24,6 +24,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.Operations;
@@ -140,6 +141,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         super.onRestart();
     }
 
+
     private void ToolbarSetUp() {
         //Toolbar..
         myToolbar = findViewById(R.id.MyToolBar);
@@ -176,6 +178,10 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 deviceSerialNumber_tv.setText(telephonyManager.getDeviceId());
                 tabletSerialNumber = telephonyManager.getDeviceId();
                 showTabletSerialNumberError(false);
+
+               // Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
+
+               // getTabletCountryCode();
             }
         }catch (Exception e){
         }
@@ -196,6 +202,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                     }
                     deviceSerialNumber_tv.setText(telephonyManager.getDeviceId());
                     showTabletSerialNumberError(false);
+                  //  Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
                 }
                 else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 // user rejected the permission

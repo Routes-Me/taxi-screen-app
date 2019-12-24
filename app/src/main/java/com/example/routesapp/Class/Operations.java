@@ -376,7 +376,7 @@ public class Operations {
                     }
 
 
-                    ADS_ImageView.postDelayed(r, 15100);
+                    ADS_ImageView.postDelayed(r, 15400);
 
                 }else {
 
@@ -391,8 +391,7 @@ public class Operations {
         ADS_ImageView.postDelayed(r, 1);
     }
 
-    private void fadeOutImageView(final ImageView img)
-    {
+    private void fadeOutImageView(final ImageView img) {
 
         Animation fadeOut = AnimationUtils.loadAnimation(activity,R.anim.fade_out);
         img.startAnimation(fadeOut);
@@ -403,8 +402,8 @@ public class Operations {
     private void showBannerIntoImageView(final Uri uri) {
         try {
 
-            final ObjectAnimator animation1 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 1f, 0f).setDuration(50);
-            final ObjectAnimator oa2 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 0f, 1f).setDuration(50);
+            final ObjectAnimator animation1 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 1f, 0f).setDuration(200);
+            final ObjectAnimator oa2 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 0f, 1f).setDuration(200);
 
             animation1.setInterpolator(new DecelerateInterpolator());
             oa2.setInterpolator(new AccelerateDecelerateInterpolator());
