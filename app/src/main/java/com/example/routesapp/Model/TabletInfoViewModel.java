@@ -12,6 +12,7 @@ import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.Operations;
+import com.example.routesapp.Class.ServerRetrofit;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.LoginScreen;
 
@@ -59,7 +60,7 @@ public class TabletInfoViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadTabletInfo(final Activity activity, String token, TabletCredentials tabletCredentials) {
-
+/*
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -72,7 +73,19 @@ public class TabletInfoViewModel extends ViewModel {
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
-        RoutesApi api = retrofit.create(RoutesApi.class);
+ */
+
+
+
+        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+        RoutesApi api = null;
+        if (serverRetrofit != null){
+            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        }else {
+            return;
+        }
+
+      //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
         Call<TabletInfo> call = api.tabletRegister(token,tabletCredentials);
         call.enqueue(new Callback<TabletInfo>() {
             @Override

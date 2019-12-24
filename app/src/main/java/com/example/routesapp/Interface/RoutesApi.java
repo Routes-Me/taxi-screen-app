@@ -69,7 +69,7 @@ public interface RoutesApi {
 
     //Videos List
     @GET("Channels")
-    Call<List<VideoModel>> getVideos(@Query("channelidvideolist") int ch_ID_Videos, @Header("Authorization") String token);
+    Call<List<VideoModel>> getVideos(@Query("channelidvideolist") int ch_ID_Videos);
 
 
     //Increase Video View Times ...
@@ -82,7 +82,7 @@ public interface RoutesApi {
 
     //Banners List
     @GET("Channels")
-    Call<List<BannerModel>> getBanners(@Query("channelidadvlist") int ch_ID_Banners, @Header("Authorization") String token);
+    Call<List<BannerModel>> getBanners(@Query("channelidadvlist") int ch_ID_Banners);
 
 
     //Increase Banner View Times ...
@@ -94,12 +94,12 @@ public interface RoutesApi {
 
     //Banners List
     @GET("List_Items")
-    Call<List<ItemsModel>> getItems(@Query("getlistitems") int ItemsListId, @Header("Authorization") String token);
+    Call<List<ItemsModel>> getItems(@Query("getlistitems") int ItemsListId);
 
 
     //Currencies List [Money Strip]
     @GET("Currencies")
-    Call<List<CurrenciesModel>> getCurrencies(@Query("getMyCurrencies") int CurrenciesListId, @Header("Authorization") String token);
+    Call<List<CurrenciesModel>> getCurrencies(@Query("getMyCurrencies") int CurrenciesListId);
 
 
 

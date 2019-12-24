@@ -10,13 +10,17 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
+import com.example.routesapp.Class.ServerRetrofit;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.LoginScreen;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -50,8 +54,15 @@ public class BannersViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadBannersList(int ch_ID, final Activity activity, String token) {
-
+/*
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public okhttp3.Response intercept(Chain chain) throws IOException {
+                        Request request = chain.request().newBuilder().addHeader("parameter", "value").build();
+                        return chain.proceed(request);
+                    }
+                })
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
                 .writeTimeout(15, TimeUnit.SECONDS)
@@ -64,9 +75,18 @@ public class BannersViewModel extends ViewModel {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        */
 
-        RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<BannerModel>> call = api.getBanners(ch_ID, token);
+        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+        RoutesApi api = null;
+        if (serverRetrofit != null){
+            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        }else {
+            return;
+        }
+
+      //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        Call<List<BannerModel>> call = api.getBanners(ch_ID);
 
 
         call.enqueue(new Callback<List<BannerModel>>() {

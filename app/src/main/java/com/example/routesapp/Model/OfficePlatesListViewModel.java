@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.example.routesapp.Class.ServerRetrofit;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.LoginScreen;
 
@@ -45,7 +46,7 @@ public class OfficePlatesListViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadOfficePlatesList(final Activity activity, String savedToken,  int officeId, String include) {
-
+/*
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -57,8 +58,17 @@ public class OfficePlatesListViewModel extends ViewModel {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+*/
 
-        RoutesApi api = retrofit.create(RoutesApi.class);
+        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+        RoutesApi api = null;
+        if (serverRetrofit != null){
+            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        }else {
+            return;
+        }
+
+      //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
         Call<OfficePlatesList> call = api.getOfficePlatesList( savedToken, officeId, include);
 
         call.enqueue(new Callback<OfficePlatesList>() {

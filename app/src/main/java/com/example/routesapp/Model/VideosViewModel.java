@@ -10,6 +10,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
+import com.example.routesapp.Class.ServerRetrofit;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.LoginScreen;
 
@@ -50,7 +51,7 @@ public class VideosViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadVideosList(int ch_ID ,final Activity activity, String savedToken) {
-
+/*
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -62,9 +63,18 @@ public class VideosViewModel extends ViewModel {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+*/
 
-        RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<VideoModel>> call = api.getVideos(ch_ID, savedToken);
+        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+        RoutesApi api = null;
+        if (serverRetrofit != null){
+            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        }else {
+            return;
+        }
+
+       // RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        Call<List<VideoModel>> call = api.getVideos(ch_ID);
 
         call.enqueue(new Callback<List<VideoModel>>() {
             @Override

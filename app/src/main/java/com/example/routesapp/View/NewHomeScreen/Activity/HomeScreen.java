@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -77,8 +78,18 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-        // TelephonyManager telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
-      //  Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
+       //  TelephonyManager telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
+       // Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
+
+        /*
+        String locale;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            locale = getResources().getConfiguration().getLocales().get(0).getCountry();
+        } else {
+            locale = getResources().getConfiguration().locale.getCountry();
+        }
+        Toast.makeText(this, "country code:  " + locale, Toast.LENGTH_SHORT).show();
+        */
     }
 
 

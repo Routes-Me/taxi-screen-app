@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
+import com.example.routesapp.Class.ServerRetrofit;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.LoginScreen;
 
@@ -49,7 +50,7 @@ public class ItemsViewModel  extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadItemsList(int ch_ID, final Activity activity, String savedToken) {
-
+/*
         OkHttpClient okHttpClient = new OkHttpClient.Builder()
                 .connectTimeout(1, TimeUnit.MINUTES)
                 .readTimeout(30, TimeUnit.SECONDS)
@@ -63,9 +64,17 @@ public class ItemsViewModel  extends ViewModel {
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+*/
+        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+        RoutesApi api = null;
+        if (serverRetrofit != null){
+            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        }else {
+            return;
+        }
 
-        RoutesApi api = retrofit.create(RoutesApi.class);
-        Call<List<ItemsModel>> call = api.getItems(ch_ID,savedToken);
+       /// RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+        Call<List<ItemsModel>> call = api.getItems(ch_ID);
 
 
         call.enqueue(new Callback<List<ItemsModel>>() {
