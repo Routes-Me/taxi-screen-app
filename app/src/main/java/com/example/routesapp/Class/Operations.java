@@ -380,6 +380,7 @@ public class Operations {
 
                 }else {
 
+                    
                    // currentImageIndex = 0;
                   //  displayAdvertisementBannerList(adBannerList);
 
