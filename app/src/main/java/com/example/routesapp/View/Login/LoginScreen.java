@@ -156,7 +156,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                         showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
                       //  Toast.makeText(LoginScreen.this, "error id:  " + authCredentialsErrors.get(e).getErrorNumber(), Toast.LENGTH_SHORT).show();
                     }else {
-                        Toast.makeText(LoginScreen.this, "Error:  " + authCredentialsErrors.get(e).getErrorMasseg(), Toast.LENGTH_SHORT).show();
+                       // Toast.makeText(LoginScreen.this, "Error:  " + authCredentialsErrors.get(e).getErrorMasseg(), Toast.LENGTH_SHORT).show();
                     }
                 }
 
@@ -172,7 +172,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         try {
             clickTimes++;
             //if user Click on Back button Two Times
-            if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 5) {
+            if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
               //  pressedTimesToast.cancel();
 
                 openLoginLayout(true);
@@ -278,15 +278,20 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
     private void saveAuthCredentials(){
 
-        String userName = userName_et.getText().toString().trim();
-        String password = password_et.getText().toString().trim();
-       // if (!userName.equals(null) && !userName.isEmpty()){
+        try {
+            String userName = userName_et.getText().toString().trim();
+            String password = password_et.getText().toString().trim();
+            // if (!userName.equals(null) && !userName.isEmpty()){
             app.setTechnicalSupportUserName(userName);
-      //  }
-     //   if (!password.equals(null) && !password.isEmpty()){
+            //  }
+            //   if (!password.equals(null) && !password.isEmpty()){
             app.setTechnicalSupportPassword(password);
-      //  }
-        app.setNewLogin(true);
+            //  }
+            app.setNewLogin(true);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
 
 
     }

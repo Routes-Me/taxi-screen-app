@@ -15,6 +15,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.CounterOperations;
 import com.example.routesapp.R;
 import com.example.routesapp.View.LastHomeScreen.Fragment.RecyclerViewFragment;
@@ -71,33 +72,38 @@ public class SideMenuFragment extends Fragment {
     }
 
     private void setUpTimeCounter() {
+        try {
+            counterOperations = new CounterOperations(getActivity());
 
-        counterOperations = new CounterOperations(getActivity());
+            timeClock_tv = nMainView.findViewById(R.id.timeClock_tv);
+            timeDate_tv  = nMainView.findViewById(R.id.timeDate_tv);
 
-        timeClock_tv = nMainView.findViewById(R.id.timeClock_tv);
-        timeDate_tv  = nMainView.findViewById(R.id.timeDate_tv);
+            mTime = new Time();
 
-        mTime = new Time();
+            runnableTime = new Runnable() {
+                @Override
+                public void run() {
 
-        runnableTime = new Runnable() {
-            @Override
-            public void run() {
+                    mTime.setToNow();
 
-                mTime.setToNow();
+                    // counterOperations.getCurrentTime_newView(mTime, timeClock_tv, timeDate_tv);
 
-               // counterOperations.getCurrentTime_newView(mTime, timeClock_tv, timeDate_tv);
-
-                timeClock_tv.setText(counterOperations.getTimeClock(mTime));
-                timeDate_tv.setText(counterOperations.getDayOfWeek(mTime) + ", \n" + counterOperations.getDate(mTime));
+                    timeClock_tv.setText(counterOperations.getTimeClock(mTime));
+                    timeDate_tv.setText(counterOperations.getDayOfWeek(mTime) + ", \n" + counterOperations.getDate(mTime));
 
 
-                handlerTime.postDelayed(runnableTime, 1000);
+                    handlerTime.postDelayed(runnableTime, 1000);
 
-            }
-        };
+                }
+            };
 
-        handlerTime = new Handler();
-        handlerTime.postDelayed(runnableTime, 1000);
+            handlerTime = new Handler();
+            handlerTime.postDelayed(runnableTime, 1000);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
+
 
     }
 

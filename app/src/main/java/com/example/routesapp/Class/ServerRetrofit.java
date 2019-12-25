@@ -51,6 +51,8 @@ public class ServerRetrofit {
         if (savedTabletToken != null) {
 
 
+
+
           //  Toast.makeText(activity, "Authorization: " + requestHeaders.getAuthorization() + "  ,country_code: " + requestHeaders.getCountry_code() + " ,app_version: " + requestHeaders.getApp_version(), Toast.LENGTH_SHORT).show();
 
             requestHeaders = new RequestHeaders(getToken(),getCountryCode(), getVersionName());
@@ -71,7 +73,7 @@ public class ServerRetrofit {
 
 
             retrofit = new Retrofit.Builder()
-                    .baseUrl(RoutesApi.BASE_URL)
+                    .baseUrl(Helper.getConfigValue(activity, "baseUrl"))
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();

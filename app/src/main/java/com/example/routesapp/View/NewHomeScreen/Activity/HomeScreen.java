@@ -5,23 +5,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
-import android.content.ComponentName;
-import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.telephony.TelephonyManager;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -30,8 +22,6 @@ import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.R;
-import com.example.routesapp.View.LastHomeScreen.Activity.MainActivity;
-import com.example.routesapp.View.LastHomeScreen.Fragment.RecyclerViewFragment;
 import com.example.routesapp.View.Login.LoginScreen;
 import com.example.routesapp.View.NewHomeScreen.Fragments.ContentFragment;
 import com.example.routesapp.View.NewHomeScreen.Fragments.SideMenuFragment;
@@ -78,18 +68,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-       //  TelephonyManager telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
-       // Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
 
-        /*
-        String locale;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            locale = getResources().getConfiguration().getLocales().get(0).getCountry();
-        } else {
-            locale = getResources().getConfiguration().locale.getCountry();
-        }
-        Toast.makeText(this, "country code:  " + locale, Toast.LENGTH_SHORT).show();
-        */
     }
 
 
@@ -180,7 +159,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     public void readPatternFromTechnicalSupport() {
 
-        openChangePasswordDialog();
+        showExitPatternDialog();
 
         pattern_exitApp.addPatternLockListener(new PatternLockViewListener() {
             @Override
@@ -208,45 +187,60 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         });
     }
 
-    private void openChangePasswordDialog() {
-
-        exitPatternDialog = new Dialog(this);
-        exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
-
-
-        pattern_exitApp = exitPatternDialog.findViewById(R.id.pattern_exitApp);
+    private void showExitPatternDialog() {
+        try{
+            exitPatternDialog = new Dialog(this);
+            exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
 
 
-        exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-        exitPatternDialog.show();
-        exitPatternDialog.setCancelable(false);
+            pattern_exitApp = exitPatternDialog.findViewById(R.id.pattern_exitApp);
+
+
+            exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            exitPatternDialog.show();
+            exitPatternDialog.setCancelable(false);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
+
 
     }
 
     private void openSettings() {
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                final Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
+                startActivity(intent);
+            } else {
+                final Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                startActivity(intent);
+            }
 
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            final Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
-            startActivity(intent);
-        } else {
-            final Intent intent = new Intent(Settings.ACTION_SETTINGS);
-            startActivity(intent);
+            finish();
+            System.exit(0);
+        }catch (Exception e){
+            Crashlytics.logException(e);
         }
 
-        finish();
-        System.exit(0);
+
 
     }
 
     private void hideNavigationBar() {
-        View decorView = getWindow().getDecorView();
-        final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
-        decorView.setSystemUiVisibility(flags);
+        try {
+            View decorView = getWindow().getDecorView();
+            final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
+            decorView.setSystemUiVisibility(flags);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
     }
 
     @SuppressLint("ResourceAsColor")
@@ -263,19 +257,29 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     //Fragment To Show [ RecyclerViewFragment    or    ViewItemFragment ]
     private void showFragments() {
-        getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment_container, new ContentFragment()).commit();
-        getSupportFragmentManager().beginTransaction().replace(R.id.sideMenuFragment_container, new SideMenuFragment()).commit();
+        try {
+            getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment_container, new ContentFragment()).commit();
+            getSupportFragmentManager().beginTransaction().replace(R.id.sideMenuFragment_container, new SideMenuFragment()).commit();
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
     }
 
     private void deleteAuthenticationCredentialsFromAppClass() {
-        app = (App) getApplicationContext();
+        try {
+            app = (App) getApplicationContext();
 
-        app.setTechnicalSupportUserName(null);
-        app.setTechnicalSupportPassword(null);
-        app.setNewLogin(false);
-        app.setTaxiOfficeId(0);
-        app.setTaxiOfficeName(null);
-        app.setTaxiPlateNumber(null);
+            app.setTechnicalSupportUserName(null);
+            app.setTechnicalSupportPassword(null);
+            app.setNewLogin(false);
+            app.setTaxiOfficeId(0);
+            app.setTaxiOfficeName(null);
+            app.setTaxiPlateNumber(null);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
     }
 
     private boolean isAuthorized() {
@@ -292,17 +296,26 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     }
 
     private void fetchSharedPreferenceData() {
+        try {
+            savedTabletToken = sharedPreferences.getString("tabToken", null);
+            savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
+            savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
+            savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
-        savedTabletToken = sharedPreferences.getString("tabToken", null);
-        savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
-        savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
-        savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
+
     }
 
     private void IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics() {
 
-        Crashlytics.setUserIdentifier(savedTabletSerialNo);
-        firebaseAnalytics.setUserId(savedTabletSerialNo);
+        try {
+            Crashlytics.setUserIdentifier(savedTabletSerialNo);
+            firebaseAnalytics.setUserId(savedTabletSerialNo);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
     }
 

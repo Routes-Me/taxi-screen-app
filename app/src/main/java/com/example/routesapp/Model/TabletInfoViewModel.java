@@ -60,70 +60,60 @@ public class TabletInfoViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadTabletInfo(final Activity activity, String token, TabletCredentials tabletCredentials) {
-/*
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .build();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RoutesApi.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        try {
+            ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+            RoutesApi api = null;
+            if (serverRetrofit != null){
+                api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            }else {
+                return;
+            }
 
- */
+            //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            Call<TabletInfo> call = api.tabletRegister(token,tabletCredentials);
+            call.enqueue(new Callback<TabletInfo>() {
+                @Override
+                public void onResponse(Call<TabletInfo> call, Response<TabletInfo> response) {
+                    if (response.isSuccessful()){
+                        dialog.dismiss();
+                        // operations.enableNextButton(register_btn,true);
+                        if (response.body() != null) {
 
+                            try {
+                                tabletInfo.setValue(response.body());
 
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Crashlytics.logException(e);
+                            }
+                        }
 
-        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
-        RoutesApi api = null;
-        if (serverRetrofit != null){
-            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        }else {
-            return;
+                    }else {
+                        operations.enableNextButton(register_btn,true);
+                        dialog.dismiss();
+
+                        Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
+
+                        if (response.code() == 401) {
+                            activity.startActivity(new Intent(activity, LoginScreen.class));
+                            activity.finish();
+                        }
+
+                    }
+                }
+
+                @Override
+                public void onFailure(Call<TabletInfo> call, Throwable t) {
+                    Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }catch (Exception e){
+            Crashlytics.logException(e);
         }
 
-      //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        Call<TabletInfo> call = api.tabletRegister(token,tabletCredentials);
-        call.enqueue(new Callback<TabletInfo>() {
-            @Override
-            public void onResponse(Call<TabletInfo> call, Response<TabletInfo> response) {
-                if (response.isSuccessful()){
-                    dialog.dismiss();
-                   // operations.enableNextButton(register_btn,true);
-                    if (response.body() != null) {
 
-                        try {
-                            tabletInfo.setValue(response.body());
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            Crashlytics.logException(e);
-                        }
-                    }
-
-                }else {
-                    operations.enableNextButton(register_btn,true);
-                    dialog.dismiss();
-
-                    Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
-
-                    if (response.code() == 401) {
-                        activity.startActivity(new Intent(activity, LoginScreen.class));
-                        activity.finish();
-                    }
-
-                }
-            }
-
-            @Override
-            public void onFailure(Call<TabletInfo> call, Throwable t) {
-                Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
 
 
     }

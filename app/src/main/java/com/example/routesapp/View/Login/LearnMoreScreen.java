@@ -11,6 +11,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ImageView;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.R;
 
@@ -36,15 +37,21 @@ public class LearnMoreScreen extends AppCompatActivity {
 
     private void initialize() {
 
+
         ToolbarSetUp();
 
         app = (App) getApplicationContext();
 
-        webView_routesWebsite = findViewById(R.id.webView_routesWebsite);
-        webView_routesWebsite.setWebViewClient(new WebViewClient());
-        webView_routesWebsite.loadUrl(routesWebsiteLink);
-        WebSettings webSettings = webView_routesWebsite.getSettings();
-        webSettings.setJavaScriptEnabled(true);
+        try {
+            webView_routesWebsite = findViewById(R.id.webView_routesWebsite);
+            webView_routesWebsite.setWebViewClient(new WebViewClient());
+            webView_routesWebsite.loadUrl(routesWebsiteLink);
+            WebSettings webSettings = webView_routesWebsite.getSettings();
+            webSettings.setJavaScriptEnabled(true);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
     }
 
 

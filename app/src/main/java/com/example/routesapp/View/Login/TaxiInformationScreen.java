@@ -24,15 +24,14 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Model.TabletCredentials;
 import com.example.routesapp.Model.TabletInfo;
 import com.example.routesapp.Model.TabletInfoViewModel;
 import com.example.routesapp.R;
-import com.example.routesapp.View.LastHomeScreen.Activity.MainActivity;
 import com.example.routesapp.View.NewHomeScreen.Activity.HomeScreen;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
@@ -116,6 +115,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     @Override
     protected void onRestart() {
+        taxiOffice_tv.setEnabled(true);
+        taxiPlateNumber_tv.setEnabled(true);
 
         operations.enableNextButton(register_btn,true);
 
@@ -184,6 +185,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                // getTabletCountryCode();
             }
         }catch (Exception e){
+            Crashlytics.logException(e);
         }
 
     }
@@ -230,20 +232,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
 
             case R.id.taxiOffice_tv:
-                openTaxiOfficesList(Offices_STR);
-                showInputError(false,0);
+
+                openTaxiOfficesList();
                 break;
 
             case R.id.taxiPlateNumber_tv:
-                if (taxiOfficeId > 0) {
-                    openTaxiOfficesList(Office_Plates_STR);
-                }else {
-                    showInputError(true,1);
-                    return;
-                }
-                showInputError(false,0);
 
-
+            openTaxiOfficePlateNumbersList();
                 break;
 
             case R.id.register_btn:
@@ -254,10 +249,39 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     }
 
-    private void openTaxiOfficesList(String listType) {
+
+
+    private void openTaxiOfficesList() {
+        try {
+            taxiOffice_tv.setEnabled(false);
+            openDataList(Offices_STR);
+            showInputError(false,0);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void openTaxiOfficePlateNumbersList() {
+        try {
+            if (taxiOfficeId > 0) {
+                taxiPlateNumber_tv.setEnabled(false);
+                openDataList(Office_Plates_STR);
+            }else {
+                showInputError(true,1);
+                return;
+            }
+            showInputError(false,0);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+    }
+
+    private void openDataList(String listType) {
         try {
             startActivity(new Intent(this, TaxiInformationListScreen.class).putExtra(List_Type_STR,listType));
-        }catch (Exception e){}
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
     }
 
@@ -294,14 +318,18 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
 
 
+                try {
+                    editor.putString("tabletPassword", tabletInfo.getTabletPassword());
+                    editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
+                    editor.putString("tabletSerialNo", tabletSerialNumber);
+                    editor.apply();
 
-                editor.putString("tabletPassword", tabletInfo.getTabletPassword());
-                editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
-                editor.putString("tabletSerialNo", tabletSerialNumber);
-                editor.apply();
+                    startActivity(new Intent(TaxiInformationScreen.this, HomeScreen.class));
+                    finish();
+                }catch (Exception e){
+                    Crashlytics.logException(e);
+                }
 
-                startActivity(new Intent(TaxiInformationScreen.this, HomeScreen.class));
-                finish();
 
 
 
@@ -309,10 +337,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
              //   dialog.dismiss();
             }
         });
-
-
-
-
 
     }
 

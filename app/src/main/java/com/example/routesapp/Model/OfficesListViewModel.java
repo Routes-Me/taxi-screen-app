@@ -8,6 +8,7 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.ServerRetrofit;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.LoginScreen;
@@ -46,50 +47,42 @@ public class OfficesListViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadOfficesList(final Activity activity, String savedToken, String include) {
-/*
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .build();
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RoutesApi.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        try {
+            ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+            RoutesApi api = null;
+            if (serverRetrofit != null){
+                api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            }else {
+                return;
+            }
+            //RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            Call<TaxiOfficeList> call = api.getTaxiOfficeList( savedToken, include);
 
- */
-
-        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
-        RoutesApi api = null;
-        if (serverRetrofit != null){
-             api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        }else {
-            return;
-        }
-        //RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        Call<TaxiOfficeList> call = api.getTaxiOfficeList( savedToken, include);
-
-        call.enqueue(new Callback<TaxiOfficeList>() {
-            @Override
-            public void onResponse(Call<TaxiOfficeList> call, Response<TaxiOfficeList> response) {
-                if (response.isSuccessful()){
-                    officesList.setValue(response.body());
-                }else {
-                    Toast.makeText(activity, "Error:  " + response.code(), Toast.LENGTH_SHORT).show();
-                    if (response.code() == 401) {
-                        activity.startActivity(new Intent(activity, LoginScreen.class));
-                        activity.finish();
+            call.enqueue(new Callback<TaxiOfficeList>() {
+                @Override
+                public void onResponse(Call<TaxiOfficeList> call, Response<TaxiOfficeList> response) {
+                    if (response.isSuccessful()){
+                        officesList.setValue(response.body());
+                    }else {
+                        Toast.makeText(activity, "Error:  " + response.code(), Toast.LENGTH_SHORT).show();
+                        if (response.code() == 401) {
+                            activity.startActivity(new Intent(activity, LoginScreen.class));
+                            activity.finish();
+                        }
                     }
                 }
-            }
 
-            @Override
-            public void onFailure(Call<TaxiOfficeList> call, Throwable t) {
-                Toast.makeText(activity, "Taxi Offices ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                @Override
+                public void onFailure(Call<TaxiOfficeList> call, Throwable t) {
+                    Toast.makeText(activity, "Taxi Offices ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
+
     }
 }
 

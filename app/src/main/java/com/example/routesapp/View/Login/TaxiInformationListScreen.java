@@ -13,6 +13,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.App;
 import com.example.routesapp.Model.Office;
 import com.example.routesapp.Model.OfficePlatesList;
@@ -102,107 +103,117 @@ public class TaxiInformationListScreen extends AppCompatActivity {
 
     private void getOfficesList_Sections() {
 
+        try {
+            officesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficesListViewModel.class);
+            officesListViewModel.getTaxiOfficesList(this,savedToken, "recent").observe((LifecycleOwner) this, new Observer<TaxiOfficeList>() {
+                @Override
+                public void onChanged(TaxiOfficeList taxiOfficeList) {
 
-        officesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficesListViewModel.class);
-        officesListViewModel.getTaxiOfficesList(this,savedToken, "recent").observe((LifecycleOwner) this, new Observer<TaxiOfficeList>() {
-            @Override
-            public void onChanged(TaxiOfficeList taxiOfficeList) {
-
-                listOfficesArrayList = new ArrayList<>();
-
-
-                listOfficesArrayList.add(new ItemType("Most recent",true, false,0));
-
-                ArrayList<Office> mostRecentOffices = new ArrayList<>() ;
-                mostRecentOffices.addAll(taxiOfficeList.getOfficesIncluded().getRecentOffices());
-                ArrayList<Office> allOffices = new ArrayList<>();
-                allOffices.addAll(taxiOfficeList.getOfficesData());
+                    listOfficesArrayList = new ArrayList<>();
 
 
-                for (int i=0; i <mostRecentOffices.size() ; i++){
-                    listOfficesArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
-                }
+                    listOfficesArrayList.add(new ItemType("Most recent",true, false,0));
 
-                listOfficesArrayList.add(new ItemType("Offices",true, false,0));
-
-                for (int i=0; i <allOffices.size() ; i++){
-
-                    listOfficesArrayList.add(new ItemType(allOffices.get(i).getTaxiOfficeName(),false, true,allOffices.get(i).getTaxiOfficeID()));
-                }
-
-                adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficesArrayList);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+                    ArrayList<Office> mostRecentOffices = new ArrayList<>() ;
+                    mostRecentOffices.addAll(taxiOfficeList.getOfficesIncluded().getRecentOffices());
+                    ArrayList<Office> allOffices = new ArrayList<>();
+                    allOffices.addAll(taxiOfficeList.getOfficesData());
 
 
-                // OnItemClickListener on Item
-                adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-
-                       // Toast.makeText(TaxiInformationListScreen.this, "Office ID:  "  + listOfficesArrayList.get(position).getOfficeId(), Toast.LENGTH_SHORT).show();
-                        app.setTaxiOfficeId(listOfficesArrayList.get(position).getOfficeId());
-                        app.setTaxiOfficeName(listOfficesArrayList.get(position).getItemName());
-                        app.setTaxiPlateNumber(null);
-                        finish();
+                    for (int i=0; i <mostRecentOffices.size() ; i++){
+                        listOfficesArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
                     }
-                });
 
-            }
-        });
+                    listOfficesArrayList.add(new ItemType("Offices",true, false,0));
+
+                    for (int i=0; i <allOffices.size() ; i++){
+
+                        listOfficesArrayList.add(new ItemType(allOffices.get(i).getTaxiOfficeName(),false, true,allOffices.get(i).getTaxiOfficeID()));
+                    }
+
+                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficesArrayList);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+
+                    // OnItemClickListener on Item
+                    adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+
+                            // Toast.makeText(TaxiInformationListScreen.this, "Office ID:  "  + listOfficesArrayList.get(position).getOfficeId(), Toast.LENGTH_SHORT).show();
+                            app.setTaxiOfficeId(listOfficesArrayList.get(position).getOfficeId());
+                            app.setTaxiOfficeName(listOfficesArrayList.get(position).getItemName());
+                            app.setTaxiPlateNumber(null);
+                            finish();
+                        }
+                    });
+
+                }
+            });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
 
     }
 
 
     private void getOfficePlatesList_Sections() {
 
-        officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
-        officePlatesListViewModel.getOfficePlatesList(this,savedToken,app.getTaxiOfficeId(),"recent").observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
-            @Override
-            public void onChanged(OfficePlatesList officePlatesList) {
+        try {
+            officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
+            officePlatesListViewModel.getOfficePlatesList(this,savedToken,app.getTaxiOfficeId(),"recent").observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
+                @Override
+                public void onChanged(OfficePlatesList officePlatesList) {
 
-                listOfficePlatesArrayList = new ArrayList<>();
-
-
-                listOfficePlatesArrayList.add(new ItemType("Most recent",true, false,0));
-
-                ArrayList<TaxiPlate> mostRecentOfficePlates = new ArrayList<>() ;
-                mostRecentOfficePlates.addAll(officePlatesList.getOfficePlatesIncluded().getRecentPlateNumbers());
-                ArrayList<TaxiPlate> allOfficePlates = new ArrayList<>();
-                allOfficePlates.addAll(officePlatesList.getOfficePlatesData());
+                    listOfficePlatesArrayList = new ArrayList<>();
 
 
-                for (int i=0; i <mostRecentOfficePlates.size() ; i++){
-                    listOfficePlatesArrayList.add(new ItemType(mostRecentOfficePlates.get(i).getTabletCarPlateNo(),false, false));
-                }
+                    listOfficePlatesArrayList.add(new ItemType("Most recent",true, false,0));
 
-                listOfficePlatesArrayList.add(new ItemType("Office plates",true, false,0));
-
-                for (int i=0; i <allOfficePlates.size() ; i++){
-
-                    listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true));
-                }
-
-                adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficePlatesArrayList);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+                    ArrayList<TaxiPlate> mostRecentOfficePlates = new ArrayList<>() ;
+                    mostRecentOfficePlates.addAll(officePlatesList.getOfficePlatesIncluded().getRecentPlateNumbers());
+                    ArrayList<TaxiPlate> allOfficePlates = new ArrayList<>();
+                    allOfficePlates.addAll(officePlatesList.getOfficePlatesData());
 
 
-                // OnItemClickListener on Item
-                adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
-                    @Override
-                    public void onItemClick(int position) {
-
-                        //Toast.makeText(TaxiInformationListScreen.this, "Office ID:  "  + listOfficePlatesArrayList.get(position).getItemName(), Toast.LENGTH_SHORT).show();
-                        app.setTaxiPlateNumber(listOfficePlatesArrayList.get(position).getItemName());
-                       // app.setTaxiOfficeId(listOfficePlatesArrayList.get(position).getOfficeId());
-                      //  app.setTaxiOfficeName(listOfficePlatesArrayList.get(position).getItemName());
-                        finish();
+                    for (int i=0; i <mostRecentOfficePlates.size() ; i++){
+                        listOfficePlatesArrayList.add(new ItemType(mostRecentOfficePlates.get(i).getTabletCarPlateNo(),false, false));
                     }
-                });
 
-            }
-        });
+                    listOfficePlatesArrayList.add(new ItemType("Office plates",true, false,0));
+
+                    for (int i=0; i <allOfficePlates.size() ; i++){
+
+                        listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true));
+                    }
+
+                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficePlatesArrayList);
+                    recyclerView.setAdapter(adapter);
+                    recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
+
+
+                    // OnItemClickListener on Item
+                    adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
+                        @Override
+                        public void onItemClick(int position) {
+
+                            //Toast.makeText(TaxiInformationListScreen.this, "Office ID:  "  + listOfficePlatesArrayList.get(position).getItemName(), Toast.LENGTH_SHORT).show();
+                            app.setTaxiPlateNumber(listOfficePlatesArrayList.get(position).getItemName());
+                            // app.setTaxiOfficeId(listOfficePlatesArrayList.get(position).getOfficeId());
+                            //  app.setTaxiOfficeName(listOfficePlatesArrayList.get(position).getItemName());
+                            finish();
+                        }
+                    });
+
+                }
+            });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
+
 
 
 

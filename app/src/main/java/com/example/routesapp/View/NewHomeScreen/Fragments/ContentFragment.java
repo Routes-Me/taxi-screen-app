@@ -20,6 +20,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.Operations;
 import com.example.routesapp.Model.ItemAnalytics;
 import com.example.routesapp.R;
@@ -115,10 +116,15 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
 
     private void updateFirebaseAnalystics(ItemAnalytics itemAnalytics) {
-        //save into ( Custom Item Event )
-        Bundle params = new Bundle();
+        try {
+            //save into ( Custom Item Event )
+            Bundle params = new Bundle();
 
-        firebaseAnalytics.logEvent(itemAnalytics.getName(), params);
+            firebaseAnalytics.logEvent(itemAnalytics.getName(), params);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
 
     }
 

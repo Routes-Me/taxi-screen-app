@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModel;
 import com.crashlytics.android.Crashlytics;
 import com.example.routesapp.Class.AesBase64Wrapper;
 import com.example.routesapp.Class.App;
+import com.example.routesapp.Class.Helper;
 import com.example.routesapp.Interface.RoutesApi;
 import com.example.routesapp.View.Login.TaxiInformationScreen;
 
@@ -96,7 +97,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
 
              retrofit = new Retrofit.Builder()
-                    .baseUrl(RoutesApi.BASE_URL)
+                    .baseUrl(Helper.getConfigValue(activity, "baseUrl"))
                     .client(okHttpClient)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build();
@@ -117,90 +118,100 @@ public class AuthCredentialsViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadAuthCredentialsErrors(final AuthCredentials authCredentials, final Activity activity) {
+        try {
+
+            encryptAuthCredentials1 = new AuthCredentials(aesBase64Wrapper.encryptAndEncode(authCredentials.getUsername()), aesBase64Wrapper.encryptAndEncode(authCredentials.getPassword()));
 
 
-         encryptAuthCredentials1 = new AuthCredentials(aesBase64Wrapper.encryptAndEncode(authCredentials.getUsername()), aesBase64Wrapper.encryptAndEncode(authCredentials.getPassword()));
+            Call<Token> call_success = api.loginUserSuccess(encryptAuthCredentials1);
 
 
-        Call<Token> call_success = api.loginUserSuccess(encryptAuthCredentials1);
+            call_success.enqueue(new Callback<Token>() {
+                @Override
+                public void onResponse(Call<Token> call_success, Response<Token> response_success) {
+
+                    if (response_success.isSuccessful()){
+                        if (response_success.body().getAccess_token() != null) {
+                            try {
+                                String username = authCredentials.getUsername().trim();
+                                String password = authCredentials.getPassword().trim();
+                                app.setTechnicalSupportUserName(username);
+                                app.setTechnicalSupportPassword(password);
+
+                                // Toast.makeText(activity, "token:   " +  response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
+
+                                //Save Tablet token into sharedPref. ...
+                                editor.putString("tabToken", response_success.body().getAccess_token());
+                                editor.apply();
+
+                                dialog.dismiss();
+                                // ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
+
+                                //   activity.startActivity(new Intent(activity, MainActivity.class));
 
 
-        call_success.enqueue(new Callback<Token>() {
-            @Override
-            public void onResponse(Call<Token> call_success, Response<Token> response_success) {
+                                //  Toast.makeText(activity, "MVVM ... userName:  " + app.getTechnicalSupportName() + "  ,Token:  " + response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
-                if (response_success.isSuccessful()){
-                    if (response_success.body().getAccess_token() != null) {
-                        try {
-                            String username = authCredentials.getUsername().trim();
-                            String password = authCredentials.getPassword().trim();
-                            app.setTechnicalSupportUserName(username);
-                            app.setTechnicalSupportPassword(password);
+                                app.setNewLogin(true);
+                                activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
+                                activity.finish();
 
-                           // Toast.makeText(activity, "token:   " +  response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
-
-                            //Save Tablet token into sharedPref. ...
-                            editor.putString("tabToken", response_success.body().getAccess_token());
-                            editor.apply();
-
-                            dialog.dismiss();
-                           // ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
-
-                         //   activity.startActivity(new Intent(activity, MainActivity.class));
-
-
-                          //  Toast.makeText(activity, "MVVM ... userName:  " + app.getTechnicalSupportName() + "  ,Token:  " + response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
-
-                            app.setNewLogin(true);
-                            activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
-                            activity.finish();
-
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                            Crashlytics.logException(e);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                Crashlytics.logException(e);
+                            }
                         }
-                    }
-                }else {
+                    }else {
 
+
+                    }
 
                 }
 
-            }
+                @Override
+                public void onFailure(Call<Token> call_success, Throwable t) {
+                    loadError(encryptAuthCredentials1);
+                }
+            });
 
-            @Override
-            public void onFailure(Call<Token> call_success, Throwable t) {
-                loadError(encryptAuthCredentials1);
-            }
-        });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
 
     }
 
     private void loadError(AuthCredentials authCredentials) {
+        try {
+            Call<List<AuthCredentialsError>> call_failed = api.loginUserFailed(authCredentials);
+            call_failed.enqueue(new Callback<List<AuthCredentialsError>>() {
+                @SuppressLint("NewApi")
+                @Override
+                public void onResponse(Call<List<AuthCredentialsError>> call, Response<List<AuthCredentialsError>> response) {
 
-        Call<List<AuthCredentialsError>> call_failed = api.loginUserFailed(authCredentials);
-        call_failed.enqueue(new Callback<List<AuthCredentialsError>>() {
-            @SuppressLint("NewApi")
-            @Override
-            public void onResponse(Call<List<AuthCredentialsError>> call, Response<List<AuthCredentialsError>> response) {
-
-                if (response.isSuccessful()){
-                    try {
-                        authCredentialsErrorsList.addAll(response.body());
-                        authCredentialsErrors.postValue(authCredentialsErrorsList);
-                    }catch (Exception e){
-                        Crashlytics.logException(e);
+                    if (response.isSuccessful()){
+                        try {
+                            authCredentialsErrorsList.addAll(response.body());
+                            authCredentialsErrors.postValue(authCredentialsErrorsList);
+                        }catch (Exception e){
+                            Crashlytics.logException(e);
+                        }
                     }
+
+
                 }
 
+                @Override
+                public void onFailure(Call<List<AuthCredentialsError>> call, Throwable t) {
 
-            }
+                }
+            });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
-            @Override
-            public void onFailure(Call<List<AuthCredentialsError>> call, Throwable t) {
 
-            }
-        });
     }
 
 

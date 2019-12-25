@@ -1,5 +1,6 @@
 package com.example.routesapp.Interface;
 
+import com.example.routesapp.Class.Helper;
 import com.example.routesapp.Model.AuthCredentials;
 import com.example.routesapp.Model.AuthCredentialsError;
 import com.example.routesapp.Model.BannerModel;
@@ -31,9 +32,8 @@ import retrofit2.http.Query;
 
 public interface RoutesApi {
 
-    String BASE_URL = "http://api.test.routesdashboard.com/api/";
 
-   // http://api.test.routesdashboard.com/api/auth
+
 
     @POST("auth")
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})

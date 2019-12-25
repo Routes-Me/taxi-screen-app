@@ -50,65 +50,55 @@ public class ItemsViewModel  extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadItemsList(int ch_ID, final Activity activity, String savedToken) {
-/*
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .build();
+try {
+    ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+    RoutesApi api = null;
+    if (serverRetrofit != null){
+        api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+    }else {
+        return;
+    }
+
+    /// RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+    Call<List<ItemsModel>> call = api.getItems(ch_ID);
+
+
+    call.enqueue(new Callback<List<ItemsModel>>() {
+        @Override
+        public void onResponse(Call<List<ItemsModel>> call, Response<List<ItemsModel>> response) {
+
+
+            if (response.isSuccessful()){
+                //finally we are setting the list to our MutableLiveData
+                try {
+                    itemsList.setValue(response.body());
+                }catch (Exception e){
+                    Crashlytics.logException(e);
+                    // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }else {
+                Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
+
+                if (response.code() == 401) {
+                    activity.startActivity(new Intent(activity, LoginScreen.class));
+                    activity.finish();
+                }
+            }
 
 
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RoutesApi.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-*/
-        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
-        RoutesApi api = null;
-        if (serverRetrofit != null){
-            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        }else {
-            return;
+
         }
 
-       /// RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        Call<List<ItemsModel>> call = api.getItems(ch_ID);
+        @Override
+        public void onFailure(Call<List<ItemsModel>> call, Throwable t) {
+            //  Toast.makeText(context, "Items....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    });
+}catch (Exception e){
+    Crashlytics.logException(e);
+}
 
-
-        call.enqueue(new Callback<List<ItemsModel>>() {
-            @Override
-            public void onResponse(Call<List<ItemsModel>> call, Response<List<ItemsModel>> response) {
-
-
-                if (response.isSuccessful()){
-                    //finally we are setting the list to our MutableLiveData
-                    try {
-                        itemsList.setValue(response.body());
-                    }catch (Exception e){
-                        Crashlytics.logException(e);
-                        // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }else {
-                    Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
-
-                    if (response.code() == 401) {
-                        activity.startActivity(new Intent(activity, LoginScreen.class));
-                        activity.finish();
-                    }
-                }
-
-
-
-
-            }
-
-            @Override
-            public void onFailure(Call<List<ItemsModel>> call, Throwable t) {
-                 //  Toast.makeText(context, "Items....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 }
 

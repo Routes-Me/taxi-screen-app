@@ -54,71 +54,55 @@ public class BannersViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadBannersList(int ch_ID, final Activity activity, String token) {
-/*
-        OkHttpClient okHttpClient = new OkHttpClient.Builder()
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public okhttp3.Response intercept(Chain chain) throws IOException {
-                        Request request = chain.request().newBuilder().addHeader("parameter", "value").build();
-                        return chain.proceed(request);
-                    }
-                })
-                .connectTimeout(1, TimeUnit.MINUTES)
-                .readTimeout(30, TimeUnit.SECONDS)
-                .writeTimeout(15, TimeUnit.SECONDS)
-                .build();
+        try {
+
+            ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+            RoutesApi api = null;
+            if (serverRetrofit != null){
+                api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            }else {
+                return;
+            }
+
+            //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            Call<List<BannerModel>> call = api.getBanners(ch_ID);
 
 
+            call.enqueue(new Callback<List<BannerModel>>() {
+                @Override
+                public void onResponse(Call<List<BannerModel>> call, Response<List<BannerModel>> response) {
 
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl(RoutesApi.BASE_URL)
-                .client(okHttpClient)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
-        */
+                    if (response.isSuccessful()){
+                        //finally we are setting the list to our MutableLiveData
+                        try {
+                            bannersList.setValue(response.body());
+                        }catch (Exception e){
+                            Crashlytics.logException(e);
+                            // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }else {
+                        Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
 
-        ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
-        RoutesApi api = null;
-        if (serverRetrofit != null){
-            api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        }else {
-            return;
-        }
+                        if (response.code() == 401) {
+                            activity.startActivity(new Intent(activity, LoginScreen.class));
+                            activity.finish();
+                        }
 
-      //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-        Call<List<BannerModel>> call = api.getBanners(ch_ID);
-
-
-        call.enqueue(new Callback<List<BannerModel>>() {
-            @Override
-            public void onResponse(Call<List<BannerModel>> call, Response<List<BannerModel>> response) {
-
-                if (response.isSuccessful()){
-                    //finally we are setting the list to our MutableLiveData
-                    try {
-                        bannersList.setValue(response.body());
-                    }catch (Exception e){
-                        Crashlytics.logException(e);
-                        // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }else {
-                    Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
-
-                    if (response.code() == 401) {
-                        activity.startActivity(new Intent(activity, LoginScreen.class));
-                        activity.finish();
                     }
 
                 }
 
-            }
+                @Override
+                public void onFailure(Call<List<BannerModel>> call, Throwable t) {
+                    // Toast.makeText(context, "Banners....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
+                    activity.recreate();
+                }
+            });
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
 
-            @Override
-            public void onFailure(Call<List<BannerModel>> call, Throwable t) {
-               // Toast.makeText(context, "Banners....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
-                activity.recreate();
-            }
-        });
+
     }
 }
 

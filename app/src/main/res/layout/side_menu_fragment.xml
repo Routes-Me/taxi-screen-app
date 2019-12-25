@@ -86,7 +86,10 @@
                     android:layout_height="wrap_content"
                     style="@style/AppTheme.counterText"
 
-                    android:textSize="32sp"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="27dp"
+                    android:autoSizeMaxTextSize="32sp"
+                    android:autoSizeStepGranularity="2sp"
                     android:text="Time" />
 
 
@@ -96,8 +99,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     style="@style/AppTheme.counterText"
-                    android:textSize="32sp"
-                    android:text="Date" />
+
+                    android:text="Date"
+                    android:autoSizeTextType="uniform"
+                    android:autoSizeMinTextSize="27dp"
+                    android:autoSizeMaxTextSize="32sp"
+                    android:autoSizeStepGranularity="2sp"/>
 
 
 

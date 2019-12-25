@@ -76,7 +76,7 @@ android:background="@color/white"    >
                     style="@style/AppTheme.CustomEditText"
                     android:background="@drawable/tab_text_selector"
                     android:drawableRight="@drawable/ic_right_arrow"
-                    />
+                    android:clickable="true"/>
 
 
             <TextView
@@ -104,7 +104,7 @@ android:background="@color/white"    >
                     style="@style/AppTheme.CustomEditText"
                     android:background="@drawable/tab_text_selector"
                     android:drawableRight="@drawable/ic_right_arrow"
-                    />
+                    android:clickable="true"/>
 
             <TextView
                 android:id="@+id/taxiPlateNumber_error_tv"
