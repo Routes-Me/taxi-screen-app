@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "599108135088",
+    "firebase_url": "https://taxi-screen.firebaseio.com",
+    "project_id": "taxi-screen",
+    "storage_bucket": "taxi-screen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:261a773e1dc246be5ff375",
+        "android_client_info": {
+          "package_name": "com.example.routesapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599108135088-r97junsrosfu9spvdrc297v2v851sv9b.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.routesapp",
+            "certificate_hash": "205650018b43beb132d4434c4f05495d5a24768c"
+          }
+        },
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
