@@ -92,7 +92,8 @@ try {
         @Override
         public void onFailure(Call<List<CurrenciesModel>> call, Throwable t) {
             // Toast.makeText(context, "Currencies....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
-            activity.recreate();
+
+            Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
         }
     });
 }catch (Exception e){

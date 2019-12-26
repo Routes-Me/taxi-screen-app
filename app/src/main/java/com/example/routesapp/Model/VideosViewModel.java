@@ -92,7 +92,8 @@ public class VideosViewModel extends ViewModel {
                 @Override
                 public void onFailure(Call<List<VideoModel>> call, Throwable t) {
                     // Toast.makeText(context,"Videos....  " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    activity.recreate();
+                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+                    //activity.recreate();
                 }
             });
         }catch (Exception e){

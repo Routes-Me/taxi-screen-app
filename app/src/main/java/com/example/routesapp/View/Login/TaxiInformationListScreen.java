@@ -111,25 +111,31 @@ public class TaxiInformationListScreen extends AppCompatActivity {
 
                     listOfficesArrayList = new ArrayList<>();
 
-
-                    listOfficesArrayList.add(new ItemType("Most recent",true, false,0));
-
                     ArrayList<Office> mostRecentOffices = new ArrayList<>() ;
                     mostRecentOffices.addAll(taxiOfficeList.getOfficesIncluded().getRecentOffices());
                     ArrayList<Office> allOffices = new ArrayList<>();
                     allOffices.addAll(taxiOfficeList.getOfficesData());
 
 
-                    for (int i=0; i <mostRecentOffices.size() ; i++){
-                        listOfficesArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
+                    //Get Most Offices
+                    if (mostRecentOffices.size() > 0) {
+                        listOfficesArrayList.add(new ItemType("Most recent", true, false, 0));
+                        for (int i=0; i <mostRecentOffices.size() ; i++){
+                            listOfficesArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
+                        }
                     }
 
-                    listOfficesArrayList.add(new ItemType("Offices",true, false,0));
+                    //Get all Offices
+                    if (allOffices.size() > 0) {
+                        listOfficesArrayList.add(new ItemType("Offices", true, false, 0));
 
-                    for (int i=0; i <allOffices.size() ; i++){
+                        for (int i = 0; i < allOffices.size(); i++) {
 
-                        listOfficesArrayList.add(new ItemType(allOffices.get(i).getTaxiOfficeName(),false, true,allOffices.get(i).getTaxiOfficeID()));
+                            listOfficesArrayList.add(new ItemType(allOffices.get(i).getTaxiOfficeName(), false, true, allOffices.get(i).getTaxiOfficeID()));
+                        }
                     }
+
+
 
                     adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficesArrayList);
                     recyclerView.setAdapter(adapter);
@@ -170,24 +176,30 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                     listOfficePlatesArrayList = new ArrayList<>();
 
 
-                    listOfficePlatesArrayList.add(new ItemType("Most recent",true, false,0));
-
                     ArrayList<TaxiPlate> mostRecentOfficePlates = new ArrayList<>() ;
                     mostRecentOfficePlates.addAll(officePlatesList.getOfficePlatesIncluded().getRecentPlateNumbers());
                     ArrayList<TaxiPlate> allOfficePlates = new ArrayList<>();
                     allOfficePlates.addAll(officePlatesList.getOfficePlatesData());
 
+                    //Get Most Office Plates
+                    if (mostRecentOfficePlates.size() > 0){
+                        listOfficePlatesArrayList.add(new ItemType("Most recent",true, false,0));
 
-                    for (int i=0; i <mostRecentOfficePlates.size() ; i++){
-                        listOfficePlatesArrayList.add(new ItemType(mostRecentOfficePlates.get(i).getTabletCarPlateNo(),false, false));
+                        for (int i=0; i <mostRecentOfficePlates.size() ; i++){
+                            listOfficePlatesArrayList.add(new ItemType(mostRecentOfficePlates.get(i).getTabletCarPlateNo(),false, false));
+                        }
                     }
 
-                    listOfficePlatesArrayList.add(new ItemType("Office plates",true, false,0));
+                    //Get all Office Plates
+                    if (allOfficePlates.size() > 0) {
+                        listOfficePlatesArrayList.add(new ItemType("Office plates", true, false, 0));
 
-                    for (int i=0; i <allOfficePlates.size() ; i++){
-
-                        listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true));
+                        for (int i=0; i <allOfficePlates.size() ; i++){
+                            listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true));
+                        }
                     }
+
+
 
                     adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficePlatesArrayList);
                     recyclerView.setAdapter(adapter);

@@ -135,7 +135,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             try {
                 clickTimes++;
                 //if user Click on Back button Two Times
-                if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 15) {
+                if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
 
 
                     readPatternFromTechnicalSupport();

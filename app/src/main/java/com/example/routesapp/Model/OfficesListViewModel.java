@@ -2,6 +2,7 @@ package com.example.routesapp.Model;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -21,6 +22,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class OfficesListViewModel extends ViewModel {
 
@@ -68,14 +71,17 @@ public class OfficesListViewModel extends ViewModel {
                         Toast.makeText(activity, "Error:  " + response.code(), Toast.LENGTH_SHORT).show();
                         if (response.code() == 401) {
                             activity.startActivity(new Intent(activity, LoginScreen.class));
-                            activity.finish();
                         }
+                        activity.finish();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<TaxiOfficeList> call, Throwable t) {
-                    Toast.makeText(activity, "Taxi Offices ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(activity, "Taxi Offices ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    //Log.d(TAG, "onResponse: " + "failed ... No Internet Connection!, Error Code:  " + t);
+                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+                    activity.finish();
                 }
             });
         }catch (Exception e){

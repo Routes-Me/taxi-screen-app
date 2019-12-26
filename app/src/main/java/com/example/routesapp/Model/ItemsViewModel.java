@@ -93,6 +93,7 @@ try {
         @Override
         public void onFailure(Call<List<ItemsModel>> call, Throwable t) {
             //  Toast.makeText(context, "Items....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
         }
     });
 }catch (Exception e){

@@ -43,11 +43,11 @@ public class TabletInfoViewModel extends ViewModel {
         this.dialog = dialog;
         this.register_btn = register_btn;
         //if the list is null
-        if (tabletInfo == null) {
+       // if (tabletInfo == null) {
             tabletInfo = new MutableLiveData<TabletInfo>();
             //we will load it asynchronously from server in this method
             loadTabletInfo(activity, token, tabletCredentials);
-        }
+       // }
 
         //finally we will return the list
 
@@ -106,7 +106,10 @@ public class TabletInfoViewModel extends ViewModel {
 
                 @Override
                 public void onFailure(Call<TabletInfo> call, Throwable t) {
-                    Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
+                    //activity.recreate();
                 }
             });
         }catch (Exception e){

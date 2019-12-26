@@ -95,7 +95,8 @@ public class BannersViewModel extends ViewModel {
                 @Override
                 public void onFailure(Call<List<BannerModel>> call, Throwable t) {
                     // Toast.makeText(context, "Banners....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
-                    activity.recreate();
+                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+                   // activity.recreate();
                 }
             });
         }catch (Exception e){

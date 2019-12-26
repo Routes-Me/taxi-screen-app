@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
@@ -28,6 +29,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+
+import static androidx.constraintlayout.widget.Constraints.TAG;
 
 public class AuthCredentialsViewModel extends ViewModel {
 
@@ -162,16 +165,22 @@ public class AuthCredentialsViewModel extends ViewModel {
                                 Crashlytics.logException(e);
                             }
                         }
-                    }else {
-
-
                     }
+                    //else {
+
+                       // if (response_success.code() == 503){
+                           // Toast.makeText(activity, "success ... No Internet Connection!, Error Code:  " + response_success.code(), Toast.LENGTH_SHORT).show();
+                       // Log.d(TAG, "onResponse: " + "success ... No Internet Connection!, Error Code:  " + response_success.code());
+                        //    dialog.dismiss();
+                       // }
+
+                   // }
 
                 }
 
                 @Override
                 public void onFailure(Call<Token> call_success, Throwable t) {
-                    loadError(encryptAuthCredentials1);
+                    loadError(encryptAuthCredentials1,activity);
                 }
             });
 
@@ -182,7 +191,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
     }
 
-    private void loadError(AuthCredentials authCredentials) {
+    private void loadError(AuthCredentials authCredentials, final Activity activity) {
         try {
             Call<List<AuthCredentialsError>> call_failed = api.loginUserFailed(authCredentials);
             call_failed.enqueue(new Callback<List<AuthCredentialsError>>() {
@@ -198,13 +207,20 @@ public class AuthCredentialsViewModel extends ViewModel {
                             Crashlytics.logException(e);
                         }
                     }
+                    //else {
+                       // Toast.makeText(activity, "success ... No Internet Connection!, Error Code:  " + response_success.code(), Toast.LENGTH_SHORT).show();
+                      //  Log.d(TAG, "onResponse: " + "failed ... No Internet Connection!, Error Code:  " + response.code());
+                    //    dialog.dismiss();
+                   // }
 
 
                 }
 
                 @Override
                 public void onFailure(Call<List<AuthCredentialsError>> call, Throwable t) {
-
+                    //Log.d(TAG, "onResponse: " + "failed ... No Internet Connection!, Error Code:  " + t);
+                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+                    dialog.dismiss();
                 }
             });
         }catch (Exception e){

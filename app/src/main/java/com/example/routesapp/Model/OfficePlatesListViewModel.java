@@ -69,14 +69,16 @@ public class OfficePlatesListViewModel extends ViewModel {
                         Toast.makeText(activity, "Error:  " + response.code(), Toast.LENGTH_SHORT).show();
                         if (response.code() == 401) {
                             activity.startActivity(new Intent(activity, LoginScreen.class));
-                            activity.finish();
                         }
+                        activity.finish();
                     }
                 }
 
                 @Override
                 public void onFailure(Call<OfficePlatesList> call, Throwable t) {
-                    Toast.makeText(activity, "Office Plates ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(activity, "Office Plates ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+                    activity.finish();
                 }
             });
         }catch (Exception e){
