@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.routesapp">
+    package="com.routesme.taxiscreen">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
 
     <application
-        android:name=".Class.App"
+        android:name="com.routesme.taxi_screen.Class.App"
         android:allowBackup="true"
         android:icon="@mipmap/taxi_screen_icon"
         android:keepScreenOn="true"
@@ -21,20 +21,20 @@
         tools:replace="android:supportsRtl">
 
         <activity
-            android:name=".View.Login.TaxiInformationScreen"
+            android:name="com.routesme.taxi_screen.View.Login.TaxiInformationScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
         <activity
-            android:name=".View.Login.TaxiInformationListScreen"
+            android:name="com.routesme.taxi_screen.View.Login.TaxiInformationListScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
-            android:name=".View.Login.LearnMoreScreen"
+            android:name="com.routesme.taxi_screen.View.Login.LearnMoreScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".View.Login.LoginScreen"
+            android:name="com.routesme.taxi_screen.View.Login.LoginScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
 
@@ -42,7 +42,7 @@
 
         <!-- Last design of home screen -->
         <activity
-            android:name=".View.LastHomeScreen.Activity.MainActivity"
+            android:name="com.routesme.taxi_screen.View.LastHomeScreen.Activity.MainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
@@ -55,7 +55,7 @@
 
 
         <!-- New design of home screen -->
-        <activity android:name=".View.NewHomeScreen.Activity.HomeScreen"
+        <activity android:name="com.routesme.taxi_screen.View.NewHomeScreen.Activity.HomeScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
