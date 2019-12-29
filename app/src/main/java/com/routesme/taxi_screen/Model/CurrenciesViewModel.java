@@ -28,11 +28,11 @@ public class CurrenciesViewModel extends ViewModel {
     public LiveData<List<CurrenciesModel>> getCurrencies(int ch_ID, Activity activity, String savedToken) {
         //if the list is null
 
-        if (currenciesList == null) {
+      //  if (currenciesList == null) {
             currenciesList = new MutableLiveData<List<CurrenciesModel>>();
             //we will load it asynchronously from server in this method
              loadCurrenciesList(ch_ID,activity, savedToken);
-        }
+     //   }
 
 
        // currenciesList = new MutableLiveData<List<CurrenciesModel>>();

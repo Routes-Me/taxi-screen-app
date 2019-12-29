@@ -28,11 +28,11 @@ public class BannersViewModel extends ViewModel {
     public LiveData<List<BannerModel>> getBanners(int ch_ID, Activity activity, String token) {
         //if the list is null
 
-        if (bannersList == null) {
+      //  if (bannersList == null) {
             bannersList = new MutableLiveData<List<BannerModel>>();
             //we will load it asynchronously from server in this method
             loadBannersList(ch_ID,activity,token);
-        }
+       // }
 
 
        // bannersList = new MutableLiveData<List<BannerModel>>();

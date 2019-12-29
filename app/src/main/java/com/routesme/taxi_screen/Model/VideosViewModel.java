@@ -28,11 +28,11 @@ public class VideosViewModel extends ViewModel {
     public LiveData<List<VideoModel>> getVideos(int ch_ID, Activity activity, String savedToken) {
         //if the list is null
 
-        if (videosList == null) {
+      //  if (videosList == null) {
             videosList = new MutableLiveData<List<VideoModel>>();
             //we will load it asynchronously from server in this method
             loadVideosList(ch_ID, activity, savedToken);
-        }
+      //  }
 
 
         //videosList = new MutableLiveData<List<VideoModel>>();

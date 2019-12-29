@@ -57,7 +57,7 @@ public class SideMenuFragment extends Fragment {
 
         setUpTimeCounter();
 
-        mainFragmentToShow();
+       // mainFragmentToShow();
 
 
     }
