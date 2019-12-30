@@ -60,9 +60,7 @@ public class AesBase64Wrapper {
         return str.getBytes(encrypt.getCharsetName());
     }
 
-    private Cipher getCipher(int mode) throws Exception {
-      //  Cipher c = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        Cipher c = Cipher.getInstance(encrypt.getCipher());
+    private Cipher getCipher(int mode) throws Exception { Cipher c = Cipher.getInstance(encrypt.getCipher());
         byte[] iv = getBytes(encrypt.getIv());
         c.init(mode, generateKey(), new IvParameterSpec(iv));
         return c;
