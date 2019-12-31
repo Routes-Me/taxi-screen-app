@@ -9,8 +9,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Location;
 import android.os.Bundle;
+import android.os.Handler;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -21,16 +24,25 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
+import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
+import com.routesme.taxi_screen.Tracking.database.AppDatabase;
+import com.routesme.taxi_screen.Tracking.database.AppExecutors;
+import com.routesme.taxi_screen.Tracking.database.TrackingDao;
+import com.routesme.taxi_screen.Tracking.model.Tracking;
+import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 public class HomeScreen extends AppCompatActivity implements View.OnClickListener {
 
+    private static final String TAG = "HomeScreen";
 
     private App app;
 
@@ -62,6 +74,14 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
 
+    //Tracking ... Room Database...
+    private TrackingHandler trackingHandler;
+
+    private Handler handlerTracking;
+    private Runnable runnableTracking;
+
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,7 +89,10 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         setContentView(R.layout.home_screen);
 
 
+
+
     }
+
 
 
     @Override
@@ -87,6 +110,10 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
             showFragments();
 
+            //Vehicle Tracking...
+           vehicleTracking();
+
+
         }else {
             startActivity(new Intent(this, LoginScreen.class));
             finish();
@@ -94,7 +121,52 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
 
+
+
         super.onResume();
+    }
+
+    private void vehicleTracking() {
+        trackingHandler = new TrackingHandler(this);
+        //Get Vehicle Current Location & running TrackingTimer...
+        getVehicleCurrentLocation();
+        //Get Vehicle Current Location .. at onChanged...
+        onVehicleLocationChanged();
+    }
+
+
+    private void getVehicleCurrentLocation() {
+        trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
+        TrackingTimer();
+    }
+
+
+    private void onVehicleLocationChanged() {
+        trackingHandler.insertLocation(new TrackingLocation(29.361940,47.624267));
+        trackingHandler.insertLocation(new TrackingLocation(29.471994,47.964843));
+        //trackingHandler.insertLocation(new TrackingLocation(29.375975,47.986487));
+    }
+
+    private void TrackingTimer() {
+        try {
+
+            runnableTracking = new Runnable() {
+                @Override
+                public void run() {
+
+                    trackingHandler.getLocation();
+
+                    handlerTracking.postDelayed(runnableTracking, 5000);
+
+                }
+            };
+
+            handlerTracking = new Handler();
+            handlerTracking.postDelayed(runnableTracking, 5000);
+        }catch (Exception e){
+            Crashlytics.logException(e);
+        }
+
     }
 
 
@@ -113,7 +185,6 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         openPattern.setOnClickListener(this);
 
     }
-
 
 
     @Override

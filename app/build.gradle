@@ -14,6 +14,12 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
+
+        javaCompileOptions{
+            annotationProcessorOptions{
+                arguments= ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }}
+
     }
     buildTypes {
 
@@ -139,6 +145,11 @@ dependencies {
 
     //Ring Progress Bar Library ...
     implementation 'com.github.HotBitmapGG:RingProgressBar:V1.2.3'
+
+    //Room Database Library ...
+    //room
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
 
 }
 
