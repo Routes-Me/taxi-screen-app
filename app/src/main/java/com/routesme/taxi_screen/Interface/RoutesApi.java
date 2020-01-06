@@ -31,7 +31,6 @@ public interface RoutesApi {
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
     Call<Token> loginUserSuccess(@Body AuthCredentials authCredentials);
 
-    //Currencies List [Money Strip]
     @POST("auth")
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
     Call<List<AuthCredentialsError>> loginUserFailed(@Body AuthCredentials authCredentials);

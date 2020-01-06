@@ -44,19 +44,40 @@ public class TrackingHandler {
     }
 
 
-    public void insertLocation(final TrackingLocation location) {
-        currentStamptime = dateformat.format(new Date());
-        final Tracking tracking = new Tracking(location, currentStamptime);
-        AppExecutors.getInstance().diskIO().execute(new Runnable() {
-            @Override
-            public void run() {
-                trackingDao.insertLocation(tracking);
-            }
-        });
+    public void insertLocation(final TrackingLocation newLocation) {
+
+
+            AppExecutors.getInstance().diskIO().execute(new Runnable() {
+                @Override
+                public void run() {
+                    currentStamptime = dateformat.format(new Date());
+                    final Tracking tracking = new Tracking(newLocation, currentStamptime);
+                    final List<Tracking> trackings = trackingDao.loadAllLocations();
+                    if (!trackings.isEmpty()){
+                        TrackingLocation lastTabletLocation = trackingDao.loadLastLocation().getLocation();
+                        if (!newLocation.getLatitude().equals(lastTabletLocation.getLatitude()) && !newLocation.getLongitude().equals(lastTabletLocation.getLongitude())) {
+
+                            trackingDao.insertLocation(tracking);
+                            Log.d(TAG, "Tracking ... Insert New Location:  Lat-Long" + newLocation.getLatitude() + " - " + newLocation.getLongitude());
+                        }else {
+                            Log.d(TAG, "Tracking ... this location is equal to last location in table");
+                        }
+                    }else {
+                        trackingDao.insertLocation(tracking);
+                        Log.d(TAG, "Tracking ... Insert New Location:  Lat-Long" + newLocation.getLatitude() + " - " + newLocation.getLongitude());
+                    }
+
+
+
+
+                }
+            });
+
+
     }
 
 
-    public void getLocation() {
+    public void locationChecker() {
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -69,12 +90,12 @@ public class TrackingHandler {
                     trackingFirstLocation = new TrackingLocation(trackingDao.loadFirstLocation().getLocation().getLatitude(),trackingDao.loadFirstLocation().getLocation().getLongitude());
                     trackingLastLocation = new TrackingLocation(trackingDao.loadLastLocation().getLocation().getLatitude(),trackingDao.loadLastLocation().getLocation().getLongitude());
 
-                    if (!trackingFirstLocation.equals(trackingLastLocation)){
+                    if (!trackingFirstLocation.getLatitude().equals(trackingLastLocation.getLatitude()) && !trackingFirstLocation.getLongitude().equals(trackingLastLocation.getLongitude())){
                         float distance = getDistance();
 
                         if (distance >= 2){
                             sendLocationViaSocket(trackingDao.loadLastLocation());
-                            deleteTrackingTable();
+                            clearTrackingTable();
                         }else {
                             Log.d(TAG, "Tracking ... Distance is:  " + distance +"m is  less than 2 meter ");
                         }
@@ -120,11 +141,12 @@ public class TrackingHandler {
         //then send timestamp & trackingLocation to server via socket....
     }
 
-    private void deleteTrackingTable() {
+    private void clearTrackingTable() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                trackingDao.deleteTrackingData();
+                trackingDao.clearTrackingData();
+                Log.d(TAG, "Tracking .... Clear Tracking Table");
             }
         });
 

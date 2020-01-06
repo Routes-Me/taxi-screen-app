@@ -1,15 +1,23 @@
 package com.routesme.taxi_screen.View.NewHomeScreen.Activity;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.location.Criteria;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
@@ -17,6 +25,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -24,11 +33,8 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
+import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
-import com.routesme.taxi_screen.Tracking.database.AppDatabase;
-import com.routesme.taxi_screen.Tracking.database.AppExecutors;
-import com.routesme.taxi_screen.Tracking.database.TrackingDao;
-import com.routesme.taxi_screen.Tracking.model.Tracking;
 import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
@@ -36,8 +42,6 @@ import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 
 public class HomeScreen extends AppCompatActivity implements View.OnClickListener {
@@ -77,8 +81,22 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     //Tracking ... Room Database...
     private TrackingHandler trackingHandler;
 
+    boolean isHandlerTrackingRunning = false;
     private Handler handlerTracking;
     private Runnable runnableTracking;
+
+    //Using Location Manager to get device current location [ GeoPoint ]...
+    /*
+    private LocationManager locationManager;
+    private String provider;
+    private MyLocationListener mylistener;
+    private Criteria criteria;
+    private Location location;
+    */
+
+    //New way...
+    private LocationFinder finder;
+  //  private double longitude = 0.0, latitude = 0.0;
 
 
 
@@ -119,26 +137,61 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             finish();
         }
 
-
-
-
-
         super.onResume();
+    }
+
+    @Override
+    protected void onPause() {
+       // Toast.makeText(this, "Pause here!", Toast.LENGTH_SHORT).show();
+        if (isHandlerTrackingRunning){
+            handlerTracking.removeCallbacks(runnableTracking);
+            isHandlerTrackingRunning = false;
+        }
+
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy() {
+        //Toast.makeText(this, "Destroy here!", Toast.LENGTH_SHORT).show();
+        if (isHandlerTrackingRunning){
+            handlerTracking.removeCallbacks(runnableTracking);
+            isHandlerTrackingRunning = false;
+        }
+
+        super.onDestroy();
     }
 
     private void vehicleTracking() {
         trackingHandler = new TrackingHandler(this);
+        RequestPermission();
         //Get Vehicle Current Location & running TrackingTimer...
-        getVehicleCurrentLocation();
+        startTracking();
         //Get Vehicle Current Location .. at onChanged...
-        onVehicleLocationChanged();
+      //  onVehicleLocationChanged();
     }
 
 
-    private void getVehicleCurrentLocation() {
-        trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
-        TrackingTimer();
+    private void startTracking() {
+       // trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
+       // TrackingTimer();
+
+        finder = new LocationFinder(this,trackingHandler);
+        if (finder.canGetLocation()) {
+            /*
+            latitude = finder.getLatitude();
+            longitude = finder.getLongitude();
+            Toast.makeText(this, "Room DB Insert .... First Location ... lat-lng :  " + latitude + "  —  " + longitude, Toast.LENGTH_LONG).show();
+             trackingHandler.insertLocation(new TrackingLocation(latitude,longitude));
+             */
+             TrackingTimer();
+        } else {
+            finder.showSettingsAlert();
+        }
+
     }
+
+
 
 
     private void onVehicleLocationChanged() {
@@ -153,8 +206,8 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             runnableTracking = new Runnable() {
                 @Override
                 public void run() {
-
-                    trackingHandler.getLocation();
+                    isHandlerTrackingRunning = true;
+                    trackingHandler.locationChecker();
 
                     handlerTracking.postDelayed(runnableTracking, 5000);
 
@@ -353,30 +406,35 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     }
 
+
+
     private boolean isAuthorized() {
-        //Initialize sharedPreference Storage , and fetch data that saved into it ...
-        fetchSharedPreferenceData();
-
-        if (savedTabletToken != null && savedTabletSerialNo != null && savedTabletPassword != null && savedTabletChannelId > 0){
-            // Bearer_TabletToken = "Bearer " +savedTabletToken;
-
-            return true;
-        }else {
-            return false;
-        }
-    }
-
-    private void fetchSharedPreferenceData() {
+        boolean isAuthorized = false;
         try {
-            savedTabletToken = sharedPreferences.getString("tabToken", null);
-            savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
-            savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
-            savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
+            try {
+                savedTabletToken = sharedPreferences.getString("tabToken", null);
+                savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
+                savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
+                savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
+            }catch (Exception e){
+                Crashlytics.logException(e);
+            }
+
+
+            if (savedTabletToken != null && savedTabletSerialNo != null && savedTabletPassword != null && savedTabletChannelId > 0){
+                // Bearer_TabletToken = "Bearer " +savedTabletToken;
+                Log.d(TAG, "isAuthorized: true , TabletChannelId:  " +savedTabletChannelId);
+                isAuthorized = true;
+            }else {
+                Log.d(TAG, "isAuthorized: false  , TabletChannelId:  " +savedTabletChannelId);
+
+                isAuthorized =  false;
+            }
+
         }catch (Exception e){
             Crashlytics.logException(e);
         }
-
-
+        return isAuthorized;
     }
 
     private void IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics() {
@@ -390,5 +448,129 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     }
 
+
+
+
+
+
+
+
+
+/*
+    //Tracking ... get device location by using location manager ....
+    private void getTabletCurrentLocation() {
+
+        RequestPermission();
+
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
+
+        // Define the criteria how to select the location provider
+        criteria = new Criteria();
+        // user defines the criteria
+        criteria.setCostAllowed(false);
+        //for release apk
+        criteria.setAccuracy(Criteria.ACCURACY_COARSE);   //default
+
+
+
+        provider = locationManager.getBestProvider(criteria, false);
+
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
+
+        mylistener = new MyLocationListener();
+
+        if (location != null) {
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                Toast.makeText(HomeScreen.this, "first Location .... Lat:  " + location.getLatitude() + "  ,Long:  " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+
+                mylistener.onLocationChanged(location);
+            }
+
+
+        } else {
+            // leads to the settings because there is no last known location
+            //  Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+            // startActivity(intent);
+        }
+        // location updates: at least 1 meter and 200millsecs change
+        locationManager.requestLocationUpdates(provider, 200, 1, mylistener);
+
+
+
+
+    }
+
+    private class MyLocationListener implements LocationListener {
+
+
+
+        @Override
+        public void onLocationChanged(Location location) {
+
+            Toast.makeText(HomeScreen.this, "onLocationChanged .... Lat:  " + location.getLatitude() + "  ,Long:  " + location.getLongitude(), Toast.LENGTH_SHORT).show();
+
+        }
+
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            //    Toast.makeText(MainActivity.this, provider + "'s status changed to " + status + "!", Toast.LENGTH_SHORT).show();
+
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+            //Toast.makeText(MainActivity.this, "Provider " + provider + " enabled!", Toast.LENGTH_SHORT).show();
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+            // Toast.makeText(MainActivity.this, "Provider " + provider + " disabled!", Toast.LENGTH_SHORT).show();
+
+        }
+
+
+
+    }
+*/
+
+    //for Request Permissions
+    public void RequestPermission() {
+        int Permission_All = 1;
+
+        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        if (!hasPermissions(this, Permissions)) {
+            ActivityCompat.requestPermissions(this, Permissions, Permission_All);
+        }
+
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 
 }

@@ -138,19 +138,12 @@ public class AuthCredentialsViewModel extends ViewModel {
                                 app.setTechnicalSupportUserName(username);
                                 app.setTechnicalSupportPassword(password);
 
-                                // Toast.makeText(activity, "token:   " +  response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
-                                //Save Tablet token into sharedPref. ...
                                 editor.putString("tabToken", response_success.body().getAccess_token());
                                 editor.apply();
 
                                 dialog.dismiss();
-                                // ((FragmentActivity)activity).getSupportFragmentManager().beginTransaction().setCustomAnimations( R.anim.enter_from_right, R.anim.exit_to_left, R.anim.enter_from_left, R.anim.exit_to_right).replace(R.id.login_fragment_container, new TabletDataFragment()).commit();
 
-                                //   activity.startActivity(new Intent(activity, MainActivity.class));
-
-
-                                //  Toast.makeText(activity, "MVVM ... userName:  " + app.getTechnicalSupportName() + "  ,Token:  " + response_success.body().getAccess_token(), Toast.LENGTH_SHORT).show();
 
                                 app.setNewLogin(true);
                                 activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
@@ -163,15 +156,13 @@ public class AuthCredentialsViewModel extends ViewModel {
                             }
                         }
                     }
-                    //else {
+                    else {
 
-                       // if (response_success.code() == 503){
-                           // Toast.makeText(activity, "success ... No Internet Connection!, Error Code:  " + response_success.code(), Toast.LENGTH_SHORT).show();
-                       // Log.d(TAG, "onResponse: " + "success ... No Internet Connection!, Error Code:  " + response_success.code());
-                        //    dialog.dismiss();
-                       // }
+                         Toast.makeText(activity, "success response !, Error Code:  " + response_success.code(), Toast.LENGTH_SHORT).show();
 
-                   // }
+                            dialog.dismiss();
+
+                    }
 
                 }
 
@@ -204,18 +195,16 @@ public class AuthCredentialsViewModel extends ViewModel {
                             Crashlytics.logException(e);
                         }
                     }
-                    //else {
-                       // Toast.makeText(activity, "success ... No Internet Connection!, Error Code:  " + response_success.code(), Toast.LENGTH_SHORT).show();
-                      //  Log.d(TAG, "onResponse: " + "failed ... No Internet Connection!, Error Code:  " + response.code());
-                    //    dialog.dismiss();
-                   // }
+                    else {
+                        Toast.makeText(activity, "Error response , Error Code:  " + response.code(), Toast.LENGTH_SHORT).show();
+                        dialog.dismiss();
+                    }
 
 
                 }
 
                 @Override
                 public void onFailure(Call<List<AuthCredentialsError>> call, Throwable t) {
-                    //Log.d(TAG, "onResponse: " + "failed ... No Internet Connection!, Error Code:  " + t);
                     Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
                 }

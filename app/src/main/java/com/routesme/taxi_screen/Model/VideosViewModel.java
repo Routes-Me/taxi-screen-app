@@ -73,7 +73,7 @@ public class VideosViewModel extends ViewModel {
                             // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     }else {
-                        Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(activity, "VideoViewModel .. Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
 
                         if (response.code() == 401) {
                             activity.startActivity(new Intent(activity, LoginScreen.class));

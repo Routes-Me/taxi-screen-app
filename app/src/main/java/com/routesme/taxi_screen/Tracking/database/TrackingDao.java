@@ -39,6 +39,6 @@ public interface TrackingDao {
 
     //Delete Tracking Data ...
     @Query("DELETE FROM Tracking")
-    void deleteTrackingData();
+    void clearTrackingData();
 
 }
