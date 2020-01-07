@@ -10,6 +10,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
@@ -38,6 +39,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     private Operations operations;
 
+    public static final int READ_PHONE_STATE_REQUEST_CODE = 101;
+
     private static final String   List_Type_STR = "List_Type_Key", Offices_STR = "Offices", Office_Plates_STR = "Office_Plates";
 
     private App app;
@@ -60,6 +63,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     private int taxiOfficeId = 0;
     private String tabletSerialNumber = null, taxiOfficeName = null, taxiPlateNumber = null;
+
 
 
     private boolean showRationale = true, getTabletSerialNumber = false;
@@ -169,15 +173,17 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
 
+    @SuppressLint("HardwareIds")
     private void getTabletSerialNumber() {
         try {
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
                 return;
             }else {
-                deviceSerialNumber_tv.setText(telephonyManager.getDeviceId());
                 tabletSerialNumber = telephonyManager.getDeviceId();
+                deviceSerialNumber_tv.setText(tabletSerialNumber);
+
                 showTabletSerialNumberError(false);
 
                // Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
@@ -196,10 +202,10 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         switch (requestCode) {
-            case 101:
+            case READ_PHONE_STATE_REQUEST_CODE:
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, 101);
+                        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
                         return;
                     }
                     deviceSerialNumber_tv.setText(telephonyManager.getDeviceId());

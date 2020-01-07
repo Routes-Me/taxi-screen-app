@@ -13,10 +13,6 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.location.Criteria;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -25,17 +21,14 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
-import com.routesme.taxi_screen.Class.Operations;
 import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
-import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
@@ -50,9 +43,6 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     private App app;
 
-    private Operations operations;
-
-
     //Using Firebase Analytics ...
     private FirebaseAnalytics firebaseAnalytics;
 
@@ -64,7 +54,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     //sharedPreference Storage
     private SharedPreferences sharedPreferences;
     // private SharedPreferences.Editor editor;
-    private String  savedTabletToken = null,savedTabletSerialNo = null , savedTabletPassword = null;
+    private String savedTabletToken = null, savedTabletSerialNo = null, savedTabletPassword = null;
     private int savedTabletChannelId = 0;
 
     //To open Settings [ change launcher app ] ...
@@ -77,28 +67,22 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     private PatternLockView pattern_exitApp;
 
 
+    ////////Tracking System...
 
-    //Tracking ... Room Database...
+    //Location requested permissions...
+    public static final int LOCATION_REQUEST_CODE = 102;
+    private String[] Location_Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+    private boolean showRationale = true;
+
+
+    //Room Database...
     private TrackingHandler trackingHandler;
-
+    //Location Finder to get device current location [ GeoPoint(latitude,longitude) ] ...
+    private LocationFinder finder;
+    //Thread
     boolean isHandlerTrackingRunning = false;
     private Handler handlerTracking;
     private Runnable runnableTracking;
-
-    //Using Location Manager to get device current location [ GeoPoint ]...
-    /*
-    private LocationManager locationManager;
-    private String provider;
-    private MyLocationListener mylistener;
-    private Criteria criteria;
-    private Location location;
-    */
-
-    //New way...
-    private LocationFinder finder;
-  //  private double longitude = 0.0, latitude = 0.0;
-
-
 
 
     @Override
@@ -106,11 +90,9 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-
-
+        RequestLocationPermission();
 
     }
-
 
 
     @Override
@@ -120,19 +102,25 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
 
         //Check authorization of tablet before fetch advertisement data from server to display it ..
-        if (isAuthorized()){
+        if (isAuthorized()) {
 
+
+            //Vehicle Tracking...
+            trackingHandler = new TrackingHandler(this);
+
+            //Get Vehicle Current Location & running TrackingTimer...
+            startTracking();
+            // vehicleTracking();
 
             initialize();
             hideNavigationBar();
             IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
             showFragments();
 
-            //Vehicle Tracking...
-           vehicleTracking();
 
 
-        }else {
+
+        } else {
             startActivity(new Intent(this, LoginScreen.class));
             finish();
         }
@@ -142,8 +130,8 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     @Override
     protected void onPause() {
-       // Toast.makeText(this, "Pause here!", Toast.LENGTH_SHORT).show();
-        if (isHandlerTrackingRunning){
+        // Toast.makeText(this, "Pause here!", Toast.LENGTH_SHORT).show();
+        if (isHandlerTrackingRunning) {
             handlerTracking.removeCallbacks(runnableTracking);
             isHandlerTrackingRunning = false;
         }
@@ -154,29 +142,29 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onDestroy() {
         //Toast.makeText(this, "Destroy here!", Toast.LENGTH_SHORT).show();
-        if (isHandlerTrackingRunning){
+        if (isHandlerTrackingRunning) {
             handlerTracking.removeCallbacks(runnableTracking);
             isHandlerTrackingRunning = false;
         }
 
         super.onDestroy();
     }
-
+/*
     private void vehicleTracking() {
-        trackingHandler = new TrackingHandler(this);
-        RequestPermission();
-        //Get Vehicle Current Location & running TrackingTimer...
-        startTracking();
-        //Get Vehicle Current Location .. at onChanged...
-      //  onVehicleLocationChanged();
-    }
 
+       // RequestLocationPermission();
+        //Start vehicle tracking ....
+       // startTracking();
+        vehicleTracking();
+
+    }
+*/
 
     private void startTracking() {
-       // trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
-       // TrackingTimer();
+        // trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
+        // TrackingTimer();
 
-        finder = new LocationFinder(this,trackingHandler);
+        finder = new LocationFinder(this, trackingHandler);
         if (finder.canGetLocation()) {
             /*
             latitude = finder.getLatitude();
@@ -184,21 +172,13 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             Toast.makeText(this, "Room DB Insert .... First Location ... lat-lng :  " + latitude + "  —  " + longitude, Toast.LENGTH_LONG).show();
              trackingHandler.insertLocation(new TrackingLocation(latitude,longitude));
              */
-             TrackingTimer();
+            TrackingTimer();
         } else {
             finder.showSettingsAlert();
         }
 
     }
 
-
-
-
-    private void onVehicleLocationChanged() {
-        trackingHandler.insertLocation(new TrackingLocation(29.361940,47.624267));
-        trackingHandler.insertLocation(new TrackingLocation(29.471994,47.964843));
-        //trackingHandler.insertLocation(new TrackingLocation(29.375975,47.986487));
-    }
 
     private void TrackingTimer() {
         try {
@@ -216,7 +196,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
             handlerTracking = new Handler();
             handlerTracking.postDelayed(runnableTracking, 5000);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
 
@@ -242,7 +222,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     @Override
     public void onClick(View v) {
-        switch (v.getId()){
+        switch (v.getId()) {
             case R.id.homeScreenLayout:
                 //  changeTheme();
                 break;
@@ -256,27 +236,26 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     private void openPatternDialog() {
 
-            try {
-                clickTimes++;
-                //if user Click on Back button Two Times
-                if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
+        try {
+            clickTimes++;
+            //if user Click on Back button Two Times
+            if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
 
 
-                    readPatternFromTechnicalSupport();
+                readPatternFromTechnicalSupport();
 
-                    //Toast.makeText(this, "Pattern!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(this, "Pattern!", Toast.LENGTH_SHORT).show();
 
-                    clickTimes = 0;
+                clickTimes = 0;
 
-                }
-                else {
+            } else {
 
-                }
-
-                PressedTime = System.currentTimeMillis();
-            } catch (Exception e) {
-                Crashlytics.logException(e);
             }
+
+            PressedTime = System.currentTimeMillis();
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
 
     }
 
@@ -305,6 +284,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                     exitPatternDialog.dismiss();
                 }
             }
+
             @Override
             public void onCleared() {
             }
@@ -312,7 +292,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     }
 
     private void showExitPatternDialog() {
-        try{
+        try {
             exitPatternDialog = new Dialog(this);
             exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
 
@@ -323,10 +303,9 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             exitPatternDialog.show();
             exitPatternDialog.setCancelable(false);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
-
 
 
     }
@@ -343,10 +322,9 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
             finish();
             System.exit(0);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
-
 
 
     }
@@ -361,7 +339,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             decorView.setSystemUiVisibility(flags);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
 
@@ -369,22 +347,21 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     @SuppressLint("ResourceAsColor")
     private void changeTheme() {
-        if (isLightTheme){
+        if (isLightTheme) {
             homeScreenLayout.setBackgroundColor(Color.parseColor("#000000"));
             isLightTheme = false;
-        }else {
+        } else {
             homeScreenLayout.setBackgroundColor(Color.parseColor("#ffffff"));
             isLightTheme = true;
         }
     }
 
 
-    //Fragment To Show [ RecyclerViewFragment    or    ViewItemFragment ]
     private void showFragments() {
         try {
             getSupportFragmentManager().beginTransaction().replace(R.id.contentFragment_container, new ContentFragment()).commit();
             getSupportFragmentManager().beginTransaction().replace(R.id.sideMenuFragment_container, new SideMenuFragment()).commit();
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
 
@@ -400,12 +377,11 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             app.setTaxiOfficeId(0);
             app.setTaxiOfficeName(null);
             app.setTaxiPlateNumber(null);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
 
     }
-
 
 
     private boolean isAuthorized() {
@@ -416,22 +392,22 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                 savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
                 savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
                 savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
-            }catch (Exception e){
+            } catch (Exception e) {
                 Crashlytics.logException(e);
             }
 
 
-            if (savedTabletToken != null && savedTabletSerialNo != null && savedTabletPassword != null && savedTabletChannelId > 0){
+            if (savedTabletToken != null && savedTabletSerialNo != null && savedTabletPassword != null && savedTabletChannelId > 0) {
                 // Bearer_TabletToken = "Bearer " +savedTabletToken;
-                Log.d(TAG, "isAuthorized: true , TabletChannelId:  " +savedTabletChannelId);
+                Log.d(TAG, "isAuthorized: true , TabletChannelId:  " + savedTabletChannelId);
                 isAuthorized = true;
-            }else {
-                Log.d(TAG, "isAuthorized: false  , TabletChannelId:  " +savedTabletChannelId);
+            } else {
+                Log.d(TAG, "isAuthorized: false  , TabletChannelId:  " + savedTabletChannelId);
 
-                isAuthorized =  false;
+                isAuthorized = false;
             }
 
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
         return isAuthorized;
@@ -442,115 +418,15 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         try {
             Crashlytics.setUserIdentifier(savedTabletSerialNo);
             firebaseAnalytics.setUserId(savedTabletSerialNo);
-        }catch (Exception e){
+        } catch (Exception e) {
             Crashlytics.logException(e);
         }
 
     }
 
 
-
-
-
-
-
-
-
-/*
-    //Tracking ... get device location by using location manager ....
-    private void getTabletCurrentLocation() {
-
-        RequestPermission();
-
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
-        // Define the criteria how to select the location provider
-        criteria = new Criteria();
-        // user defines the criteria
-        criteria.setCostAllowed(false);
-        //for release apk
-        criteria.setAccuracy(Criteria.ACCURACY_COARSE);   //default
-
-
-
-        provider = locationManager.getBestProvider(criteria, false);
-
-
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        location = locationManager.getLastKnownLocation(locationManager.NETWORK_PROVIDER);
-
-        mylistener = new MyLocationListener();
-
-        if (location != null) {
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                Toast.makeText(HomeScreen.this, "first Location .... Lat:  " + location.getLatitude() + "  ,Long:  " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-
-                mylistener.onLocationChanged(location);
-            }
-
-
-        } else {
-            // leads to the settings because there is no last known location
-            //  Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-            // startActivity(intent);
-        }
-        // location updates: at least 1 meter and 200millsecs change
-        locationManager.requestLocationUpdates(provider, 200, 1, mylistener);
-
-
-
-
-    }
-
-    private class MyLocationListener implements LocationListener {
-
-
-
-        @Override
-        public void onLocationChanged(Location location) {
-
-            Toast.makeText(HomeScreen.this, "onLocationChanged .... Lat:  " + location.getLatitude() + "  ,Long:  " + location.getLongitude(), Toast.LENGTH_SHORT).show();
-
-        }
-
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            //    Toast.makeText(MainActivity.this, provider + "'s status changed to " + status + "!", Toast.LENGTH_SHORT).show();
-
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-            //Toast.makeText(MainActivity.this, "Provider " + provider + " enabled!", Toast.LENGTH_SHORT).show();
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-            // Toast.makeText(MainActivity.this, "Provider " + provider + " disabled!", Toast.LENGTH_SHORT).show();
-
-        }
-
-
-
-    }
-*/
-
     //for Request Permissions
-    public void RequestPermission() {
+    public void RequestLocationPermission() {
         int Permission_All = 1;
 
         String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
@@ -572,5 +448,106 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
         return true;
     }
+
+
+
+/*
+    private void vehicleTracking() {
+        try {
+
+            if (!hasPermissions(this, Location_Permissions)) {
+                ActivityCompat.requestPermissions(this, Location_Permissions, LOCATION_REQUEST_CODE);
+                return;
+            } else {
+                //start tracking...
+                startTracking();
+            }
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
+
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        switch (requestCode) {
+            case LOCATION_REQUEST_CODE:
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    if (!hasPermissions(this, Location_Permissions)) {
+                        ActivityCompat.requestPermissions(this, Location_Permissions, LOCATION_REQUEST_CODE);
+                        return;
+                    }
+
+                    //start tracking...
+                    vehicleTracking();
+                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                    // user rejected the permission
+
+                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION);
+                        openLocationSettingsDialog();
+
+                    }
+                }
+
+                break;
+            default:
+                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
+
+    public static boolean hasPermissions(Context context, String... permissions) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    private void openLocationSettingsDialog() {
+        if (!showRationale) {
+
+            new AlertDialog.Builder(this)
+                    .setTitle("Location Permission required")
+                    .setMessage("Enable location permission from app settings is required to using tracking system")
+
+                    .setPositiveButton("Open settings", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            try {
+
+                                //showTabletSerialNumberError(false);
+                                startActivity(new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", getPackageName(), null)));
+
+                            } catch (Exception e) {
+                            }
+
+                        }
+                    })
+
+                    .setNegativeButton("Later", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            // showTabletSerialNumberError(true);
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert)
+                    .setCancelable(false)
+                    .show();
+
+        } else {
+            //start tracking...
+            vehicleTracking();
+        }
+    }
+    */
+
 
 }

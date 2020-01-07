@@ -3,6 +3,7 @@ package com.routesme.taxi_screen.Tracking.Class;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.routesme.taxi_screen.Tracking.database.AppDatabase;
 import com.routesme.taxi_screen.Tracking.database.AppExecutors;
@@ -64,7 +65,7 @@ public class TrackingHandler {
                         }
                     }else {
                         trackingDao.insertLocation(tracking);
-                        Log.d(TAG, "Tracking ... Insert New Location:  Lat-Long" + newLocation.getLatitude() + " - " + newLocation.getLongitude());
+                        Log.d(TAG, "Tracking ... Insert new location as a first location in table :  Lat-Long" + newLocation.getLatitude() + " - " + newLocation.getLongitude());
                     }
 
 

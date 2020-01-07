@@ -53,7 +53,7 @@ public class LocationFinder extends Service implements LocationListener {
     public LocationFinder(Context context, TrackingHandler trackingHandler) {
         this.context = context;
 
-      //  RequestPermission();
+      //  RequestLocationPermission();
         this.trackingHandler = trackingHandler;
         getLocation();
 
@@ -66,12 +66,19 @@ public class LocationFinder extends Service implements LocationListener {
         //longitude = location.getLongitude();
       // Toast.makeText(context, "Changed Location:   lat-lng :  " + latitude + "  —  " + longitude, Toast.LENGTH_LONG).show();
 
+
         if (location != null) {
+            try {
             latitude = location.getLatitude();
             longitude = location.getLongitude();
             trackingHandler.insertLocation(new TrackingLocation(latitude,longitude));
-            Toast.makeText(context, "Room DB Insert .... Updated Location ... lat-lng :  " + latitude + "  —  " + longitude, Toast.LENGTH_LONG).show();
-        }
+            Toast.makeText(context, "Updated Location ... lat-lng :  " + latitude + "  —  " + longitude, Toast.LENGTH_LONG).show();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            }
+
 
     }
 
