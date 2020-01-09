@@ -21,11 +21,14 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
+        <activity android:name="com.routesme.taxi_screen.Tracking.WebSocketScreen">
+
+        </activity>
 
         <activity
             android:name="com.routesme.taxi_screen.View.Login.TaxiInformationScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name="com.routesme.taxi_screen.View.Login.TaxiInformationListScreen"
             android:screenOrientation="landscape"
@@ -38,30 +41,17 @@
         <activity
             android:name="com.routesme.taxi_screen.View.Login.LoginScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"></activity>
-
-
-
-        <!-- Last design of home screen -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" /> <!-- Last design of home screen -->
         <activity
             android:name="com.routesme.taxi_screen.View.LastHomeScreen.Activity.MainActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing">
-
-
-
-
-        </activity>
-
-
-
-        <!-- New design of home screen -->
-        <activity android:name="com.routesme.taxi_screen.View.NewHomeScreen.Activity.HomeScreen"
+            android:windowSoftInputMode="adjustNothing" /> <!-- New design of home screen -->
+        <activity
+            android:name="com.routesme.taxi_screen.View.NewHomeScreen.Activity.HomeScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -69,11 +59,7 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
-
-
-
     </application>
 
 </manifest>

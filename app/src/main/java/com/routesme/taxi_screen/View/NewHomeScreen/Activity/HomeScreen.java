@@ -21,20 +21,30 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
+import com.routesme.taxi_screen.Class.Helper;
 import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
+import com.routesme.taxi_screen.Tracking.model.Tracking;
+import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
 
+import org.java_websocket.WebSocket;
+import org.java_websocket.client.WebSocketClient;
+import org.java_websocket.handshake.ServerHandshake;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 
 public class HomeScreen extends AppCompatActivity implements View.OnClickListener {
@@ -83,6 +93,10 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     boolean isHandlerTrackingRunning = false;
     private Handler handlerTracking;
     private Runnable runnableTracking;
+    //webSocket
+    private WebSocketClient trackingWebSocket;
+    private URI trackingWebSocketUri;
+    private List<Tracking> trackingLocations;
 
 
     @Override
@@ -118,8 +132,6 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             showFragments();
 
 
-
-
         } else {
             startActivity(new Intent(this, LoginScreen.class));
             finish();
@@ -131,21 +143,27 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     @Override
     protected void onPause() {
         // Toast.makeText(this, "Pause here!", Toast.LENGTH_SHORT).show();
-        if (isHandlerTrackingRunning) {
-            handlerTracking.removeCallbacks(runnableTracking);
-            isHandlerTrackingRunning = false;
-        }
+        // stopTrackingTimer();
+
+             if (trackingWebSocket != null){
+                 trackingWebSocket.close();
+             }
+
+
 
         super.onPause();
     }
 
+
     @Override
     protected void onDestroy() {
         //Toast.makeText(this, "Destroy here!", Toast.LENGTH_SHORT).show();
-        if (isHandlerTrackingRunning) {
-            handlerTracking.removeCallbacks(runnableTracking);
-            isHandlerTrackingRunning = false;
+        //  stopTrackingTimer();
+
+        if (trackingWebSocket != null){
+            trackingWebSocket.close();
         }
+
 
         super.onDestroy();
     }
@@ -173,10 +191,93 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
              trackingHandler.insertLocation(new TrackingLocation(latitude,longitude));
              */
             TrackingTimer();
+            connectWebSocket();
+          //  if (trackingWebSocket.getReadyState() == WebSocket.READYSTATE.CLOSED){
+
+
+           // }
+
+
+            //TrackingTimer();
         } else {
             finder.showSettingsAlert();
         }
 
+    }
+
+    private void connectWebSocket() {
+        try {
+            trackingWebSocketUri = new URI(Helper.getConfigValue(this, "trackingWebSocketUri"));
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
+
+
+        trackingWebSocket = new WebSocketClient(trackingWebSocketUri) {
+            @Override
+            public void onOpen(ServerHandshake serverHandshake) {
+                Log.i("trackingWebSocket:  ", "Opened");
+
+
+                //Send deviceId to server (Device Identifiering)
+                sendMessageViaSocket("deviceId:" + savedTabletSerialNo);
+
+                //Send offline locations to server if it exists....
+                /*
+                trackingLocations = trackingHandler.getAllLocations();
+                if (!trackingLocations.isEmpty()) {
+                    sendAllTabletLocations(trackingLocations);
+
+                    //clear Tracking Table....
+                    trackingHandler.clearTrackingTable();
+                }
+*/
+
+               // TrackingTimer();
+                handlerTracking.postDelayed(runnableTracking, 5000);
+            }
+
+            @Override
+            public void onMessage(String message) {
+                Log.i("trackingWebSocket:  ", "Received message:  " + message);
+                //  Toast.makeText(HomeScreen.this, "receivedMessage:  " + message, Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onClose(int code, String reason, boolean remote) {
+                stopTrackingTimer();
+                Log.i("trackingWebSocket:  ", "Closed - reason:  " + reason);
+            }
+
+            @Override
+            public void onError(Exception ex) {
+                Log.i("trackingWebSocket:  ", "Error:   " + ex.getMessage());
+
+
+            }
+        };
+        trackingWebSocket.connect();
+    }
+
+    private void sendAllTabletLocations(List<Tracking> trackingLocations) {
+        for (int l = 0; l < trackingLocations.size(); l++) {
+            Tracking tracking = trackingLocations.get(l);
+            String timestamp = tracking.getTimestamp();
+            TrackingLocation trackingLocation = tracking.getLocation();
+            String message = "location:" + trackingLocation.getLatitude() + "," + trackingLocation.getLongitude() + ";timestamp:" + timestamp;
+
+            sendMessageViaSocket(message);
+
+        }
+    }
+
+    private void sendMessageViaSocket(String message) {
+        try {
+        trackingWebSocket.send(message);
+        Log.i("trackingWebSocket:  ", "Send message:  " + message);
+    } catch (Exception e) {
+        Crashlytics.logException(e);
+    }
     }
 
 
@@ -187,7 +288,8 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                 @Override
                 public void run() {
                     isHandlerTrackingRunning = true;
-                    trackingHandler.locationChecker();
+                    Log.i("trackingWebSocket:  ", "Tracking Timer running ...");
+                    trackingHandler.locationChecker(trackingWebSocket);
 
                     handlerTracking.postDelayed(runnableTracking, 5000);
 
@@ -195,11 +297,19 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             };
 
             handlerTracking = new Handler();
-            handlerTracking.postDelayed(runnableTracking, 5000);
+
         } catch (Exception e) {
             Crashlytics.logException(e);
         }
 
+    }
+
+    private void stopTrackingTimer() {
+        if (isHandlerTrackingRunning) {
+            handlerTracking.removeCallbacks(runnableTracking);
+            isHandlerTrackingRunning = false;
+            Log.i("trackingWebSocket:  ", "Tracking Timer stop ...");
+        }
     }
 
 

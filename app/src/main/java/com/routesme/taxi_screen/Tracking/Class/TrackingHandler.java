@@ -3,13 +3,15 @@ package com.routesme.taxi_screen.Tracking.Class;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
-import android.widget.Toast;
 
+import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Tracking.database.AppDatabase;
 import com.routesme.taxi_screen.Tracking.database.AppExecutors;
 import com.routesme.taxi_screen.Tracking.database.TrackingDao;
 import com.routesme.taxi_screen.Tracking.model.Tracking;
 import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
+
+import org.java_websocket.client.WebSocketClient;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -19,12 +21,14 @@ public class TrackingHandler {
     private static final String TAG = "TrackingHandler";
 
     private Context context;
+    private WebSocketClient trackingWebSocket;
 
     private SimpleDateFormat dateformat;
     private String currentStamptime;
 
     private AppDatabase mDb;
     private TrackingDao trackingDao ;
+    private  List<Tracking> trackings;
 
     private TrackingLocation trackingFirstLocation, trackingLastLocation;
     private Location firstLocation, lastLocation;
@@ -35,6 +39,8 @@ public class TrackingHandler {
 
     public TrackingHandler(Context context) {
         this.context = context;
+
+
         dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa");
 
         //Tracking ... Room Database...
@@ -42,6 +48,17 @@ public class TrackingHandler {
         trackingDao = mDb.trackingDao();
 
 
+    }
+
+
+    public List<Tracking> getAllLocations() {
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                 trackings = trackingDao.loadAllLocations();
+            }
+        });
+        return trackings;
     }
 
 
@@ -78,7 +95,9 @@ public class TrackingHandler {
     }
 
 
-    public void locationChecker() {
+    public void locationChecker(WebSocketClient trackingWebSocket) {
+
+        this.trackingWebSocket = trackingWebSocket;
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
@@ -133,16 +152,25 @@ public class TrackingHandler {
         return distance;
     }
 
-
     private void sendLocationViaSocket(Tracking tracking) {
+
         String timestamp = tracking.getTimestamp();
         TrackingLocation trackingLocation = tracking.getLocation();
+        String message = "location:" + trackingLocation.getLatitude() + "," + trackingLocation.getLongitude() + ";timestamp:" + timestamp;
 
-        Log.d(TAG, "Tracking ... Distance ... Send new location to server via socket:  ( Timestamp:  " + timestamp + "  ,Location... Lat:  " + trackingLocation.getLatitude() + " ,Long:  "+ trackingLocation.getLongitude());
-        //then send timestamp & trackingLocation to server via socket....
+        try{
+            trackingWebSocket.send(message);
+            Log.i("trackingWebSocket:  ", "Send message:  " + message);
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
+
+
     }
 
-    private void clearTrackingTable() {
+
+
+    public void clearTrackingTable() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
