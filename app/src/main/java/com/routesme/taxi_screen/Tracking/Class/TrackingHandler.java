@@ -3,6 +3,7 @@ package com.routesme.taxi_screen.Tracking.Class;
 import android.content.Context;
 import android.location.Location;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Tracking.database.AppDatabase;
@@ -28,7 +29,8 @@ public class TrackingHandler {
 
     private AppDatabase mDb;
     private TrackingDao trackingDao ;
-    private  List<Tracking> trackings;
+   // private  List<Tracking> trackings;
+   private Tracking tracking;
 
     private TrackingLocation trackingFirstLocation, trackingLastLocation;
     private Location firstLocation, lastLocation;
@@ -37,9 +39,9 @@ public class TrackingHandler {
     public TrackingHandler() {
     }
 
-    public TrackingHandler(Context context) {
+    public TrackingHandler(Context context, WebSocketClient trackingWebSocket) {
         this.context = context;
-
+        this.trackingWebSocket = trackingWebSocket;
 
         dateformat = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa");
 
@@ -51,15 +53,59 @@ public class TrackingHandler {
     }
 
 
-    public List<Tracking> getAllLocations() {
+    public void sendOfflineTrackingToServer() {
+
+        AppExecutors.getInstance().diskIO().execute(new Runnable() {
+            @Override
+            public void run() {
+                if (trackingDao.loadAllLocations() != null){
+                    final List<Tracking> trackings = trackingDao.loadAllLocations();
+                    // final int LocationSize = trackingDao.loadAllLocations().size();
+
+                    if (!trackings.isEmpty()){
+                        //sendAllTabletLocations();
+
+                        for (int l = 0; l < trackings.size(); l++) {
+                            //  Log.d(TAG, "trackingWebSocket ... offline locations here... it size:  " + trackings.size());
+                            tracking = trackings.get(l);
+                            sendLocationViaSocket(tracking);
+
+                        }
+
+                        //clear Tracking Table....
+                        clearTrackingTable();
+                    }else {
+                        Log.d(TAG, "trackingWebSocket ... no offline location is exists!");
+                    }
+                }
+
+
+            }
+        });
+
+    }
+
+
+/*
+    private void sendAllTabletLocations() {
+        for (int l = 0; l < trackings.size(); l++) {
+            Tracking tracking = trackings.get(l);
+            sendLocationViaSocket(tracking);
+
+        }
+    }
+    */
+    /*
+    private void getAllLocations() {
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
                  trackings = trackingDao.loadAllLocations();
             }
         });
-        return trackings;
+       // return trackings;
     }
+    */
 
 
     public void insertLocation(final TrackingLocation newLocation) {
@@ -95,38 +141,40 @@ public class TrackingHandler {
     }
 
 
-    public void locationChecker(WebSocketClient trackingWebSocket) {
+    public void locationChecker() {
 
-        this.trackingWebSocket = trackingWebSocket;
+
 
         AppExecutors.getInstance().diskIO().execute(new Runnable() {
             @Override
             public void run() {
-                final List<Tracking> trackings = trackingDao.loadAllLocations();
-                // final int LocationSize = trackingDao.loadAllLocations().size();
+                if (trackingDao.loadAllLocations() != null) {
+                    final List<Tracking> trackings = trackingDao.loadAllLocations();
+                    // final int LocationSize = trackingDao.loadAllLocations().size();
 
-                if (!trackings.isEmpty()){
-                    Log.d(TAG, "Tracking ... Location size: " + trackings.size());
-                    trackingFirstLocation = new TrackingLocation(trackingDao.loadFirstLocation().getLocation().getLatitude(),trackingDao.loadFirstLocation().getLocation().getLongitude());
-                    trackingLastLocation = new TrackingLocation(trackingDao.loadLastLocation().getLocation().getLatitude(),trackingDao.loadLastLocation().getLocation().getLongitude());
+                    if (!trackings.isEmpty()) {
+                        Log.d(TAG, "Tracking ... Location size: " + trackings.size());
+                        trackingFirstLocation = new TrackingLocation(trackingDao.loadFirstLocation().getLocation().getLatitude(), trackingDao.loadFirstLocation().getLocation().getLongitude());
+                        trackingLastLocation = new TrackingLocation(trackingDao.loadLastLocation().getLocation().getLatitude(), trackingDao.loadLastLocation().getLocation().getLongitude());
 
-                    if (!trackingFirstLocation.getLatitude().equals(trackingLastLocation.getLatitude()) && !trackingFirstLocation.getLongitude().equals(trackingLastLocation.getLongitude())){
-                        float distance = getDistance();
+                        if (!trackingFirstLocation.getLatitude().equals(trackingLastLocation.getLatitude()) && !trackingFirstLocation.getLongitude().equals(trackingLastLocation.getLongitude())) {
+                            float distance = getDistance();
 
-                        if (distance >= 2){
-                            sendLocationViaSocket(trackingDao.loadLastLocation());
-                            clearTrackingTable();
-                        }else {
-                            Log.d(TAG, "Tracking ... Distance is:  " + distance +"m is  less than 2 meter ");
+                            if (distance >= 2) {
+                                sendLocationViaSocket(trackingDao.loadLastLocation());
+                                clearTrackingTable();
+                            } else {
+                                Log.d(TAG, "Tracking ... Distance is:  " + distance + "m is  less than 2 meter ");
+                            }
+                        } else {
+                            Log.d(TAG, "Tracking ... Distance not changed!");
                         }
-                    }else {
-                        Log.d(TAG, "Tracking ... Distance not changed!");
+
+                    } else {
+                        Log.d(TAG, "Tracking ... Location table is empty");
                     }
 
-                }else {
-                    Log.d(TAG, "Tracking ... Location table is empty");
                 }
-
             }
         });
 
@@ -153,10 +201,12 @@ public class TrackingHandler {
     }
 
     private void sendLocationViaSocket(Tracking tracking) {
-
+      //  Log.d(TAG, "trackingWebSocket ... offline locations here... it location: lat-long :  " + tracking.getLocation().getLatitude() + "-" + tracking.getLocation().getLongitude());
         String timestamp = tracking.getTimestamp();
         TrackingLocation trackingLocation = tracking.getLocation();
         String message = "location:" + trackingLocation.getLatitude() + "," + trackingLocation.getLongitude() + ";timestamp:" + timestamp;
+    //    trackingWebSocket.send(message);
+     //   Log.i("trackingWebSocket:  ", "Send message:  " + message);
 
         try{
             trackingWebSocket.send(message);
@@ -164,6 +214,7 @@ public class TrackingHandler {
         } catch (Exception e) {
             Crashlytics.logException(e);
         }
+
 
 
     }
@@ -175,11 +226,12 @@ public class TrackingHandler {
             @Override
             public void run() {
                 trackingDao.clearTrackingData();
-                Log.d(TAG, "Tracking .... Clear Tracking Table");
+                Log.d(TAG, "trackingWebSocket .... Clear Tracking Table");
             }
         });
 
 
     }
+
 
 }

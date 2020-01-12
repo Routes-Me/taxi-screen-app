@@ -118,9 +118,9 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         //Check authorization of tablet before fetch advertisement data from server to display it ..
         if (isAuthorized()) {
 
-
+            connectWebSocket();
             //Vehicle Tracking...
-            trackingHandler = new TrackingHandler(this);
+            trackingHandler = new TrackingHandler(this,trackingWebSocket);
 
             //Get Vehicle Current Location & running TrackingTimer...
             startTracking();
@@ -179,35 +179,47 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 */
 
     private void startTracking() {
-        // trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
-        // TrackingTimer();
+        try {
+            // trackingHandler.insertLocation(new TrackingLocation(29.375990,47.986486));
+            // TrackingTimer();
 
-        finder = new LocationFinder(this, trackingHandler);
-        if (finder.canGetLocation()) {
+            finder = new LocationFinder(this, trackingHandler);
+            if (finder.canGetLocation()) {
             /*
             latitude = finder.getLatitude();
             longitude = finder.getLongitude();
             Toast.makeText(this, "Room DB Insert .... First Location ... lat-lng :  " + latitude + "  —  " + longitude, Toast.LENGTH_LONG).show();
              trackingHandler.insertLocation(new TrackingLocation(latitude,longitude));
              */
-            TrackingTimer();
-            connectWebSocket();
-          //  if (trackingWebSocket.getReadyState() == WebSocket.READYSTATE.CLOSED){
+                TrackingTimer();
+                try {
+                    trackingWebSocket.connect();
+                 } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
+
+                //connectWebSocket();
+                //  if (trackingWebSocket.getReadyState() == WebSocket.READYSTATE.CLOSED){
 
 
-           // }
+                // }
 
 
-            //TrackingTimer();
-        } else {
-            finder.showSettingsAlert();
+                //TrackingTimer();
+            } else {
+                finder.showSettingsAlert();
+            }
+        } catch (Exception e) {
+            Crashlytics.logException(e);
         }
+
 
     }
 
     private void connectWebSocket() {
         try {
             trackingWebSocketUri = new URI(Helper.getConfigValue(this, "trackingWebSocketUri"));
+
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
@@ -223,6 +235,8 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                 sendMessageViaSocket("deviceId:" + savedTabletSerialNo);
 
                 //Send offline locations to server if it exists....
+                trackingHandler.sendOfflineTrackingToServer();
+
                 /*
                 trackingLocations = trackingHandler.getAllLocations();
                 if (!trackingLocations.isEmpty()) {
@@ -245,8 +259,19 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
             @Override
             public void onClose(int code, String reason, boolean remote) {
+
+
+
+
                 stopTrackingTimer();
-                Log.i("trackingWebSocket:  ", "Closed - reason:  " + reason);
+                Log.i("trackingWebSocket:  ", "Closed !");
+                /*
+                if (!isFinishing()){
+                    Log.i("trackingWebSocket:  ", "Closed - Activity not finished!");
+                }else {
+                    Log.i("trackingWebSocket:  ", "Closed - Activity is finished!");
+                }
+                */
             }
 
             @Override
@@ -256,20 +281,10 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
             }
         };
-        trackingWebSocket.connect();
+       // trackingWebSocket.connect();
     }
 
-    private void sendAllTabletLocations(List<Tracking> trackingLocations) {
-        for (int l = 0; l < trackingLocations.size(); l++) {
-            Tracking tracking = trackingLocations.get(l);
-            String timestamp = tracking.getTimestamp();
-            TrackingLocation trackingLocation = tracking.getLocation();
-            String message = "location:" + trackingLocation.getLatitude() + "," + trackingLocation.getLongitude() + ";timestamp:" + timestamp;
 
-            sendMessageViaSocket(message);
-
-        }
-    }
 
     private void sendMessageViaSocket(String message) {
         try {
@@ -289,7 +304,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                 public void run() {
                     isHandlerTrackingRunning = true;
                     Log.i("trackingWebSocket:  ", "Tracking Timer running ...");
-                    trackingHandler.locationChecker(trackingWebSocket);
+                    trackingHandler.locationChecker();
 
                     handlerTracking.postDelayed(runnableTracking, 5000);
 
