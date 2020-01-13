@@ -12,11 +12,13 @@ import com.routesme.taxi_screen.Tracking.database.TrackingDao;
 import com.routesme.taxi_screen.Tracking.model.Tracking;
 import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
 
-import org.java_websocket.client.WebSocketClient;
+//import org.java_websocket.client.WebSocketClient;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+
+import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class TrackingHandler {
     private static final String TAG = "TrackingHandler";

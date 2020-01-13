@@ -21,9 +21,7 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.Tracking.WebSocketScreen">
 
-        </activity>
 
         <activity
             android:name="com.routesme.taxi_screen.View.Login.TaxiInformationScreen"

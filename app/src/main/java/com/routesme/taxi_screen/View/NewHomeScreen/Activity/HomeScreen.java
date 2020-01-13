@@ -21,7 +21,6 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -32,20 +31,18 @@ import com.routesme.taxi_screen.Class.Helper;
 import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
 import com.routesme.taxi_screen.Tracking.model.Tracking;
-import com.routesme.taxi_screen.Tracking.model.TrackingLocation;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
 
-import org.java_websocket.WebSocket;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.handshake.ServerHandshake;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
+
+import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class HomeScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -78,13 +75,6 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
     ////////Tracking System...
-
-    //Location requested permissions...
-    public static final int LOCATION_REQUEST_CODE = 102;
-    private String[] Location_Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
-    private boolean showRationale = true;
-
-
     //Room Database...
     private TrackingHandler trackingHandler;
     //Location Finder to get device current location [ GeoPoint(latitude,longitude) ] ...
@@ -96,7 +86,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
     //webSocket
     private WebSocketClient trackingWebSocket;
     private URI trackingWebSocketUri;
-    private List<Tracking> trackingLocations;
+
 
 
     @Override
@@ -118,7 +108,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         //Check authorization of tablet before fetch advertisement data from server to display it ..
         if (isAuthorized()) {
 
-            connectWebSocket();
+            createWebSocketNew();
             //Vehicle Tracking...
             trackingHandler = new TrackingHandler(this,trackingWebSocket);
 
@@ -145,9 +135,14 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         // Toast.makeText(this, "Pause here!", Toast.LENGTH_SHORT).show();
         // stopTrackingTimer();
 
-             if (trackingWebSocket != null){
-                 trackingWebSocket.close();
-             }
+        try {
+            if (trackingWebSocket != null){
+                trackingWebSocket.onCloseReceived();
+            }
+
+        } catch (Exception e) {
+            Crashlytics.logException(e);
+        }
 
 
 
@@ -160,23 +155,19 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         //Toast.makeText(this, "Destroy here!", Toast.LENGTH_SHORT).show();
         //  stopTrackingTimer();
 
-        if (trackingWebSocket != null){
-            trackingWebSocket.close();
+        try {
+             if (trackingWebSocket != null){
+            trackingWebSocket.onCloseReceived();
+              }
+
+        } catch (Exception e) {
+            Crashlytics.logException(e);
         }
 
 
         super.onDestroy();
     }
-/*
-    private void vehicleTracking() {
 
-       // RequestLocationPermission();
-        //Start vehicle tracking ....
-       // startTracking();
-        vehicleTracking();
-
-    }
-*/
 
     private void startTracking() {
         try {
@@ -198,7 +189,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                 Crashlytics.logException(e);
             }
 
-                //connectWebSocket();
+                //createWebSocketNew();
                 //  if (trackingWebSocket.getReadyState() == WebSocket.READYSTATE.CLOSED){
 
 
@@ -216,18 +207,23 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     }
 
-    private void connectWebSocket() {
+
+    private void createWebSocketNew() {
+
         try {
             trackingWebSocketUri = new URI(Helper.getConfigValue(this, "trackingWebSocketUri"));
-
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
         }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+            return;
+        }
+
 
 
         trackingWebSocket = new WebSocketClient(trackingWebSocketUri) {
             @Override
-            public void onOpen(ServerHandshake serverHandshake) {
+            public void onOpen() {
+                try {
                 Log.i("trackingWebSocket:  ", "Opened");
 
 
@@ -237,52 +233,63 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
                 //Send offline locations to server if it exists....
                 trackingHandler.sendOfflineTrackingToServer();
 
-                /*
-                trackingLocations = trackingHandler.getAllLocations();
-                if (!trackingLocations.isEmpty()) {
-                    sendAllTabletLocations(trackingLocations);
-
-                    //clear Tracking Table....
-                    trackingHandler.clearTrackingTable();
-                }
-*/
-
-               // TrackingTimer();
-                handlerTracking.postDelayed(runnableTracking, 5000);
+                //Start Tracking Timer after 500 melli seconds...
+               // handlerTracking.postDelayed(runnableTracking, 500);
+                    handlerTracking.post(runnableTracking);
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
             }
 
             @Override
-            public void onMessage(String message) {
+            public void onTextReceived(String message) {
                 Log.i("trackingWebSocket:  ", "Received message:  " + message);
-                //  Toast.makeText(HomeScreen.this, "receivedMessage:  " + message, Toast.LENGTH_SHORT).show();
             }
 
             @Override
-            public void onClose(int code, String reason, boolean remote) {
+            public void onBinaryReceived(byte[] data) {
+                Log.i("trackingWebSocket:  ", "onBinaryReceived:   " + data);
+            }
 
+            @Override
+            public void onPingReceived(byte[] data) {
+                Log.i("trackingWebSocket:  ", "onPingReceived:   " + data);
+            }
 
+            @Override
+            public void onPongReceived(byte[] data) {
+                Log.i("trackingWebSocket:  ", "onPongReceived:   " + data);
+            }
 
-
+            @Override
+            public void onException(Exception e) {
+                try {
+                Log.i("trackingWebSocket:  ", "Exception Error:   " + e.getMessage());
                 stopTrackingTimer();
-                Log.i("trackingWebSocket:  ", "Closed !");
-                /*
-                if (!isFinishing()){
-                    Log.i("trackingWebSocket:  ", "Closed - Activity not finished!");
-                }else {
-                    Log.i("trackingWebSocket:  ", "Closed - Activity is finished!");
-                }
-                */
+            } catch (Exception ex) {
+                Crashlytics.logException(ex);
+            }
             }
 
             @Override
-            public void onError(Exception ex) {
-                Log.i("trackingWebSocket:  ", "Error:   " + ex.getMessage());
-
+            public void onCloseReceived() {
+                try {
+                Log.i("trackingWebSocket:  ", "Closed !");
+                stopTrackingTimer();
+            } catch (Exception ex) {
+                Crashlytics.logException(ex);
+            }
 
             }
         };
+
+        trackingWebSocket.setConnectTimeout(10000);
+        trackingWebSocket.setReadTimeout(60000);
+      //  trackingWebSocket.addHeader("Origin", "http://developer.example.com");
+        trackingWebSocket.enableAutomaticReconnection(5000);
        // trackingWebSocket.connect();
     }
+
 
 
 
@@ -321,9 +328,14 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     private void stopTrackingTimer() {
         if (isHandlerTrackingRunning) {
-            handlerTracking.removeCallbacks(runnableTracking);
-            isHandlerTrackingRunning = false;
-            Log.i("trackingWebSocket:  ", "Tracking Timer stop ...");
+            try {
+                handlerTracking.removeCallbacks(runnableTracking);
+                isHandlerTrackingRunning = false;
+                Log.i("trackingWebSocket:  ", "Tracking Timer stop ...");
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
+
         }
     }
 
@@ -576,103 +588,6 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
 
-/*
-    private void vehicleTracking() {
-        try {
-
-            if (!hasPermissions(this, Location_Permissions)) {
-                ActivityCompat.requestPermissions(this, Location_Permissions, LOCATION_REQUEST_CODE);
-                return;
-            } else {
-                //start tracking...
-                startTracking();
-            }
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
-    }
-
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
-        switch (requestCode) {
-            case LOCATION_REQUEST_CODE:
-                if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
-                    if (!hasPermissions(this, Location_Permissions)) {
-                        ActivityCompat.requestPermissions(this, Location_Permissions, LOCATION_REQUEST_CODE);
-                        return;
-                    }
-
-                    //start tracking...
-                    vehicleTracking();
-                } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                    // user rejected the permission
-
-                    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
-                        showRationale = shouldShowRequestPermissionRationale(Manifest.permission.ACCESS_COARSE_LOCATION);
-                        openLocationSettingsDialog();
-
-                    }
-                }
-
-                break;
-            default:
-                super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        }
-    }
-
-    public static boolean hasPermissions(Context context, String... permissions) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
-            for (String permission : permissions) {
-                if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
-
-    private void openLocationSettingsDialog() {
-        if (!showRationale) {
-
-            new AlertDialog.Builder(this)
-                    .setTitle("Location Permission required")
-                    .setMessage("Enable location permission from app settings is required to using tracking system")
-
-                    .setPositiveButton("Open settings", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-                            try {
-
-                                //showTabletSerialNumberError(false);
-                                startActivity(new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", getPackageName(), null)));
-
-                            } catch (Exception e) {
-                            }
-
-                        }
-                    })
-
-                    .setNegativeButton("Later", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            // showTabletSerialNumberError(true);
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert)
-                    .setCancelable(false)
-                    .show();
-
-        } else {
-            //start tracking...
-            vehicleTracking();
-        }
-    }
-    */
 
 
 }
