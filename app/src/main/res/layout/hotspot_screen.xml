@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Hotspot_Configuration.HotspotScreen"
+    android:background="@color/white"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Current State"
+        android:textColor="@color/grey"
+        android:textSize="26dp"
+        android:gravity="center"/>
+
+
+
+    <Button
+        android:id="@+id/enable_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Enable Hotspot"
+        android:layout_margin="16dp"/>
+
+    <Button
+        android:id="@+id/disable_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Disable Hotspot"
+        android:layout_margin="16dp"/>
+
+
+</LinearLayout>
