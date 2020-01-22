@@ -1,5 +1,6 @@
-package com.routesme.taxi_screen.Interface;
+package com.routesme.taxi_screen.Server.Interface;
 
+import com.google.gson.JsonElement;
 import com.routesme.taxi_screen.Model.AuthCredentials;
 import com.routesme.taxi_screen.Model.AuthCredentialsError;
 import com.routesme.taxi_screen.Model.BannerModel;
@@ -17,7 +18,6 @@ import java.util.List;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
-import retrofit2.http.Header;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
@@ -25,6 +25,10 @@ import retrofit2.http.Query;
 public interface RoutesApi {
 
 
+
+    @POST("auth")
+    @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
+    Call<JsonElement> loginAuth(@Body AuthCredentials authCredentials);
 
 
     @POST("auth")
@@ -39,17 +43,17 @@ public interface RoutesApi {
 
     //Taxi Office List
     @GET("TaxiOffices")
-    Call<TaxiOfficeList> getTaxiOfficeList(@Header("Authorization") String token, @Query("include") String include);
+    Call<TaxiOfficeList> getTaxiOfficeList( @Query("include") String include);
 
     //Taxi Offic plates list
     @GET("Tablets")
-    Call<OfficePlatesList> getOfficePlatesList(@Header("Authorization") String token, @Query("taxiOfficeId") int taxiOfficeId, @Query("include") String include);
+    Call<OfficePlatesList> getOfficePlatesList( @Query("taxiOfficeId") int taxiOfficeId, @Query("include") String include);
 
 
     //Tablet Register
     @POST("Tablets")
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
-    Call<TabletInfo> tabletRegister(@Header("Authorization") String token, @Body TabletCredentials tabletCredentials);
+    Call<TabletInfo> tabletRegister( @Body TabletCredentials tabletCredentials);
 
 
 

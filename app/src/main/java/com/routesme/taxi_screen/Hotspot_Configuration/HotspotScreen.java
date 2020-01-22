@@ -3,16 +3,16 @@ package com.routesme.taxi_screen.Hotspot_Configuration;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
-import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.routesme.taxiscreen.R;
+
+import java.lang.reflect.Method;
 
 public class HotspotScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -43,7 +43,7 @@ public class HotspotScreen extends AppCompatActivity implements View.OnClickList
 
     }
 
-
+/*
     private static void turnOnOffHotspot(Context context, boolean isTurnToOn) {
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiApControl apControl = WifiApControl.getApControl(wifiManager);
@@ -69,6 +69,22 @@ public class HotspotScreen extends AppCompatActivity implements View.OnClickList
        //     Toast.makeText(context, "This device not supported for this features!", Toast.LENGTH_SHORT).show();
        // }
     }
+    */
+
+    public static void turnOnOffHotspot(Context context, boolean isTurnToOn) {
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        WifiApControl apControl = WifiApControl.getApControl(wifiManager);
+        if (apControl != null) {
+
+            // TURN OFF YOUR WIFI BEFORE ENABLE HOTSPOT
+           // if (isWifiOn(context) && isTurnToOn) {
+              turnOnOffWifi(context);
+           // }
+
+            apControl.setWifiApEnabled(apControl.getWifiApConfiguration(), isTurnToOn);
+            apControl.getWifiApConfiguration().allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
+        }
+    }
 
 
 
@@ -88,7 +104,8 @@ public class HotspotScreen extends AppCompatActivity implements View.OnClickList
         switch (v.getId()){
             case R.id.enable_btn:
                 try{
-                    turnOnOffHotspot(this,true);
+                  //  turnOnOffHotspot(this,true);
+                    openHotspot();
                 }catch (Exception e){
 
                 }
@@ -102,5 +119,23 @@ public class HotspotScreen extends AppCompatActivity implements View.OnClickList
                 }
                 break;
         }
+    }
+
+    private Boolean openHotspot() {
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(Context.WIFI_SERVICE);
+        WifiConfiguration myConfig = new WifiConfiguration();
+        myConfig.SSID = "Routes Wifi"; // SSID name of netwok
+        myConfig.preSharedKey = "123456"; // password for network
+        myConfig.allowedKeyManagement.set(4); // 4 is for KeyMgmt.WPA2_PSK which is not exposed by android KeyMgmt class
+        myConfig.allowedAuthAlgorithms.set(WifiConfiguration.AuthAlgorithm.OPEN); // Set Auth Algorithms to open
+        try {
+            Method method = wifiManager.getClass().getMethod("setWifiApEnabled", WifiConfiguration.class, boolean.class);
+            return (Boolean) method.invoke(wifiManager, myConfig, true);  // setting and turing on android wifiap with new configrations
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
     }
 }

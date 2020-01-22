@@ -12,9 +12,11 @@ import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.Operations;
-import com.routesme.taxi_screen.Class.ServerRetrofit;
-import com.routesme.taxi_screen.Interface.RoutesApi;
+import com.routesme.taxi_screen.Server.Class.RetrofitClientInstance;
+import com.routesme.taxi_screen.Server.Interface.RoutesApi;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
+
+import java.io.IOException;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -41,7 +43,7 @@ public class TabletInfoViewModel extends ViewModel {
        // if (tabletInfo == null) {
             tabletInfo = new MutableLiveData<TabletInfo>();
             //we will load it asynchronously from server in this method
-            loadTabletInfo(activity, token, tabletCredentials);
+            loadTabletInfo(activity, tabletCredentials);
        // }
 
         //finally we will return the list
@@ -54,26 +56,27 @@ public class TabletInfoViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadTabletInfo(final Activity activity, String token, TabletCredentials tabletCredentials) {
+    private void loadTabletInfo(final Activity activity, TabletCredentials tabletCredentials) {
 
         try {
-            ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+            RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
-            if (serverRetrofit != null){
-                api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+            if (retrofitClientInstance != null){
+                api = retrofitClientInstance.getRetrofitInstance(true).create(RoutesApi.class);
             }else {
                 return;
             }
 
-            //  RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
-            Call<TabletInfo> call = api.tabletRegister(token,tabletCredentials);
+            //  RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
+            Call<TabletInfo> call = api.tabletRegister(tabletCredentials);
             call.enqueue(new Callback<TabletInfo>() {
                 @Override
                 public void onResponse(Call<TabletInfo> call, Response<TabletInfo> response) {
-                    if (response.isSuccessful()){
-                        dialog.dismiss();
+                    dialog.dismiss();
+                    if (response.isSuccessful() && response.body() != null){
+
                         // operations.enableNextButton(register_btn,true);
-                        if (response.body() != null) {
+
 
                             try {
                                 tabletInfo.setValue(response.body());
@@ -83,27 +86,31 @@ public class TabletInfoViewModel extends ViewModel {
                                 Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
                                 Crashlytics.logException(e);
                             }
-                        }
+
 
                     }else {
                         operations.enableNextButton(register_btn,true);
-                        dialog.dismiss();
 
-                        Toast.makeText(activity, "Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
 
-                        if (response.code() == 401) {
-                            activity.startActivity(new Intent(activity, LoginScreen.class));
-                            activity.finish();
-                        }
+                        Toast.makeText(activity, "TabletInfoViewModel . request is not Success! , with error code:   " + response.code(), Toast.LENGTH_SHORT).show();
+
 
                     }
                 }
 
                 @Override
                 public void onFailure(Call<TabletInfo> call, Throwable t) {
-                   // Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
-                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
                     dialog.dismiss();
+                   // Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+                    if (t instanceof IOException) {
+                        Toast.makeText(activity, "TabletInfoViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
+                        // logging probably not necessary
+                    }
+                    else {
+                        Toast.makeText(activity, "TabletInfoViewModel. request onFailure ... conversion issue!", Toast.LENGTH_SHORT).show();
+                        // todo log to some central bug tracking service
+                    }
+
                     //activity.recreate();
                 }
             });

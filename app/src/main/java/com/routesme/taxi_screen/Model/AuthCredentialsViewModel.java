@@ -1,6 +1,5 @@
 package com.routesme.taxi_screen.Model;
 
-import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -12,30 +11,27 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
-import com.routesme.taxi_screen.Class.AesBase64Wrapper;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.reflect.TypeToken;
+import com.routesme.taxi_screen.Server.Class.AesBase64Wrapper;
 import com.routesme.taxi_screen.Class.App;
-import com.routesme.taxi_screen.Class.Helper;
-import com.routesme.taxi_screen.Interface.RoutesApi;
+import com.routesme.taxi_screen.Server.Class.RetrofitClientInstance;
+import com.routesme.taxi_screen.Server.Interface.RoutesApi;
 import com.routesme.taxi_screen.View.Login.TaxiInformationScreen;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import okhttp3.OkHttpClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class AuthCredentialsViewModel extends ViewModel {
 
     private App app;
-
-    private RoutesApi api;
-    private OkHttpClient okHttpClient;
-    private Retrofit retrofit;
 
     private AesBase64Wrapper aesBase64Wrapper;
 
@@ -88,24 +84,9 @@ public class AuthCredentialsViewModel extends ViewModel {
 
             aesBase64Wrapper = new AesBase64Wrapper(activity);
 
-             okHttpClient = new OkHttpClient.Builder()
-                    .connectTimeout(1, TimeUnit.MINUTES)
-                    .readTimeout(30, TimeUnit.SECONDS)
-                    .writeTimeout(15, TimeUnit.SECONDS)
-                    .build();
 
 
-
-             retrofit = new Retrofit.Builder()
-                    .baseUrl(Helper.getConfigValue(activity, "baseUrl"))
-                    .client(okHttpClient)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            api = retrofit.create(RoutesApi.class);
-
-
-           loadAuthCredentialsErrors(new AuthCredentials(userName, password),activity);
+            getToken(new AuthCredentials(userName, password),activity);
 
              return authCredentialsErrors;
 
@@ -117,103 +98,101 @@ public class AuthCredentialsViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadAuthCredentialsErrors(final AuthCredentials authCredentials, final Activity activity) {
+
+    private void getToken(final AuthCredentials authCredentials, final Activity activity) {
         try {
+
+            RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
+            RoutesApi api = null;
+            if (retrofitClientInstance != null){
+                api = retrofitClientInstance.getRetrofitInstance(false).create(RoutesApi.class);
+            }else {
+                return;
+            }
 
             encryptAuthCredentials1 = new AuthCredentials(aesBase64Wrapper.encryptAndEncode(authCredentials.getUsername()), aesBase64Wrapper.encryptAndEncode(authCredentials.getPassword()));
 
 
-            Call<Token> call_success = api.loginUserSuccess(encryptAuthCredentials1);
-
-
-            call_success.enqueue(new Callback<Token>() {
+            Call<JsonElement> call = api.loginAuth(encryptAuthCredentials1);
+            call.enqueue(new Callback<JsonElement>() {
                 @Override
-                public void onResponse(Call<Token> call_success, Response<Token> response_success) {
-
-                    if (response_success.isSuccessful()){
-                        if (response_success.body().getAccess_token() != null) {
-                            try {
-                                String username = authCredentials.getUsername().trim();
-                                String password = authCredentials.getPassword().trim();
-                                app.setTechnicalSupportUserName(username);
-                                app.setTechnicalSupportPassword(password);
+                public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
+                    dialog.dismiss();
 
 
-                                editor.putString("tabToken", response_success.body().getAccess_token());
-                                editor.apply();
-
-                                dialog.dismiss();
-
-
-                                app.setNewLogin(true);
-                                activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
-                                activity.finish();
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                Crashlytics.logException(e);
+                    if (response.isSuccessful() && response.body() != null){
+                        JsonElement questions = response.body();
+                        if (questions.isJsonArray()){
+                            List<AuthCredentialsError> authErrors = new Gson().fromJson(((JsonArray)questions), new TypeToken<List<AuthCredentialsError>>(){}.getType());
+                            if (!authErrors.isEmpty()){
+                                authCredentialsErrors.postValue(authErrors);
                             }
+                        }else if (questions.isJsonObject()){
+                            Token token = new Gson().fromJson(questions.getAsJsonObject(), Token.class);
+
+                            if (token.getAccess_token() != null) {
+
+                                try {
+                                    saveDataIntoSharedPreference(authCredentials, token.getAccess_token());
+
+                                    OpenTaxiInformationScreen(activity);
+
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                    Crashlytics.logException(e);
+                                }
+                            }
+
+                        }else {
+                            Toast.makeText(activity, "Auth. return unknown response!", Toast.LENGTH_SHORT).show();
                         }
-                    }
-                    else {
+                    }else {
 
-                         Toast.makeText(activity, "success response !, Error Code:  " + response_success.code(), Toast.LENGTH_SHORT).show();
 
-                            dialog.dismiss();
 
+                        Toast.makeText(activity, "Auth. request is not Success! , with error code:  " + response.code(), Toast.LENGTH_SHORT).show();
                     }
 
                 }
-
                 @Override
-                public void onFailure(Call<Token> call_success, Throwable t) {
-                    loadError(encryptAuthCredentials1,activity);
+                public void onFailure(Call<JsonElement> call, Throwable t) {
+                    dialog.dismiss();
+                    if (t instanceof IOException) {
+                        Toast.makeText(activity, "Auth. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
+                        // logging probably not necessary
+                    }
+                    else {
+                        Toast.makeText(activity, "Auth. request onFailure ... conversion issue!", Toast.LENGTH_SHORT).show();
+                        // todo log to some central bug tracking service
+                    }
+                   // Toast.makeText(activity, "Auth. request failed , with error message:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
+
                 }
             });
 
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
 
-
+         }catch (Exception e){
+        Crashlytics.logException(e);
+    }
     }
 
-    private void loadError(AuthCredentials authCredentials, final Activity activity) {
-        try {
-            Call<List<AuthCredentialsError>> call_failed = api.loginUserFailed(authCredentials);
-            call_failed.enqueue(new Callback<List<AuthCredentialsError>>() {
-                @SuppressLint("NewApi")
-                @Override
-                public void onResponse(Call<List<AuthCredentialsError>> call, Response<List<AuthCredentialsError>> response) {
-
-                    if (response.isSuccessful()){
-                        try {
-                            authCredentialsErrorsList.addAll(response.body());
-                            authCredentialsErrors.postValue(authCredentialsErrorsList);
-                        }catch (Exception e){
-                            Crashlytics.logException(e);
-                        }
-                    }
-                    else {
-                        Toast.makeText(activity, "Error response , Error Code:  " + response.code(), Toast.LENGTH_SHORT).show();
-                        dialog.dismiss();
-                    }
+    private void saveDataIntoSharedPreference(AuthCredentials authCredentials, String access_token) {
+        String username = authCredentials.getUsername().trim();
+        String password = authCredentials.getPassword().trim();
+        app.setTechnicalSupportUserName(username);
+        app.setTechnicalSupportPassword(password);
 
 
-                }
+        editor.putString("tabToken", access_token);
+        editor.apply();
+    }
 
-                @Override
-                public void onFailure(Call<List<AuthCredentialsError>> call, Throwable t) {
-                    Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
-                    dialog.dismiss();
-                }
-            });
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
-
-
+    private void OpenTaxiInformationScreen(Activity activity) {
+        app.setNewLogin(true);
+        activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
+        activity.finish();
     }
 
 

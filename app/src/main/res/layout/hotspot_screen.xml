@@ -18,7 +18,8 @@
         android:text="Current State"
         android:textColor="@color/grey"
         android:textSize="26dp"
-        android:gravity="center"/>
+        android:gravity="center"
+        android:visibility="gone"/>
 
 
 
@@ -34,7 +35,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Disable Hotspot"
-        android:layout_margin="16dp"/>
+        android:layout_margin="16dp"
+        android:visibility="gone"/>
 
 
 </LinearLayout>

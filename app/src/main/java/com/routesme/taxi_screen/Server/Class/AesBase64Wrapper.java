@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.Class;
+package com.routesme.taxi_screen.Server.Class;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;

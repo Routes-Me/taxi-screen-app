@@ -234,7 +234,7 @@ try {
 
     final ItemsViewModel model = ViewModelProviders.of(this).get(ItemsViewModel.class);
 
-    model.getItems(1, getActivity(), savedToken).observe(this, new Observer<List<ItemsModel>>() {
+    model.getItems(1, getActivity()).observe(this, new Observer<List<ItemsModel>>() {
         @Override
         public void onChanged(@Nullable final List<ItemsModel> itemsList) {
 

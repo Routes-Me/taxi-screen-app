@@ -9,10 +9,11 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.crashlytics.android.Crashlytics;
-import com.routesme.taxi_screen.Class.ServerRetrofit;
-import com.routesme.taxi_screen.Interface.RoutesApi;
+import com.routesme.taxi_screen.Server.Class.RetrofitClientInstance;
+import com.routesme.taxi_screen.Server.Interface.RoutesApi;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 
+import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
@@ -25,13 +26,13 @@ public class CurrenciesViewModel extends ViewModel {
     private MutableLiveData<List<CurrenciesModel>> currenciesList;
 
     //we will call this method to get the data
-    public LiveData<List<CurrenciesModel>> getCurrencies(int ch_ID, Activity activity, String savedToken) {
+    public LiveData<List<CurrenciesModel>> getCurrencies(int ch_ID, Activity activity) {
         //if the list is null
 
       //  if (currenciesList == null) {
             currenciesList = new MutableLiveData<List<CurrenciesModel>>();
             //we will load it asynchronously from server in this method
-             loadCurrenciesList(ch_ID,activity, savedToken);
+             loadCurrenciesList(ch_ID,activity);
      //   }
 
 
@@ -45,17 +46,17 @@ public class CurrenciesViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadCurrenciesList(int ch_ID, final Activity activity, String savedToken) {
+    private void loadCurrenciesList(int ch_ID, final Activity activity) {
 try {
-    ServerRetrofit serverRetrofit = new ServerRetrofit(activity);
+    RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
     RoutesApi api = null;
-    if (serverRetrofit != null){
-        api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+    if (retrofitClientInstance != null){
+        api = retrofitClientInstance.getRetrofitInstance(true).create(RoutesApi.class);
     }else {
         return;
     }
 
-    // RoutesApi api = serverRetrofit.getRetrofit().create(RoutesApi.class);
+    // RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
     Call<List<CurrenciesModel>> call = api.getCurrencies(ch_ID);
 
 
@@ -63,7 +64,7 @@ try {
         @Override
         public void onResponse(Call<List<CurrenciesModel>> call, Response<List<CurrenciesModel>> response) {
 
-            if (response.isSuccessful()){
+            if (response.isSuccessful() && response.body() != null){
                 //finally we are setting the list to our MutableLiveData
                 try {
                     currenciesList.setValue(response.body());
@@ -72,12 +73,7 @@ try {
                     // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }else {
-                Toast.makeText(activity, "CurrenciesViewModel .. Error Code:   " + response.code(), Toast.LENGTH_SHORT).show();
-
-                if (response.code() == 401) {
-                    activity.startActivity(new Intent(activity, LoginScreen.class));
-                    activity.finish();
-                }
+                Toast.makeText(activity, "CurrenciesViewModel . request is not Success! , with error code:   " + response.code(), Toast.LENGTH_SHORT).show();
 
             }
 
@@ -88,7 +84,14 @@ try {
         public void onFailure(Call<List<CurrenciesModel>> call, Throwable t) {
             // Toast.makeText(context, "Currencies....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
 
-            Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
+            if (t instanceof IOException) {
+                Toast.makeText(activity, "CurrenciesViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
+                // logging probably not necessary
+            }
+            else {
+                Toast.makeText(activity, "CurrenciesViewModel. request onFailure ... conversion issue!", Toast.LENGTH_SHORT).show();
+                // todo log to some central bug tracking service
+            }
         }
     });
 }catch (Exception e){

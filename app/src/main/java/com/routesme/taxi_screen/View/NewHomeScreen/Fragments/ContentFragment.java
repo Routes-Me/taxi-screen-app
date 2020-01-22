@@ -89,6 +89,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
 
         operations = new Operations(getActivity(),Advertisement_Video_CardView, videoRingProgressBar, AD_Video_VideoView, AD_Banner_ImageView, AD_Currencies_TextView);
+
         operations.fetchAdvertisementData();
 
 

@@ -152,7 +152,7 @@ public class Operations {
 
             bannersViewModel = ViewModelProviders.of((FragmentActivity) activity).get(BannersViewModel.class);
 
-            bannersViewModel.getBanners(savedTabletChannelId, activity,Bearer_TabletToken).observe((LifecycleOwner) activity, new Observer<List<BannerModel>>() {
+            bannersViewModel.getBanners(savedTabletChannelId, activity).observe((LifecycleOwner) activity, new Observer<List<BannerModel>>() {
                 @Override
                 public void onChanged(@Nullable List<BannerModel> BannersList) {
 
@@ -183,7 +183,7 @@ public class Operations {
 
             videosViewModel = ViewModelProviders.of((FragmentActivity) activity).get(VideosViewModel.class);
 
-            videosViewModel.getVideos(savedTabletChannelId,activity, Bearer_TabletToken).observe((LifecycleOwner) activity, new Observer<List<VideoModel>>() {
+            videosViewModel.getVideos(savedTabletChannelId,activity).observe((LifecycleOwner) activity, new Observer<List<VideoModel>>() {
                 @Override
                 public void onChanged(@Nullable List<VideoModel> VideosList) {
 
@@ -209,7 +209,7 @@ public class Operations {
         try {
             currenciesViewModel = ViewModelProviders.of((FragmentActivity) activity).get(CurrenciesViewModel.class);
 
-            currenciesViewModel.getCurrencies(1, activity, Bearer_TabletToken).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
+            currenciesViewModel.getCurrencies(1, activity).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
                 @Override
                 public void onChanged(@Nullable List<CurrenciesModel> currenciesList) {
 
@@ -235,7 +235,7 @@ public class Operations {
         try {
             currenciesViewModel = ViewModelProviders.of((FragmentActivity) activity).get(CurrenciesViewModel.class);
 
-            currenciesViewModel.getCurrencies(1, activity, Bearer_TabletToken).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
+            currenciesViewModel.getCurrencies(1, activity).observe((LifecycleOwner) activity, new Observer<List<CurrenciesModel>>() {
                 @Override
                 public void onChanged(@Nullable List<CurrenciesModel> currenciesList) {
 

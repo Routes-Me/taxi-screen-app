@@ -105,7 +105,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
 
         try {
             officesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficesListViewModel.class);
-            officesListViewModel.getTaxiOfficesList(this,savedToken, "recent").observe((LifecycleOwner) this, new Observer<TaxiOfficeList>() {
+            officesListViewModel.getTaxiOfficesList(this, "recent").observe((LifecycleOwner) this, new Observer<TaxiOfficeList>() {
                 @Override
                 public void onChanged(TaxiOfficeList taxiOfficeList) {
 
@@ -169,7 +169,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
 
         try {
             officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
-            officePlatesListViewModel.getOfficePlatesList(this,savedToken,app.getTaxiOfficeId(),"recent").observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
+            officePlatesListViewModel.getOfficePlatesList(this,app.getTaxiOfficeId(),"recent").observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
                 @Override
                 public void onChanged(OfficePlatesList officePlatesList) {
 
