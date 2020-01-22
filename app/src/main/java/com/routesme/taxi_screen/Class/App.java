@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
+import com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver;
 
 import java.io.File;
 
@@ -15,6 +16,27 @@ public class App extends Application {
 
     private int taxiOfficeId = 0;
     private String taxiPlateNumber = null, taxiOfficeName = null;
+
+
+
+    //Detect Internet Connection Status...
+    private static App mInstance;
+    @Override
+    public void onCreate() {
+        super.onCreate();
+
+        mInstance = this;
+    }
+
+    public static synchronized App getInstance() {
+        return mInstance;
+    }
+
+    public void setConnectivityListener(ConnectivityReceiver.ConnectivityReceiverListener listener) {
+        ConnectivityReceiver.connectivityReceiverListener = listener;
+    }
+ ///////////////////////////////////////////////////////////
+
 
 
 

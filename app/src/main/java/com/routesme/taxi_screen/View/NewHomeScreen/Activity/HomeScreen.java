@@ -9,10 +9,12 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -21,6 +23,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -28,9 +31,9 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Helper;
+import com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver;
 import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
-import com.routesme.taxi_screen.Tracking.model.Tracking;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
@@ -44,7 +47,7 @@ import java.util.List;
 
 import tech.gusavila92.websocketclient.WebSocketClient;
 
-public class HomeScreen extends AppCompatActivity implements View.OnClickListener {
+public class HomeScreen extends AppCompatActivity implements View.OnClickListener  {
 
     private static final String TAG = "HomeScreen";
 
@@ -89,12 +92,16 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.home_screen);
 
-        RequestLocationPermission();
+        RequestPermissions();
+
+
+
 
     }
 
@@ -127,8 +134,27 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
             finish();
         }
 
+        // register connection status listener
+/*
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(getPackageName() + "android.net.conn.CONNECTIVITY_CHANGE");
+
+        ConnectivityReceiver myReceiver = new ConnectivityReceiver();
+        registerReceiver(myReceiver, intentFilter);
+*/
+
+
         super.onResume();
+
+
+
     }
+
+
+
+
+
+
 
     @Override
     protected void onPause() {
@@ -143,6 +169,7 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
         } catch (Exception e) {
             Crashlytics.logException(e);
         }
+
 
 
 
@@ -563,10 +590,10 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
     //for Request Permissions
-    public void RequestLocationPermission() {
+    public void RequestPermissions() {
         int Permission_All = 1;
 
-        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION};
+        String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE,Manifest.permission.ACCESS_WIFI_STATE};
         if (!hasPermissions(this, Permissions)) {
             ActivityCompat.requestPermissions(this, Permissions, Permission_All);
         }

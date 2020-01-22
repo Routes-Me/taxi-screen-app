@@ -2,21 +2,27 @@ package com.routesme.taxi_screen.View.NewHomeScreen.Fragments;
 
 
 import android.app.Activity;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import android.widget.VideoView;
 
 import com.crashlytics.android.Crashlytics;
+import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
+import com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver;
 import com.routesme.taxi_screen.Model.ItemAnalytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
@@ -26,8 +32,9 @@ import io.netopen.hotbitmapgg.library.view.RingProgressBar;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class ContentFragment extends Fragment implements View.OnClickListener {
+public class ContentFragment extends Fragment implements View.OnClickListener , ConnectivityReceiver.ConnectivityReceiverListener{
 
+    private static final String TAG = "ContentFragment";
 
     private Operations operations;
 
@@ -47,9 +54,13 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
     //Using Firebase Analytics ...
     private FirebaseAnalytics firebaseAnalytics;
 
-
+    private ConnectivityReceiver receiver;
+    private IntentFilter intentFilter;
 
     private View nMainView;
+
+    //Detect Internet Status ...
+    private boolean isConnected = false, isDataFetched = false;
 
     public ContentFragment() {
         // Required empty public constructor
@@ -90,7 +101,15 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
         operations = new Operations(getActivity(),Advertisement_Video_CardView, videoRingProgressBar, AD_Video_VideoView, AD_Banner_ImageView, AD_Currencies_TextView);
 
-        operations.fetchAdvertisementData();
+
+        // Manually checking internet connection
+        receiver = new ConnectivityReceiver();
+        checkConnection();
+
+
+
+
+
 
 
     }
@@ -124,6 +143,88 @@ public class ContentFragment extends Fragment implements View.OnClickListener {
 
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+
+        ConnectivityReceiverRegistering(false);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        ConnectivityReceiverRegistering(false);
+    }
+
+
+
+    // Method to manually check connection status
+    private void checkConnection() {
+        isConnected = ConnectivityReceiver.isConnected();
+      //  Log.d(TAG, "ContentFragment .. Initial ... Internet Connection Status:  "+ isConnected);
+        Toast.makeText(getActivity(), "ContentFragment .. Initial ... Internet Connection Status:  "+ isConnected, Toast.LENGTH_SHORT).show();
+        if (isConnected){
+            try {
+                operations.fetchAdvertisementData();
+                isDataFetched = true;
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
+        }else {
+            networkListener();
+        }
+
+    }
+
+    private void networkListener() {
+        ConnectivityReceiverRegistering(true);
+        App.getInstance().setConnectivityListener(this);
+    }
+
+    @Override
+    public void onNetworkConnectionChanged(boolean isConnected) {
+      //  Log.d(TAG, "ContentFragment .. Changed ... Internet Connection Status:  "+ isConnected);
+        Toast.makeText(getActivity(), "ContentFragment .. Changed ... Internet Connection Status:  "+ isConnected, Toast.LENGTH_SHORT).show();
+        if (isConnected && !isDataFetched){
+            try {
+                operations.fetchAdvertisementData();
+                isDataFetched = true;
+                //getActivity().unregisterReceiver(receiver);
+                ConnectivityReceiverRegistering(false);
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
+        }
+    }
+
+
+    private void ConnectivityReceiverRegistering(boolean register){
+        try {
+            //Register or UnRegister your broadcast receiver here
+
+            if (register){
+
+               intentFilter = new IntentFilter("com.routesme.taxi_screen.SOME_ACTION");
+               intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
+
+               getActivity().registerReceiver(receiver, intentFilter);
+           }else {
+               getActivity().unregisterReceiver(receiver);
+           }
+
+        } catch(IllegalArgumentException e) {
+
+            e.printStackTrace();
+        }
+    }
 
 
 }
