@@ -4,7 +4,7 @@ import android.app.Application;
 import android.content.Context;
 
 import com.danikula.videocache.HttpProxyCacheServer;
-import com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver;
+import com.routesme.taxi_screen.Detect_Network_Connection_Status.ConnectivityReceiver;
 
 import java.io.File;
 

@@ -4,14 +4,16 @@
     package="com.routesme.taxiscreen">
 
     <uses-permission android:name="android.permission.INTERNET" /> <!-- Phone Info Permissions -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- Tracking Permissions -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- Tracking Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Hotspot Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Hotspot Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission
+        android:name="android.permission.WRITE_SETTINGS"
+        tools:ignore="ProtectedPermissions" />
+    <uses-permission android:name="android.permission.TETHER_PRIVILEGED" />
 
     <application
         android:name="com.routesme.taxi_screen.Class.App"
@@ -26,9 +28,8 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.Hotspot_Configuration.HotspotScreen">
 
-        </activity>
+        <activity android:name="com.routesme.taxi_screen.Hotspot_Configuration.HotspotScreen" />
         <activity
             android:name="com.routesme.taxi_screen.View.Login.TaxiInformationScreen"
             android:screenOrientation="landscape"
@@ -64,12 +65,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-
         <!-- Detect Internet Connection Status -->
         <receiver
-            android:name="com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver"
-            android:enabled="true" >
+            android:name="com.routesme.taxi_screen.Detect_Network_Connection_Status.ConnectivityReceiver"
+            android:enabled="true">
             <intent-filter>
 
                 <!-- Intent filters for broadcast receiver -->
@@ -80,6 +79,36 @@
         </receiver>
 
 
+        <!-- Hotspot Configuration -->
+        <activity android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.MagicActivity">
+            <intent-filter>
+                <category android:name="android.intent.category.BROWSABLE" />
+                <category android:name="android.intent.category.DEFAULT" />
+
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:scheme="wifihotspot" />
+            </intent-filter>
+        </activity>
+
+        <service
+            android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.HotSpotIntentService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <receiver
+            android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.fitc.wifihotspot.TURN_ON" />
+                <action android:name="com.fitc.wifihotspot.TURN_OFF" />
+            </intent-filter>
+        </receiver>
+
+        <activity android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.HotspotMainScreen">
+
+        </activity>
 
     </application>
 

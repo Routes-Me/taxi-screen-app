@@ -10,7 +10,6 @@ import android.os.Bundle;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,7 +21,7 @@ import android.widget.VideoView;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
-import com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver;
+import com.routesme.taxi_screen.Detect_Network_Connection_Status.ConnectivityReceiver;
 import com.routesme.taxi_screen.Model.ItemAnalytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;

@@ -7,23 +7,23 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
-import android.net.ConnectivityManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.provider.Settings;
+import android.text.method.LinkMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
@@ -31,7 +31,7 @@ import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Helper;
-import com.routesme.taxi_screen.DetectInternetConnectionStatus.ConnectivityReceiver;
+import com.routesme.taxi_screen.New_Hotspot_Configuration.PermissionsActivity;
 import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
@@ -47,7 +47,7 @@ import java.util.List;
 
 import tech.gusavila92.websocketclient.WebSocketClient;
 
-public class HomeScreen extends AppCompatActivity implements View.OnClickListener  {
+public class HomeScreen extends PermissionsActivity implements View.OnClickListener {
 
     private static final String TAG = "HomeScreen";
 
@@ -105,6 +105,11 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
     }
 
+    @Override
+    public void onPermissionsOkay() {
+
+    }
+
 
     @Override
     protected void onResume() {
@@ -144,6 +149,11 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 */
 
 
+        //TurnOn Hotspot....
+            TurnOnHotspot();
+
+
+
         super.onResume();
 
 
@@ -152,6 +162,29 @@ public class HomeScreen extends AppCompatActivity implements View.OnClickListene
 
 
 
+    private void TurnOnHotspot(){
+        try {
+        Intent intent = new Intent(getString(R.string.intent_action_turnon));
+        sendImplicitBroadcast(this,intent);
+    } catch (Exception e) {
+        Crashlytics.logException(e);
+    }
+    }
+
+    private static void sendImplicitBroadcast(Context ctxt, Intent i) {
+        PackageManager pm=ctxt.getPackageManager();
+        List<ResolveInfo> matches=pm.queryBroadcastReceivers(i, 0);
+
+        for (ResolveInfo resolveInfo : matches) {
+            Intent explicit=new Intent(i);
+            ComponentName cn=
+                    new ComponentName(resolveInfo.activityInfo.applicationInfo.packageName,
+                            resolveInfo.activityInfo.name);
+
+            explicit.setComponent(cn);
+            ctxt.sendBroadcast(explicit);
+        }
+    }
 
 
 
