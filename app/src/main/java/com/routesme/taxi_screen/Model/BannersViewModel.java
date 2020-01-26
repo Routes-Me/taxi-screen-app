@@ -29,16 +29,11 @@ public class BannersViewModel extends ViewModel {
     public LiveData<List<BannerModel>> getBanners(int ch_ID, Activity activity) {
         //if the list is null
 
-      //  if (bannersList == null) {
+        if (bannersList == null) {
             bannersList = new MutableLiveData<List<BannerModel>>();
             //we will load it asynchronously from server in this method
             loadBannersList(ch_ID,activity);
-       // }
-
-
-       // bannersList = new MutableLiveData<List<BannerModel>>();
-        //we will load it asynchronously from server in this method
-        //loadBannersList(ch_ID,context,token);
+        }
 
         //finally we will return the list
         return bannersList;
@@ -47,7 +42,6 @@ public class BannersViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadBannersList(int ch_ID, final Activity activity) {
-        try {
 
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
@@ -57,7 +51,6 @@ public class BannersViewModel extends ViewModel {
                 return;
             }
 
-            //  RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
 
             Call<List<BannerModel>> call = api.getBanners(ch_ID);
 
@@ -68,12 +61,9 @@ public class BannersViewModel extends ViewModel {
 
                     if (response.isSuccessful() && response.body() != null){
                         //finally we are setting the list to our MutableLiveData
-                        try {
+
                             bannersList.setValue(response.body());
-                        }catch (Exception e){
-                            Crashlytics.logException(e);
-                            // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+
                     }else {
                         Toast.makeText(activity, "BannerViewModel . request is not Success! , with error code:   " + response.code(), Toast.LENGTH_SHORT).show();
                     }
@@ -82,12 +72,9 @@ public class BannersViewModel extends ViewModel {
 
                 @Override
                 public void onFailure(Call<List<BannerModel>> call, Throwable t) {
-                    // Toast.makeText(context, "Banners....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
-                   // Toast.makeText(activity, "Error occur!", Toast.LENGTH_SHORT).show();
-                   // activity.recreate();
+
                     if (t instanceof IOException) {
                         Toast.makeText(activity, "BannerViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
-                        // logging probably not necessary
                     }
                     else {
                         Toast.makeText(activity, "BannerViewModel. request onFailure ... conversion issue!", Toast.LENGTH_SHORT).show();
@@ -95,9 +82,7 @@ public class BannersViewModel extends ViewModel {
                     }
                 }
             });
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
+
 
 
     }

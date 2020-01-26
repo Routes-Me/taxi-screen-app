@@ -46,10 +46,7 @@ public class TabletInfoViewModel extends ViewModel {
             loadTabletInfo(activity, tabletCredentials);
        // }
 
-        //finally we will return the list
 
-      //  operations.enableNextButton(register_btn,true);
-      //  this.dialog.dismiss();
 
         return tabletInfo;
     }
@@ -58,7 +55,7 @@ public class TabletInfoViewModel extends ViewModel {
     //This method is using Retrofit to get the JSON data from URL
     private void loadTabletInfo(final Activity activity, TabletCredentials tabletCredentials) {
 
-        try {
+
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){
@@ -67,7 +64,6 @@ public class TabletInfoViewModel extends ViewModel {
                 return;
             }
 
-            //  RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
             Call<TabletInfo> call = api.tabletRegister(tabletCredentials);
             call.enqueue(new Callback<TabletInfo>() {
                 @Override
@@ -75,18 +71,8 @@ public class TabletInfoViewModel extends ViewModel {
                     dialog.dismiss();
                     if (response.isSuccessful() && response.body() != null){
 
-                        // operations.enableNextButton(register_btn,true);
 
-
-                            try {
                                 tabletInfo.setValue(response.body());
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
-                                Crashlytics.logException(e);
-                            }
-
 
                     }else {
                         operations.enableNextButton(register_btn,true);
@@ -101,7 +87,6 @@ public class TabletInfoViewModel extends ViewModel {
                 @Override
                 public void onFailure(Call<TabletInfo> call, Throwable t) {
                     dialog.dismiss();
-                   // Toast.makeText(activity, "Failure ... TabletInfo ViewModel:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     if (t instanceof IOException) {
                         Toast.makeText(activity, "TabletInfoViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
                         // logging probably not necessary
@@ -111,12 +96,9 @@ public class TabletInfoViewModel extends ViewModel {
                         // todo log to some central bug tracking service
                     }
 
-                    //activity.recreate();
                 }
             });
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
+
 
 
 

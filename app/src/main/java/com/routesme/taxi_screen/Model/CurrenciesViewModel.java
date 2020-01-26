@@ -29,16 +29,12 @@ public class CurrenciesViewModel extends ViewModel {
     public LiveData<List<CurrenciesModel>> getCurrencies(int ch_ID, Activity activity) {
         //if the list is null
 
-      //  if (currenciesList == null) {
+        if (currenciesList == null) {
             currenciesList = new MutableLiveData<List<CurrenciesModel>>();
             //we will load it asynchronously from server in this method
              loadCurrenciesList(ch_ID,activity);
-     //   }
+        }
 
-
-       // currenciesList = new MutableLiveData<List<CurrenciesModel>>();
-        //we will load it asynchronously from server in this method
-      //  loadCurrenciesList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return currenciesList;
@@ -47,7 +43,7 @@ public class CurrenciesViewModel extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadCurrenciesList(int ch_ID, final Activity activity) {
-try {
+
     RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
     RoutesApi api = null;
     if (retrofitClientInstance != null){
@@ -56,7 +52,6 @@ try {
         return;
     }
 
-    // RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
     Call<List<CurrenciesModel>> call = api.getCurrencies(ch_ID);
 
 
@@ -66,12 +61,9 @@ try {
 
             if (response.isSuccessful() && response.body() != null){
                 //finally we are setting the list to our MutableLiveData
-                try {
+
                     currenciesList.setValue(response.body());
-                }catch (Exception e){
-                    Crashlytics.logException(e);
-                    // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+
             }else {
                 Toast.makeText(activity, "CurrenciesViewModel . request is not Success! , with error code:   " + response.code(), Toast.LENGTH_SHORT).show();
 
@@ -82,11 +74,9 @@ try {
 
         @Override
         public void onFailure(Call<List<CurrenciesModel>> call, Throwable t) {
-            // Toast.makeText(context, "Currencies....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
 
             if (t instanceof IOException) {
                 Toast.makeText(activity, "CurrenciesViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
-                // logging probably not necessary
             }
             else {
                 Toast.makeText(activity, "CurrenciesViewModel. request onFailure ... conversion issue!", Toast.LENGTH_SHORT).show();
@@ -94,9 +84,7 @@ try {
             }
         }
     });
-}catch (Exception e){
-    Crashlytics.logException(e);
-}
+
 
 
     }

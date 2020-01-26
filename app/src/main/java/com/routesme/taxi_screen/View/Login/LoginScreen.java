@@ -132,7 +132,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     }
 
     private void openTaxiInformationScreen() {
-        dialog.show();
+        //dialog.show();
 
 
         String userName = userName_et.getText().toString().trim();
@@ -148,7 +148,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             @Override
             public void onChanged(List<AuthCredentialsError> authCredentialsErrors) {
 
-                dialog.dismiss();
+              //  dialog.dismiss();
 
 
                 for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){

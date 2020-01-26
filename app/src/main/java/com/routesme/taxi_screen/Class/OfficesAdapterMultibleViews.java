@@ -136,24 +136,7 @@ public class OfficesAdapterMultibleViews extends RecyclerView.Adapter<RecyclerVi
 
             itemName =  itemView.findViewById(R.id.itemName);
             rowLayout = itemView.findViewById(R.id.rowLayout);
-/*
-            //handel OnClickListener on Item
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
 
-                    int position = getAdapterPosition();
-                    // we put this condition because when we delete any item this take position[-1] ...... {RecyclerView.NO_POSITION = -1}
-                    if (position != RecyclerView.NO_POSITION && listener != null) {
-
-                        listener.onItemClick(position);
-
-                        notifyDataSetChanged();
-
-                    }
-                }
-            });
-        */
 
 
         }

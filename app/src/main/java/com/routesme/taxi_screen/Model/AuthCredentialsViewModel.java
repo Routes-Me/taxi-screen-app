@@ -86,7 +86,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
 
 
-            getToken(new AuthCredentials(userName, password),activity); // TODO: pass the same object authCredentials why to create a new one
+            getToken(authCredentials,activity); // TODO: pass the same object authCredentials why to create a new one
 
              return authCredentialsErrors;
 
@@ -100,7 +100,6 @@ public class AuthCredentialsViewModel extends ViewModel {
     //This method is using Retrofit to get the JSON data from URL
 
     private void getToken(final AuthCredentials authCredentials, final Activity activity) {
-        try {
 
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
@@ -114,6 +113,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
 
             Call<JsonElement> call = api.loginAuth(encryptAuthCredentials1);
+        dialog.show();
             call.enqueue(new Callback<JsonElement>() {
                 @Override
                 public void onResponse(Call<JsonElement> call, Response<JsonElement> response) {
@@ -173,9 +173,7 @@ public class AuthCredentialsViewModel extends ViewModel {
             });
 
 
-         }catch (Exception e){
-        Crashlytics.logException(e);
-    }
+
     }
 
     private void saveDataIntoSharedPreference(AuthCredentials authCredentials, String access_token) {

@@ -29,16 +29,12 @@ public class VideosViewModel extends ViewModel {
     public LiveData<List<VideoModel>> getVideos(int ch_ID, Activity activity) {
         //if the list is null
 
-      //  if (videosList == null) {
+        if (videosList == null) {
             videosList = new MutableLiveData<List<VideoModel>>();
             //we will load it asynchronously from server in this method
             loadVideosList(ch_ID, activity);
-      //  }
+        }
 
-
-        //videosList = new MutableLiveData<List<VideoModel>>();
-        //we will load it asynchronously from server in this method
-       // loadVideosList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return videosList;
@@ -48,8 +44,6 @@ public class VideosViewModel extends ViewModel {
     //This method is using Retrofit to get the JSON data from URL
     private void loadVideosList(int ch_ID ,final Activity activity) {
 
-        try {
-
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){
@@ -58,7 +52,6 @@ public class VideosViewModel extends ViewModel {
                 return;
             }
 
-            // RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
             Call<List<VideoModel>> call = api.getVideos(ch_ID);
 
             call.enqueue(new Callback<List<VideoModel>>() {
@@ -67,12 +60,9 @@ public class VideosViewModel extends ViewModel {
 
                     if (response.isSuccessful() && response.body() != null){
                         //finally we are setting the list to our MutableLiveData
-                        try {
+
                             videosList.setValue(response.body());
-                        }catch (Exception e){
-                            Crashlytics.logException(e);
-                            // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+
                     }else {
                         Toast.makeText(activity, "VideoViewModel . request is not Success! , with error code:   " + response.code(), Toast.LENGTH_SHORT).show();
                     }
@@ -81,7 +71,6 @@ public class VideosViewModel extends ViewModel {
 
                 @Override
                 public void onFailure(Call<List<VideoModel>> call, Throwable t) {
-                    // Toast.makeText(context,"Videos....  " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     if (t instanceof IOException) {
                         Toast.makeText(activity, "VideoViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
                         // logging probably not necessary
@@ -90,12 +79,9 @@ public class VideosViewModel extends ViewModel {
                         Toast.makeText(activity, "VideoViewModel. request onFailure ... conversion issue!", Toast.LENGTH_SHORT).show();
                         // todo log to some central bug tracking service
                     }
-                    //activity.recreate();
                 }
             });
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
+
 
     }
 }

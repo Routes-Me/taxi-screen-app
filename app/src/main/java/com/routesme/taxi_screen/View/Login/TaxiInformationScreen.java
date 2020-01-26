@@ -25,6 +25,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
@@ -58,15 +59,15 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     private TelephonyManager telephonyManager;
 
-    private TextView deviceSerialNumber_tv, taxiOffice_tv, taxiOffice_error_tv, taxiPlateNumber_tv, taxiPlateNumber_error_tv;
+    private TextView deviceSerialNumber_tv, SimCardNumber_tv, taxiOffice_tv, taxiOffice_error_tv, taxiPlateNumber_tv, taxiPlateNumber_error_tv;
     private Button register_btn;
 
     private int taxiOfficeId = 0;
-    private String tabletSerialNumber = null, taxiOfficeName = null, taxiPlateNumber = null;
+    private String tabletSerialNumber = null, simCardNumber = null , taxiOfficeName = null, taxiPlateNumber = null;
 
 
 
-    private boolean showRationale = true, getTabletSerialNumber = false;
+    private boolean showRationale = true, getDeviceInfo = false;
 
     private ProgressDialog dialog;
 
@@ -94,6 +95,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         deviceSerialNumber_tv = findViewById(R.id.deviceSerialNumber_tv);
         deviceSerialNumber_tv.setOnClickListener(this);
+        SimCardNumber_tv = findViewById(R.id.SimCardNumber_tv);
+        SimCardNumber_tv.setOnClickListener(this);
         taxiOffice_tv = findViewById(R.id.taxiOffice_tv);
         taxiOffice_tv.setOnClickListener(this);
         taxiOffice_error_tv = findViewById(R.id.taxiOffice_error_tv);
@@ -110,9 +113,9 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
 
 
-        //Get tablet serial number ...
+        //Get tablet serial number  & SIM card number ...
         telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
-        getTabletSerialNumber();
+        getTabletInfo();
 
     }
 
@@ -124,13 +127,14 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         operations.enableNextButton(register_btn,true);
 
-        getTabletSerialNumber();
+        getTabletInfo();
 
 
 
         taxiOfficeId = app.getTaxiOfficeId();
         taxiOfficeName = app.getTaxiOfficeName();
         taxiPlateNumber = app.getTaxiPlateNumber();
+
 
         if (taxiOfficeName != null && !taxiOfficeName.isEmpty()){
             taxiOffice_tv.setText(taxiOfficeName);
@@ -174,7 +178,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
 
     @SuppressLint("HardwareIds")
-    private void getTabletSerialNumber() {
+    private void getTabletInfo() {
         try {
 
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
@@ -182,9 +186,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 return;
             }else {
                 tabletSerialNumber = telephonyManager.getDeviceId();
+               // simCardNumber = telephonyManager.getLine1Number();
+                simCardNumber = telephonyManager.getSimSerialNumber();
                 deviceSerialNumber_tv.setText(tabletSerialNumber);
+                SimCardNumber_tv.setText(simCardNumber);
 
-                showTabletSerialNumberError(false);
+
+                showTabletInfoError(false);
 
                // Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
 
@@ -199,6 +207,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
 
 
+    @SuppressLint("HardwareIds")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
         switch (requestCode) {
@@ -208,8 +217,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
                         return;
                     }
-                    deviceSerialNumber_tv.setText(telephonyManager.getDeviceId());
-                    showTabletSerialNumberError(false);
+                    tabletSerialNumber = telephonyManager.getDeviceId();
+                   // simCardNumber = telephonyManager.getLine1Number();
+                    simCardNumber = telephonyManager.getSimSerialNumber();
+                    deviceSerialNumber_tv.setText(tabletSerialNumber);
+                    SimCardNumber_tv.setText(simCardNumber);
+
+                    showTabletInfoError(false);
                   //  Toast.makeText(this, "country_code:  " + telephonyManager.getSimCountryIso(), Toast.LENGTH_SHORT).show();
                 }
                 else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
@@ -218,7 +232,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                     if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
                         showRationale = shouldShowRequestPermissionRationale( Manifest.permission.READ_PHONE_STATE );
 
-                        showTabletSerialNumberError(true);
+                        showTabletInfoError(true);
                     }
             }
 
@@ -234,7 +248,11 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         switch (v.getId()){
 
             case R.id.deviceSerialNumber_tv:
-                clickOnGetDeviceSerialNumber();
+                clickOnGetDeviceInfo();
+                break;
+
+            case R.id.SimCardNumber_tv:
+                clickOnGetDeviceInfo();
                 break;
 
             case R.id.taxiOffice_tv:
@@ -303,16 +321,19 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             return;
         }
 
-        if (tabletSerialNumber == null || tabletSerialNumber.isEmpty()){
-            showTabletSerialNumberError(true);
+        if (tabletSerialNumber == null || tabletSerialNumber.isEmpty() || simCardNumber == null || simCardNumber.isEmpty()){
+            showTabletInfoError(true);
             return;
         }
+
+
+
 
 
         operations.enableNextButton(register_btn,false);
         dialog.show();
 
-        TabletCredentials tabletCredentials = new TabletCredentials(taxiOfficeId, taxiPlateNumber, tabletSerialNumber);
+        TabletCredentials tabletCredentials = new TabletCredentials(taxiOfficeId, taxiPlateNumber, tabletSerialNumber, simCardNumber);
 
 
 
@@ -328,6 +349,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                     editor.putString("tabletPassword", tabletInfo.getTabletPassword());
                     editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
                     editor.putString("tabletSerialNo", tabletSerialNumber);
+                    editor.putString("simCardNumber", simCardNumber);
                     editor.apply();
 
                     startActivity(new Intent(TaxiInformationScreen.this, HomeScreen.class));
@@ -346,19 +368,19 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
     }
 
-    private void clickOnGetDeviceSerialNumber() {
-        if (! showRationale && !getTabletSerialNumber) {
+    private void clickOnGetDeviceInfo() {
+        if (! showRationale && !getDeviceInfo) {
 
             new AlertDialog.Builder(this)
                     .setTitle("Phone Permission required")
-                    .setMessage("Enable phone permission from app settings is required to get the serial number")
+                    .setMessage("Enable phone permission from app settings is required to get device information")
 
                     .setPositiveButton("Open settings", new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
                             try {
 
-                                showTabletSerialNumberError(false);
+                                showTabletInfoError(false);
                                 startActivity( new Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", getPackageName(), null)));
 
                             }catch (Exception e){}
@@ -369,29 +391,33 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                     .setNegativeButton("Later", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            showTabletSerialNumberError(true);
+                            showTabletInfoError(true);
                         }
                     })
                     .setIcon(android.R.drawable.ic_dialog_alert)
                     .setCancelable(false)
                     .show();
 
-        }else if (!getTabletSerialNumber){
-            getTabletSerialNumber();
+        }else if (!getDeviceInfo){
+            getTabletInfo();
         }
     }
 
 
-    private void showTabletSerialNumberError(boolean show){
+    private void showTabletInfoError(boolean show){
         if (show){
             deviceSerialNumber_tv.setError("Click here to get serial number");
             deviceSerialNumber_tv.requestFocus();
-            getTabletSerialNumber = false;
+            SimCardNumber_tv.setError("Click here to get SIM card number");
+            SimCardNumber_tv.requestFocus();
+            getDeviceInfo = false;
             return;
         }else {
             deviceSerialNumber_tv.setError(null);
             deviceSerialNumber_tv.clearFocus();
-            getTabletSerialNumber = true;
+            SimCardNumber_tv.setError(null);
+            SimCardNumber_tv.clearFocus();
+            getDeviceInfo = true;
         }
     }
 

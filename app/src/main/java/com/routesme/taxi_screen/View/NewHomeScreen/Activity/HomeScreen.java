@@ -54,7 +54,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
     private LinearLayout homeScreenLayout;
     private boolean isLightTheme = true;
     private SharedPreferences sharedPreferences;
-    private String savedTabletToken = null, savedTabletSerialNo = null, savedTabletPassword = null;
+    private String savedTabletToken = null, savedTabletSerialNo = null, savedSimCardNumber = null, savedTabletPassword = null;
     private int savedTabletChannelId = 0;
     private ImageView openPattern;
     private long PressedTime;
@@ -70,6 +70,8 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
     private WebSocketClient trackingWebSocket;
     private URI trackingWebSocketUri;
 
+    private boolean isHotspotOn = false;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +79,6 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         setContentView(R.layout.home_screen);
 
         RequestPermissions();
-
-        TurnOnHotspot();
-
 
     }
 
@@ -109,6 +108,8 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
             IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
             showFragments();
 
+           TurnOnHotspot();
+
 
         } else {
             startActivity(new Intent(this, LoginScreen.class));
@@ -121,11 +122,14 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
 
     private void TurnOnHotspot() {
-        try {
-            Intent intent = new Intent(getString(R.string.intent_action_turnon));
-            sendImplicitBroadcast(this, intent);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
+        if (!isHotspotOn){
+            try {
+                Intent intent = new Intent(getString(R.string.intent_action_turnon));
+                sendImplicitBroadcast(this, intent);
+                isHotspotOn = true;
+            } catch (Exception e) {
+                Crashlytics.logException(e);
+            }
         }
     }
 
@@ -501,11 +505,12 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         try {
             savedTabletToken = sharedPreferences.getString("tabToken", null);
             savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
+            savedSimCardNumber = sharedPreferences.getString("simCardNumber", null);
             savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
             savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
 
 
-            if (savedTabletToken != null && savedTabletSerialNo != null && savedTabletPassword != null && savedTabletChannelId > 0) {
+            if (savedTabletToken != null && savedTabletSerialNo != null  && savedSimCardNumber != null  && savedTabletPassword != null && savedTabletChannelId > 0) {
                 // Bearer_TabletToken = "Bearer " +savedTabletToken;
                 Log.d(TAG, "isAuthorized: true , TabletChannelId:  " + savedTabletChannelId);
                 isAuthorized = true;

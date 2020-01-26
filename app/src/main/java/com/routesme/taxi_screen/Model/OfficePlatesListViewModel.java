@@ -45,7 +45,7 @@ public class OfficePlatesListViewModel extends ViewModel {
     //This method is using Retrofit to get the JSON data from URL
     private void loadOfficePlatesList(final Activity activity,  int officeId, String include) {
 
-        try {
+
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){
@@ -54,7 +54,6 @@ public class OfficePlatesListViewModel extends ViewModel {
                 return;
             }
 
-            //  RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
             Call<OfficePlatesList> call = api.getOfficePlatesList( officeId, include);
 
             call.enqueue(new Callback<OfficePlatesList>() {
@@ -69,7 +68,6 @@ public class OfficePlatesListViewModel extends ViewModel {
 
                 @Override
                 public void onFailure(Call<OfficePlatesList> call, Throwable t) {
-                   // Toast.makeText(activity, "Office Plates ViewModel Failure:  " + t.getMessage(), Toast.LENGTH_SHORT).show();
                     if (t instanceof IOException) {
                         Toast.makeText(activity, "OfficePlatesListViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
                         // logging probably not necessary
@@ -81,9 +79,7 @@ public class OfficePlatesListViewModel extends ViewModel {
                     activity.finish();
                 }
             });
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
+
 
 
 

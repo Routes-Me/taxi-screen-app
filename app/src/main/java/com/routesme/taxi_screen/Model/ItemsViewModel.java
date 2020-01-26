@@ -36,9 +36,6 @@ public class ItemsViewModel  extends ViewModel {
         }
 
 
-       // itemsList = new MutableLiveData<List<ItemsModel>>();
-        //we will load it asynchronously from server in this method
-       // loadItemsList(ch_ID,context, savedToken);
 
         //finally we will return the list
         return itemsList;
@@ -47,7 +44,7 @@ public class ItemsViewModel  extends ViewModel {
 
     //This method is using Retrofit to get the JSON data from URL
     private void loadItemsList(int ch_ID, final Activity activity) {
-try {
+
     RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
     RoutesApi api = null;
     if (retrofitClientInstance != null){
@@ -56,7 +53,6 @@ try {
         return;
     }
 
-    /// RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
     Call<List<ItemsModel>> call = api.getItems(ch_ID);
 
 
@@ -67,25 +63,17 @@ try {
 
             if (response.isSuccessful() && response.body() != null){
                 //finally we are setting the list to our MutableLiveData
-                try {
                     itemsList.setValue(response.body());
-                }catch (Exception e){
-                    Crashlytics.logException(e);
-                    // Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                }
+
             }else {
                 Toast.makeText(activity, "ItemsViewModel . request is not Success! , with error code:   " + response.code(), Toast.LENGTH_SHORT).show();
 
             }
 
-
-
-
         }
 
         @Override
         public void onFailure(Call<List<ItemsModel>> call, Throwable t) {
-            //  Toast.makeText(context, "Items....  "+t.getMessage(), Toast.LENGTH_SHORT).show();
             if (t instanceof IOException) {
                 Toast.makeText(activity, "ItemsViewModel. request onFailure ... this is an actual network failure!", Toast.LENGTH_SHORT).show();
                 // logging probably not necessary
@@ -96,9 +84,7 @@ try {
             }
         }
     });
-}catch (Exception e){
-    Crashlytics.logException(e);
-}
+
 
     }
 }

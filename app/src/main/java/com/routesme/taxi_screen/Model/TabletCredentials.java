@@ -17,6 +17,9 @@ public class TabletCredentials {
     @Expose
     private String tabletSerialNumber;
 
+    @SerializedName("simCardNumber")
+    @Expose
+    private String simCardNumber;
 
 
 
@@ -25,11 +28,13 @@ public class TabletCredentials {
     public TabletCredentials() {
     }
 
-    public TabletCredentials(int taxiOfficeId, String taxiPlateNumber, String tabletSerialNumber) {
+    public TabletCredentials(int taxiOfficeId, String taxiPlateNumber, String tabletSerialNumber, String simCardNumber) {
         this.taxiOfficeId = taxiOfficeId;
         this.taxiPlateNumber = taxiPlateNumber;
         this.tabletSerialNumber = tabletSerialNumber;
+        this.simCardNumber = simCardNumber;
     }
+
 
 
     //Getter...
@@ -46,9 +51,12 @@ public class TabletCredentials {
         return tabletSerialNumber;
     }
 
+    public String getSimCardNumber() {
+        return simCardNumber;
+    }
+
 
     //Setter...
-
 
     public void setTaxiOfficeId(int taxiOfficeId) {
         this.taxiOfficeId = taxiOfficeId;
@@ -61,4 +69,10 @@ public class TabletCredentials {
     public void setTabletSerialNumber(String tabletSerialNumber) {
         this.tabletSerialNumber = tabletSerialNumber;
     }
+
+    public void setSimCardNumber(String simCardNumber) {
+        this.simCardNumber = simCardNumber;
+    }
+
+
 }

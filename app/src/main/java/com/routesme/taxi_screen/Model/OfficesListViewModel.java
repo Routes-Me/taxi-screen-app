@@ -34,9 +34,6 @@ public class OfficesListViewModel extends ViewModel {
             loadOfficesList(activity, include);
         }
 
-
-
-
         //finally we will return the list
         return officesList;
     }
@@ -45,7 +42,7 @@ public class OfficesListViewModel extends ViewModel {
     //This method is using Retrofit to get the JSON data from URL
     private void loadOfficesList(final Activity activity, String include) {
 
-        try {
+
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){
@@ -53,7 +50,6 @@ public class OfficesListViewModel extends ViewModel {
             }else {
                 return;
             }
-            //RoutesApi api = serverRetrofit.getRetrofitInstance().create(RoutesApi.class);
             Call<TaxiOfficeList> call = api.getTaxiOfficeList(include);
 
             call.enqueue(new Callback<TaxiOfficeList>() {
@@ -82,9 +78,7 @@ public class OfficesListViewModel extends ViewModel {
                     activity.finish();
                 }
             });
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
+
 
 
     }
