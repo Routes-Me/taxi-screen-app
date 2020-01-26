@@ -6,18 +6,15 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
-
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
-
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.VideoView;
-
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
@@ -53,7 +50,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener , 
     //Using Firebase Analytics ...
     private FirebaseAnalytics firebaseAnalytics;
 
-    private ConnectivityReceiver receiver;
+    private ConnectivityReceiver connectionReceiver;
     private IntentFilter intentFilter;
 
     private View nMainView;
@@ -78,16 +75,12 @@ public class ContentFragment extends Fragment implements View.OnClickListener , 
 
     private void initialize() {
 
-        //sharedPreference Storage
         sharedPreferences = getActivity().getSharedPreferences("userData", Activity.MODE_PRIVATE);
         savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
 
-        //Using Firebase Analytics ...
         firebaseAnalytics = FirebaseAnalytics.getInstance(getActivity());
         firebaseAnalytics.setUserId(savedTabletSerialNo);
 
-
-        //Initialize Advertisement Items ...
         Advertisement_Video_CardView = nMainView.findViewById(R.id.Advertisement_Video_CardView);
         AD_Video_VideoView = nMainView.findViewById(R.id.AD_Video_VideoView);
         AD_Video_VideoView.setOnClickListener(this);
@@ -100,17 +93,9 @@ public class ContentFragment extends Fragment implements View.OnClickListener , 
 
         operations = new Operations(getActivity(),Advertisement_Video_CardView, videoRingProgressBar, AD_Video_VideoView, AD_Banner_ImageView, AD_Currencies_TextView);
 
+        connectionReceiver = new ConnectivityReceiver();
 
-        // Manually checking internet connection
-        receiver = new ConnectivityReceiver();
-        checkConnection();
-
-
-
-
-
-
-
+         checkConnection();
     }
 
     @Override
@@ -168,8 +153,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener , 
     // Method to manually check connection status
     private void checkConnection() {
         isConnected = ConnectivityReceiver.isConnected();
-      //  Log.d(TAG, "ContentFragment .. Initial ... Internet Connection Status:  "+ isConnected);
-        Toast.makeText(getActivity(), "ContentFragment .. Initial ... Internet Connection Status:  "+ isConnected, Toast.LENGTH_SHORT).show();
+        Log.d(TAG, "ContentFragment .. Initial ... Internet Connection Status:  "+ isConnected);
         if (isConnected){
             try {
                 operations.fetchAdvertisementData();
@@ -190,37 +174,32 @@ public class ContentFragment extends Fragment implements View.OnClickListener , 
 
     @Override
     public void onNetworkConnectionChanged(boolean isConnected) {
-      //  Log.d(TAG, "ContentFragment .. Changed ... Internet Connection Status:  "+ isConnected);
-        Toast.makeText(getActivity(), "ContentFragment .. Changed ... Internet Connection Status:  "+ isConnected, Toast.LENGTH_SHORT).show();
+
+        Log.d(TAG, "ContentFragment .. Changed ... Internet Connection Status:  "+ isConnected);
         if (isConnected && !isDataFetched){
-            try {
-                operations.fetchAdvertisementData();
-                isDataFetched = true;
-                //getActivity().unregisterReceiver(receiver);
-                ConnectivityReceiverRegistering(false);
-            } catch (Exception e) {
-                Crashlytics.logException(e);
-            }
+            operations.fetchAdvertisementData();
+            isDataFetched = true;
+            ConnectivityReceiverRegistering(false);
+
         }
     }
 
 
     private void ConnectivityReceiverRegistering(boolean register){
         try {
-            //Register or UnRegister your broadcast receiver here
 
+            // register or unRegister your broadcast connectionReceiver
             if (register){
 
                intentFilter = new IntentFilter("com.routesme.taxi_screen.SOME_ACTION");
                intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
 
-               getActivity().registerReceiver(receiver, intentFilter);
+               getActivity().registerReceiver(connectionReceiver, intentFilter);
            }else {
-               getActivity().unregisterReceiver(receiver);
+               getActivity().unregisterReceiver(connectionReceiver);
            }
 
         } catch(IllegalArgumentException e) {
-
             e.printStackTrace();
         }
     }

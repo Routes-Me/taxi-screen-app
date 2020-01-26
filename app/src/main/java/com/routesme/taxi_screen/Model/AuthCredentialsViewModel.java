@@ -86,7 +86,7 @@ public class AuthCredentialsViewModel extends ViewModel {
 
 
 
-            getToken(new AuthCredentials(userName, password),activity);
+            getToken(new AuthCredentials(userName, password),activity); // TODO: pass the same object authCredentials why to create a new one
 
              return authCredentialsErrors;
 

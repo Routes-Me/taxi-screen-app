@@ -2,9 +2,8 @@ package com.routesme.taxi_screen.Server.Class;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-
+import android.util.Base64;
 import com.routesme.taxi_screen.Model.EncryptModel;
-
 import java.io.UnsupportedEncodingException;
 import java.security.Key;
 import java.security.spec.KeySpec;
@@ -33,11 +32,8 @@ public class AesBase64Wrapper {
     @SuppressLint("NewApi")
     public String encryptAndEncode(String raw) {
         try {
-            Cipher c = getCipher(Cipher.ENCRYPT_MODE);
-           // byte[] encryptedVal = c.doFinal(getBytes(raw));
-           // String s = getString(Base64.encodeBase64(encryptedVal));
-            //return s;
-            return java.util.Base64.getEncoder().encodeToString(c.doFinal(raw.getBytes()));
+            Cipher cipher = getCipher(Cipher.ENCRYPT_MODE);
+            return Base64.encodeToString(cipher.doFinal(raw.getBytes()), Base64.DEFAULT);
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
@@ -45,11 +41,8 @@ public class AesBase64Wrapper {
 
     @SuppressLint("NewApi")
     public String decodeAndDecrypt(String encrypted) throws Exception {
-       // byte[] decodedValue = Base64.decodeBase64(getBytes(encrypted));
         Cipher c = getCipher(Cipher.DECRYPT_MODE);
-       // byte[] decValue = c.doFinal(decodedValue);
         return new String(c.doFinal(java.util.Base64.getDecoder().decode(encrypted)));
-       // return new String(decValue);
     }
 
     private String getString(byte[] bytes) throws UnsupportedEncodingException {
@@ -67,7 +60,6 @@ public class AesBase64Wrapper {
     }
 
     private Key generateKey() throws Exception {
-       // SecretKeyFactory factory = SecretKeyFactory.getInstance("PBKDF2WithHmacSHA1");
         SecretKeyFactory factory = SecretKeyFactory.getInstance(encrypt.getFactory());
         char[] password = encrypt.getPassword().toCharArray();
         byte[] salt = getBytes(encrypt.getSalt());

@@ -1,4 +1,6 @@
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android-extensions'
+apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
 
@@ -160,7 +162,13 @@ dependencies {
 
     //Hotspot Configuration...
     implementation 'com.linkedin.dexmaker:dexmaker:2.25.0'
+    compile "androidx.core:core-ktx:+"
+    compile "androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 
 }
 
 apply plugin: 'com.google.gms.google-services'
+repositories {
+    mavenCentral()
+}

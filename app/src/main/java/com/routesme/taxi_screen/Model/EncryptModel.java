@@ -1,17 +1,13 @@
 package com.routesme.taxi_screen.Model;
 
 import android.app.Activity;
-
 import com.routesme.taxi_screen.Class.Helper;
 
 public class EncryptModel {
 
     private String secretKey, iv, password, salt, cipher, factory, iterationCount, keyLength, algorithm , charsetName;
 
- //   private Activity activity;
-
     public EncryptModel(Activity activity) {
-       // this.activity = activity;
 
         this.secretKey = Helper.getConfigValue(activity, "secretKey");
         this.iv = Helper.getConfigValue(activity, "iv");
