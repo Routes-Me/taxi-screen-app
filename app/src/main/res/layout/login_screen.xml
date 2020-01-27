@@ -37,6 +37,15 @@
         layout="@layout/technical_login_layout" />
 
 
+    <ImageView
+        android:id="@+id/openPattern"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:background="@color/white"
+        />
+
 </RelativeLayout>
 
 

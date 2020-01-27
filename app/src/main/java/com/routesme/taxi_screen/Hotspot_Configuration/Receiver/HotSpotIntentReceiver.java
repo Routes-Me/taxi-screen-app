@@ -1,11 +1,10 @@
-package com.routesme.taxi_screen.New_Hotspot_Configuration.Receiver;
+package com.routesme.taxi_screen.Hotspot_Configuration.Receiver;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
-
-import com.routesme.taxi_screen.New_Hotspot_Configuration.MagicActivity;
+import com.routesme.taxi_screen.Hotspot_Configuration.MagicActivity;
 import com.routesme.taxiscreen.R;
 
 public class HotSpotIntentReceiver extends BroadcastReceiver {
@@ -26,6 +25,5 @@ public class HotSpotIntentReceiver extends BroadcastReceiver {
                 MagicActivity.useMagicActivityToTurnOff(context);
             }
         }
-
     }
 }

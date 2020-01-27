@@ -4,17 +4,11 @@ public class TrackingLocation {
     private Double latitude = 0.0;
     private Double longitude = 0.0;
 
-
-
-
     //Constructor...
-
     public TrackingLocation(Double latitude, Double longitude) {
         this.latitude = latitude;
         this.longitude = longitude;
     }
-
-
 
     //Getter...
     public Double getLatitude() {
@@ -24,8 +18,6 @@ public class TrackingLocation {
     public Double getLongitude() {
         return longitude;
     }
-
-
 
     //Setter...
     public void setLatitude(Double latitude) {

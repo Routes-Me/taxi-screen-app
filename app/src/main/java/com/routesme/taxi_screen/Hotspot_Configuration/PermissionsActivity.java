@@ -1,14 +1,12 @@
-package com.routesme.taxi_screen.New_Hotspot_Configuration;
+package com.routesme.taxi_screen.Hotspot_Configuration;
 
 import android.Manifest;
-import android.app.Activity;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -24,20 +22,13 @@ public abstract class PermissionsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         settingPermission();
-        /**
-         * Locations permission done in onActrivityResult
-         */
         locationsPermission();
-
         if (mLocationPermission && mSettingPermission) onPermissionsOkay();
     }
 
-
     private void settingPermission() {
         mSettingPermission = true;
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (!Settings.System.canWrite(getApplicationContext())) {
                 mSettingPermission = false;

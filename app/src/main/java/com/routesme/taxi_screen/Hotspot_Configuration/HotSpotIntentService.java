@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.New_Hotspot_Configuration;
+package com.routesme.taxi_screen.Hotspot_Configuration;
 
 import android.Manifest;
 import android.app.IntentService;
@@ -12,24 +12,18 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
-
-import com.routesme.taxi_screen.New_Hotspot_Configuration.Receiver.HotSpotIntentReceiver;
+import com.routesme.taxi_screen.Hotspot_Configuration.Receiver.HotSpotIntentReceiver;
 import com.routesme.taxiscreen.R;
-
 import java.lang.reflect.Method;
-
 import static android.content.ContentValues.TAG;
 
 public class HotSpotIntentService extends IntentService {
 
-    /**
-     Id for running service in foreground
-     */
+
     private static int FOREGROUND_ID=1338;
     private static final String CHANNEL_ID = "control_app";
 
@@ -44,11 +38,7 @@ public class HotSpotIntentService extends IntentService {
     MyOreoWifiManager mMyOreoWifiManager;
 
 
-    /**
-     * Creates an IntentService.  Invoked by your subclass's constructor.
-     *
 
-     */
     public HotSpotIntentService() {
         super("HotSpotIntentService");
     }
@@ -73,18 +63,14 @@ public class HotSpotIntentService extends IntentService {
         DATAURI_TURNON = getString(R.string.intent_data_host_turnon);
         DATAURI_TURNOFF = getString(R.string.intent_data_host_turnoff);
 
-        // Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
         Log.i(TAG,"Received start intent");
-
         mStartIntent = intent;
-
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
         } else {
             carryOn();
         }
-
     }
 
 
@@ -99,9 +85,7 @@ public class HotSpotIntentService extends IntentService {
             } else if (ACTION_TURNOFF.equals(action)|| (data!=null && data.contains(DATAURI_TURNOFF))) {
                 turnOn = false;
                 Log.i(TAG,"Action/data to turn off hotspot");
-            }
-
-            if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
+            }if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.O){
                 hotspotOreo(turnOn);
             } else {
                 turnOnHotspotPreOreo(turnOn);
@@ -137,19 +121,14 @@ public class HotSpotIntentService extends IntentService {
             return false;
         }
 
-
     }
 
-    /**
-     *
-     */
     @RequiresApi(api = Build.VERSION_CODES.O)
     private void hotspotOreo(boolean turnOn){
 
         if (mMyOreoWifiManager ==null){
             mMyOreoWifiManager = new MyOreoWifiManager(this);
         }
-
         if (turnOn) {
 
             //this dont work
@@ -159,10 +138,8 @@ public class HotSpotIntentService extends IntentService {
                     startForeground(FOREGROUND_ID,
                             buildForegroundNotification());
                 }
-
                 @Override
                 public void onTetheringFailed() {
-
                 }
             };
 
@@ -176,7 +153,6 @@ public class HotSpotIntentService extends IntentService {
     }
 
     //****************************************************************************************
-
 
     /**
      * Build low priority notification for running this service as a foreground service.
@@ -200,7 +176,6 @@ public class HotSpotIntentService extends IntentService {
                 .setCategory(Notification.CATEGORY_SERVICE)
                 .setSmallIcon(R.drawable.notif_hotspot_black_24dp);
 
-
         return(b.build());
     }
 
@@ -211,7 +186,6 @@ public class HotSpotIntentService extends IntentService {
             if (mngr.getNotificationChannel(CHANNEL_ID) != null) {
                 return;
             }
-            //
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
                     context.getString(R.string.notification_chnnl),

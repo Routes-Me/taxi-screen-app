@@ -23,14 +23,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Helper;
-import com.routesme.taxi_screen.New_Hotspot_Configuration.PermissionsActivity;
+import com.routesme.taxi_screen.Hotspot_Configuration.PermissionsActivity;
 import com.routesme.taxi_screen.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.Tracking.Class.TrackingHandler;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
@@ -38,12 +37,9 @@ import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
-
-
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-
 import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class HomeScreen extends PermissionsActivity implements View.OnClickListener {
@@ -79,12 +75,11 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         setContentView(R.layout.home_screen);
 
         RequestPermissions();
-
+        TurnOnHotspot();
     }
 
     @Override
     public void onPermissionsOkay() {
-
     }
 
 
@@ -94,49 +89,36 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
         //Check authorization of tablet before fetch advertisement data from server to display it ..
         if (isAuthorized()) {
-
             createWebSocketNew();
-
             trackingHandler = new TrackingHandler(this, trackingWebSocket);
-
-            //Get Vehicle Current Location & running TrackingTimer...
             startTracking();
-            // vehicleTracking();
-
             initialize();
             hideNavigationBar();
             IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
             showFragments();
 
-           TurnOnHotspot();
+          //  TurnOnHotspot();
 
 
         } else {
             startActivity(new Intent(this, LoginScreen.class));
             finish();
         }
-
         super.onResume();
-
     }
 
 
     private void TurnOnHotspot() {
-        if (!isHotspotOn){
-            try {
+        if (!isHotspotOn) {
                 Intent intent = new Intent(getString(R.string.intent_action_turnon));
                 sendImplicitBroadcast(this, intent);
                 isHotspotOn = true;
-            } catch (Exception e) {
-                Crashlytics.logException(e);
-            }
         }
     }
 
     private static void sendImplicitBroadcast(Context ctxt, Intent i) {
         PackageManager pm = ctxt.getPackageManager();
         List<ResolveInfo> matches = pm.queryBroadcastReceivers(i, 0);
-
         for (ResolveInfo resolveInfo : matches) {
             Intent explicit = new Intent(i);
             ComponentName cn =
@@ -151,61 +133,34 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
-        try {
             if (trackingWebSocket != null) {
                 trackingWebSocket.onCloseReceived();
             }
-
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
-
         super.onPause();
     }
 
 
     @Override
     protected void onDestroy() {
-        try {
             if (trackingWebSocket != null) {
                 trackingWebSocket.onCloseReceived();
             }
-
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
-
         super.onDestroy();
     }
 
 
     private void startTracking() {
-        try {
-
-            finder = new LocationFinder(this, trackingHandler);
-            if (finder.canGetLocation()) {
-
-                TrackingTimer();
-                try {
-                    trackingWebSocket.connect();
-                } catch (Exception e) {
-                    Crashlytics.logException(e);
-                }
-            } else {
-                finder.showSettingsAlert();
-            }
-        } catch (Exception e) {
-            Crashlytics.logException(e);
+        finder = new LocationFinder(this, trackingHandler);
+        if (finder.canGetLocation()) {
+            TrackingTimer();
+            trackingWebSocket.connect();
+        } else {
+            finder.showSettingsAlert();
         }
-
-
     }
 
 
     private void createWebSocketNew() {
-
         try {
             trackingWebSocketUri = new URI(Helper.getConfigValue(this, "trackingWebSocketUri"));
         } catch (URISyntaxException e) {
@@ -213,26 +168,17 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
             return;
         }
 
-
         trackingWebSocket = new WebSocketClient(trackingWebSocketUri) {
             @Override
             public void onOpen() {
-                try {
-                    Log.i("trackingWebSocket:  ", "Opened");
-
-
-                    //Send deviceId to server (Device Identifiering)
-                    sendMessageViaSocket("deviceId:" + savedTabletSerialNo);
-
-                    //Send offline locations to server if it exists....
-                    trackingHandler.sendOfflineTrackingToServer();
-
-                    //Start Tracking Timer after 500 melli seconds...
-                    // handlerTracking.postDelayed(runnableTracking, 500);
-                    handlerTracking.post(runnableTracking);
-                } catch (Exception e) {
-                    Crashlytics.logException(e);
-                }
+                Log.i("trackingWebSocket:  ", "Opened");
+                //Send deviceId to server (Device Identifiering)
+                sendMessageViaSocket("deviceId:" + savedTabletSerialNo);
+                //Send offline locations to server if it exists....
+                trackingHandler.sendOfflineTrackingToServer();
+                //Start Tracking Timer after 500 melli seconds...
+                // handlerTracking.postDelayed(runnableTracking, 500);
+                handlerTracking.post(runnableTracking);
             }
 
             @Override
@@ -257,95 +203,61 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
             @Override
             public void onException(Exception e) {
-                try {
-                    Log.i("trackingWebSocket:  ", "Exception Error:   " + e.getMessage());
-                    stopTrackingTimer();
-                } catch (Exception ex) {
-                    Crashlytics.logException(ex);
-                }
+                Log.i("trackingWebSocket:  ", "Exception Error:   " + e.getMessage());
+                stopTrackingTimer();
             }
 
             @Override
             public void onCloseReceived() {
-                try {
-                    Log.i("trackingWebSocket:  ", "Closed !");
-                    stopTrackingTimer();
-                } catch (Exception ex) {
-                    Crashlytics.logException(ex);
-                }
-
+                Log.i("trackingWebSocket:  ", "Closed !");
+                stopTrackingTimer();
             }
         };
-
         trackingWebSocket.setConnectTimeout(10000);
         trackingWebSocket.setReadTimeout(60000);
-        //  trackingWebSocket.addHeader("Origin", "http://developer.example.com");
         trackingWebSocket.enableAutomaticReconnection(5000);
-        // trackingWebSocket.connect();
     }
 
 
     private void sendMessageViaSocket(String message) {
-        try {
-            trackingWebSocket.send(message);
-            Log.i("trackingWebSocket:  ", "Send message:  " + message);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
+        trackingWebSocket.send(message);
+        Log.i("trackingWebSocket:  ", "Send message:  " + message);
     }
 
 
     private void TrackingTimer() {
-        try {
+        runnableTracking = new Runnable() {
+            @Override
+            public void run() {
+                isHandlerTrackingRunning = true;
+                Log.i("trackingWebSocket:  ", "Tracking Timer running ...");
+                trackingHandler.locationChecker();
 
-            runnableTracking = new Runnable() {
-                @Override
-                public void run() {
-                    isHandlerTrackingRunning = true;
-                    Log.i("trackingWebSocket:  ", "Tracking Timer running ...");
-                    trackingHandler.locationChecker();
+                handlerTracking.postDelayed(runnableTracking, 5000);
 
-                    handlerTracking.postDelayed(runnableTracking, 5000);
-
-                }
-            };
-
-            handlerTracking = new Handler();
-
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
+            }
+        };
+        handlerTracking = new Handler();
     }
 
     private void stopTrackingTimer() {
         if (isHandlerTrackingRunning) {
-            try {
-                handlerTracking.removeCallbacks(runnableTracking);
-                isHandlerTrackingRunning = false;
-                Log.i("trackingWebSocket:  ", "Tracking Timer stop ...");
-            } catch (Exception e) {
-                Crashlytics.logException(e);
-            }
-
+            handlerTracking.removeCallbacks(runnableTracking);
+            isHandlerTrackingRunning = false;
+            Log.i("trackingWebSocket:  ", "Tracking Timer stop ...");
         }
     }
 
 
     private void initialize() {
-
         //Using Firebase Analytics ...
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
-
         //Delete Technical Support Authentication Credentials ....
         deleteAuthenticationCredentialsFromAppClass();
-
         homeScreenLayout = findViewById(R.id.homeScreenLayout);
         homeScreenLayout.setOnClickListener(this);
-
         openPattern = findViewById(R.id.openPattern);
         openPattern.setOnClickListener(this);
-
     }
 
 
@@ -359,38 +271,22 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
             case R.id.openPattern:
                 openPatternDialog();
                 break;
-
         }
     }
 
     private void openPatternDialog() {
-
-        try {
-            clickTimes++;
-            //if user Click on Back button Two Times
-            if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
-
-
-                readPatternFromTechnicalSupport();
-
-                clickTimes = 0;
-
-            } else {
-
-            }
-
-            PressedTime = System.currentTimeMillis();
-        } catch (Exception e) {
-            Crashlytics.logException(e);
+        clickTimes++;
+        //if user Click on Back button Two Times
+        if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
+            readPatternFromTechnicalSupport();
+            clickTimes = 0;
         }
-
+        PressedTime = System.currentTimeMillis();
     }
 
 
     public void readPatternFromTechnicalSupport() {
-
         showExitPatternDialog();
-
         pattern_exitApp.addPatternLockListener(new PatternLockViewListener() {
             @Override
             public void onStarted() {
@@ -419,45 +315,27 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
     }
 
     private void showExitPatternDialog() {
-        try {
-            exitPatternDialog = new Dialog(this);
-            exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
-
-
-            pattern_exitApp = exitPatternDialog.findViewById(R.id.pattern_exitApp);
-
-
-            exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
-            exitPatternDialog.show();
-            exitPatternDialog.setCancelable(false);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
-
+        exitPatternDialog = new Dialog(this);
+        exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
+        pattern_exitApp = exitPatternDialog.findViewById(R.id.pattern_exitApp);
+        exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        exitPatternDialog.show();
+        exitPatternDialog.setCancelable(false);
     }
 
     private void openSettings() {
-        try {
-            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-                final Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
-                startActivity(intent);
-            } else {
-                final Intent intent = new Intent(Settings.ACTION_SETTINGS);
-                startActivity(intent);
-            }
-
-            finish();
-            System.exit(0);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            final Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
+            startActivity(intent);
+        } else {
+            final Intent intent = new Intent(Settings.ACTION_SETTINGS);
+            startActivity(intent);
         }
-
-
+        finish();
+        System.exit(0);
     }
 
     private void hideNavigationBar() {
-        try {
             View decorView = getWindow().getDecorView();
             final int flags = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
@@ -466,10 +344,6 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY;
             decorView.setSystemUiVisibility(flags);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
     }
 
     @SuppressLint("ResourceAsColor")
@@ -499,58 +373,39 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         app.setTaxiPlateNumber(null);
     }
 
-
     private boolean isAuthorized() {
         boolean isAuthorized = false;
-        try {
-            savedTabletToken = sharedPreferences.getString("tabToken", null);
-            savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
-            savedSimCardNumber = sharedPreferences.getString("simCardNumber", null);
-            savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
-            savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
+        savedTabletToken = sharedPreferences.getString("tabToken", null);
+        savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
+        savedSimCardNumber = sharedPreferences.getString("simCardNumber", null);
+        savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
+        savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
 
-
-            if (savedTabletToken != null && savedTabletSerialNo != null  && savedSimCardNumber != null  && savedTabletPassword != null && savedTabletChannelId > 0) {
-                // Bearer_TabletToken = "Bearer " +savedTabletToken;
-                Log.d(TAG, "isAuthorized: true , TabletChannelId:  " + savedTabletChannelId);
-                isAuthorized = true;
-            } else {
-                Log.d(TAG, "isAuthorized: false  , TabletChannelId:  " + savedTabletChannelId);
-
-                isAuthorized = false;
-            }
-
-        } catch (Exception e) {
-            Crashlytics.logException(e);
+        if (savedTabletToken != null && savedTabletSerialNo != null && savedSimCardNumber != null && savedTabletPassword != null && savedTabletChannelId > 0) {
+            Log.d(TAG, "isAuthorized: true , TabletChannelId:  " + savedTabletChannelId);
+            isAuthorized = true;
+        } else {
+            Log.d(TAG, "isAuthorized: false  , TabletChannelId:  " + savedTabletChannelId);
+            isAuthorized = false;
         }
         return isAuthorized;
     }
 
     private void IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics() {
-
-        try {
-            Crashlytics.setUserIdentifier(savedTabletSerialNo);
-            firebaseAnalytics.setUserId(savedTabletSerialNo);
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
+        Crashlytics.setUserIdentifier(savedTabletSerialNo);
+        firebaseAnalytics.setUserId(savedTabletSerialNo);
     }
-
 
     //for Request Permissions
     public void RequestPermissions() {
         int Permission_All = 1;
-
         String[] Permissions = {Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE};
         if (!hasPermissions(this, Permissions)) {
             ActivityCompat.requestPermissions(this, Permissions, Permission_All);
         }
-
     }
 
     public static boolean hasPermissions(Context context, String... permissions) {
-
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M && context != null && permissions != null) {
             for (String permission : permissions) {
                 if (ActivityCompat.checkSelfPermission(context, permission) != PackageManager.PERMISSION_GRANTED) {
@@ -558,9 +413,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
                 }
             }
         }
-
         return true;
     }
-
 
 }

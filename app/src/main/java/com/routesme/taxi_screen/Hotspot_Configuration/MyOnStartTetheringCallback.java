@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.New_Hotspot_Configuration;
+package com.routesme.taxi_screen.Hotspot_Configuration;
 
 public abstract class MyOnStartTetheringCallback {
     /**

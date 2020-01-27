@@ -3,10 +3,7 @@ package com.routesme.taxi_screen.Class;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
-
-
 import com.routesme.taxiscreen.R;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -16,7 +13,6 @@ public final class Helper {
 
     public static String getConfigValue(Context context, String name) {
         Resources resources = context.getResources();
-
         try {
             InputStream rawResource = resources.openRawResource(R.raw.config);
             Properties properties = new Properties();
@@ -27,7 +23,6 @@ public final class Helper {
         } catch (IOException e) {
             Log.e(TAG, "Failed to open config file.");
         }
-
         return null;
     }
 

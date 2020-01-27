@@ -2,8 +2,6 @@ package com.routesme.taxi_screen.Model;
 
 public class ItemType {
 
-    // String child;
-
     private String itemName;
     private boolean isHeader, isNormalItem;
     private int officeId;

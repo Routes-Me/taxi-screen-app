@@ -5,11 +5,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-
 import com.routesme.taxi_screen.Class.App;
 
 public class ConnectivityReceiver extends BroadcastReceiver{
-    private static final String TAG = "ConnectivityReceiver";
+
 
     public static ConnectivityReceiverListener connectivityReceiverListener;
 
@@ -19,20 +18,14 @@ public class ConnectivityReceiver extends BroadcastReceiver{
 
     @Override
     public void onReceive(Context context, Intent intent) {
-        //  Log.d(TAG, "From Connectivity Receiver ... Changed ... Internet Connection Status:  [ onReceive ] " );
-
-        //Toast.makeText(context, "Action: " + intent.getAction(), Toast.LENGTH_SHORT).show();
-
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnected();
 
         if (connectivityReceiverListener != null) {
             connectivityReceiverListener.onNetworkConnectionChanged(isConnected);
-          //  Log.d(TAG, "From Connectivity Receiver ... Changed ... Internet Connection Status:  "+ isConnected);
         }
     }
-
 
 
     public static boolean isConnected() {

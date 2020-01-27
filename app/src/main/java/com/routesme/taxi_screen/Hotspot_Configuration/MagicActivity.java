@@ -1,6 +1,4 @@
-package com.routesme.taxi_screen.New_Hotspot_Configuration;
-
-import androidx.appcompat.app.AppCompatActivity;
+package com.routesme.taxi_screen.Hotspot_Configuration;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.routesme.taxiscreen.R;
 
 public class MagicActivity extends PermissionsActivity {
@@ -23,7 +20,7 @@ public class MagicActivity extends PermissionsActivity {
 
     public static void useMagicActivityToTurnOff(Context c) {
         Uri uri = new Uri.Builder().scheme(c.getString(R.string.intent_data_scheme)).authority(c.getString(R.string.intent_data_host_turnoff)).build();
-        Toast.makeText(c, "Turn off. Uri: " + uri.toString(), Toast.LENGTH_LONG).show();
+       // Toast.makeText(c, "Turn off. Uri: " + uri.toString(), Toast.LENGTH_LONG).show();
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.setData(uri);
         c.startActivity(i);
@@ -36,14 +33,12 @@ public class MagicActivity extends PermissionsActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.e(TAG, "onCreate");
-
     }
 
     @Override
     public void onPermissionsOkay() {
         carryOnWithHotSpotting();
     }
-
 
     /**
      * The whole purpose of this activity - to start {@link HotSpotIntentService}
@@ -54,4 +49,6 @@ public class MagicActivity extends PermissionsActivity {
         HotSpotIntentService.start(this, intent);
         finish();
     }
+
+
 }

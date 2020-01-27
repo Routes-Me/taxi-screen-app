@@ -5,10 +5,13 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
+import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
@@ -18,9 +21,9 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.crashlytics.android.Crashlytics;
+import com.andrognito.patternlockview.PatternLockView;
+import com.andrognito.patternlockview.listener.PatternLockViewListener;
+import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
 import com.routesme.taxi_screen.Model.AuthCredentials;
@@ -28,25 +31,16 @@ import com.routesme.taxi_screen.Model.AuthCredentialsError;
 import com.routesme.taxi_screen.Model.AuthCredentialsViewModel;
 import com.routesme.taxiscreen.R;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
-
 import java.util.List;
 
 public class LoginScreen extends AppCompatActivity implements View.OnClickListener {
 
     private Operations operations;
-
     private App app;
-
-
-
     private ImageView btnOpenLoginScreen;
     private RelativeLayout loginLayout;
-
     private long PressedTime;
-    private Toast pressedTimesToast;
     private int clickTimes = 0;
-
-
     //For Login Layout...
     private String userName = null, password = null;
     View technical_login_screen ;
@@ -57,6 +51,11 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     private ShowHidePasswordEditText password_et;
     private TextView userName_error_tv, password_error_tv;
     private ProgressDialog dialog;
+    private String final_pattern = "";
+    private Dialog exitPatternDialog;
+    private PatternLockView pattern_exitApp;
+    private ImageView openPattern;
+    private String patternPassword;
 
 
 
@@ -67,26 +66,19 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         setContentView(R.layout.login_screen);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
-
         initialize();
-
     }
 
 
     private void initialize() {
-
         operations = new Operations(this);
-
         app = (App) getApplicationContext();
-
-
-
         btnOpenLoginScreen = findViewById(R.id.btnOpenLoginScreen);
         btnOpenLoginScreen.setOnClickListener(this);
         loginLayout = findViewById(R.id.loginLayout);
-
+        openPattern = findViewById(R.id.openPattern);
+        openPattern.setOnClickListener(this);
         initializeLoginLayout();
-
         openLoginLayout(app.isNewLogin());
     }
 
@@ -107,9 +99,6 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         password_et = technical_login_screen.findViewById(R.id.password_et);
         password_error_tv = technical_login_screen.findViewById(R.id.password_error_tv);
         editTextListener();
-
-
-
     }
 
 
@@ -128,68 +117,93 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
                 saveAuthCredentials();
                 openLearnMoreScreen();
                 break;
+
+            case R.id.openPattern:
+                openPatternDialog();
+                break;
         }
     }
 
+    private void openPatternDialog() {
+            clickTimes++;
+            if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
+                readPatternFromTechnicalSupport();
+                clickTimes = 0;
+            }
+            PressedTime = System.currentTimeMillis();
+    }
+
+    public void readPatternFromTechnicalSupport() {
+        patternPassword = "2103678";
+        showExitPatternDialog();
+
+        pattern_exitApp.addPatternLockListener(new PatternLockViewListener() {
+            @Override
+            public void onStarted() {
+            }
+            @Override
+            public void onProgress(List<PatternLockView.Dot> progressPattern) {
+            }
+            @Override
+            public void onComplete(List<PatternLockView.Dot> pattern) {
+                final_pattern = PatternLockUtils.patternToString(pattern_exitApp, pattern);
+                if (final_pattern.equals(patternPassword)) {
+                    openSettings();
+                } else {
+                    pattern_exitApp.clearPattern();
+                    exitPatternDialog.dismiss();
+                }
+            }
+            @Override
+            public void onCleared() {
+            }
+        });
+    }
+
+    private void showExitPatternDialog() {
+            exitPatternDialog = new Dialog(this);
+            exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
+            pattern_exitApp = exitPatternDialog.findViewById(R.id.pattern_exitApp);
+            exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+            exitPatternDialog.show();
+            exitPatternDialog.setCancelable(false);
+    }
+
+    private void openSettings() {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                final Intent intent = new Intent(Settings.ACTION_HOME_SETTINGS);
+                startActivity(intent);
+            } else {
+                final Intent intent = new Intent(Settings.ACTION_SETTINGS);
+                startActivity(intent);
+            }
+            finish();
+            System.exit(0);
+    }
+
     private void openTaxiInformationScreen() {
-        //dialog.show();
-
-
         String userName = userName_et.getText().toString().trim();
         String password = password_et.getText().toString().trim();
-
-
-
         AuthCredentials authCredentials = new AuthCredentials(userName, password);
-
-
         authCredentialsViewModel = ViewModelProviders.of((FragmentActivity) this).get(AuthCredentialsViewModel.class);
         authCredentialsViewModel.getToken(authCredentials,this, dialog).observe((LifecycleOwner) this, new Observer<List<AuthCredentialsError>>() {
             @Override
             public void onChanged(List<AuthCredentialsError> authCredentialsErrors) {
-
-              //  dialog.dismiss();
-
-
                 for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
                     if (authCredentialsErrors.get(e).getErrorNumber() == 1 || authCredentialsErrors.get(e).getErrorNumber() == 2){
                         showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
-                      //  Toast.makeText(LoginScreen.this, "error id:  " + authCredentialsErrors.get(e).getErrorNumber(), Toast.LENGTH_SHORT).show();
-                    }else {
-                       // Toast.makeText(LoginScreen.this, "Error:  " + authCredentialsErrors.get(e).getErrorMasseg(), Toast.LENGTH_SHORT).show();
                     }
                 }
-
-
-
             }
         });
     }
 
     private void showLoginView() {
-
-
-        try {
             clickTimes++;
-            //if user Click on Back button Two Times
             if (PressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
-              //  pressedTimesToast.cancel();
-
                 openLoginLayout(true);
-
             }
-            //if user Click on Back button One Times
-            else {
-               // pressedTimesToast = pressedTimesToast.makeText(getBaseContext(), "Clicked Times:  " + clickTimes, pressedTimesToast.LENGTH_SHORT);
-              //  pressedTimesToast.show();
-            }
-
             PressedTime = System.currentTimeMillis();
-        } catch (Exception e) {
-            Crashlytics.logException(e);
-        }
-
-
     }
 
     private void editTextListener() {
@@ -204,7 +218,6 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             @Override
             public void afterTextChanged(Editable s) { }
         });
-
         password_et.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) { }
@@ -219,24 +232,18 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     }
 
     private void showErrorMessage(int errorId , String errorStr, boolean show){
-
         EditText editText = null;
         TextView textView = null;
-
         switch (errorId){
-
             case 1 :
                 editText = userName_et;
                 textView = userName_error_tv;
                 break;
-
             case 2 :
                 editText = password_et;
                 textView = password_error_tv;
                 break;
         }
-
-
         if (show){
             editText.setBackgroundResource(R.drawable.red_border);
             textView.setText("* " + errorStr);
@@ -246,11 +253,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             editText.setBackgroundResource(R.drawable.grey_border_edit_text);
             textView.setVisibility(View.INVISIBLE);
         }
-
-
-
     }
-
     private void openLearnMoreScreen() {
         startActivity(new Intent(this, LearnMoreScreen.class));
     }
@@ -259,7 +262,6 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
         if (show) {
             btnOpenLoginScreen.setVisibility(View.GONE);
             loginLayout.setVisibility(View.VISIBLE);
-
             userName = app.getTechnicalSupportUserName();
             password = app.getTechnicalSupportPassword();
             if (userName != null && !userName.isEmpty()){
@@ -268,32 +270,18 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             if (password != null && !password.isEmpty()){
                 password_et.setText(password);
             }
-
         }else{
             btnOpenLoginScreen.setVisibility(View.VISIBLE);
             loginLayout.setVisibility(View.GONE);
         }
     }
 
-
     private void saveAuthCredentials(){
-
-        try {
             String userName = userName_et.getText().toString().trim();
             String password = password_et.getText().toString().trim();
-            // if (!userName.equals(null) && !userName.isEmpty()){
             app.setTechnicalSupportUserName(userName);
-            //  }
-            //   if (!password.equals(null) && !password.isEmpty()){
             app.setTechnicalSupportPassword(password);
-            //  }
             app.setNewLogin(true);
-        }catch (Exception e){
-            Crashlytics.logException(e);
-        }
-
-
-
     }
 
 }

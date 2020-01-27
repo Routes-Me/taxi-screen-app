@@ -4,15 +4,12 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
-
 import com.routesme.taxi_screen.Class.Helper;
 import com.routesme.taxi_screen.Model.RequestHeaders;
 import com.routesme.taxi_screen.View.Login.LoginScreen;
 import com.routesme.taxiscreen.BuildConfig;
-
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
-
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -37,21 +34,14 @@ public class RetrofitClientInstance {
 
 
 
-
     public RetrofitClientInstance(final Activity activity) {
-
-
         this.activity = activity;
-
         //sharedPreference Storage
         sharedPreferences = activity.getSharedPreferences("userData", Activity.MODE_PRIVATE);
-
-
     }
 
     private OkHttpClient getOkHttpClient(boolean hasToken){
 
-        //requestHeaders = new RequestHeaders(getToken(),getCountryCode(), getVersionName());
         if (hasToken){
 
             savedTabletToken = sharedPreferences.getString("tabToken", null);
@@ -111,11 +101,9 @@ public class RetrofitClientInstance {
 
     private String getToken(){
         return "Bearer " + savedTabletToken;
-            //return "Bearer " + "BJikwjcJvaaUF8obe_XLDjZeKqtXY7fD1_HuNHlbWhxX8357uTfZKB-L5ADQk1683jzwulZoJH1OyY7Z0E3DvUg8Dg-mW8C6NVn7CSRE4qZ8SZVC_bQdM9aquF-HHFACJe-C0f8JG54Fh8FMRMAcMyyxWWYdid2NUDNffp7ALnv3NakqdhAqT6sKXah1CA3nQV4ASlPIZhFrHIqVDoPaxlNBVdx9yXtbSoU3Zp0O8JrHuKgnOHEJ0XKsjl4pUivjS7mRoOU5S3dLH5-_MxHtPeJ5QOK_VQJ_ioFCVjlzVfzHjGx_u1kRGuYbh9ow83fEAyDwwHnb_T_A-HTOb9rEuXgKuUxI6HUDRTaB1BzJCKD2Q-Suvwpgo_H-hS0IadQ_6fUp55jlf_5cNN3ZqJap7gTiZTWbNUyHEAzBtbrRU2JXUvmkfSab3zdKlpxSyg4KKYGWXZaEWn6FdNaSx-RcjboJ1g1nuZ1p0HDgoNk28Wccc";
     }
 
     private String getVersionName(){
-
         versionName = BuildConfig.VERSION_NAME;
         versionCode = BuildConfig.VERSION_CODE;
         return versionName+"."+versionCode;
@@ -129,4 +117,5 @@ public class RetrofitClientInstance {
                 .build();
         return retrofit;
     }
+
 }

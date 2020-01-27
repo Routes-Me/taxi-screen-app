@@ -8,7 +8,6 @@ public class BannerModel {
 
 
 //Constructor ...
-
     public BannerModel() {
     }
 
@@ -16,14 +15,7 @@ public class BannerModel {
         Adv_ID = adv_ID;
         Adv_URL = adv_URL;
     }
-
-
-
-
-
-
     //Getter ...
-
     public int getAdv_ID() {
         return Adv_ID;
     }
@@ -31,11 +23,6 @@ public class BannerModel {
     public String getAdv_URL() {
         return Adv_URL;
     }
-
-
-
-
-
 
     //Setter ...
 

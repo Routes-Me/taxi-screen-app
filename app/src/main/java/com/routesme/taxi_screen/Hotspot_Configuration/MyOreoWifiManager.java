@@ -1,19 +1,14 @@
-package com.routesme.taxi_screen.New_Hotspot_Configuration;
+package com.routesme.taxi_screen.Hotspot_Configuration;
 
 
 import android.content.Context;
 import android.net.ConnectivityManager;
-import android.net.wifi.WifiConfiguration;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
-
-
 import androidx.annotation.RequiresApi;
-
 import com.android.dx.stock.ProxyBuilder;
-
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -30,26 +25,6 @@ public class MyOreoWifiManager {
         mContext = c;
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
         mConnectivityManager = (ConnectivityManager) mContext.getSystemService(ConnectivityManager.class);
-    }
-
-    /**
-     * This sets the Wifi SSID and password
-     * Call this before {@code startTethering} if app is a system/privileged app
-     * Requires: android.permission.TETHER_PRIVILEGED which is only granted to system apps
-     */
-    public void configureHotspot(String name, String password) {
-        WifiConfiguration apConfig = new WifiConfiguration();
-        apConfig.SSID = name;
-        apConfig.preSharedKey = password;
-        apConfig.allowedKeyManagement.set(WifiConfiguration.KeyMgmt.WPA_PSK);
-        try {
-            Method setConfigMethod = mWifiManager.getClass().getMethod("setWifiApConfiguration", WifiConfiguration.class);
-            boolean status = (boolean) setConfigMethod.invoke(mWifiManager, apConfig);
-            Log.d(TAG, "setWifiApConfiguration - success? " + status);
-        } catch (Exception e) {
-            Log.e(TAG, "Error in configureHotspot");
-            e.printStackTrace();
-        }
     }
 
     /**

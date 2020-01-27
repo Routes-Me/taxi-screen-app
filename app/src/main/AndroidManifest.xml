@@ -3,10 +3,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.routesme.taxiscreen">
 
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Phone Info Permissions -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- Tracking Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Phone Info Permissions -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <!-- Tracking Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Hotspot Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Hotspot Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -30,7 +33,7 @@
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
 
-        <activity android:name="com.routesme.taxi_screen.Hotspot_Configuration.HotspotScreen" />
+
         <activity
             android:name="com.routesme.taxi_screen.View.Login.TaxiInformationScreen"
             android:screenOrientation="landscape"
@@ -47,12 +50,7 @@
         <activity
             android:name="com.routesme.taxi_screen.View.Login.LoginScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" /> <!-- Last design of home screen -->
-        <activity
-            android:name="com.routesme.taxi_screen.View.LastHomeScreen.Activity.MainActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing" /> <!-- New design of home screen -->
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
         <activity
             android:name="com.routesme.taxi_screen.View.NewHomeScreen.Activity.HomeScreen"
             android:screenOrientation="landscape"
@@ -71,17 +69,15 @@
             android:name="com.routesme.taxi_screen.Detect_Network_Connection_Status.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
-
                 <!-- Intent filters for broadcast receiver -->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
         </receiver>
-
-
+        
         <!-- Hotspot Configuration -->
-        <activity android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.MagicActivity">
+        <activity android:name="com.routesme.taxi_screen.Hotspot_Configuration.MagicActivity">
             <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -93,12 +89,12 @@
         </activity>
 
         <service
-            android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.HotSpotIntentService"
+            android:name="com.routesme.taxi_screen.Hotspot_Configuration.HotSpotIntentService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
+            android:name="com.routesme.taxi_screen.Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -107,9 +103,7 @@
             </intent-filter>
         </receiver>
 
-        <activity android:name="com.routesme.taxi_screen.New_Hotspot_Configuration.HotspotMainScreen">
 
-        </activity>
 
     </application>
 

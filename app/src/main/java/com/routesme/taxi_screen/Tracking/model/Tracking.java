@@ -7,10 +7,6 @@ import androidx.room.Embedded;
 import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
-import androidx.room.TypeConverters;
-
-
-import java.sql.Date;
 
 @Entity(tableName = "Tracking")
 public class Tracking {
@@ -24,10 +20,7 @@ public class Tracking {
     @ColumnInfo(name = "timestamp")
     private String timestamp;
 
-
-
     //Constructor...
-
     @Ignore
     public Tracking(TrackingLocation location, String timestamp) {
         this.location = location;
@@ -44,7 +37,6 @@ public class Tracking {
 
 
     //Getter...
-
     public int getId() {
         return id;
     }
@@ -59,8 +51,6 @@ public class Tracking {
 
 
     //Setter...
-
-
     public void setId(int id) {
         this.id = id;
     }
@@ -72,10 +62,6 @@ public class Tracking {
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
     }
-
-
-
-
 
 }
 

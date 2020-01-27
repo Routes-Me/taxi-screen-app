@@ -18,16 +18,11 @@ import javax.crypto.spec.SecretKeySpec;
 
 public class AesBase64Wrapper {
 
-   // private static String IV = "IV_VALUE_16_BYTE";
-   // private static String PASSWORD = "PASSWORD_VALUE";
-   // private static String SALT = "SALT_VALUE";
-
     private static EncryptModel encrypt;
 
     public AesBase64Wrapper(Activity activity) {
         this.encrypt = new EncryptModel(activity);
     }
-
 
     @SuppressLint("NewApi")
     public String encryptAndEncode(String raw) {
@@ -37,16 +32,6 @@ public class AesBase64Wrapper {
         } catch (Throwable t) {
             throw new RuntimeException(t);
         }
-    }
-
-    @SuppressLint("NewApi")
-    public String decodeAndDecrypt(String encrypted) throws Exception {
-        Cipher c = getCipher(Cipher.DECRYPT_MODE);
-        return new String(c.doFinal(java.util.Base64.getDecoder().decode(encrypted)));
-    }
-
-    private String getString(byte[] bytes) throws UnsupportedEncodingException {
-        return new String(bytes, encrypt.getCharsetName());
     }
 
     private byte[] getBytes(String str) throws UnsupportedEncodingException {
