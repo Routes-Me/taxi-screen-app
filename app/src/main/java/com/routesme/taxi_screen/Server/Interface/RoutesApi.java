@@ -35,7 +35,7 @@ public interface RoutesApi {
     Call<TaxiOfficeList> getTaxiOfficeList( @Query("include") String include);
     //Taxi Offic plates list
     @GET("Tablets")
-    Call<OfficePlatesList> getOfficePlatesList( @Query("taxiOfficeId") int taxiOfficeId, @Query("include") String include);
+    Call<OfficePlatesList> getOfficePlatesList( @Query("taxiOfficeId") int taxiOfficeId);
     //Tablet Register
     @POST("Tablets")
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})

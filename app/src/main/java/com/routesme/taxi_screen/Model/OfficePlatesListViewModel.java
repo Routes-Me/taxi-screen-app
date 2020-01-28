@@ -16,13 +16,13 @@ public class OfficePlatesListViewModel extends ViewModel {
     private MutableLiveData<OfficePlatesList> officePlatesList;
 
     //we will call this method to get the data
-    public LiveData<OfficePlatesList> getOfficePlatesList(Activity activity, int officeId, String include) {
+    public LiveData<OfficePlatesList> getOfficePlatesList(Activity activity, int officeId) {
         //if the list is null
 
         if (officePlatesList == null) {
             officePlatesList = new MutableLiveData<OfficePlatesList>();
             //we will load it asynchronously from server in this method
-            loadOfficePlatesList(activity, officeId, include);
+            loadOfficePlatesList(activity, officeId);
         }
         //finally we will return the list
         return officePlatesList;
@@ -30,7 +30,7 @@ public class OfficePlatesListViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadOfficePlatesList(final Activity activity,  int officeId, String include) {
+    private void loadOfficePlatesList(final Activity activity,  int officeId) {
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){
@@ -38,7 +38,7 @@ public class OfficePlatesListViewModel extends ViewModel {
             }else {
                 return;
             }
-            Call<OfficePlatesList> call = api.getOfficePlatesList( officeId, include);
+            Call<OfficePlatesList> call = api.getOfficePlatesList( officeId);
             call.enqueue(new Callback<OfficePlatesList>() {
                 @Override
                 public void onResponse(Call<OfficePlatesList> call, Response<OfficePlatesList> response) {

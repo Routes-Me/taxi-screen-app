@@ -89,15 +89,17 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
         //Check authorization of tablet before fetch advertisement data from server to display it ..
         if (isAuthorized()) {
-            createWebSocketNew();
-            trackingHandler = new TrackingHandler(this, trackingWebSocket);
-            startTracking();
+
+            //createWebSocketNew();
+           // trackingHandler = new TrackingHandler(this, trackingWebSocket);
+            //startTracking();
+
             initialize();
-            hideNavigationBar();
+           // hideNavigationBar();
             IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
             showFragments();
 
-          //  TurnOnHotspot();
+
 
 
         } else {
@@ -130,7 +132,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         }
     }
 
-
+/*
     @Override
     protected void onPause() {
             if (trackingWebSocket != null) {
@@ -138,8 +140,6 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
             }
         super.onPause();
     }
-
-
     @Override
     protected void onDestroy() {
             if (trackingWebSocket != null) {
@@ -147,7 +147,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
             }
         super.onDestroy();
     }
-
+*/
 
     private void startTracking() {
         finder = new LocationFinder(this, trackingHandler);

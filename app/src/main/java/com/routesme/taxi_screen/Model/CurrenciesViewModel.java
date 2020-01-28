@@ -45,7 +45,7 @@ public class CurrenciesViewModel extends ViewModel {
         @Override
         public void onResponse(Call<List<CurrenciesModel>> call, Response<List<CurrenciesModel>> response) {
 
-            if (response.isSuccessful() && response.body() != null){
+            if (response.isSuccessful() && response.body() != null  && !response.body().isEmpty()){
                 //finally we are setting the list to our MutableLiveData
                     currenciesList.setValue(response.body());
             }

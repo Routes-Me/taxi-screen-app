@@ -43,7 +43,7 @@ public class VideosViewModel extends ViewModel {
             call.enqueue(new Callback<List<VideoModel>>() {
                 @Override
                 public void onResponse(Call<List<VideoModel>> call, Response<List<VideoModel>> response) {
-                    if (response.isSuccessful() && response.body() != null){
+                    if (response.isSuccessful() && response.body() != null && !response.body().isEmpty()){
                         //finally we are setting the list to our MutableLiveData
                             videosList.setValue(response.body());
                     }

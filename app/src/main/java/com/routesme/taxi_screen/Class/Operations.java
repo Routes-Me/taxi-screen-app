@@ -90,7 +90,7 @@ public class Operations {
 
         if (savedTabletToken != null && savedTabletChannelId > 0){
                 fetchAdvertisementBannerList();
-                fetchAdvertisementScrollingText();
+              //  fetchAdvertisementScrollingText();
                 fetchAdvertisementVideoList();
         }
 
@@ -104,7 +104,10 @@ public class Operations {
                     for (int Bno = 0; Bno < BannersList.size(); Bno++) {
                         adBannerList.add(new Advertisement(BannersList.get(Bno).getAdv_ID(),BannersList.get(Bno).getAdv_URL()));
                     }
-                    displayAdvertisementBannerList(adBannerList);
+                    if (adBannerList != null && !adBannerList.isEmpty()) {
+                        displayAdvertisementBannerList(adBannerList);
+                    }
+
                 }
 
 
@@ -119,7 +122,10 @@ public class Operations {
                     for (int Vno = 0; Vno < VideosList.size(); Vno++) {
                         adVideoList.add(new Advertisement(VideosList.get(Vno).getVideo_ID(),VideosList.get(Vno).getVideo_URL()));
                     }
-                    displayAdvertisementVideoList(adVideoList);
+                    if (adVideoList != null && !adVideoList.isEmpty()) {
+                        displayAdvertisementVideoList(adVideoList);
+                    }
+
                 }
 
 
@@ -137,7 +143,9 @@ public class Operations {
                     for (int Cno = 0; Cno < currenciesList.size(); Cno++) {
                         CurrenciesString  +=  currenciesList.get(Cno).getCurrency_Name(activity)   + "        ";
                     }
-                    displayAdvertisementCurrenciesList(CurrenciesString);
+                    if (!CurrenciesString.isEmpty()) {
+                        displayAdvertisementCurrenciesList(CurrenciesString);
+                    }
                 }
 
 

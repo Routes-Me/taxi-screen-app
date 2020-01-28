@@ -47,7 +47,7 @@ public class BannersViewModel extends ViewModel {
                 @Override
                 public void onResponse(Call<List<BannerModel>> call, Response<List<BannerModel>> response) {
 
-                    if (response.isSuccessful() && response.body() != null){
+                    if (response.isSuccessful() && response.body() != null  && !response.body().isEmpty()){
                         //finally we are setting the list to our MutableLiveData
                             bannersList.setValue(response.body());
                     }

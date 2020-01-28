@@ -111,21 +111,12 @@ public class TaxiInformationListScreen extends AppCompatActivity {
 
     private void getOfficePlatesList_Sections() {
             officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
-            officePlatesListViewModel.getOfficePlatesList(this,app.getTaxiOfficeId(),"recent").observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
+            officePlatesListViewModel.getOfficePlatesList(this,app.getTaxiOfficeId()).observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
                 @Override
                 public void onChanged(OfficePlatesList officePlatesList) {
                     listOfficePlatesArrayList = new ArrayList<>();
-                    ArrayList<TaxiPlate> mostRecentOfficePlates = new ArrayList<>() ;
-                    mostRecentOfficePlates.addAll(officePlatesList.getOfficePlatesIncluded().getRecentPlateNumbers());
                     ArrayList<TaxiPlate> allOfficePlates = new ArrayList<>();
                     allOfficePlates.addAll(officePlatesList.getOfficePlatesData());
-                    //Get Most Office Plates
-                    if (mostRecentOfficePlates.size() > 0){
-                        listOfficePlatesArrayList.add(new ItemType("Most recent",true, false,0));
-                        for (int i=0; i <mostRecentOfficePlates.size() ; i++){
-                            listOfficePlatesArrayList.add(new ItemType(mostRecentOfficePlates.get(i).getTabletCarPlateNo(),false, false));
-                        }
-                    }
                     //Get all Office Plates
                     if (allOfficePlates.size() > 0) {
                         listOfficePlatesArrayList.add(new ItemType("Office plates", true, false, 0));

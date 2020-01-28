@@ -11,10 +11,6 @@ public class OfficePlatesList {
     private List<TaxiPlate> officePlatesData;
 
 
-    @SerializedName("included")
-    public IncludedTaxiPlates officePlatesIncluded;
-
-
 
 
 
@@ -36,17 +32,11 @@ public class OfficePlatesList {
         return officePlatesData;
     }
 
-    public IncludedTaxiPlates getOfficePlatesIncluded() {
-        return officePlatesIncluded;
-    }
-
     //Setter...
 
     public void setOfficePlatesData(List<TaxiPlate> officePlatesData) {
         this.officePlatesData = officePlatesData;
     }
 
-    public void setOfficePlatesIncluded(IncludedTaxiPlates officePlatesIncluded) {
-        this.officePlatesIncluded = officePlatesIncluded;
-    }
+
 }
