@@ -23,6 +23,8 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.Toast;
+
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
@@ -51,7 +53,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
     private boolean isLightTheme = true;
     private SharedPreferences sharedPreferences;
     private String savedTabletToken = null, savedTabletSerialNo = null, savedSimCardNumber = null, savedTabletPassword = null;
-    private int savedTabletChannelId = 0;
+    private int savedTabletChannelId ;
     private ImageView openPattern;
     private long PressedTime;
     private int clickTimes = 0;
@@ -88,6 +90,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
 
         //Check authorization of tablet before fetch advertisement data from server to display it ..
+
         if (isAuthorized()) {
 
             //createWebSocketNew();
@@ -374,21 +377,10 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
     }
 
     private boolean isAuthorized() {
-        boolean isAuthorized = false;
-        savedTabletToken = sharedPreferences.getString("tabToken", null);
-        savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
-        savedSimCardNumber = sharedPreferences.getString("simCardNumber", null);
-        savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
-        savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", 0);
 
-        if (savedTabletToken != null && savedTabletSerialNo != null && savedSimCardNumber != null && savedTabletPassword != null && savedTabletChannelId > 0) {
-            Log.d(TAG, "isAuthorized: true , TabletChannelId:  " + savedTabletChannelId);
-            isAuthorized = true;
-        } else {
-            Log.d(TAG, "isAuthorized: false  , TabletChannelId:  " + savedTabletChannelId);
-            isAuthorized = false;
-        }
-        return isAuthorized;
+        savedTabletToken = sharedPreferences.getString("tabToken", null);
+        savedTabletChannelId = sharedPreferences.getInt("tabletChannelId", -999);
+        return savedTabletToken != null && savedTabletChannelId != -999;
     }
 
     private void IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics() {

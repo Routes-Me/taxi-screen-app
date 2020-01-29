@@ -24,6 +24,8 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import com.routesme.taxi_screen.Class.App;
 import com.routesme.taxi_screen.Class.Operations;
 import com.routesme.taxi_screen.Model.TabletCredentials;
@@ -41,7 +43,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     //sharedPreference Storage
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private String savedToken = null;
+   // private String savedToken = null;
+    private String bearerToken = null;
     private TabletInfoViewModel tabletInfoViewModel;
     private Toolbar myToolbar;
     private TelephonyManager telephonyManager;
@@ -59,33 +62,73 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         setContentView(R.layout.taxi_information_screen);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
+        initialize();
+
+    }
+
+    private void initialize() {
         operations = new Operations(this);
         app = (App) getApplicationContext();
-        ToolbarSetUp();
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
-        editor = sharedPreferences.edit();
-        savedToken = "Bearer " + sharedPreferences.getString("tabToken", null);
-        deviceSerialNumber_tv = findViewById(R.id.deviceSerialNumber_tv);
-        deviceSerialNumber_tv.setOnClickListener(this);
-        SimCardNumber_tv = findViewById(R.id.SimCardNumber_tv);
-        SimCardNumber_tv.setOnClickListener(this);
+
+        initializeViews();
+        sharedPreferencesStorage();
+        getTabletInfo();
+    }
+
+
+
+    private void initializeViews() {
+        toolbarSetUp();
+        initLayoutViews();
+        initProgressDialog();
+    }
+
+    private void initLayoutViews() {
         taxiOffice_tv = findViewById(R.id.taxiOffice_tv);
         taxiOffice_tv.setOnClickListener(this);
         taxiOffice_error_tv = findViewById(R.id.taxiOffice_error_tv);
         taxiPlateNumber_tv = findViewById(R.id.taxiPlateNumber_tv);
         taxiPlateNumber_tv.setOnClickListener(this);
         taxiPlateNumber_error_tv = findViewById(R.id.taxiPlateNumber_error_tv);
+
+        deviceSerialNumber_tv = findViewById(R.id.deviceSerialNumber_tv);
+        deviceSerialNumber_tv.setOnClickListener(this);
+        SimCardNumber_tv = findViewById(R.id.SimCardNumber_tv);
+        SimCardNumber_tv.setOnClickListener(this);
+
         register_btn = findViewById(R.id.register_btn);
         register_btn.setOnClickListener(this);
+    }
+
+
+    private void initProgressDialog() {
         dialog = new ProgressDialog(this);
         dialog.setMessage("Please Wait...");
         dialog.setCancelable(false);
-        //Get tablet serial number  & SIM card Serial Number ...
-        telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
-        getTabletInfo();
-
     }
 
+    private void sharedPreferencesStorage() {
+        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+    }
+
+
+    private void toolbarSetUp() {
+        myToolbar = findViewById(R.id.MyToolBar);
+        setSupportActionBar(myToolbar);
+        String username = app.getTechnicalSupportUserName();
+        if (username != null && !username.isEmpty()){
+            getSupportActionBar().setTitle("Welcome,  " + username.substring(0, 1).toUpperCase() + username.substring(1));
+        }else {
+            getSupportActionBar().setTitle("Welcome,");
+        }
+        // add back arrow to toolbar
+        if (getSupportActionBar() != null){
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_grey);
+        }
+    }
 
     @Override
     protected void onRestart() {
@@ -110,26 +153,16 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
 
-    private void ToolbarSetUp() {
-        myToolbar = findViewById(R.id.MyToolBar);
-        setSupportActionBar(myToolbar);
-        String username = app.getTechnicalSupportUserName();
-        if (username != null && !username.isEmpty()){
-            getSupportActionBar().setTitle("Welcome,  " + username.substring(0, 1).toUpperCase() + username.substring(1));
-        }else {
-            getSupportActionBar().setTitle("Welcome,");
-        }
-        // add back arrow to toolbar
-        if (getSupportActionBar() != null){
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_grey);
-        }
-    }
+
 
 
     @SuppressLint("HardwareIds")
     private void getTabletInfo() {
+
+        if (telephonyManager == null){
+            telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
+        }
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
                 ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
                 return;
@@ -233,20 +266,30 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         operations.enableNextButton(register_btn,false);
         dialog.show();
         TabletCredentials tabletCredentials = new TabletCredentials(taxiOfficeId, taxiPlateNumber, tabletSerialNumber, simCardNumber);
-        tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
-        tabletInfoViewModel.getTabletInfo(this,savedToken,tabletCredentials, dialog,register_btn).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
-            @Override
-            public void onChanged(TabletInfo tabletInfo) {
+
+        if (Token() != null){
+            tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
+            tabletInfoViewModel.getTabletInfo(this, Token(),tabletCredentials, dialog,register_btn).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
+                @Override
+                public void onChanged(TabletInfo tabletInfo) {
                     editor.putString("tabletPassword", tabletInfo.getTabletPassword());
                     editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
+                    editor.putInt("taxiOfficeId", taxiOfficeId);
+                    editor.putString("taxiPlateNumber", taxiPlateNumber);
                     editor.putString("tabletSerialNo", tabletSerialNumber);
                     editor.putString("simCardNumber", simCardNumber);
                     editor.apply();
                     startActivity(new Intent(TaxiInformationScreen.this, HomeScreen.class));
                     finish();
-            }
-        });
+                }
+            });
+        }
+    }
 
+
+    private String Token() {
+        String savedToken =  sharedPreferences.getString("tabToken", null);
+        return savedToken != null && !savedToken.isEmpty() ? "Bearer " + savedToken : null;
     }
 
     private void clickOnGetDeviceInfo() {
