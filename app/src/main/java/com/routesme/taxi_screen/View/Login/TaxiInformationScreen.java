@@ -167,6 +167,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             return;
         } else {
 
+            
             tabletCredentials.setDeviceId(telephonyManager.getDeviceId());
             tabletCredentials.setSimSerialNumber(telephonyManager.getSimSerialNumber());
             tabletSerialNumber_tv.setText(tabletCredentials.getDeviceId());
