@@ -15,11 +15,11 @@ public class TabletCredentials {
 
     @SerializedName("tabletRegesterSerialNo")
     @Expose
-    private String tabletSerialNumber;
+    private String DeviceId;
 
-    @SerializedName("simCardNumber")
+    @SerializedName("SimSerialNumber")
     @Expose
-    private String simCardNumber;
+    private String SimSerialNumber;
 
 
 
@@ -28,11 +28,11 @@ public class TabletCredentials {
     public TabletCredentials() {
     }
 
-    public TabletCredentials(int taxiOfficeId, String taxiPlateNumber, String tabletSerialNumber, String simCardNumber) {
+    public TabletCredentials(int taxiOfficeId, String taxiPlateNumber, String DeviceId, String simCardNumber) {
         this.taxiOfficeId = taxiOfficeId;
         this.taxiPlateNumber = taxiPlateNumber;
-        this.tabletSerialNumber = tabletSerialNumber;
-        this.simCardNumber = simCardNumber;
+        this.DeviceId = DeviceId;
+        this.SimSerialNumber = simCardNumber;
     }
 
 
@@ -47,12 +47,12 @@ public class TabletCredentials {
         return taxiPlateNumber;
     }
 
-    public String getTabletSerialNumber() {
-        return tabletSerialNumber;
+    public String getDeviceId() {
+        return DeviceId;
     }
 
-    public String getSimCardNumber() {
-        return simCardNumber;
+    public String getSimSerialNumber() {
+        return SimSerialNumber;
     }
 
 
@@ -66,12 +66,12 @@ public class TabletCredentials {
         this.taxiPlateNumber = taxiPlateNumber;
     }
 
-    public void setTabletSerialNumber(String tabletSerialNumber) {
-        this.tabletSerialNumber = tabletSerialNumber;
+    public void setDeviceId(String DeviceId) {
+        this.DeviceId = DeviceId;
     }
 
-    public void setSimCardNumber(String simCardNumber) {
-        this.simCardNumber = simCardNumber;
+    public void setSimSerialNumber(String SimSerialNumber) {
+        this.SimSerialNumber = SimSerialNumber;
     }
 
 

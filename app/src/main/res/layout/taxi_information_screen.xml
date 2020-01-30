@@ -126,7 +126,8 @@ android:background="@color/white"    >
                     android:layout_height="wrap_content"
                     android:hint="Tablet Serial Number"
                     android:nextFocusDown="@id/password_et"
-                    style="@style/AppTheme.CustomTextView"
+                    style="@style/AppTheme.CustomEditText"
+                    android:background="@drawable/grey_border_text_view"
                     android:layout_marginBottom="10dp"/>
                 <TextView
                     android:id="@+id/SimCardNumber_tv"
@@ -134,7 +135,8 @@ android:background="@color/white"    >
                     android:layout_height="wrap_content"
                     android:hint="SIM Card Number"
                     android:nextFocusDown="@id/password_et"
-                    style="@style/AppTheme.CustomTextView"/>
+                    style="@style/AppTheme.CustomEditText"
+                    android:background="@drawable/grey_border_text_view"/>
 
 
             </LinearLayout>
