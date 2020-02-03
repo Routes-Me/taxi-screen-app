@@ -3,24 +3,22 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.routesme.taxiscreen">
 
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- Phone Info Permissions -->
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- Tracking Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Phone Info Permissions -->
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" /> <!-- Tracking Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Hotspot Permissions -->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" /> <!-- Hotspot Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
-    <uses-permission android:name="android.permission.TETHER_PRIVILEGED"
+    <uses-permission
+        android:name="android.permission.TETHER_PRIVILEGED"
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name="com.routesme.taxi_screen.Class.App"
+        android:name="com.routesme.taxi_screen.java.Class.App"
         android:allowBackup="true"
         android:icon="@mipmap/taxi_screen_icon"
         android:keepScreenOn="true"
@@ -32,30 +30,11 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-
-
-        <activity
-            android:name="com.routesme.taxi_screen.View.Login.TaxiInformationScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.routesme.taxi_screen.View.Login.TaxiInformationListScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.routesme.taxi_screen.View.Login.LearnMoreScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name="com.routesme.taxi_screen.View.Login.LoginScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.routesme.taxi_screen.View.NewHomeScreen.Activity.HomeScreen"
+        <activity android:name="com.routesme.taxi_screen.kotlin.SplashScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -63,21 +42,44 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
-        <!-- Detect Internet Connection Status -->
+        <activity
+            android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationListScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="com.routesme.taxi_screen.java.View.Login.LearnMoreScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.routesme.taxi_screen.java.View.Login.LoginScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+        <activity
+            android:name="com.routesme.taxi_screen.java.View.NewHomeScreen.Activity.HomeScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="adjustNothing">
+
+        </activity> <!-- Detect Internet Connection Status -->
         <receiver
-            android:name="com.routesme.taxi_screen.Detect_Network_Connection_Status.ConnectivityReceiver"
+            android:name="com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver"
             android:enabled="true">
             <intent-filter>
+
                 <!-- Intent filters for broadcast receiver -->
                 <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
-        </receiver>
-        
-        <!-- Hotspot Configuration -->
-        <activity android:name="com.routesme.taxi_screen.Hotspot_Configuration.MagicActivity">
+        </receiver> <!-- Hotspot Configuration -->
+        <activity android:name="com.routesme.taxi_screen.java.Hotspot_Configuration.MagicActivity">
             <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -89,12 +91,12 @@
         </activity>
 
         <service
-            android:name="com.routesme.taxi_screen.Hotspot_Configuration.HotSpotIntentService"
+            android:name="com.routesme.taxi_screen.java.Hotspot_Configuration.HotSpotIntentService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name="com.routesme.taxi_screen.Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
+            android:name="com.routesme.taxi_screen.java.Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -102,9 +104,6 @@
                 <action android:name="com.fitc.wifihotspot.TURN_OFF" />
             </intent-filter>
         </receiver>
-
-
-
     </application>
 
 </manifest>

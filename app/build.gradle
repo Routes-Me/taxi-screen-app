@@ -1,6 +1,8 @@
 apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 apply plugin: 'io.fabric'
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-kapt'
 
 android {
     compileSdkVersion 28
@@ -77,7 +79,17 @@ dependencies {
     implementation 'tech.gusavila92:java-android-websocket-client:1.2.2'
     //Hotspot Configuration...
     implementation 'com.linkedin.dexmaker:dexmaker:2.25.0'
+
+    //Kotlin ...
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+
+    //Butterknife ...
+  //   implementation 'com.jakewharton:butterknife:10.0.0'
+    // kapt 'com.jakewharton:butterknife-compiler:10.0.0'
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'
-
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
