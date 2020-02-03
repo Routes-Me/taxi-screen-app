@@ -31,8 +31,8 @@ import com.routesme.taxi_screen.java.Class.Operations;
 import com.routesme.taxi_screen.java.Model.TabletCredentials;
 import com.routesme.taxi_screen.java.Model.TabletInfo;
 import com.routesme.taxi_screen.java.Model.TabletInfoViewModel;
-import com.routesme.taxi_screen.kotlin.Authorization;
-import com.routesme.taxi_screen.kotlin.SplashScreen;
+import com.routesme.taxi_screen.kotlin.Model.Authorization;
+import com.routesme.taxi_screen.kotlin.View.SplashScreen;
 import com.routesme.taxiscreen.R;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {

@@ -7,10 +7,8 @@ import android.os.Build;
 
 import com.routesme.taxi_screen.java.Class.Helper;
 import com.routesme.taxi_screen.java.Model.RequestHeaders;
-import com.routesme.taxi_screen.java.View.Login.LoginScreen;
-import com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen;
-import com.routesme.taxi_screen.kotlin.Authorization;
-import com.routesme.taxi_screen.kotlin.SplashScreen;
+import com.routesme.taxi_screen.kotlin.Model.Authorization;
+import com.routesme.taxi_screen.kotlin.View.SplashScreen;
 import com.routesme.taxiscreen.BuildConfig;
 
 import java.io.IOException;

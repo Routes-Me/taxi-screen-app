@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin
+package com.routesme.taxi_screen.kotlin.Model
 
 import java.io.Serializable
 
