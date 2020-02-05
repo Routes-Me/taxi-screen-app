@@ -23,7 +23,6 @@ class SplashScreen : AppCompatActivity() {
         //ButterKnife.bind(this)
 
         launchScreen()
-        
 
     }
 
