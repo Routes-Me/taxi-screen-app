@@ -74,7 +74,7 @@ dependencies {
     implementation 'com.github.HotBitmapGG:RingProgressBar:V1.2.3'
     //Room Database Library ...
     implementation "android.arch.persistence.room:runtime:1.1.1"
-    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
     //WebSocket library  ... to send current location of device to server (Tracking)..
     implementation 'tech.gusavila92:java-android-websocket-client:1.2.2'
     //Hotspot Configuration...

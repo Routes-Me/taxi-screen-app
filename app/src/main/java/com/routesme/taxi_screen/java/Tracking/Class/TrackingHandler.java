@@ -124,6 +124,7 @@ public class TrackingHandler {
         TrackingLocation trackingLocation = tracking.getLocation();
         String message = "location:" + trackingLocation.getLatitude() + "," + trackingLocation.getLongitude() + ";timestamp:" + timestamp;
         trackingWebSocket.send(message);
+        Log.i("trackingWebSocket:  ", "Send message:  " + message);
     }
 
     public void clearTrackingTable() {

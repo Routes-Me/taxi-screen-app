@@ -32,6 +32,7 @@ import com.routesme.taxi_screen.java.Class.App;
 import com.routesme.taxi_screen.java.Class.Helper;
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity;
 import com.routesme.taxi_screen.java.Tracking.Class.LocationFinder;
+import com.routesme.taxi_screen.java.Tracking.Class.LocationTrackingService;
 import com.routesme.taxi_screen.java.Tracking.Class.TrackingHandler;
 import com.routesme.taxi_screen.java.View.Login.LoginScreen;
 import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.ContentFragment;
@@ -47,27 +48,16 @@ import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class HomeScreen extends PermissionsActivity implements View.OnClickListener {
 
-    private static final String TAG = "HomeScreen";
     private FirebaseAnalytics firebaseAnalytics;
     private LinearLayout homeScreenLayout;
     private boolean isLightTheme = true;
-    private SharedPreferences sharedPreferences;
-    private String savedTabletToken = null, savedTabletSerialNo = null, savedSimCardNumber = null, savedTabletPassword = null;
-    private int savedTabletChannelId;
-    private ImageView openPattern;
+    private String  savedTabletSerialNo = null, savedTabletPassword = null;
     private long PressedTime;
     private int clickTimes = 0;
     private String final_pattern = "";
     private Dialog exitPatternDialog;
     private PatternLockView pattern_exitApp;
-    private TrackingHandler trackingHandler;
-    private LocationFinder finder;
-    boolean isHandlerTrackingRunning = false;
-    private Handler handlerTracking;
-    private Runnable runnableTracking;
-    private WebSocketClient trackingWebSocket;
-    private URI trackingWebSocketUri;
-
+    private LocationTrackingService locationTrackingService;
     private boolean isHotspotOn = false;
 
 
@@ -77,7 +67,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         setContentView(R.layout.home_screen);
 
         RequestPermissions();
-        TurnOnHotspot();
+         // TurnOnHotspot();
     }
 
     @Override
@@ -87,20 +77,16 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
     @Override
     protected void onResume() {
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
-
-
-        //createWebSocketNew();
-        // trackingHandler = new TrackingHandler(this, trackingWebSocket);
-        //startTracking();
-
+        startLocationTrackingService();
         initialize();
         hideNavigationBar();
         IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
         showFragments();
-
-
         super.onResume();
+    }
+
+    private void startLocationTrackingService() {
+            locationTrackingService = new LocationTrackingService(getApplicationContext());
     }
 
 
@@ -126,129 +112,33 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         }
     }
 
-/*
+
     @Override
     protected void onPause() {
-            if (trackingWebSocket != null) {
-                trackingWebSocket.onCloseReceived();
-            }
+         if (locationTrackingService != null){
+             locationTrackingService.stopLocationTrackingService();
+         }
         super.onPause();
     }
     @Override
     protected void onDestroy() {
-            if (trackingWebSocket != null) {
-                trackingWebSocket.onCloseReceived();
-            }
+        if (locationTrackingService != null){
+            locationTrackingService.stopLocationTrackingService();
+        }
         super.onDestroy();
-    }
-*/
-
-    private void startTracking() {
-        finder = new LocationFinder(this, trackingHandler);
-        if (finder.canGetLocation()) {
-            TrackingTimer();
-            trackingWebSocket.connect();
-        } else {
-            finder.showSettingsAlert();
-        }
-    }
-
-
-    private void createWebSocketNew() {
-        try {
-            trackingWebSocketUri = new URI(Helper.getConfigValue(this, "trackingWebSocketUri"));
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return;
-        }
-
-        trackingWebSocket = new WebSocketClient(trackingWebSocketUri) {
-            @Override
-            public void onOpen() {
-                Log.i("trackingWebSocket:  ", "Opened");
-                //Send deviceId to server (Device Identifiering)
-                sendMessageViaSocket("deviceId:" + savedTabletSerialNo);
-                //Send offline locations to server if it exists....
-                trackingHandler.sendOfflineTrackingToServer();
-                //Start Tracking Timer after 500 melli seconds...
-                // handlerTracking.postDelayed(runnableTracking, 500);
-                handlerTracking.post(runnableTracking);
-            }
-
-            @Override
-            public void onTextReceived(String message) {
-                Log.i("trackingWebSocket:  ", "Received message:  " + message);
-            }
-
-            @Override
-            public void onBinaryReceived(byte[] data) {
-                Log.i("trackingWebSocket:  ", "onBinaryReceived:   " + data);
-            }
-
-            @Override
-            public void onPingReceived(byte[] data) {
-                Log.i("trackingWebSocket:  ", "onPingReceived:   " + data);
-            }
-
-            @Override
-            public void onPongReceived(byte[] data) {
-                Log.i("trackingWebSocket:  ", "onPongReceived:   " + data);
-            }
-
-            @Override
-            public void onException(Exception e) {
-                Log.i("trackingWebSocket:  ", "Exception Error:   " + e.getMessage());
-                stopTrackingTimer();
-            }
-
-            @Override
-            public void onCloseReceived() {
-                Log.i("trackingWebSocket:  ", "Closed !");
-                stopTrackingTimer();
-            }
-        };
-        trackingWebSocket.setConnectTimeout(10000);
-        trackingWebSocket.setReadTimeout(60000);
-        trackingWebSocket.enableAutomaticReconnection(5000);
-    }
-
-
-    private void sendMessageViaSocket(String message) {
-        trackingWebSocket.send(message);
-        Log.i("trackingWebSocket:  ", "Send message:  " + message);
-    }
-
-
-    private void TrackingTimer() {
-        runnableTracking = new Runnable() {
-            @Override
-            public void run() {
-                isHandlerTrackingRunning = true;
-                Log.i("trackingWebSocket:  ", "Tracking Timer running ...");
-                trackingHandler.locationChecker();
-
-                handlerTracking.postDelayed(runnableTracking, 5000);
-
-            }
-        };
-        handlerTracking = new Handler();
-    }
-
-    private void stopTrackingTimer() {
-        if (isHandlerTrackingRunning) {
-            handlerTracking.removeCallbacks(runnableTracking);
-            isHandlerTrackingRunning = false;
-            Log.i("trackingWebSocket:  ", "Tracking Timer stop ...");
-        }
     }
 
 
     private void initialize() {
+        SharedPreferences sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+        savedTabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
+        savedTabletPassword = sharedPreferences.getString("tabletPassword", null);
+
         //Using Firebase Analytics ...
         firebaseAnalytics = FirebaseAnalytics.getInstance(this);
         homeScreenLayout = findViewById(R.id.homeScreenLayout);
         homeScreenLayout.setOnClickListener(this);
-        openPattern = findViewById(R.id.openPattern);
+        ImageView openPattern = findViewById(R.id.openPattern);
         openPattern.setOnClickListener(this);
     }
 
