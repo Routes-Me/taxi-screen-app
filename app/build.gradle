@@ -88,6 +88,17 @@ dependencies {
     // kapt 'com.jakewharton:butterknife-compiler:10.0.0'
 
 
+
+    //Location tracking service by kotlin ...
+    //1-Room database
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.legacy:legacy-support-v4:1.0.0"
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.0.0'
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.0.0'
+    kapt "androidx.room:room-compiler:$room_version"
+
+
+
 }
 
 apply plugin: 'com.google.gms.google-services'

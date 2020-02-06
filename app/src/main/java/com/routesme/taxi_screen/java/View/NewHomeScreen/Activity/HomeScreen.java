@@ -17,9 +17,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -28,30 +26,21 @@ import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
-import com.routesme.taxi_screen.java.Class.App;
-import com.routesme.taxi_screen.java.Class.Helper;
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity;
-import com.routesme.taxi_screen.java.Tracking.Class.LocationFinder;
 import com.routesme.taxi_screen.java.Tracking.Class.LocationTrackingService;
-import com.routesme.taxi_screen.java.Tracking.Class.TrackingHandler;
-import com.routesme.taxi_screen.java.View.Login.LoginScreen;
 import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
 import com.routesme.taxiscreen.R;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.List;
-
-import tech.gusavila92.websocketclient.WebSocketClient;
 
 public class HomeScreen extends PermissionsActivity implements View.OnClickListener {
 
     private FirebaseAnalytics firebaseAnalytics;
     private LinearLayout homeScreenLayout;
     private boolean isLightTheme = true;
-    private String  savedTabletSerialNo = null, savedTabletPassword = null;
+    private String savedTabletSerialNo = null, savedTabletPassword = null;
     private long PressedTime;
     private int clickTimes = 0;
     private String final_pattern = "";
@@ -67,7 +56,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         setContentView(R.layout.home_screen);
 
         RequestPermissions();
-         // TurnOnHotspot();
+        TurnOnHotspot();
     }
 
     @Override
@@ -78,6 +67,8 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
     @Override
     protected void onResume() {
         startLocationTrackingService();
+
+
         initialize();
         hideNavigationBar();
         IdentifierTabletByItSerialNumber_For_FirebaseAnalyticsAndCrashlytics();
@@ -85,8 +76,9 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         super.onResume();
     }
 
+
     private void startLocationTrackingService() {
-            locationTrackingService = new LocationTrackingService(getApplicationContext());
+        locationTrackingService = new LocationTrackingService(getApplicationContext());
     }
 
 
@@ -115,14 +107,15 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
     @Override
     protected void onPause() {
-         if (locationTrackingService != null){
-             locationTrackingService.stopLocationTrackingService();
-         }
+        if (locationTrackingService != null) {
+            locationTrackingService.stopLocationTrackingService();
+        }
         super.onPause();
     }
+
     @Override
     protected void onDestroy() {
-        if (locationTrackingService != null){
+        if (locationTrackingService != null) {
             locationTrackingService.stopLocationTrackingService();
         }
         super.onDestroy();

@@ -30,7 +30,7 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.SplashScreen"
+        <activity android:name="com.routesme.taxi_screen.kotlin.SplashScreen.View.SplashScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">

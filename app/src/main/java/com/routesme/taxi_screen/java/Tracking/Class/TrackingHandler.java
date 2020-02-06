@@ -119,6 +119,8 @@ public class TrackingHandler {
         return distance;
     }
 
+
+
     private void sendLocationViaSocket(Tracking tracking) {
         String timestamp = tracking.getTimestamp();
         TrackingLocation trackingLocation = tracking.getLocation();

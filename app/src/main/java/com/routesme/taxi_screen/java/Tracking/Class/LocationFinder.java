@@ -15,7 +15,9 @@ import android.provider.Settings;
 import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import com.routesme.taxi_screen.java.Tracking.model.TrackingLocation;
+
+import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.TrackingHandler;
+import com.routesme.taxi_screen.kotlin.LocationTrackingService.Model.TrackingLocation;
 
 
 public class LocationFinder extends Service implements LocationListener {

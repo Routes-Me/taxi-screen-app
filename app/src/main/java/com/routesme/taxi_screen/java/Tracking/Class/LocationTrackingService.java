@@ -5,13 +5,11 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
-
 import com.routesme.taxi_screen.java.Class.Helper;
-
 import java.net.URI;
 import java.net.URISyntaxException;
-
 import tech.gusavila92.websocketclient.WebSocketClient;
+import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.TrackingHandler;
 
 public class LocationTrackingService {
 

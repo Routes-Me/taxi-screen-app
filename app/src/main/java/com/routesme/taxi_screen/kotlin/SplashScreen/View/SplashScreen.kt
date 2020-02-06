@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View
+package com.routesme.taxi_screen.kotlin.SplashScreen.View
 
 import android.app.Activity
 import android.content.Intent
@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi_screen.java.Class.App
 import com.routesme.taxi_screen.java.View.Login.LoginScreen
 import com.routesme.taxi_screen.java.View.NewHomeScreen.Activity.HomeScreen
-import com.routesme.taxi_screen.kotlin.Model.Authorization
+import com.routesme.taxi_screen.kotlin.SplashScreen.Model.Authorization
 import com.routesme.taxiscreen.R
 
 class SplashScreen : AppCompatActivity() {

@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.Model
+package com.routesme.taxi_screen.kotlin.SplashScreen.Model
 
 import java.io.Serializable
 
