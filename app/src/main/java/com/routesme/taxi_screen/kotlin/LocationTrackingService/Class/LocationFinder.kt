@@ -60,6 +60,7 @@ class LocationFinder(val context: Context, private val trackingHandler: Tracking
         return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     }
 
+    
     private fun isNetworkEnabled(): Boolean {
         return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
