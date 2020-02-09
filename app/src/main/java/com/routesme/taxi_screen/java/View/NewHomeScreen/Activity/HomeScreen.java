@@ -56,7 +56,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
         setContentView(R.layout.home_screen);
 
         RequestPermissions();
-        TurnOnHotspot();
+       // TurnOnHotspot();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class HomeScreen extends PermissionsActivity implements View.OnClickListe
 
 
     private void startLocationTrackingService() {
-        locationTrackingService = new LocationTrackingService(getApplicationContext());
+        locationTrackingService = new LocationTrackingService(this);
     }
 
 

@@ -5,11 +5,16 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Handler;
 import android.util.Log;
+
 import com.routesme.taxi_screen.java.Class.Helper;
+
 import java.net.URI;
 import java.net.URISyntaxException;
+
 import tech.gusavila92.websocketclient.WebSocketClient;
+
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.TrackingHandler;
+import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationFinder;
 
 public class LocationTrackingService {
 
@@ -33,7 +38,7 @@ public class LocationTrackingService {
 
     private void createWebSocket() {
         String tabletSerialNo = sharedPreferences.getString("tabletSerialNo", null);
-        setTrackingWebSocketConfiguration(trackingWebSocketUri(),tabletSerialNo);
+        setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo);
     }
 
     private URI trackingWebSocketUri() {
@@ -61,7 +66,7 @@ public class LocationTrackingService {
 
             @Override
             public void onTextReceived(String message) {
-                Log.i("trackingWebSocket:  ", "Received message:  " + message);
+               // Log.i("trackingWebSocket:  ", "Received message:  " + message);
             }
 
             @Override
@@ -101,11 +106,12 @@ public class LocationTrackingService {
 
     private void startTracking() {
         LocationFinder locationFinder = new LocationFinder(context, trackingHandler);
-        if (locationFinder.canGetLocation()) {
+
+        if (locationFinder.setUpLocationListener()) {
             setupTrackingTimer();
             trackingWebSocket.connect();
-        } else {
-            locationFinder.showSettingsAlert();
+        }else {
+            locationFinder.showAlertDialog();
         }
     }
 
@@ -131,7 +137,7 @@ public class LocationTrackingService {
         }
     }
 
-    public void stopLocationTrackingService(){
+    public void stopLocationTrackingService() {
         if (trackingWebSocket != null) {
             trackingWebSocket.onCloseReceived();
         }

@@ -12,11 +12,10 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class TrackingHandler(val context: Context, private var trackingWebSocket: WebSocketClient) {
-    val db = AppDatabase(context).trackingDao()
+    private val db = AppDatabase(context).trackingDao()
 
     @SuppressLint("SimpleDateFormat")
-    val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")
-
+    private val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")
 
     fun sendOfflineTrackingToServer() {
         if (!db.loadAllLocations().isNullOrEmpty()) {
@@ -27,7 +26,6 @@ class TrackingHandler(val context: Context, private var trackingWebSocket: WebSo
         } else {
             Log.d("trackingWebSocketKotlin", "No offline location is exists!")
         }
-
     }
 
     fun insertLocation(trackingLocation: TrackingLocation) {
@@ -57,14 +55,14 @@ class TrackingHandler(val context: Context, private var trackingWebSocket: WebSo
     }
 
     private fun distance(firstLocation: TrackingLocation, lastLocation: TrackingLocation): Float {
-        val fLocation = Location("firstLocation")
-        fLocation.latitude = firstLocation.latitude
-        fLocation.longitude = firstLocation.longitude
-        val lLocation = Location("lastLocation")
-        lLocation.latitude = lastLocation.latitude
-        lLocation.longitude = lastLocation.longitude
+        return convertLocation(firstLocation,"firstLocation").distanceTo(convertLocation(lastLocation,"lastLocation"))
+    }
 
-        return fLocation.distanceTo(lLocation)
+    private fun convertLocation(trackingLocation: TrackingLocation, providerName:String):Location{
+        val location = Location(providerName)
+        location.latitude = trackingLocation.latitude
+        location.longitude = trackingLocation.longitude
+        return location
     }
 
     private fun clearTrackingTable() {
