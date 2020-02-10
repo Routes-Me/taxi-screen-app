@@ -17,7 +17,7 @@ class TrackingHandler(val context: Context, private var trackingWebSocket: WebSo
     @SuppressLint("SimpleDateFormat")
     private val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")
 
-    fun sendOfflineTrackingToServer() {
+    fun sendOfflineTrackingLocationsToServer() {
         if (!db.loadAllLocations().isNullOrEmpty()) {
             for (t in db.loadAllLocations()) {
                 sendLocationViaSocket(t)

@@ -27,10 +27,10 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.crashlytics.android.Crashlytics;
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity;
-import com.routesme.taxi_screen.java.Tracking.Class.LocationTrackingService;
 import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.ContentFragment;
 import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.SideMenuFragment;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService;
 import com.routesme.taxiscreen.R;
 
 import java.util.List;
