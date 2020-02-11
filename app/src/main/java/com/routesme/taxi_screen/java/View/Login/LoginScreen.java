@@ -26,9 +26,9 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
 import com.routesme.taxi_screen.java.Class.App;
 import com.routesme.taxi_screen.java.Class.Operations;
-import com.routesme.taxi_screen.java.Model.AuthCredentials;
-import com.routesme.taxi_screen.java.Model.AuthCredentialsError;
 import com.routesme.taxi_screen.java.Model.AuthCredentialsViewModel;
+import com.routesme.taxi_screen.kotlin.Model.AuthCredentials;
+import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError;
 import com.routesme.taxiscreen.R;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 import java.util.List;
@@ -191,7 +191,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
             public void onChanged(List<AuthCredentialsError> authCredentialsErrors) {
                 for (int e = 0 ; e < authCredentialsErrors.size() ; e++ ){
                     if (authCredentialsErrors.get(e).getErrorNumber() == 1 || authCredentialsErrors.get(e).getErrorNumber() == 2){
-                        showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMasseg(),true);
+                        showErrorMessage(authCredentialsErrors.get(e).getErrorNumber(),authCredentialsErrors.get(e).getErrorMessage(),true);
                     }
                 }
             }

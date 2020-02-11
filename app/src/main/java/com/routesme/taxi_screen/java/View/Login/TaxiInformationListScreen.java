@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.os.Bundle;
 import android.view.MenuItem;
 import com.routesme.taxi_screen.java.Class.App;
-import com.routesme.taxi_screen.java.Model.Office;
-import com.routesme.taxi_screen.java.Model.OfficePlatesList;
 import com.routesme.taxi_screen.java.Model.OfficePlatesListViewModel;
 import com.routesme.taxi_screen.java.Model.OfficesListViewModel;
-import com.routesme.taxi_screen.java.Model.TaxiOfficeList;
-import com.routesme.taxi_screen.java.Model.TaxiPlate;
 import com.routesme.taxi_screen.java.Class.OfficesAdapterMultibleViews;
-import com.routesme.taxi_screen.java.Model.ItemType;
+import com.routesme.taxi_screen.kotlin.Model.ItemType;
+import com.routesme.taxi_screen.kotlin.Model.Office;
+import com.routesme.taxi_screen.kotlin.Model.OfficePlatesList;
+import com.routesme.taxi_screen.kotlin.Model.TaxiOfficeList;
+import com.routesme.taxi_screen.kotlin.Model.TaxiPlate;
 import com.routesme.taxiscreen.R;
 import java.util.ArrayList;
 
@@ -122,7 +122,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                         listOfficePlatesArrayList.add(new ItemType("Office plates", true, false, 0));
 
                         for (int i=0; i <allOfficePlates.size() ; i++){
-                            listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true));
+                            listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true,0));
                         }
                     }
 

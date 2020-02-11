@@ -28,11 +28,11 @@ import android.widget.TextView;
 
 import com.routesme.taxi_screen.java.Class.App;
 import com.routesme.taxi_screen.java.Class.Operations;
-import com.routesme.taxi_screen.java.Model.TabletCredentials;
-import com.routesme.taxi_screen.java.Model.TabletInfo;
 import com.routesme.taxi_screen.java.Model.TabletInfoViewModel;
-import com.routesme.taxi_screen.kotlin.SplashScreen.Model.Authorization;
-import com.routesme.taxi_screen.kotlin.SplashScreen.View.SplashScreen;
+import com.routesme.taxi_screen.kotlin.Model.Authorization;
+import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
+import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
+import com.routesme.taxi_screen.kotlin.SplashScreen.SplashScreen;
 import com.routesme.taxiscreen.R;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {

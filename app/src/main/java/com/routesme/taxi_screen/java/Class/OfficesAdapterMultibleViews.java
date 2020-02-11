@@ -8,7 +8,8 @@ import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import androidx.recyclerview.widget.RecyclerView;
-import com.routesme.taxi_screen.java.Model.ItemType;
+
+import com.routesme.taxi_screen.kotlin.Model.ItemType;
 import com.routesme.taxiscreen.R;
 import java.util.ArrayList;
 

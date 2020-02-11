@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.routesme.taxi_screen.kotlin.LocationTrackingService.Model.Tracking
+import com.routesme.taxi_screen.kotlin.Model.Tracking
 
 @Database(entities = arrayOf(Tracking::class), version = 1 ,exportSchema = false)
 abstract class AppDatabase  : RoomDatabase(){

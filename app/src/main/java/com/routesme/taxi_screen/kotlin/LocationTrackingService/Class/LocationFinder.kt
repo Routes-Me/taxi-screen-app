@@ -11,7 +11,7 @@ import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.routesme.taxi_screen.kotlin.LocationTrackingService.Model.TrackingLocation
+import com.routesme.taxi_screen.kotlin.Model.TrackingLocation
 
 class LocationFinder(val context: Context, private val trackingHandler: TrackingHandler) : LocationListener {
 

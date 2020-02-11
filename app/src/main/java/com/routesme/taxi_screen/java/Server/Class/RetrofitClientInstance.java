@@ -6,9 +6,9 @@ import android.content.SharedPreferences;
 import android.os.Build;
 
 import com.routesme.taxi_screen.java.Class.Helper;
-import com.routesme.taxi_screen.java.Model.RequestHeaders;
-import com.routesme.taxi_screen.kotlin.SplashScreen.Model.Authorization;
-import com.routesme.taxi_screen.kotlin.SplashScreen.View.SplashScreen;
+import com.routesme.taxi_screen.kotlin.Model.Authorization;
+import com.routesme.taxi_screen.kotlin.Model.RequestHeaders;
+import com.routesme.taxi_screen.kotlin.SplashScreen.SplashScreen;
 import com.routesme.taxiscreen.BuildConfig;
 
 import java.io.IOException;

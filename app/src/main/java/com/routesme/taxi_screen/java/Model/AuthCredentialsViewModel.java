@@ -16,6 +16,10 @@ import com.routesme.taxi_screen.java.Class.App;
 import com.routesme.taxi_screen.java.Server.Class.RetrofitClientInstance;
 import com.routesme.taxi_screen.java.Server.Interface.RoutesApi;
 import com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen;
+import com.routesme.taxi_screen.kotlin.Model.AuthCredentials;
+import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError;
+import com.routesme.taxi_screen.kotlin.Model.Token;
+
 import java.util.ArrayList;
 import java.util.List;
 import retrofit2.Call;

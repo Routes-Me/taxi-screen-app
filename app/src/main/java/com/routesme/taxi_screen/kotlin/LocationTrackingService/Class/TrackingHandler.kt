@@ -5,8 +5,8 @@ import android.content.Context
 import android.location.Location
 import android.util.Log
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.AppDatabase
-import com.routesme.taxi_screen.kotlin.LocationTrackingService.Model.Tracking
-import com.routesme.taxi_screen.kotlin.LocationTrackingService.Model.TrackingLocation
+import com.routesme.taxi_screen.kotlin.Model.Tracking
+import com.routesme.taxi_screen.kotlin.Model.TrackingLocation
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.text.SimpleDateFormat
 import java.util.*

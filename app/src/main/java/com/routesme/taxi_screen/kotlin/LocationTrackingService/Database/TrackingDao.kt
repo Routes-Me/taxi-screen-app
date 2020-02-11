@@ -1,7 +1,7 @@
 package com.routesme.taxi_screen.kotlin.LocationTrackingService.Database
 
 import androidx.room.*
-import com.routesme.taxi_screen.kotlin.LocationTrackingService.Model.Tracking
+import com.routesme.taxi_screen.kotlin.Model.Tracking
 
 
 @Dao

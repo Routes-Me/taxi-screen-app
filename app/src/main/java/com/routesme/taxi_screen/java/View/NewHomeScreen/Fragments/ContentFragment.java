@@ -17,8 +17,8 @@ import android.widget.VideoView;
 import com.routesme.taxi_screen.java.Class.App;
 import com.routesme.taxi_screen.java.Class.Operations;
 import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver;
-import com.routesme.taxi_screen.java.Model.ItemAnalytics;
 import com.google.firebase.analytics.FirebaseAnalytics;
+import com.routesme.taxi_screen.kotlin.Model.ItemAnalytics;
 import com.routesme.taxiscreen.R;
 import io.netopen.hotbitmapgg.library.view.RingProgressBar;
 
@@ -37,7 +37,7 @@ public class ContentFragment extends Fragment implements View.OnClickListener, C
     private String savedTabletSerialNo = "";
 
 
-    //Define Advertisement Items ...
+
     private ImageView AD_Banner_ImageView;
     private VideoView AD_Video_VideoView;
     private RingProgressBar videoRingProgressBar;
