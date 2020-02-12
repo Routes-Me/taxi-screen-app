@@ -48,7 +48,7 @@ public class Operations {
     private int savedTabletChannelId = 0;
 
     private List<BannerModel> adBannerList;
-    private BannersViewModel bannersViewModel;
+    private ViewModel bannersViewModel;
     private ImageView ADS_ImageView;
     private Runnable r;
     private int currentImageIndex = 0;
@@ -87,16 +87,16 @@ public class Operations {
     public void fetchAdvertisementData() {
 
         if (savedTabletToken != null && savedTabletChannelId > 0) {
-            fetchAdvertisementBannerList();
             fetchAdvertisementVideoList();
+            fetchAdvertisementBannerList();
         }
 
     }
 
     private void fetchAdvertisementBannerList() {
         adBannerList = new ArrayList<BannerModel>();
-        bannersViewModel = ViewModelProviders.of((FragmentActivity) activity).get(BannersViewModel.class);
-        bannersViewModel.getBanners(savedTabletChannelId, activity).observe((LifecycleOwner) activity, new Observer<List<BannerModel>>() {
+        bannersViewModel = ViewModelProviders.of((FragmentActivity) activity).get(ViewModel.class);
+        bannersViewModel.getBannerList(savedTabletChannelId, activity).observe((LifecycleOwner) activity, new Observer<List<BannerModel>>() {
             @Override
             public void onChanged(@Nullable List<BannerModel> BannersList) {
                 for (int Bno = 0; Bno < BannersList.size(); Bno++) {

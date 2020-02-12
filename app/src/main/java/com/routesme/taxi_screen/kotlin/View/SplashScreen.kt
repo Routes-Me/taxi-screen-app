@@ -1,9 +1,8 @@
-package com.routesme.taxi_screen.kotlin.SplashScreen
+package com.routesme.taxi_screen.kotlin.View
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi_screen.java.Class.App
 import com.routesme.taxi_screen.java.View.Login.LoginScreen

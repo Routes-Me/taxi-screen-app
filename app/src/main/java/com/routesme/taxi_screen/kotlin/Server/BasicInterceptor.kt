@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.routesme.taxi_screen.kotlin.Model.Authorization
-import com.routesme.taxi_screen.kotlin.SplashScreen.SplashScreen
+import com.routesme.taxi_screen.kotlin.View.SplashScreen
 import com.routesme.taxiscreen.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -16,8 +16,7 @@ import java.io.IOException
 internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request()
-        request = request.newBuilder()
+        var request = chain.request().newBuilder()
                 .addHeader(Header.Authorization.toString(), token())
                 .addHeader(Header.country_code.toString(), countryCode())
                 .addHeader(Header.app_version.toString(), appVersion())
@@ -31,7 +30,6 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
     private fun countryCode() = activity.resources.configuration.locales.get(0).country
 
     private fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
-
 }
 
 internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
