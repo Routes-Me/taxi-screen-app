@@ -64,7 +64,7 @@ class SplashScreen : AppCompatActivity() {
 
     private fun isAuthorized(): Boolean {
         val authorization: Authorization = intent.getSerializableExtra(AUTHORIZATION_KAY) as Authorization
-        Toast.makeText(this, "isAuthorized: ${authorization.isAuthorized} .. responseCode: ${authorization.responseCode}", Toast.LENGTH_SHORT).show()
+       // Toast.makeText(this, "isAuthorized: ${authorization.isAuthorized} .. responseCode: ${authorization.responseCode}", Toast.LENGTH_SHORT).show()
         return authorization.isAuthorized
     }
 

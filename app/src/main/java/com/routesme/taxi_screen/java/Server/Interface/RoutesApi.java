@@ -24,12 +24,6 @@ public interface RoutesApi {
     @POST("auth")
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
     Call<JsonElement> loginAuth(@Body AuthCredentials authCredentials);
-    @POST("auth")
-    @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
-    Call<Token> loginUserSuccess(@Body AuthCredentials authCredentials);
-    @POST("auth")
-    @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
-    Call<List<AuthCredentialsError>> loginUserFailed(@Body AuthCredentials authCredentials);
     //Taxi Office List
     @GET("TaxiOffices")
     Call<TaxiOfficeList> getTaxiOfficeList(@Query("include") String include);

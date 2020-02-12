@@ -3,7 +3,13 @@ package com.routesme.taxi_screen.java.Class;
 import android.content.Context;
 import android.content.res.Resources;
 import android.util.Log;
+
+import com.routesme.taxi_screen.kotlin.Server.RetrofitService;
 import com.routesme.taxiscreen.R;
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -26,4 +32,8 @@ public final class Helper {
         return null;
     }
 
+    @Nullable
+    public static String getConfigValue(@NotNull RetrofitService.Factory factory, @NotNull String s) {
+        return null;
+    }
 }

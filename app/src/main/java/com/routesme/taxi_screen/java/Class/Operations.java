@@ -25,9 +25,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.danikula.videocache.HttpProxyCacheServer;
 import com.routesme.taxi_screen.java.Model.BannersViewModel;
-import com.routesme.taxi_screen.java.Model.VideosViewModel;
 import com.routesme.taxi_screen.kotlin.Model.BannerModel;
 import com.routesme.taxi_screen.kotlin.Model.VideoModel;
+import com.routesme.taxi_screen.kotlin.ViewModel.ViewModel;
 import com.routesme.taxiscreen.R;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class Operations {
     private RequestOptions options = new RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true);
 
     private List<VideoModel> adVideoList;
-    private VideosViewModel videosViewModel;
+    private ViewModel videosViewModel;
     private VideoView ADS_VideoView;
     private RingProgressBar videoRingProgressBar;
     private int currentVideoIndex = 0;
@@ -114,8 +114,8 @@ public class Operations {
 
     private void fetchAdvertisementVideoList() {
         adVideoList = new ArrayList<VideoModel>();
-        videosViewModel = ViewModelProviders.of((FragmentActivity) activity).get(VideosViewModel.class);
-        videosViewModel.getVideos(savedTabletChannelId, activity).observe((LifecycleOwner) activity, new Observer<List<VideoModel>>() {
+        videosViewModel = ViewModelProviders.of((FragmentActivity) activity).get(ViewModel.class);
+        videosViewModel.getVideoList(savedTabletChannelId, activity).observe((LifecycleOwner) activity, new Observer<List<VideoModel>>() {
             @Override
             public void onChanged(@Nullable List<VideoModel> VideosList) {
                 for (int Vno = 0; Vno < VideosList.size(); Vno++) {
