@@ -30,11 +30,15 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.SplashScreen"
+        <activity android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="adjustNothing"/>
+        <activity
+            android:name="com.routesme.taxi_screen.kotlin.View.SplashScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -42,7 +46,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen"
@@ -61,13 +64,7 @@
             android:name="com.routesme.taxi_screen.java.View.Login.LoginScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.routesme.taxi_screen.java.View.NewHomeScreen.Activity.HomeScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing">
-
-        </activity> <!-- Detect Internet Connection Status -->
+    <!-- Detect Internet Connection Status -->
         <receiver
             android:name="com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver"
             android:enabled="true">

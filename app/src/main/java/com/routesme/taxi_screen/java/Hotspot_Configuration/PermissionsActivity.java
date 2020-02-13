@@ -70,6 +70,7 @@ public abstract class PermissionsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
+        super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == MY_PERMISSIONS_MANAGE_WRITE_SETTINGS) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {

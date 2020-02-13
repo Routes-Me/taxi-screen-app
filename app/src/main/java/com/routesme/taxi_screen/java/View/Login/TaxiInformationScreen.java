@@ -315,7 +315,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         editor.apply();
     }
     private void openSplashScreen() {
-       // startActivity(new Intent(TaxiInformationScreen.this, HomeScreen.class));
         Authorization authorization = new Authorization(true,200);
         Intent SplashScreenIntent = new Intent(TaxiInformationScreen.this, SplashScreen.class);
         SplashScreenIntent.putExtra("authorization",authorization);

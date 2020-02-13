@@ -11,7 +11,7 @@
 
 
     <com.andrognito.patternlockview.PatternLockView
-        android:id="@+id/pattern_exitApp"
+        android:id="@+id/admin_verification_pattern"
         android:layout_width="400dp"
         android:layout_height="400dp"
         android:background="@color/white"

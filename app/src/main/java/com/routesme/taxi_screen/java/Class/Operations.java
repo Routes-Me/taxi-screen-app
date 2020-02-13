@@ -24,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.danikula.videocache.HttpProxyCacheServer;
-import com.routesme.taxi_screen.java.Model.BannersViewModel;
 import com.routesme.taxi_screen.kotlin.Model.BannerModel;
 import com.routesme.taxi_screen.kotlin.Model.VideoModel;
 import com.routesme.taxi_screen.kotlin.ViewModel.ViewModel;

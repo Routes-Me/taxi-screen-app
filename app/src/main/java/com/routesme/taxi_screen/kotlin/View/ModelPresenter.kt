@@ -6,7 +6,6 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi_screen.java.Class.App
 import com.routesme.taxi_screen.java.View.Login.LoginScreen
-import com.routesme.taxi_screen.java.View.NewHomeScreen.Activity.HomeScreen
 import com.routesme.taxi_screen.kotlin.Model.Authorization
 import com.routesme.taxiscreen.R
 
@@ -16,7 +15,7 @@ class SplashScreen : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.splash_screen)
+        setContentView(R.layout.model_presenter)
 
         launchScreen()
     }

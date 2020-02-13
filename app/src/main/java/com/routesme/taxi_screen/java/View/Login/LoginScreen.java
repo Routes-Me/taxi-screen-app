@@ -163,7 +163,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
     private void showExitPatternDialog() {
             exitPatternDialog = new Dialog(this);
             exitPatternDialog.setContentView(R.layout.exit_pattern_dialog);
-            pattern_exitApp = exitPatternDialog.findViewById(R.id.pattern_exitApp);
+            pattern_exitApp = exitPatternDialog.findViewById(R.id.admin_verification_pattern);
             exitPatternDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             exitPatternDialog.show();
             exitPatternDialog.setCancelable(false);
