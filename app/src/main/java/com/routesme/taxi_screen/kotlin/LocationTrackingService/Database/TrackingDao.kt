@@ -30,9 +30,7 @@ interface TrackingDao {
     @Query("SELECT * FROM Tracking ORDER BY id DESC LIMIT 1")
     fun loadLastLocation(): Tracking
 
-
     //Delete Tracking Data ...
     @Query("DELETE FROM Tracking")
     fun clearTrackingData()
-
 }

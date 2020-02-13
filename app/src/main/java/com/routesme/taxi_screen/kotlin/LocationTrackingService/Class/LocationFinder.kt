@@ -9,7 +9,6 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.routesme.taxi_screen.kotlin.Model.TrackingLocation
 
@@ -19,11 +18,11 @@ class LocationFinder(val context: Context, private val trackingHandler: Tracking
 
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
-            if (isGPSEnabled()) {
+            if (isGPSEnabled())
                 setLocationManagerProvider(LocationManager.GPS_PROVIDER)
-            } else if (isNetworkEnabled()) {
+            else if (isNetworkEnabled())
                 setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
-            }
+
             true
         } else {
             false
@@ -52,17 +51,11 @@ class LocationFinder(val context: Context, private val trackingHandler: Tracking
     private val positiveButtonClick = { dialog: DialogInterface, which: Int -> context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
     private val negativeButtonClick = { dialog: DialogInterface, which: Int -> dialog.cancel() }
 
-    private fun canGetLocation(): Boolean {
-        return isGPSEnabled() || isNetworkEnabled()
-    }
+    private fun canGetLocation() = isGPSEnabled() || isNetworkEnabled()
 
-    private fun isGPSEnabled(): Boolean {
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-    }
+    private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
-    private fun isNetworkEnabled(): Boolean {
-        return locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
+    private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     private fun insertLocation(location: Location) {
         trackingHandler.insertLocation(TrackingLocation(location.latitude, location.longitude))
@@ -70,9 +63,7 @@ class LocationFinder(val context: Context, private val trackingHandler: Tracking
 
     //LocationListener Methods...
     override fun onLocationChanged(location: Location?) {
-        if (location != null) {
-            insertLocation(location)
-        }
+        if (location != null) insertLocation(location)
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}

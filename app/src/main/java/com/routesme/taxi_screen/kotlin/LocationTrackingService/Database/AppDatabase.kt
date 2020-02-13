@@ -10,20 +10,12 @@ import com.routesme.taxi_screen.kotlin.Model.Tracking
 abstract class AppDatabase  : RoomDatabase(){
     abstract fun trackingDao(): TrackingDao
 
-
     companion object {
         @Volatile private var instance: AppDatabase? = null
         private val LOCK = Any()
 
-        operator fun invoke(context: Context)= instance
-                ?: synchronized(LOCK){
-            instance
-                    ?: buildDatabase(context).also { instance = it}
-        }
+        operator fun invoke(context: Context)= instance ?: synchronized(LOCK){ instance ?: buildDatabase(context).also { instance = it} }
 
-        private fun buildDatabase(context: Context) = Room.databaseBuilder(context,
-                AppDatabase::class.java, "todo-list.db").allowMainThreadQueries()
-                .build()
+        private fun buildDatabase(context: Context) = Room.databaseBuilder(context, AppDatabase::class.java, "todo-list.db").allowMainThreadQueries().build()
     }
-
 }

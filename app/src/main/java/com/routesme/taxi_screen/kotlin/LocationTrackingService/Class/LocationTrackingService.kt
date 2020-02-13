@@ -25,9 +25,8 @@ class LocationTrackingService(val context: Context) {
         }
     }
 
-    private fun trackingWebSocketUri(): URI {
-        return URI(Helper.getConfigValue(context, "trackingWebSocketUri"))
-    }
+    private fun trackingWebSocketUri()= URI(Helper.getConfigValue(context, "trackingWebSocketUri"))
+
 
     private fun setTrackingWebSocketConfiguration(trackingUri: URI, tabletSerialNo: String): WebSocketClient {
         val webSocket = object : WebSocketClient(trackingUri) {
@@ -37,7 +36,6 @@ class LocationTrackingService(val context: Context) {
                 trackingHandler.sendOfflineTrackingLocationsToServer()
                 handlerTracking?.post(runnableTracking)
             }
-
             override fun onTextReceived(message: String) {}
             override fun onBinaryReceived(data: ByteArray) {}
             override fun onPingReceived(data: ByteArray) {}

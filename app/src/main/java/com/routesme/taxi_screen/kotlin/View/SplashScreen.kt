@@ -12,17 +12,13 @@ import com.routesme.taxiscreen.R
 
 class SplashScreen : AppCompatActivity() {
 
-    // @BindView(R.id.showKotlinToast) lateinit var showKotlinToast: Button
-    val AUTHORIZATION_KAY = "authorization"
-
+    private val AUTHORIZATION_KAY = "authorization"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.splash_screen)
-        //ButterKnife.bind(this)
 
         launchScreen()
-
     }
 
     private fun launchScreen() {
@@ -44,29 +40,23 @@ class SplashScreen : AppCompatActivity() {
 
     private fun deleteAuthenticationCredentialsFromAppClass() {
         val app = applicationContext as App
-        app.setTechnicalSupportUserName(null)
-        app.setTechnicalSupportPassword(null)
-        app.setNewLogin(false)
-        app.setTaxiOfficeId(0)
-        app.setTaxiOfficeName(null)
-        app.setTaxiPlateNumber(null)
+        app.technicalSupportUserName = null
+        app.technicalSupportPassword = null
+        app.isNewLogin = false
+        app.taxiOfficeId = 0
+        app.taxiOfficeName = null
+        app.taxiPlateNumber = null
     }
-
 
     private fun isRegistered(): Boolean {
         val sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
-        val Token = sharedPreferences.getString("tabToken", null)
-        val channelId = sharedPreferences.getInt("tabletChannelId", -999)
-        return Token != null && channelId != -999
+        return sharedPreferences.getString("tabToken", null) != null && sharedPreferences.getInt("tabletChannelId", -999) != -999
     }
-
 
     private fun isAuthorized(): Boolean {
         val authorization: Authorization = intent.getSerializableExtra(AUTHORIZATION_KAY) as Authorization
-       // Toast.makeText(this, "isAuthorized: ${authorization.isAuthorized} .. responseCode: ${authorization.responseCode}", Toast.LENGTH_SHORT).show()
         return authorization.isAuthorized
     }
-
 
     private fun openScreen(screen: Screens) {
         when (screen) {
@@ -80,4 +70,3 @@ class SplashScreen : AppCompatActivity() {
 enum class Screens {
     HomeScreen, LoginScreen
 }
-

@@ -54,9 +54,8 @@ class TrackingHandler(val context: Context, private var trackingWebSocket: WebSo
         }
     }
 
-    private fun distance(firstLocation: TrackingLocation, lastLocation: TrackingLocation): Float {
-        return convertLocation(firstLocation,"firstLocation").distanceTo(convertLocation(lastLocation,"lastLocation"))
-    }
+    private fun distance(firstLocation: TrackingLocation, lastLocation: TrackingLocation) = convertLocation(firstLocation,"firstLocation").distanceTo(convertLocation(lastLocation,"lastLocation"))
+
 
     private fun convertLocation(trackingLocation: TrackingLocation, providerName:String):Location{
         val location = Location(providerName)
