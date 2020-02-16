@@ -4,13 +4,11 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.view.View
-import android.widget.Toast
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
-import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.ContentFragment
-import com.routesme.taxi_screen.java.View.NewHomeScreen.Fragments.SideMenuFragment
-import com.routesme.taxi_screen.kotlin.HomeScreenFunctions
+import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
+import com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments.ContentFragment
+import com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
@@ -30,7 +28,7 @@ class HomeScreen : PermissionsActivity() {
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
-        turnOnHotspot()
+       // turnOnHotspot()
         openPattern.setOnClickListener {openPatternClick()}
     }
 

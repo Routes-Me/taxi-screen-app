@@ -11,7 +11,6 @@ import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.DecelerateInterpolator;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 import android.widget.VideoView;
 
 import androidx.annotation.Nullable;
@@ -28,6 +27,8 @@ import com.routesme.taxi_screen.kotlin.Model.BannerModel;
 import com.routesme.taxi_screen.kotlin.Model.VideoModel;
 import com.routesme.taxi_screen.kotlin.ViewModel.ViewModel;
 import com.routesme.taxiscreen.R;
+
+import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,17 +62,14 @@ public class Operations {
     private int duration = 0;
     private Timer timer;
 
-    private TextView scrollingCurrencies_tv;
-    private String CurrenciesString = "";
 
 
     //Constructor....
-    public Operations(Activity activity, RingProgressBar videoRingProgressBar, VideoView ADS_VideoView, ImageView ADS_ImageView, TextView scrollingCurrencies_tv) {
+    public Operations(Activity activity, RingProgressBar videoRingProgressBar, VideoView ADS_VideoView, ImageView ADS_ImageView) {
         this.activity = activity;
         this.ADS_VideoView = ADS_VideoView;
         this.videoRingProgressBar = videoRingProgressBar;
         this.ADS_ImageView = ADS_ImageView;
-        this.scrollingCurrencies_tv = scrollingCurrencies_tv;
         //sharedPreference Storage
         this.sharedPreferences = activity.getSharedPreferences("userData", Activity.MODE_PRIVATE);
         savedTabletToken = sharedPreferences.getString("tabToken", null);
@@ -129,10 +127,6 @@ public class Operations {
 
         });
     }
-
-
-
-
 
     //Display advertisement data from server and display it ...
 
@@ -250,5 +244,7 @@ public class Operations {
             button.setEnabled(false);
         }
     }
+
+
 
 }

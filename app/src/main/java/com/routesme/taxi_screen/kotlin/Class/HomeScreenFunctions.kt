@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin
+package com.routesme.taxi_screen.kotlin.Class
 
 import android.Manifest
 import android.annotation.TargetApi

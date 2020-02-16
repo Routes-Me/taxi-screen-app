@@ -9,7 +9,7 @@
     android:paddingEnd="13dp"
     android:paddingStart="6dp"
     android:paddingBottom="8dp"
-    tools:context=".View.NewHomeScreen.Fragments.ContentFragment">
+    tools:context=".kotlin.View.Home_Screen_Fragments.ContentFragment">
 
 
 

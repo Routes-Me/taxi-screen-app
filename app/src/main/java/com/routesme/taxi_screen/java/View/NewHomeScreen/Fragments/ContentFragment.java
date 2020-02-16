@@ -30,27 +30,17 @@ public class ContentFragment extends Fragment implements View.OnClickListener, C
     private static final String TAG = "ContentFragment";
 
     private Operations operations;
-
-
     //sharedPreference Storage
     private SharedPreferences sharedPreferences;
     private String savedTabletSerialNo = "";
-
-
-
     private ImageView AD_Banner_ImageView;
     private VideoView AD_Video_VideoView;
     private RingProgressBar videoRingProgressBar;
-    private TextView AD_Currencies_TextView;
-
     //Using Firebase Analytics ...
     private FirebaseAnalytics firebaseAnalytics;
-
     private ConnectivityReceiver connectionReceiver;
     private IntentFilter intentFilter;
-
     private View nMainView;
-
     //Detect Internet Status ...
     private boolean isConnected = false, isDataFetched = false;
 
@@ -79,9 +69,8 @@ public class ContentFragment extends Fragment implements View.OnClickListener, C
         videoRingProgressBar = nMainView.findViewById(R.id.videoRingProgressBar);
         AD_Banner_ImageView = nMainView.findViewById(R.id.AD_Banner_ImageView);
       //  AD_Banner_ImageView.setOnClickListener(this);
-        AD_Currencies_TextView = nMainView.findViewById(R.id.AD_Currencies_TextView);
-        AD_Currencies_TextView.setSelected(true);
-        operations = new Operations(getActivity(), videoRingProgressBar, AD_Video_VideoView, AD_Banner_ImageView, AD_Currencies_TextView);
+
+        operations = new Operations(getActivity(), videoRingProgressBar, AD_Video_VideoView, AD_Banner_ImageView);
         connectionReceiver = new ConnectivityReceiver();
         checkConnection();
     }

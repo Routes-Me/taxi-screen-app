@@ -9,7 +9,7 @@ android {
     buildToolsVersion "28.0.3"
     defaultConfig {
         applicationId "com.routesme.taxi_screen"
-        minSdkVersion 17
+        minSdkVersion 21
         targetSdkVersion 28
         versionCode 3
         versionName "1.2"
@@ -74,7 +74,8 @@ dependencies {
     implementation 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     //MVVM Architecture
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
-    implementation "android.arch.lifecycle:extensions:1.1.1"
+    implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation 'androidx.fragment:fragment-ktx:1.1.0'
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation 'com.google.android.material:material:1.1.0'
 
@@ -95,5 +96,3 @@ dependencies {
     //WebSocket
     implementation 'tech.gusavila92:java-android-websocket-client:1.2.2'
 }
-
-
