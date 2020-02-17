@@ -8,7 +8,7 @@ import android.view.MenuItem;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import com.routesme.taxi_screen.java.Class.App;
+import com.routesme.taxi_screen.kotlin.Class.App;
 import com.routesme.taxiscreen.R;
 
 public class LearnMoreScreen extends AppCompatActivity {

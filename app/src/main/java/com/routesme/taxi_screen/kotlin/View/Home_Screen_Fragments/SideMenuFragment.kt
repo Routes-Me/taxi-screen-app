@@ -17,10 +17,6 @@ class SideMenuFragment : Fragment() {
     private lateinit var runnableTime: Runnable
     private lateinit var counterOperations: CounterOperations
 
-    companion object {
-        fun newInstance(): SideMenuFragment = SideMenuFragment()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         sideMenuFragmentView = inflater.inflate(R.layout.side_menu_fragment, container, false)
 
@@ -28,17 +24,15 @@ class SideMenuFragment : Fragment() {
 
         return sideMenuFragmentView
     }
-
     private fun initialize(){
-        setUpTime()
+        timeSetUp()
     }
-
     @SuppressLint("SetTextI18n")
-    private fun setUpTime() {
+    private fun timeSetUp() {
         counterOperations = CounterOperations()
         runnableTime = Runnable {
             sideMenuFragmentView.timeClock_tv.text = counterOperations.timeClock()
-            sideMenuFragmentView.timeDate_tv.text = counterOperations.dayOfWeek() + ", \n" + counterOperations.date()
+            sideMenuFragmentView.timeDate_tv.text = "${counterOperations.dayOfWeek()}, \n ${counterOperations.date()}"
             handlerTime.postDelayed(runnableTime, 1000)
         }
         handlerTime = Handler()

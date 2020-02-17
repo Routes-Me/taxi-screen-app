@@ -6,9 +6,9 @@ import android.widget.Button;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.routesme.taxi_screen.java.Class.Operations;
 import com.routesme.taxi_screen.java.Server.Class.RetrofitClientInstance;
 import com.routesme.taxi_screen.java.Server.Interface.RoutesApi;
+import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
 import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
 
@@ -27,7 +27,7 @@ public class TabletInfoViewModel extends ViewModel {
 
     //we will call this method to get the data
     public LiveData<TabletInfo> getTabletInfo(Activity activity, String token, TabletCredentials tabletCredentials, ProgressDialog dialog, Button register_btn) {
-        operations = new Operations(activity);
+        operations = new Operations();
         this.dialog = dialog;
         this.register_btn = register_btn;
 

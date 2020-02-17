@@ -5,7 +5,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import com.routesme.taxi_screen.java.Class.App;
+
+import com.routesme.taxi_screen.kotlin.Class.App;
+
+import java.util.Objects;
+
 
 public class ConnectivityReceiver extends BroadcastReceiver{
 
@@ -29,7 +33,7 @@ public class ConnectivityReceiver extends BroadcastReceiver{
 
 
     public static boolean isConnected() {
-        ConnectivityManager cm = (ConnectivityManager) App.getInstance().getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) Objects.requireNonNull(App.Companion.getInstance()).getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnected();
     }

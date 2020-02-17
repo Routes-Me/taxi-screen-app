@@ -27,11 +27,7 @@ public class MyOreoWifiManager {
         mConnectivityManager = (ConnectivityManager) mContext.getSystemService(ConnectivityManager.class);
     }
 
-    /**
-     * This enables tethering using the ssid/password defined in Settings App>Hotspot & tethering
-     * Does not require app to have system/privileged access
-     * Credit: Vishal Sharma - https://stackoverflow.com/a/52219887
-     */
+
     public boolean startTethering(final MyOnStartTetheringCallback callback) {
         File outputDir = mContext.getCodeCacheDir();
         Object proxy;

@@ -4,8 +4,8 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi_screen.java.Class.App
 import com.routesme.taxi_screen.java.View.Login.LoginScreen
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Model.Authorization
 import com.routesme.taxiscreen.R
 

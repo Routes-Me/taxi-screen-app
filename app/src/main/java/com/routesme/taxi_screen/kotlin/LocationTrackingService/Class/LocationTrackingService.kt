@@ -36,7 +36,9 @@ class LocationTrackingService(val context: Context) {
                 trackingHandler.sendOfflineTrackingLocationsToServer()
                 handlerTracking?.post(runnableTracking)
             }
-            override fun onTextReceived(message: String) {}
+            override fun onTextReceived(message: String) {
+                Log.i("trackingWebSocket:  ", "Received : $message")
+            }
             override fun onBinaryReceived(data: ByteArray) {}
             override fun onPingReceived(data: ByteArray) {}
             override fun onPongReceived(data: ByteArray) {}
@@ -84,7 +86,7 @@ class LocationTrackingService(val context: Context) {
         if (isHandlerTrackingRunning) {
             handlerTracking?.removeCallbacks(runnableTracking)
             isHandlerTrackingRunning = false
-            Log.i("trackingWebSocket:  ", "Tracking Timer stop ...")
+            Log.i("trackingWebSocketKotlin", "Tracking Timer stop ...")
         }
     }
 

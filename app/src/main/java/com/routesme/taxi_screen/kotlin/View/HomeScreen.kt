@@ -28,7 +28,7 @@ class HomeScreen : PermissionsActivity() {
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
-       // turnOnHotspot()
+        turnOnHotspot()
         openPattern.setOnClickListener {openPatternClick()}
     }
 

@@ -24,9 +24,9 @@ import android.widget.TextView;
 import com.andrognito.patternlockview.PatternLockView;
 import com.andrognito.patternlockview.listener.PatternLockViewListener;
 import com.andrognito.patternlockview.utils.PatternLockUtils;
-import com.routesme.taxi_screen.java.Class.App;
-import com.routesme.taxi_screen.java.Class.Operations;
 import com.routesme.taxi_screen.java.Model.AuthCredentialsViewModel;
+import com.routesme.taxi_screen.kotlin.Class.App;
+import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials;
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError;
 import com.routesme.taxiscreen.R;
@@ -71,7 +71,7 @@ public class LoginScreen extends AppCompatActivity implements View.OnClickListen
 
 
     private void initialize() {
-        operations = new Operations(this);
+        operations = new Operations();
         app = (App) getApplicationContext();
         btnOpenLoginScreen = findViewById(R.id.btnOpenLoginScreen);
         btnOpenLoginScreen.setOnClickListener(this);

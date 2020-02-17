@@ -26,9 +26,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.routesme.taxi_screen.java.Class.App;
-import com.routesme.taxi_screen.java.Class.Operations;
 import com.routesme.taxi_screen.java.Model.TabletInfoViewModel;
+import com.routesme.taxi_screen.kotlin.Class.App;
+import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
 import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
@@ -66,7 +66,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
     private void initialize() {
-        operations = new Operations(this);
+        operations = new Operations();
         app = (App) getApplicationContext();
         tabletCredentials = new TabletCredentials();
         initializeViews();

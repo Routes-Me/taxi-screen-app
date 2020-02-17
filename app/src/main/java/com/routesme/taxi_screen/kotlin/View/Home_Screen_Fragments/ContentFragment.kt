@@ -2,44 +2,53 @@ package com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments
 
 import android.app.Activity
 import android.content.IntentFilter
+import android.content.SharedPreferences
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi_screen.java.Class.App
-import com.routesme.taxi_screen.java.Class.Operations
 import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver
 import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver.ConnectivityReceiverListener
+import com.routesme.taxi_screen.kotlin.Class.App
+import com.routesme.taxi_screen.kotlin.Class.DisplayAdvertisements
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
 import com.routesme.taxi_screen.kotlin.Model.ItemAnalytics
 import com.routesme.taxi_screen.kotlin.Model.VideoModel
+import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
-import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.android.synthetic.main.content_fragment.view.*
-import java.util.ArrayList
 
-@Suppress("DEPRECATION")
-class ContentFragment : Fragment() ,View.OnClickListener, ConnectivityReceiverListener{
+class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiverListener {
 
     private lateinit var contentFragmentView: View
-    private lateinit var Advertisement_Banner_CardView:CardView
-    private lateinit var Advertisement_Video_CardView:CardView
-    private lateinit var videoRingProgressBar:RingProgressBar
-    private val sharedPreferences = context?.getSharedPreferences("userData", Activity.MODE_PRIVATE)
-    private  var firebaseAnalytics = context?.let { FirebaseAnalytics.getInstance(it) }
+    private lateinit var sharedPreferences: SharedPreferences
+    private var firebaseAnalytics = context?.let { FirebaseAnalytics.getInstance(it) }
     private val connectivityReceiver = ConnectivityReceiver()
     private lateinit var intentFilter: IntentFilter
     private var isConnected = false
     private var isDataFetched = false
-    private lateinit var operations:Operations
+    private lateinit var displayAdvertisements: DisplayAdvertisements
 
     companion object {
-        fun newInstance(): ContentFragment = ContentFragment()
+        private fun initAdvertiseViews(contentFragment: ContentFragment) {
+            contentFragment.contentFragmentView.Advertisement_Banner_CardView.setOnClickListener(contentFragment)
+            contentFragment.contentFragmentView.Advertisement_Video_CardView.setOnClickListener(contentFragment)
+            val videoRingProgressBar = contentFragment.contentFragmentView.videoRingProgressBar
+            val advertisementsVideoView = contentFragment.contentFragmentView.advertisementsVideoView
+            val advertisementsImageView = contentFragment.contentFragmentView.advertisementsImageView
+            contentFragment.displayAdvertisements = DisplayAdvertisements(contentFragment.activity, videoRingProgressBar, advertisementsVideoView, advertisementsImageView)
+        }
+
+        private fun firebaseAnalyticsSetUp(contentFragment: ContentFragment) {
+            val tabletSerialNumber = contentFragment.sharedPreferences.getString("tabletSerialNo", null)
+            contentFragment.firebaseAnalytics?.setUserId(tabletSerialNumber)
+        }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -55,36 +64,24 @@ class ContentFragment : Fragment() ,View.OnClickListener, ConnectivityReceiverLi
         connectivityReceiverRegistering(false)
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        connectivityReceiverRegistering(false)
-    }
-
     private fun initialize() {
-        Advertisement_Banner_CardView = contentFragmentView.Advertisement_Banner_CardView
-        Advertisement_Banner_CardView.setOnClickListener(this)
-        Advertisement_Video_CardView = contentFragmentView.Advertisement_Video_CardView
-        Advertisement_Video_CardView.setOnClickListener(this)
-        videoRingProgressBar = contentFragmentView.videoRingProgressBar
-        firebaseAnalyticsSetUp()
-        operations = Operations(activity)
+        sharedPreferences = context!!.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+        initAdvertiseViews(this)
+        firebaseAnalyticsSetUp(this)
         checkConnection()
     }
 
-    private fun firebaseAnalyticsSetUp() {
-        val tabletSerialNumber = sharedPreferences?.getString("tabletSerialNo", null)
-        firebaseAnalytics?.setUserId(tabletSerialNumber)
-    }
     override fun onClick(view: View?) {
-        when(view?.id){
+        when (view?.id) {
             R.id.Advertisement_Banner_CardView -> updateFirebaseAnalystics(ItemAnalytics(2, "click_banner"))
-            R.id.Advertisement_Video_CardView ->  updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
+            R.id.Advertisement_Video_CardView -> updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
         }
     }
+
     private fun updateFirebaseAnalystics(itemAnalytics: ItemAnalytics) {
         val params = Bundle()
-        params.putInt("id",itemAnalytics.id)
-        params.putString("name",itemAnalytics.name)
+        params.putInt("id", itemAnalytics.id)
+        params.putString("name", itemAnalytics.name)
         itemAnalytics.name?.let { firebaseAnalytics?.logEvent(it, params) }
     }
 
@@ -92,26 +89,27 @@ class ContentFragment : Fragment() ,View.OnClickListener, ConnectivityReceiverLi
         isConnected = ConnectivityReceiver.isConnected()
         if (isConnected) {
             fetchAdvertisementData()
-          //  operations.fetchAdvertisementData()
             isDataFetched = true
         } else {
             networkListener()
         }
     }
+
     private fun networkListener() {
         connectivityReceiverRegistering(true)
-        App.getInstance().setConnectivityListener(this)
+        App.instance?.setConnectivityListener(this)
     }
+
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
             fetchAdvertisementData()
-            //operations.fetchAdvertisementData()
             isDataFetched = true
             connectivityReceiverRegistering(false)
         }
     }
+
     private fun connectivityReceiverRegistering(register: Boolean) {
-        try { // register or unRegister your broadcast connectionReceiver
+        try {
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
                 intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
@@ -124,14 +122,28 @@ class ContentFragment : Fragment() ,View.OnClickListener, ConnectivityReceiverLi
         }
     }
 
-    private fun fetchAdvertisementData(){
-        val channdelId = channelId()
-        val videoList = operations.advertisementVideoList(channdelId)
-       // val bannerList = operations.advertisementBannerList(channdelId!!)
-        Toast.makeText(activity,"videos size: ${videoList.size} ",Toast.LENGTH_SHORT).show()
+    private fun fetchAdvertisementData() {
+        fetchVideoList()
+        fetchBannerList()
     }
 
-    private fun channelId() = sharedPreferences?.getInt("tabletChannelId", 0)
+    private fun fetchBannerList() {
+        val model: RoutesViewModel by viewModels()
+        context?.let {
+            model.getBannerList(channelId(), it)?.observe((it as LifecycleOwner?)!!, Observer<List<BannerModel>> { banners ->
+                displayAdvertisements.displayAdvertisementBannerList(banners)
+            })
+        }
+    }
 
+    private fun fetchVideoList() {
+        val model: RoutesViewModel by viewModels()
+        context?.let {
+            model.getVideoList(channelId(), it)?.observe((it as LifecycleOwner?)!!, Observer<List<VideoModel>> { videos ->
+                displayAdvertisements.displayAdvertisementVideoList(videos)
+            })
+        }
+    }
 
+    private fun channelId() = sharedPreferences.getInt("tabletChannelId", 0)
 }

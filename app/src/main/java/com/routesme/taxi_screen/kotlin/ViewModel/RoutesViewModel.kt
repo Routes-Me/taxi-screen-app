@@ -7,7 +7,7 @@ import com.routesme.taxi_screen.kotlin.Model.BannerModel
 import com.routesme.taxi_screen.kotlin.Model.VideoModel
 import com.routesme.taxi_screen.kotlin.Server.RetrofitService
 
-class ViewModel() : ViewModel() {
+class RoutesViewModel() : ViewModel() {
 
     private val mService  =  RetrofitService()
 

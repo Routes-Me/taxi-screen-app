@@ -18,7 +18,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name="com.routesme.taxi_screen.java.Class.App"
+        android:name="com.routesme.taxi_screen.kotlin.Class.App"
         android:allowBackup="true"
         android:icon="@mipmap/taxi_screen_icon"
         android:keepScreenOn="true"
