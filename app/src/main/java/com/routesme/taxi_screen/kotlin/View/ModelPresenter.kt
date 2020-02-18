@@ -4,9 +4,10 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi_screen.java.View.Login.LoginScreen
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Model.Authorization
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
+import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen
 import com.routesme.taxiscreen.R
 
 class SplashScreen : AppCompatActivity() {
@@ -39,8 +40,8 @@ class SplashScreen : AppCompatActivity() {
 
     private fun deleteAuthenticationCredentialsFromAppClass() {
         val app = applicationContext as App
-        app.technicalSupportUserName = null
-        app.technicalSupportPassword = null
+        app.authCredentials!!.Username = ""
+        app.authCredentials!!.Password = ""
         app.isNewLogin = false
         app.taxiOfficeId = 0
         app.taxiOfficeName = null

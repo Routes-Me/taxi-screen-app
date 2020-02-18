@@ -30,10 +30,19 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen"
+        <activity android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"/>
+        <activity
+            android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LearnMoreScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing"/>
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.SplashScreen"
             android:screenOrientation="landscape"
@@ -55,16 +64,7 @@
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationListScreen"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-        <activity
-            android:name="com.routesme.taxi_screen.java.View.Login.LearnMoreScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustPan" />
-        <activity
-            android:name="com.routesme.taxi_screen.java.View.Login.LoginScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
-    <!-- Detect Internet Connection Status -->
+        <!-- Detect Internet Connection Status -->
         <receiver
             android:name="com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver"
             android:enabled="true">

@@ -2,8 +2,10 @@ package com.routesme.taxi_screen.kotlin.Server
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.java.Class.Helper
+import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
 import com.routesme.taxi_screen.kotlin.Model.VideoModel
 import retrofit2.Call
@@ -15,6 +17,7 @@ class RetrofitService() {
 
     val videoList: MutableLiveData<List<VideoModel>> = MutableLiveData()
     val bannerList: MutableLiveData<List<BannerModel>> = MutableLiveData()
+    val tokenJsonElement:MutableLiveData<JsonElement> = MutableLiveData()
 
     companion object Factory {
         fun create(context: Context): RoutesApi {
@@ -50,5 +53,16 @@ class RetrofitService() {
         }
         )
         return bannerList
+    }
+
+    fun getToken(context: Context, authCredentials: AuthCredentials): MutableLiveData<JsonElement> {
+        val retrofitCall = create(context).loginAuth(authCredentials)
+        retrofitCall?.enqueue(object : Callback<JsonElement?>{
+            override fun onFailure(call: Call<JsonElement?>, t: Throwable) {}
+            override fun onResponse(call: Call<JsonElement?>, response: Response<JsonElement?>) {
+                if (response.isSuccessful && !response.body()!!.isJsonNull) tokenJsonElement.value = response.body() as JsonElement
+            }
+        })
+        return tokenJsonElement
     }
 }

@@ -18,7 +18,7 @@ data class VideoModel(@SerializedName("Video_ID")val advertisement_ID: Int = 0,@
 data class ItemAnalytics( val id: Int = 0, val name: String? = null)
 
 //Authentication
-data class AuthCredentials(val Username: String? = null, val Password: String? = null)
+data class AuthCredentials(var Username: String = "", var Password: String = "")
 data class Token(val access_token: String? = null)
 data class AuthCredentialsError (val ErrorNumber: Int = 0, @SerializedName("ErrorMasseg") val ErrorMessage: String? = null)
 data class Authorization(var isAuthorized:Boolean , var responseCode:Int) : Serializable

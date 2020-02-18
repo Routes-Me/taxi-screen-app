@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments
+package com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment
 
 import android.app.Activity
 import android.content.IntentFilter
@@ -130,8 +130,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiverLi
     private fun fetchBannerList() {
         val model: RoutesViewModel by viewModels()
         context?.let {
-            model.getBannerList(channelId(), it)?.observe((it as LifecycleOwner?)!!, Observer<List<BannerModel>> { banners ->
-                displayAdvertisements.displayAdvertisementBannerList(banners)
+            model.getBannerList(channelId(), it)?.observe((it as LifecycleOwner?)!!, Observer<List<BannerModel>> {
+                displayAdvertisements.displayAdvertisementBannerList(it)
             })
         }
     }
@@ -139,8 +139,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiverLi
     private fun fetchVideoList() {
         val model: RoutesViewModel by viewModels()
         context?.let {
-            model.getVideoList(channelId(), it)?.observe((it as LifecycleOwner?)!!, Observer<List<VideoModel>> { videos ->
-                displayAdvertisements.displayAdvertisementVideoList(videos)
+            model.getVideoList(channelId(), it)?.observe((it as LifecycleOwner?)!!, Observer<List<VideoModel>> {
+                displayAdvertisements.displayAdvertisementVideoList(it)
             })
         }
     }

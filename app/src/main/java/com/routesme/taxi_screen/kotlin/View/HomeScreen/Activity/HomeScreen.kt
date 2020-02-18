@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View
+package com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity
 
 import android.app.Activity
 import android.content.Intent
@@ -7,8 +7,8 @@ import android.os.Bundle
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
-import com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments.ContentFragment
-import com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments.SideMenuFragment
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 

@@ -123,8 +123,8 @@ public class AuthCredentialsViewModel extends ViewModel {
     private void saveDataIntoSharedPreference(AuthCredentials authCredentials, String access_token) {
         String username = authCredentials.getUsername().trim();
         String password = authCredentials.getPassword().trim();
-        app.setTechnicalSupportUserName(username);
-        app.setTechnicalSupportPassword(password);
+        //app.setTechnicalSupportUserName(username);
+       // app.setTechnicalSupportPassword(password);
         editor.putString("tabToken", access_token);
         editor.apply();
     }
@@ -134,9 +134,4 @@ public class AuthCredentialsViewModel extends ViewModel {
         activity.startActivity(new Intent(activity, TaxiInformationScreen.class));
         activity.finish();
     }
-
-
-
-
 }
-

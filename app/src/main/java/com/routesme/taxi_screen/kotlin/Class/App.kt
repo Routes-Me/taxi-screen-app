@@ -5,11 +5,11 @@ import android.content.Context
 import com.danikula.videocache.HttpProxyCacheServer
 import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver
 import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver.ConnectivityReceiverListener
+import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 
 class App : Application() {
     private var proxy: HttpProxyCacheServer? = null
-    var technicalSupportUserName: String? = null
-    var technicalSupportPassword: String? = null
+    var authCredentials:AuthCredentials? = null
     var isNewLogin = false
     var taxiOfficeId = 0
     var taxiPlateNumber: String? = null

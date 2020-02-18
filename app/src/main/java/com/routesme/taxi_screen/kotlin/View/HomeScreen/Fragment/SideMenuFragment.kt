@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.Home_Screen_Fragments
+package com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle

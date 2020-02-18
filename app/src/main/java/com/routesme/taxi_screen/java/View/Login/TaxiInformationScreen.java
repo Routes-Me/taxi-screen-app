@@ -32,6 +32,7 @@ import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
 import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
+import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
 import com.routesme.taxi_screen.kotlin.View.SplashScreen;
 import com.routesme.taxiscreen.R;
 
@@ -125,7 +126,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
 
     private String welcomeMessage() {
-        String username = app.getTechnicalSupportUserName();
+        String username = app.getAuthCredentials().getUsername();
         return  "Welcome,  " +  (username != null && !username.isEmpty() ?  username.substring(0, 1).toUpperCase() + username.substring(1) : "");
     }
 
