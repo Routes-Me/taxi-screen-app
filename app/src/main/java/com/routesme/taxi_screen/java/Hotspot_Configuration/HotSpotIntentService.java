@@ -44,7 +44,7 @@ public class HotSpotIntentService extends IntentService {
     }
 
     /**
-     * Helper method to start this intent from {@link HotSpotIntentReceiver}
+     *  method to start this intent from {@link HotSpotIntentReceiver}
      * @param context
      * @param intent
      */

@@ -23,8 +23,8 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
-import com.routesme.taxi_screen.java.Server.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen
+import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials

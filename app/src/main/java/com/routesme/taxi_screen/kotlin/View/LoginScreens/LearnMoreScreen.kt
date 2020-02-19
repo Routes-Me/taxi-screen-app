@@ -6,8 +6,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi_screen.java.Class.Helper
 import com.routesme.taxi_screen.kotlin.Class.App
+import com.routesme.taxi_screen.kotlin.Class.Helper
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.learn_more_screen.*
 

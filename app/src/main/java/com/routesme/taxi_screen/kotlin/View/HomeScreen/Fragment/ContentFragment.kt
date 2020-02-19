@@ -13,9 +13,8 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver
-import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver.ConnectivityReceiverListener
 import com.routesme.taxi_screen.kotlin.Class.App
+import com.routesme.taxi_screen.kotlin.Class.ConnectivityReceiver
 import com.routesme.taxi_screen.kotlin.Class.DisplayAdvertisements
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
 import com.routesme.taxi_screen.kotlin.Model.ItemAnalytics
@@ -24,7 +23,7 @@ import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.content_fragment.view.*
 
-class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiverListener {
+class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.ConnectivityReceiverListener {
 
     private lateinit var contentFragmentView: View
     private lateinit var sharedPreferences: SharedPreferences
@@ -86,7 +85,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiverLi
     }
 
     private fun checkConnection() {
-        isConnected = ConnectivityReceiver.isConnected()
+        isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
             fetchAdvertisementData()
             isDataFetched = true

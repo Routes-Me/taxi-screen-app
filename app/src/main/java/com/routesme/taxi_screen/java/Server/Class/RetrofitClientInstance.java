@@ -5,7 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
-import com.routesme.taxi_screen.java.Class.Helper;
+import com.routesme.taxi_screen.kotlin.Class.Helper;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.RequestHeaders;
 import com.routesme.taxi_screen.kotlin.View.SplashScreen;
@@ -117,7 +117,7 @@ public class RetrofitClientInstance {
 
     public Retrofit getRetrofitInstance(boolean hasToken) {
         retrofit = new Retrofit.Builder()
-                .baseUrl(Helper.getConfigValue(activity, "baseUrl"))
+                .baseUrl("http://api.test.routesdashboard.com/api/")
                 .client(getOkHttpClient(hasToken))
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();

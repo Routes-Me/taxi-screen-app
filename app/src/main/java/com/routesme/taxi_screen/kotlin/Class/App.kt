@@ -3,8 +3,7 @@ package com.routesme.taxi_screen.kotlin.Class
 import android.app.Application
 import android.content.Context
 import com.danikula.videocache.HttpProxyCacheServer
-import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver
-import com.routesme.taxi_screen.java.Detect_Network_Connection_Status.ConnectivityReceiver.ConnectivityReceiverListener
+
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 
 class App : Application() {
@@ -20,7 +19,7 @@ class App : Application() {
         instance = this
     }
 
-    fun setConnectivityListener(listener: ConnectivityReceiverListener?) {
+    fun setConnectivityListener(listener: ConnectivityReceiver.ConnectivityReceiverListener?) {
         ConnectivityReceiver.connectivityReceiverListener = listener
     }
 
