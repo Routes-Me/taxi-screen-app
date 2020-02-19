@@ -62,6 +62,8 @@ dependencies {
     implementation 'com.github.scottyab:showhidepasswordedittext:0.8'
     //Hotspot Configuration...
     implementation 'com.linkedin.dexmaker:dexmaker:2.25.0'
+    //Spots progress dialog
+    implementation 'com.github.d-max:spots-dialog:1.1@aar'
 
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'

@@ -1,6 +1,7 @@
 package com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity
 
 import android.app.Activity
+import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
@@ -28,7 +29,6 @@ class HomeScreen : PermissionsActivity() {
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
-        turnOnHotspot()
         openPattern.setOnClickListener {openPatternClick()}
     }
 
@@ -36,6 +36,7 @@ class HomeScreen : PermissionsActivity() {
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         showFragments()
+        turnOnHotspot()
         startLocationTrackingService()
         super.onResume()
     }
@@ -58,8 +59,16 @@ class HomeScreen : PermissionsActivity() {
 
     private fun turnOnHotspot() {
         if (!isHotspotOn) {
-            homeScreenFunctions.sendImplicitBroadcast(Intent(getString(R.string.intent_action_turnon)))
+            sendImplicitBroadcast(Intent(getString(R.string.intent_action_turnon)))
             isHotspotOn = true
+        }
+    }
+
+    private fun sendImplicitBroadcast(i: Intent) {
+        val matches = packageManager.queryBroadcastReceivers(i, 0)
+        for (resolveInfo in matches) {
+            Intent(i).component = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
+            sendBroadcast(Intent(i))
         }
     }
     private fun openPatternClick() {

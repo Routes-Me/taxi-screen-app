@@ -2,8 +2,8 @@ package com.routesme.taxi_screen.kotlin.View.LoginScreens
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.Dialog
-import android.app.ProgressDialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -32,6 +32,7 @@ import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError
 import com.routesme.taxi_screen.kotlin.Model.Token
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
+import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 import kotlinx.android.synthetic.main.login_screen.*
 import kotlinx.android.synthetic.main.technical_login_layout.*
@@ -46,7 +47,7 @@ class LoginScreen : AppCompatActivity() {
     private lateinit var authCredentials: AuthCredentials
     private lateinit var userName: String
     private lateinit var password: String
-    private lateinit var dialog: ProgressDialog
+    private lateinit var dialog: AlertDialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,9 +89,12 @@ class LoginScreen : AppCompatActivity() {
     }
 
     private fun dialogSetUp() {
-        dialog = ProgressDialog(this)
-        dialog.setMessage("Please Wait...")
-        dialog.setCancelable(false)
+        dialog = SpotsDialog.Builder()
+                .setContext(this)
+                .setTheme(R.style.SpotsDialogStyle)
+                .setCancelable(false).build()
+
+
     }
 
     private fun buttonNextClick() {
@@ -105,11 +109,10 @@ class LoginScreen : AppCompatActivity() {
             val aesBase64Wrapper = AesBase64Wrapper(this)
             val authCredentials = AuthCredentials(aesBase64Wrapper.encryptAndEncode(userName), aesBase64Wrapper.encryptAndEncode(password))
             val model: RoutesViewModel by viewModels()
-            model.getToken(authCredentials, this).observe(this, Observer<JsonElement> {
-                dialog.dismiss()
+            model.getToken(authCredentials, dialog, this).observe(this, Observer<JsonElement> {
                 if (it.isJsonObject) {
-                    val accessToken = Gson().fromJson<Token>(it, Token::class.java).toString()
-                    if (accessToken.isNotEmpty()) {
+                    val accessToken = Gson().fromJson<Token>(it, Token::class.java).access_token
+                    if (!accessToken.isNullOrEmpty()) {
                         saveDataIntoSharedPreference(accessToken)
                         openTaxiInformationScreen()
                     }

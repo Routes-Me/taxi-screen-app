@@ -124,4 +124,13 @@
     </style>
 
 
+        <style name="SpotsDialogStyle" parent="android:Theme.DeviceDefault.Dialog">
+            <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+            <item name="DialogTitleText">@string/please_wait</item>
+            <item name="DialogSpotColor">@color/colorPrimaryDark</item>
+            <item name="DialogSpotCount">4</item>
+        </style>
+
+
+
 </resources>

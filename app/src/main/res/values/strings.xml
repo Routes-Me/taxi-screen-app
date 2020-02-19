@@ -42,6 +42,7 @@
     <string name="instructions"><a href="http://www.floatingintheclouds.com/app-wifi-hot-spot-on-oreo/">INSTRUCTIONS</a></string>
     <string name="wifi_password">12345678</string>
     <string name="wifi_name">Routes</string>
+    <string name="please_wait">Please Wait...</string>
 
 
 </resources>

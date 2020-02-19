@@ -53,15 +53,6 @@ class HomeScreenFunctions(val activity: Activity) {
         }
         return true
     }
-
-    fun sendImplicitBroadcast(i: Intent) {
-        val matches = activity.packageManager.queryBroadcastReceivers(i, 0)
-        for (resolveInfo in matches) {
-            Intent(i).component = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
-            activity.sendBroadcast(Intent(i))
-        }
-    }
-
     fun showAdminVerificationDialog(tabletPassword: String) {
         val adminVerificationDialog = Dialog(activity)
         adminVerificationDialog.setContentView(R.layout.exit_pattern_dialog)

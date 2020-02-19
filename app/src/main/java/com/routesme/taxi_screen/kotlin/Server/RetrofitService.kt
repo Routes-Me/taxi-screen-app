@@ -1,5 +1,6 @@
 package com.routesme.taxi_screen.kotlin.Server
 
+import android.app.AlertDialog
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
@@ -55,11 +56,12 @@ class RetrofitService() {
         return bannerList
     }
 
-    fun getToken(context: Context, authCredentials: AuthCredentials): MutableLiveData<JsonElement> {
+    fun getToken(authCredentials: AuthCredentials, dialog: AlertDialog,context: Context): MutableLiveData<JsonElement> {
         val retrofitCall = create(context).loginAuth(authCredentials)
         retrofitCall?.enqueue(object : Callback<JsonElement?>{
-            override fun onFailure(call: Call<JsonElement?>, t: Throwable) {}
+            override fun onFailure(call: Call<JsonElement?>, t: Throwable) {dialog.dismiss()}
             override fun onResponse(call: Call<JsonElement?>, response: Response<JsonElement?>) {
+                dialog.dismiss()
                 if (response.isSuccessful && !response.body()!!.isJsonNull) tokenJsonElement.value = response.body() as JsonElement
             }
         })
