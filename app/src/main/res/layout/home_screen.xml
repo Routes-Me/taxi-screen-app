@@ -2,44 +2,36 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/tabletLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".View.NewHomeScreen.Activity.HomeScreen"
-    android:id="@+id/tabletLayout">
+    tools:context=".View.NewHomeScreen.Activity.HomeScreen">
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-
-
-
         <LinearLayout
             android:id="@+id/homeScreenLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:background="@color/white"
             android:orientation="horizontal"
-            android:weightSum="100"
-            android:background="@color/white">
-
-
-
-
+            android:weightSum="1">
 
             <FrameLayout
                 android:id="@+id/contentFragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible"
-                android:layout_weight="13.4"/>
+                android:layout_weight="0.134"
+                android:visibility="visible" />
 
             <FrameLayout
                 android:id="@+id/sideMenuFragment_container"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="visible"
-                android:layout_weight="86.6"/>
+                android:layout_weight="0.866"
+                android:visibility="visible" />
 
         </LinearLayout>
 
@@ -47,13 +39,11 @@
             android:id="@+id/openPattern"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_alignParentEnd="true"
             android:layout_alignParentTop="true"
+            android:layout_alignParentEnd="true"
             android:background="@color/white"
-            android:clickable="true"/>
+            android:clickable="true" />
 
     </RelativeLayout>
-
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

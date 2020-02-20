@@ -36,7 +36,7 @@ class HomeScreen : PermissionsActivity() {
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         showFragments()
-        turnOnHotspot()
+       // turnOnHotspot()
         startLocationTrackingService()
         super.onResume()
     }

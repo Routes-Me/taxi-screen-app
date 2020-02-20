@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.routesme.taxi_screen.kotlin.Model.Authorization
-import com.routesme.taxi_screen.kotlin.View.SplashScreen
+import com.routesme.taxi_screen.kotlin.View.ModelPresenter
 import com.routesme.taxiscreen.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -42,7 +42,7 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     }
 
     private fun startSplashScreen(activity: Activity, responseCode: Int) {
-        activity.startActivity(Intent(activity, SplashScreen::class.java).putExtra("authorization", Authorization(false, responseCode)))
+        activity.startActivity(Intent(activity, ModelPresenter::class.java).putExtra("authorization", Authorization(false, responseCode)))
         activity.finish()
     }
 }

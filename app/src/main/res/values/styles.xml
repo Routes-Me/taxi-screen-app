@@ -28,7 +28,7 @@
     </style>
 
 
-    <style name="AppTheme.CustomEditText"     parent="android:style/Widget.EditText">
+    <style name="AppTheme.CustomEditText" parent="android:style/Widget.EditText">
         //...
 
         <item name="android:imeOptions">actionNext</item>
@@ -42,7 +42,7 @@
         <item name="android:layout_gravity">start</item>
     </style>
 
-    <style name="AppTheme.CustomTextView" >
+    <style name="AppTheme.CustomTextView">
         //...
 
         <item name="android:imeOptions">actionNext</item>
@@ -57,7 +57,7 @@
         <item name="android:clickable">false</item>
     </style>
 
-    <style name="AppTheme.CustomButton"    >
+    <style name="AppTheme.CustomButton">
         //...
 
         <item name="android:textSize">18sp</item>
@@ -69,20 +69,20 @@
 
     </style>
 
-    <style name="AppTheme.CustomTextViewTitle"    >
+    <style name="AppTheme.CustomTextViewTitle">
         //...
 
-       <item name="android:textStyle">normal</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">sans-serif</item>
 
     </style>
 
-    <style name="AppTheme.CustomTextViewToolbar"     >
+    <style name="AppTheme.CustomTextViewToolbar">
         //...
 
-      <item name="android:textStyle">normal</item>
+        <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">sans-serif-medium</item>
@@ -91,7 +91,7 @@
     </style>
 
 
-    <style name="AppTheme.CustomTextViewList"    >
+    <style name="AppTheme.CustomTextViewList">
         //...
 
         <item name="android:textStyle">normal</item>
@@ -103,7 +103,7 @@
     </style>
 
 
-    <style name="AppTheme.scrollingTextView"     >
+    <style name="AppTheme.scrollingTextView">
         //...
 
         <item name="android:textStyle">normal</item>
@@ -114,7 +114,7 @@
     </style>
 
 
-    <style name="AppTheme.counterText"     >
+    <style name="AppTheme.counterText">
         //...
 
         <item name="android:textStyle">normal</item>
@@ -124,13 +124,21 @@
     </style>
 
 
-        <style name="SpotsDialogStyle" parent="android:Theme.DeviceDefault.Dialog">
-            <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
-            <item name="DialogTitleText">@string/please_wait</item>
-            <item name="DialogSpotColor">@color/colorPrimaryDark</item>
-            <item name="DialogSpotCount">4</item>
-        </style>
+    <style name="SpotsDialogStyle" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="DialogTitleText">@string/please_wait</item>
+        <item name="DialogSpotColor">@color/colorPrimaryDark</item>
+        <item name="DialogSpotCount">4</item>
+    </style>
 
+    <style name="noActionBar.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="noActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
+
+    <style name="noActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 
 
 </resources>

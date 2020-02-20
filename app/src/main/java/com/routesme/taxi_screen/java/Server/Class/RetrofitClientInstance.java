@@ -5,10 +5,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
-import com.routesme.taxi_screen.kotlin.Class.Helper;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.RequestHeaders;
-import com.routesme.taxi_screen.kotlin.View.SplashScreen;
+import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.BuildConfig;
 
 import java.io.IOException;
@@ -67,7 +66,7 @@ public class RetrofitClientInstance {
                                 // todo deal with the issues the way you need to
                                 if (response.code() == 401) {
                                     Authorization authorization = new Authorization(false, response.code());
-                                    Intent SplashScreenIntent = new Intent(activity, SplashScreen.class);
+                                    Intent SplashScreenIntent = new Intent(activity, ModelPresenter.class);
                                     SplashScreenIntent.putExtra("authorization", authorization);
                                     activity.startActivity(SplashScreenIntent);
                                     activity.finish();
@@ -84,7 +83,7 @@ public class RetrofitClientInstance {
                         .writeTimeout(15, TimeUnit.SECONDS)
                         .build();
             } else {
-                activity.startActivity(new Intent(activity, SplashScreen.class));
+                activity.startActivity(new Intent(activity, ModelPresenter.class));
                 activity.finish();
             }
         } else {

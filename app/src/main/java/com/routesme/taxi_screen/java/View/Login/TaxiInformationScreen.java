@@ -33,7 +33,7 @@ import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
 import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
-import com.routesme.taxi_screen.kotlin.View.SplashScreen;
+import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
@@ -317,7 +317,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
     private void openSplashScreen() {
         Authorization authorization = new Authorization(true,200);
-        Intent SplashScreenIntent = new Intent(TaxiInformationScreen.this, SplashScreen.class);
+        Intent SplashScreenIntent = new Intent(TaxiInformationScreen.this, ModelPresenter.class);
         SplashScreenIntent.putExtra("authorization",authorization);
         startActivity(SplashScreenIntent);
         finish();

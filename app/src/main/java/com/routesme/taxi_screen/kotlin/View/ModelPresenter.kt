@@ -10,7 +10,7 @@ import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen
 import com.routesme.taxiscreen.R
 
-class SplashScreen : AppCompatActivity() {
+class ModelPresenter : AppCompatActivity() {
 
     private val AUTHORIZATION_KAY = "authorization"
 

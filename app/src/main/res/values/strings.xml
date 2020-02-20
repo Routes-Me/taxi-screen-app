@@ -43,6 +43,8 @@
     <string name="wifi_password">12345678</string>
     <string name="wifi_name">Routes</string>
     <string name="please_wait">Please Wait...</string>
+    <string name="title_item_list">Items</string>
+    <string name="title_item_detail">Item Detail</string>
 
 
 </resources>
