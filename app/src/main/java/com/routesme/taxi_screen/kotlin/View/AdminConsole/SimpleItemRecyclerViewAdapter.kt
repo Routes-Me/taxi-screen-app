@@ -5,36 +5,34 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.RelativeLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.View.AdminConsole.dummy.DummyContent
+import com.routesme.taxi_screen.kotlin.View.AdminConsole.dummy.listItem
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_list_content.view.*
 
-class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity, private val values: List<DummyContent.DummyItem>, private val twoPane: Boolean)
+class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity, private val values: List<listItem.Item>)
     : RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
 
     private val onClickListener: View.OnClickListener
 
     init {
         onClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyContent.DummyItem
-            if (twoPane) {
-                val fragment = ItemDetailFragment().apply {
-                    arguments = Bundle().apply {
-                        putString(ItemDetailFragment.ARG_ITEM_ID, item.id)
-                    }
+            v.setBackgroundResource(R.drawable.list_item_selector_drawable)
+            val item = v.tag as listItem.Item
+            val fragment = ItemDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ItemDetailFragment.ARG_ITEM_ID, item.id)
+                   // Toast.makeText(parentActivity,"itemView: ${item.itemView}", Toast.LENGTH_SHORT).show()
                 }
-                parentActivity.supportFragmentManager
-                        .beginTransaction()
-                        .replace(R.id.item_detail_container, fragment)
-                        .commit()
-            } else {
-                val intent = Intent(v.context, ItemDetailActivity::class.java).apply {
-                    putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id)
-                }
-                v.context.startActivity(intent)
             }
+            parentActivity.supportFragmentManager
+                    .beginTransaction()
+                    .replace(R.id.item_detail_container, fragment)
+                    .commit()
+
         }
     }
 
@@ -45,7 +43,7 @@ class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = values[position]
-        holder.itemTitle.text = item.content
+        holder.itemTitle.text = item.title
 
         with(holder.itemView) {
             tag = item
@@ -57,5 +55,6 @@ class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity
 
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val itemTitle: TextView = view.title
+        val listItem:RelativeLayout = view.list_item
     }
 }

@@ -27,6 +27,9 @@
 
     <color name="textColor">#FFFFFF</color>
 
+    <color name="list_item_color">#4c18428f</color>
+    <color name="view_line_color">#4c979797</color>
+
 
 
 

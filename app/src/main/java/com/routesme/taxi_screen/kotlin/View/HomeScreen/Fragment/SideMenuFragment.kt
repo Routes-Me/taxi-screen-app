@@ -32,7 +32,7 @@ class SideMenuFragment : Fragment() {
         counterOperations = CounterOperations()
         runnableTime = Runnable {
             sideMenuFragmentView.timeClock_tv.text = counterOperations.timeClock()
-            sideMenuFragmentView.timeDate_tv.text = "${counterOperations.dayOfWeek()}, \n ${counterOperations.date()}"
+            sideMenuFragmentView.timeDate_tv.text = "${counterOperations.dayOfWeek()},\n${counterOperations.date()}"
             handlerTime.postDelayed(runnableTime, 1000)
         }
         handlerTime = Handler()

@@ -41,8 +41,8 @@
             android:layout_height="50dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
-            android:background="@color/white"
-            android:clickable="true" />
+            android:background="#00FFFFFF"
+            android:visibility="visible" />
 
     </RelativeLayout>
 

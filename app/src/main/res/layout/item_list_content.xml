@@ -1,30 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<app:androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/Advertisement_Banner_CardView"
-    android:layout_width="@dimen/item_width"
-    android:layout_height="@dimen/item_height"
+    android:id="@+id/list_item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
     app:cardCornerRadius="4dp"
-    app:cardElevation="3dp"
-    app:cardPreventCornerOverlap="true"
-    app:cardUseCompatPadding="true"
-    app:layout_constraintBottom_toTopOf="@+id/Advertisement_Video_CardView"
-    app:layout_constraintDimensionRatio="H,728:90"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.42"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"
-    android:layout_marginStart="10dp"
-    android:layout_marginEnd="14dp"
-    android:layout_marginBottom="10dp">
+    android:layout_marginBottom="10dp"
+    android:background="@drawable/list_item_style_not_selected">
 
     <TextView
-        android:layout_width="@dimen/item_width"
-        android:layout_height="@dimen/item_height"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:id="@+id/title"
-        android:text="fkghgkghlhkgfl">
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="15dp"
+        android:paddingBottom="15dp"
+        android:textSize="24sp"
+        android:fontFamily="sans-serif"
+        android:textStyle="normal"
+        android:textColor="@color/black"
+        android:gravity="center_horizontal|start">
 
     </TextView>
 
 
-</app:androidx.cardview.widget.CardView>
+</RelativeLayout>
