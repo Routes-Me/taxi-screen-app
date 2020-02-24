@@ -41,3 +41,4 @@ data class TabletInfo(@SerializedName("tabletRegesterPassword") val tabletPasswo
 data class Tracking(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Embedded var location: TrackingLocation, @ColumnInfo(name = "timestamp") var timestamp: String)
 data class TrackingLocation (val latitude:Double , val longitude:Double)
 
+

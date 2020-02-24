@@ -28,8 +28,8 @@
     <color name="textColor">#FFFFFF</color>
 
     <color name="list_item_color">#4c18428f</color>
-    <color name="view_line_color">#4c979797</color>
-
+    <color name="viewLineColor">#44979797</color>
+    <color name="cellValueColor">#99000000</color>
 
 
 

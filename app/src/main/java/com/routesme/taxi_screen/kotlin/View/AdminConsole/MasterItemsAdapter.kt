@@ -1,60 +1,52 @@
 package com.routesme.taxi_screen.kotlin.View.AdminConsole
 
-import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.View.AdminConsole.dummy.listItem
+import com.routesme.taxi_screen.kotlin.View.AdminConsole.dummy.AdminConsoleLists
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_list_content.view.*
 
-class SimpleItemRecyclerViewAdapter(private val parentActivity: ItemListActivity, private val values: List<listItem.Item>)
-    : RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder>() {
+class MasterItemsAdapter(private val parentActivity: ItemListActivity, private val MasterItems: List<AdminConsoleLists.MasterItem>) : RecyclerView.Adapter<MasterItemsAdapter.ViewHolder>() {
 
+    private var rowIndex: Int = 0
     private val onClickListener: View.OnClickListener
 
     init {
         onClickListener = View.OnClickListener { v ->
-            v.setBackgroundResource(R.drawable.list_item_selector_drawable)
-            val item = v.tag as listItem.Item
+            val item = v.tag as AdminConsoleLists.MasterItem
+            rowIndex = item.id;
+            notifyDataSetChanged()
             val fragment = ItemDetailFragment().apply {
                 arguments = Bundle().apply {
                     putInt(ItemDetailFragment.ARG_ITEM_ID, item.id)
-                   // Toast.makeText(parentActivity,"itemView: ${item.itemView}", Toast.LENGTH_SHORT).show()
                 }
             }
-            parentActivity.supportFragmentManager
-                    .beginTransaction()
-                    .replace(R.id.item_detail_container, fragment)
-                    .commit()
-
+            parentActivity.supportFragmentManager.beginTransaction().replace(R.id.item_detail_container, fragment).commit()
         }
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_list_content, parent, false)
         return ViewHolder(view)
     }
-
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = values[position]
-        holder.itemTitle.text = item.title
-
+        val item = MasterItems[position]
+        holder.itemTitle.text = item.type.toString()
         with(holder.itemView) {
             tag = item
             setOnClickListener(onClickListener)
         }
+        //Change item background when it clicked
+        if (rowIndex == position) holder.listItem.setBackgroundResource(R.drawable.list_item_style_selected)
+        else holder.listItem.setBackgroundResource(R.drawable.list_item_style_not_selected)
     }
-
-    override fun getItemCount() = values.size
-
+    override fun getItemCount() = MasterItems.size
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val itemTitle: TextView = view.title
-        val listItem:RelativeLayout = view.list_item
+        val listItem: RelativeLayout = view.list_item
     }
 }

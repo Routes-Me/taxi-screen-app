@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:text="Admin Console"
             android:textColor="@color/grey"
-            android:textSize="18sp"
+            android:textSize="21sp"
             android:fontFamily="sans-serif-medium"
             android:textStyle="normal" />
 
