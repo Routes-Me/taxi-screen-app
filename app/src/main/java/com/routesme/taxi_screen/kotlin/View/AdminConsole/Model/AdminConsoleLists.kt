@@ -1,7 +1,6 @@
-package com.routesme.taxi_screen.kotlin.View.AdminConsole.dummy
+package com.routesme.taxi_screen.kotlin.View.AdminConsole.Model
 
 object AdminConsoleLists {
-
     val MASTER_ITEMS = listOf(
             MasterItem(0, ItemType.Info),
             MasterItem(1, ItemType.Account),

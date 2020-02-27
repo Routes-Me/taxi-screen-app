@@ -4,10 +4,5 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".kotlin.SplashScreen"
-    android:background="@drawable/login_routes_background">
-
-
-
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+    android:background="@drawable/login_routes_background"
+    tools:context=".kotlin.SplashScreen" />

@@ -10,7 +10,6 @@
     android:paddingBottom="8dp"
     tools:context=".kotlin.View.Home_Screen_Fragments.ContentFragment">
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/Advertisement_Banner_CardView"
         android:layout_width="0dp"
@@ -42,7 +41,6 @@
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
 
     <androidx.cardview.widget.CardView
         android:id="@+id/Advertisement_Video_CardView"
@@ -88,11 +86,9 @@
                 app:ringWidth="1dp"
                 app:style="FILL" />
 
-
         </RelativeLayout>
 
     </androidx.cardview.widget.CardView>
-
 
     <LinearLayout
         android:id="@+id/Advertisement_Currencies_RelativeLayout"

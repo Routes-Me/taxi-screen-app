@@ -9,31 +9,23 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:background="@color/white"
         android:gravity="center"
-        android:background="@color/white">
+        android:orientation="vertical">
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/MyToolBar"
+            style="@style/AppTheme.CustomTextViewToolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            style="@style/AppTheme.CustomTextViewToolbar"
             android:layout_marginTop="31dp"
-            />
-
-
-
+            android:layout_marginBottom="20dp" />
 
         <WebView
             android:id="@+id/webView_routesWebsite"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:ignore="WebViewLayout" />
-
-
-
-
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

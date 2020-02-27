@@ -3,20 +3,19 @@
     android:id="@+id/list_item"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="10dp"
-    android:layout_marginBottom="10dp">
+    android:layout_marginTop="40dp"
+    android:layout_marginBottom="25dp">
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/title"
-        android:textSize="24sp"
         android:fontFamily="sans-serif"
-        android:textStyle="bold"
+        android:text="Title"
         android:textColor="@color/black"
-        android:text="Title">
+        android:textSize="24sp"
+        android:textStyle="bold">
 
     </TextView>
-
 
 </RelativeLayout>

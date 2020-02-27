@@ -31,10 +31,10 @@
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.AdminConsole.ItemListActivity"
-            android:label="@string/title_item_list"
-            android:theme="@style/noActionBar.NoActionBar">
-
+            android:name="com.routesme.taxi_screen.kotlin.View.AdminConsole.View.ItemListActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -43,17 +43,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-        </activity>
-        <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.AdminConsole.ItemDetailActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
-            android:windowSoftInputMode="adjustNothing"
-            android:label="@string/title_item_detail"
-            android:parentActivityName="com.routesme.taxi_screen.kotlin.View.AdminConsole.ItemListActivity">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.routesme.taxi_screen.kotlin.View.AdminConsole.ItemListActivity" />
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen"
