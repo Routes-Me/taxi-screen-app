@@ -1,12 +1,12 @@
-package com.routesme.taxi_screen.kotlin.View.AdminConsole.View
+package com.routesme.taxi_screen.kotlin.AdminConsole.View
 
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.View.AdminConsole.Class.MasterItemsAdapter
-import com.routesme.taxi_screen.kotlin.View.AdminConsole.Model.AdminConsoleLists
+import com.routesme.taxi_screen.kotlin.AdminConsole.Class.MasterItemsAdapter
+import com.routesme.taxi_screen.kotlin.AdminConsole.Class.AdminConsoleLists
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.activity_item_list.*
 import kotlinx.android.synthetic.main.item_list.*
@@ -35,7 +35,7 @@ class ItemListActivity : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.item_detail_container, fragment).commit()
     }
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.apply { adapter = MasterItemsAdapter(this@ItemListActivity, AdminConsoleLists.MASTER_ITEMS) }
+        recyclerView.apply { adapter = MasterItemsAdapter(this@ItemListActivity, AdminConsoleLists.List.MASTER_ITEMS) }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {

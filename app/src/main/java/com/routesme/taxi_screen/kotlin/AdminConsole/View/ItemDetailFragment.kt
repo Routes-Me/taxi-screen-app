@@ -1,28 +1,38 @@
-package com.routesme.taxi_screen.kotlin.View.AdminConsole.View
+package com.routesme.taxi_screen.kotlin.AdminConsole.View
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
-import com.routesme.taxi_screen.kotlin.View.AdminConsole.Class.DetailsListAdapter
-import com.routesme.taxi_screen.kotlin.View.AdminConsole.Model.AdminConsoleLists
+import com.routesme.taxi_screen.kotlin.AdminConsole.Class.DetailsListAdapter
+import com.routesme.taxi_screen.kotlin.AdminConsole.Class.AdminConsoleLists
+import com.routesme.taxi_screen.kotlin.Model.MasterItemType
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 
 class ItemDetailFragment : Fragment() {
-    companion object { const val ARG_ITEM_ID = "itemId" }
-    private var detailsList = AdminConsoleLists.INFO_CELLS
+    companion object {
+        const val ARG_ITEM_ID = "itemId"
+    }
+
+    private var detailsList = AdminConsoleLists.List.INFO_CELLS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        getSelectedItemList()
+    }
+
+    private fun getSelectedItemList(){
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
-                val item = AdminConsoleLists.MASTER_ITEMS[it.getInt(ARG_ITEM_ID)]
-                 detailsList= AdminConsoleLists.INFO_CELLS
-
+                val item = AdminConsoleLists.List.MASTER_ITEMS[it.getInt(ARG_ITEM_ID)]
+                detailsList = when (item.type) {
+                    MasterItemType.Account -> AdminConsoleLists.List.ACCOUNT_CELLS
+                    MasterItemType.Settings -> AdminConsoleLists.List.SETTINGS_CELLS
+                    else -> AdminConsoleLists.List.INFO_CELLS
+                }
             }
         }
     }

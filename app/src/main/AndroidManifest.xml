@@ -31,7 +31,7 @@
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.AdminConsole.View.ItemListActivity"
+            android:name="com.routesme.taxi_screen.kotlin.AdminConsole.View.ItemListActivity"
             android:screenOrientation="landscape"
             android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
