@@ -66,7 +66,6 @@ class ModelPresenter : AppCompatActivity() {
         this.finish()
     }
 }
-
 enum class Screens {
     HomeScreen, LoginScreen
 }

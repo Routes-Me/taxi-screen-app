@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.AdminConsole.Class
+package com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

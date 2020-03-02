@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.AdminConsole.Class
+package com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -7,13 +7,13 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.AdminConsole.View.ItemDetailFragment
-import com.routesme.taxi_screen.kotlin.AdminConsole.View.ItemListActivity
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.ItemDetailFragment
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.AdminConsolePanel
 import com.routesme.taxi_screen.kotlin.Model.MasterItem
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_list_content.view.*
 
-class MasterItemsAdapter(private val parentActivity: ItemListActivity, private val MasterItems: List<MasterItem>) : RecyclerView.Adapter<MasterItemsAdapter.ViewHolder>() {
+class MasterItemsAdapter(private val parentActivity: AdminConsolePanel, private val MasterItems: List<MasterItem>) : RecyclerView.Adapter<MasterItemsAdapter.ViewHolder>() {
 
     private var rowIndex: Int = 0
     private val onClickListener: View.OnClickListener
@@ -23,7 +23,7 @@ class MasterItemsAdapter(private val parentActivity: ItemListActivity, private v
             val item = it.tag as MasterItem
             rowIndex = item.id;
             notifyDataSetChanged()
-            val fragment = ItemDetailFragment().apply { arguments = Bundle().apply { putInt(ItemDetailFragment.ARG_ITEM_ID, rowIndex) } }
+            val fragment = ItemDetailFragment(parentActivity).apply { arguments = Bundle().apply { putInt(ItemDetailFragment.ARG_ITEM_ID, rowIndex) } }
             parentActivity.supportFragmentManager.beginTransaction().replace(R.id.item_detail_container, fragment).commit()
         }
     }

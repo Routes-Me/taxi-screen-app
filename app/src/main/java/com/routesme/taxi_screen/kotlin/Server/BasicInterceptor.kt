@@ -36,12 +36,12 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(@NonNull chain: Interceptor.Chain): Response {
         val response: Response = chain.proceed(chain.request())
-        if (response.code() == 401) startSplashScreen(activity, response.code())
+        if (response.code() == 401) openModelPresenterScreen(activity, response.code())
 
         return response
     }
 
-    private fun startSplashScreen(activity: Activity, responseCode: Int) {
+    private fun openModelPresenterScreen(activity: Activity, responseCode: Int) {
         activity.startActivity(Intent(activity, ModelPresenter::class.java).putExtra("authorization", Authorization(false, responseCode)))
         activity.finish()
     }

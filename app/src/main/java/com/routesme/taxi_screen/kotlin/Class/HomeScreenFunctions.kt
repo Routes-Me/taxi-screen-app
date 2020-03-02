@@ -16,6 +16,7 @@ import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
 import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.AdminConsolePanel
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 import kotlin.system.exitProcess
@@ -64,13 +65,14 @@ class HomeScreenFunctions(val activity: Activity) {
                 val finalPattern = PatternLockUtils.patternToString(adminVerificationPattern, pattern)
 
                 if (finalPattern == tabletPassword) {
-                    openSettings();
+                    adminVerificationDialog.dismiss()
+                   // openSettings();
+                    openAdminConsolePanel()
                 } else {
                     adminVerificationPattern.clearPattern();
                     adminVerificationDialog.dismiss();
                 }
             }
-
             override fun onCleared() {}
             override fun onStarted() {}
             override fun onProgress(progressPattern: MutableList<PatternLockView.Dot>?) {}
@@ -82,5 +84,9 @@ class HomeScreenFunctions(val activity: Activity) {
         activity.startActivity(settingIntent)
         activity.finish()
         exitProcess(0)
+    }
+
+    private fun openAdminConsolePanel() {
+      activity.apply { startActivity(Intent(activity,AdminConsolePanel::class.java)); finish() }
     }
 }

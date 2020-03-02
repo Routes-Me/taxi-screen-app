@@ -8,7 +8,6 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
@@ -25,9 +24,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
-
 import com.routesme.taxi_screen.java.Model.TabletInfoViewModel;
 import com.routesme.taxi_screen.kotlin.Class.App;
+import com.routesme.taxi_screen.kotlin.Class.DateOperations;
 import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
@@ -35,6 +34,8 @@ import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
+
+import java.util.Objects;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -53,9 +54,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private int taxiOfficeId = 0;
     private boolean showRationale = true, getDeviceInfo = false;
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,9 +61,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
 
         initialize();
-
     }
-
     private void initialize() {
         operations = new Operations();
         app = (App) getApplicationContext();
@@ -74,14 +70,11 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         sharedPreferencesStorage();
         getTabletInfo();
     }
-
-
     private void initializeViews() {
         toolbarSetUp();
         initLayoutViews();
         initProgressDialog();
     }
-
     private void initLayoutViews() {
         taxiOffice_tv = findViewById(R.id.taxiOffice_tv);
         taxiOffice_tv.setOnClickListener(this);
@@ -89,34 +82,26 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         taxiPlateNumber_tv = findViewById(R.id.taxiPlateNumber_tv);
         taxiPlateNumber_tv.setOnClickListener(this);
         taxiPlateNumber_error_tv = findViewById(R.id.taxiPlateNumber_error_tv);
-
         tabletSerialNumber_tv = findViewById(R.id.deviceSerialNumber_tv);
         tabletSerialNumber_tv.setOnClickListener(this);
         SimCardNumber_tv = findViewById(R.id.SimCardNumber_tv);
         SimCardNumber_tv.setOnClickListener(this);
-
         register_btn = findViewById(R.id.register_btn);
         register_btn.setOnClickListener(this);
     }
-
-
     private void initProgressDialog() {
         dialog = new ProgressDialog(this);
         dialog.setMessage("Please Wait...");
         dialog.setCancelable(false);
     }
-
     private void sharedPreferencesStorage() {
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
 
     }
-
-
     private void toolbarSetUp() {
         myToolbar = findViewById(R.id.MyToolBar);
         setSupportActionBar(myToolbar);
         getSupportActionBar().setTitle(welcomeMessage());
-
         // add back arrow to toolbar
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -124,12 +109,10 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back_grey);
         }
     }
-
     private String welcomeMessage() {
         String username = app.getAuthCredentials().getUsername();
         return  "Welcome,  " +  (username != null && !username.isEmpty() ?  username.substring(0, 1).toUpperCase() + username.substring(1) : "");
     }
-
     @Override
     protected void onRestart() {
         if (tabletCredentials == null){
@@ -148,29 +131,21 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         super.onRestart();
     }
-
     private String showTaxiOfficeName(String taxiOfficeName){
         return taxiOfficeName != null && !taxiOfficeName.isEmpty() ? taxiOfficeName : null;
     }
     private String showTaxiPlateNumber(String taxiPlateNumber){
         return taxiPlateNumber != null && !taxiPlateNumber.isEmpty() ? taxiPlateNumber : null;
     }
-
-
     @SuppressLint("HardwareIds")
     private void getTabletInfo() {
-
         if (telephonyManager == null) {
             telephonyManager = (TelephonyManager) getSystemService(this.TELEPHONY_SERVICE);
         }
-
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
             return;
         } else {
-
-
-
             tabletCredentials.setDeviceId(telephonyManager.getDeviceId());
             tabletCredentials.setSimSerialNumber(telephonyManager.getSimSerialNumber());
             tabletSerialNumber_tv.setText(tabletCredentials.getDeviceId());
@@ -178,7 +153,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             showTabletInfoError(false);
         }
     }
-
     @SuppressLint("HardwareIds")
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
@@ -203,7 +177,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -225,13 +198,11 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
         }
     }
-
     private void openTaxiOfficesList() {
         taxiOffice_tv.setEnabled(false);
         openDataList(Offices_STR);
         showInputError(false, 0);
     }
-
     private void openTaxiOfficePlateNumbersList() {
         if (taxiOfficeId > 0) {
             taxiPlateNumber_tv.setEnabled(false);
@@ -242,28 +213,23 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         }
         showInputError(false, 0);
     }
-
     private void openDataList(String listType) {
         startActivity(new Intent(this, TaxiInformationListScreen.class).putExtra(List_Type_STR, listType));
     }
-
     private void TabletRegister() {
         if (Token() != null && AllDataExist()) {
             operations.enableNextButton(register_btn, false);
             dialog.show();
-
             TabletInfoViewModel tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
             tabletInfoViewModel.getTabletInfo(this, Token(), tabletCredentials, dialog, register_btn).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
                 @Override
                 public void onChanged(TabletInfo tabletInfo) {
                     saveTabletInfoIntoSharedPreferences(tabletInfo);
-                    openSplashScreen();
-
+                    openModelPresenterScreen();
                 }
             });
         }
     }
-
     private String Token() {
         String savedToken = sharedPreferences.getString("tabToken", null);
         return savedToken != null && !savedToken.isEmpty() ? "Bearer " + savedToken : null;
@@ -307,25 +273,24 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         if (editor == null){
             editor = sharedPreferences.edit();
         }
+        editor.putString("technicalUserName", Objects.requireNonNull(app.getAuthCredentials()).getUsername());
+        editor.putString("registrationDate", new DateOperations().registrationDate());
         editor.putString("tabletPassword", tabletInfo.getTabletPassword());
         editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
         editor.putInt("taxiOfficeId", tabletCredentials.getTaxiOfficeId());
+        editor.putString("institutionName",app.getTaxiOfficeName());
         editor.putString("taxiPlateNumber", tabletCredentials.getTaxiPlateNumber());
         editor.putString("tabletSerialNo", tabletCredentials.getDeviceId());
         editor.putString("simCardNumber", tabletCredentials.getSimSerialNumber());
         editor.apply();
     }
-    private void openSplashScreen() {
+    private void openModelPresenterScreen() {
         Authorization authorization = new Authorization(true,200);
-        Intent SplashScreenIntent = new Intent(TaxiInformationScreen.this, ModelPresenter.class);
-        SplashScreenIntent.putExtra("authorization",authorization);
-        startActivity(SplashScreenIntent);
+        Intent ModelPresenterScreenIntent = new Intent(TaxiInformationScreen.this, ModelPresenter.class);
+        ModelPresenterScreenIntent.putExtra("authorization",authorization);
+        startActivity(ModelPresenterScreenIntent);
         finish();
     }
-
-
-
-
     private void clickOnGetDeviceInfo() {
         if (!showRationale && !getDeviceInfo) {
             new AlertDialog.Builder(this)
@@ -397,6 +362,4 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         }
         return super.onOptionsItemSelected(item);
     }
-
-
 }

@@ -1,22 +1,26 @@
-package com.routesme.taxi_screen.kotlin.AdminConsole.View
+package com.routesme.taxi_screen.kotlin.AdminConsolePanel.View
 
+import android.app.Activity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.routesme.taxi_screen.kotlin.AdminConsole.Class.DetailsListAdapter
-import com.routesme.taxi_screen.kotlin.AdminConsole.Class.AdminConsoleLists
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class.AdminConsoleDetailsListAdapter
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class.AdminConsoleLists
 import com.routesme.taxi_screen.kotlin.Model.MasterItemType
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 
-class ItemDetailFragment : Fragment() {
+class ItemDetailFragment(activity: Activity) : Fragment() {
     companion object {
         const val ARG_ITEM_ID = "itemId"
-    }
 
-    private var detailsList = AdminConsoleLists.List.INFO_CELLS
+    }
+    private val adminConsoleLists = AdminConsoleLists(activity)
+
+
+    private var detailsList = adminConsoleLists.INFO_CELLS
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +31,11 @@ class ItemDetailFragment : Fragment() {
     private fun getSelectedItemList(){
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
-                val item = AdminConsoleLists.List.MASTER_ITEMS[it.getInt(ARG_ITEM_ID)]
+                val item = adminConsoleLists.MASTER_ITEMS[it.getInt(ARG_ITEM_ID)]
                 detailsList = when (item.type) {
-                    MasterItemType.Account -> AdminConsoleLists.List.ACCOUNT_CELLS
-                    MasterItemType.Settings -> AdminConsoleLists.List.SETTINGS_CELLS
-                    else -> AdminConsoleLists.List.INFO_CELLS
+                    MasterItemType.Account -> adminConsoleLists.ACCOUNT_CELLS
+                    MasterItemType.Settings -> adminConsoleLists.SETTINGS_CELLS
+                    else -> adminConsoleLists.INFO_CELLS
                 }
             }
         }
@@ -40,6 +44,6 @@ class ItemDetailFragment : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.item_detail_fragment, container, false)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ItemDetailsRecyclerView.apply { adapter = DetailsListAdapter(detailsList) }
+        ItemDetailsRecyclerView.apply { adapter = activity?.let { detailsList.let { it1 -> AdminConsoleDetailsListAdapter(it, it1) } } }
     }
 }

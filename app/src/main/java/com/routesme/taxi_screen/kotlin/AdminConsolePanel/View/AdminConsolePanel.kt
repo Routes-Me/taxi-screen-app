@@ -1,21 +1,23 @@
-package com.routesme.taxi_screen.kotlin.AdminConsole.View
+package com.routesme.taxi_screen.kotlin.AdminConsolePanel.View
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.AdminConsole.Class.MasterItemsAdapter
-import com.routesme.taxi_screen.kotlin.AdminConsole.Class.AdminConsoleLists
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class.MasterItemsAdapter
+import com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class.AdminConsoleLists
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
 import com.routesme.taxiscreen.R
-import kotlinx.android.synthetic.main.activity_item_list.*
+import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
 
-class ItemListActivity : AppCompatActivity() {
+class AdminConsolePanel : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_item_list)
+        setContentView(R.layout.admin_console_panel)
 
         initialize()
     }
@@ -31,15 +33,15 @@ class ItemListActivity : AppCompatActivity() {
         }
     }
     private fun setUpItemDetailFragment(){
-        val fragment = ItemDetailFragment().apply { Bundle().apply { putInt(ItemDetailFragment.ARG_ITEM_ID, 0) } }
+        val fragment = ItemDetailFragment(this).apply { Bundle().apply { putInt(ItemDetailFragment.ARG_ITEM_ID, 0) } }
         supportFragmentManager.beginTransaction().replace(R.id.item_detail_container, fragment).commit()
     }
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.apply { adapter = MasterItemsAdapter(this@ItemListActivity, AdminConsoleLists.List.MASTER_ITEMS) }
+        recyclerView.apply { adapter = MasterItemsAdapter(this@AdminConsolePanel, AdminConsoleLists(this@AdminConsolePanel).MASTER_ITEMS) }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-          Toast.makeText(this,"Back button clicked!",Toast.LENGTH_SHORT).show()
+            this.apply { startActivity(Intent(this,HomeScreen::class.java)); finish() }
         }
         return super.onOptionsItemSelected(item)
     }
