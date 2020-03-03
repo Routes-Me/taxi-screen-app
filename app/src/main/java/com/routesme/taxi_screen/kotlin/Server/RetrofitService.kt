@@ -5,6 +5,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.Helper
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
@@ -24,7 +25,7 @@ class RetrofitService() {
         fun create(context: Context): RoutesApi {
             return Retrofit.Builder()
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .baseUrl(Helper.getConfigValue(context, "baseUrl"))
+                    .baseUrl(Helper.getConfigValue("baseUrl"))
                     .client(ApiWorker(context).client)
                     .addConverterFactory(ApiWorker(context).gsonConverter)
                     .build()
@@ -57,7 +58,8 @@ class RetrofitService() {
     }
 
     fun getToken(authCredentials: AuthCredentials, dialog: AlertDialog,context: Context): MutableLiveData<JsonElement> {
-        val retrofitCall = create(context).loginAuth(authCredentials)
+        val encryptedAuthCredentials = AuthCredentials(encrypt(authCredentials.Username),encrypt(authCredentials.Password))
+        val retrofitCall = create(context).loginAuth(encryptedAuthCredentials)
         retrofitCall?.enqueue(object : Callback<JsonElement?>{
             override fun onFailure(call: Call<JsonElement?>, t: Throwable) {dialog.dismiss()}
             override fun onResponse(call: Call<JsonElement?>, response: Response<JsonElement?>) {
@@ -67,4 +69,6 @@ class RetrofitService() {
         })
         return tokenJsonElement
     }
+
+    private fun encrypt(string: String) = AesBase64Wrapper().encryptAndEncode(string)
 }

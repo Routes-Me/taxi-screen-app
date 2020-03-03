@@ -2,6 +2,7 @@ package com.routesme.taxi_screen.kotlin.Class
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.util.Base64
 import com.routesme.taxi_screen.kotlin.Model.EncryptModel
 import java.io.UnsupportedEncodingException
@@ -13,7 +14,7 @@ import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 
-class AesBase64Wrapper(activity: Activity?) {
+class AesBase64Wrapper() {
     @SuppressLint("NewApi")
     fun encryptAndEncode(raw: String): String {
         return try {
@@ -53,6 +54,6 @@ class AesBase64Wrapper(activity: Activity?) {
     }
 
     init {
-        encrypt = EncryptModel(activity!!)
+        encrypt = EncryptModel()
     }
 }

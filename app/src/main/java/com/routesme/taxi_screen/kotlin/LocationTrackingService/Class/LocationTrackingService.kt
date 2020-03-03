@@ -25,7 +25,7 @@ class LocationTrackingService(val context: Context) {
         }
     }
 
-    private fun trackingWebSocketUri()= URI(Helper.getConfigValue(context, "trackingWebSocketUri"))
+    private fun trackingWebSocketUri()= URI(Helper.getConfigValue("trackingWebSocketUri"))
 
 
     private fun setTrackingWebSocketConfiguration(trackingUri: URI, tabletSerialNo: String): WebSocketClient {

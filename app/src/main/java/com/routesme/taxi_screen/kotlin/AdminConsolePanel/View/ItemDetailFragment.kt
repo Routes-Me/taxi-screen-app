@@ -44,6 +44,6 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.item_detail_fragment, container, false)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ItemDetailsRecyclerView.apply { adapter = activity?.let { detailsList.let { it1 -> AdminConsoleDetailsListAdapter(it, it1) } } }
+        ItemDetailsRecyclerView.apply { adapter = activity?.let { AdminConsoleDetailsListAdapter(it, detailsList) } }
     }
 }

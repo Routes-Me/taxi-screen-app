@@ -1,6 +1,6 @@
 package com.routesme.taxi_screen.java.View.Login;
 
-import androidx.appcompat.app.AlertDialog;
+import android.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -37,6 +37,8 @@ import com.routesme.taxiscreen.R;
 
 import java.util.Objects;
 
+import dmax.dialog.SpotsDialog;
+
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
     private App app;
@@ -50,7 +52,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private TelephonyManager telephonyManager;
     private TextView tabletSerialNumber_tv, SimCardNumber_tv, taxiOffice_tv, taxiOffice_error_tv, taxiPlateNumber_tv, taxiPlateNumber_error_tv;
     private Button register_btn;
-    private ProgressDialog dialog;
+    private AlertDialog dialog;
     private int taxiOfficeId = 0;
     private boolean showRationale = true, getDeviceInfo = false;
 
@@ -90,9 +92,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         register_btn.setOnClickListener(this);
     }
     private void initProgressDialog() {
-        dialog = new ProgressDialog(this);
-        dialog.setMessage("Please Wait...");
-        dialog.setCancelable(false);
+        dialog = new SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build();
     }
     private void sharedPreferencesStorage() {
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);

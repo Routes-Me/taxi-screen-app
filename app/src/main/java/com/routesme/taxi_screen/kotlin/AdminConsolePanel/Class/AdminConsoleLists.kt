@@ -34,9 +34,9 @@ class AdminConsoleLists(val activity: Activity) {
     )
     val SETTINGS_CELLS = listOf(
             LabelCell("Launcher"),
-            DetailActionCell("Home App", "DONE", false),
+            DetailActionCell("Home App", DetailActionStatus.PENDING, "Open launcher settings"),
             LabelCell("Tracking"),
-            DetailActionCell("Location", "OPEN SETTINGS", false)
+            DetailActionCell("Location", DetailActionStatus.PENDING, "Open general settings")
     )
 
     private fun plateNumber() = sharedPreferences?.getString("taxiPlateNumber", defaultValue)

@@ -13,6 +13,7 @@ import android.text.TextWatcher
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -89,12 +90,7 @@ class LoginScreen : AppCompatActivity() {
     }
 
     private fun dialogSetUp() {
-        dialog = SpotsDialog.Builder()
-                .setContext(this)
-                .setTheme(R.style.SpotsDialogStyle)
-                .setCancelable(false).build()
-
-
+        dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
     }
 
     private fun buttonNextClick() {
@@ -106,17 +102,11 @@ class LoginScreen : AppCompatActivity() {
     private fun login() {
         if (userNameValid() && passwordValid()) {
             dialog.show()
-            val aesBase64Wrapper = AesBase64Wrapper(this)
-            val authCredentials = AuthCredentials(aesBase64Wrapper.encryptAndEncode(userName), aesBase64Wrapper.encryptAndEncode(password))
+            val authCredentials = AuthCredentials(userName, password)
             val model: RoutesViewModel by viewModels()
             model.getToken(authCredentials, dialog, this).observe(this, Observer<JsonElement> {
-                if (it.isJsonObject) {
-                    val accessToken = Gson().fromJson<Token>(it, Token::class.java).access_token
-                    if (!accessToken.isNullOrEmpty()) {
-                        saveDataIntoSharedPreference(accessToken)
-                        openTaxiInformationScreen()
-                    }
-                } else if (it.isJsonArray) {
+
+                if (it.isJsonArray) {
                     val authErrors = Gson().fromJson<List<AuthCredentialsError>>(it as JsonArray?, object : TypeToken<List<AuthCredentialsError?>?>() {}.type)
                     if (authErrors != null) {
                         for (e in authErrors.indices) {
@@ -125,8 +115,15 @@ class LoginScreen : AppCompatActivity() {
                             }
                         }
                     }
+                }else {
+                    val accessToken = Gson().fromJson<Token>(it, Token::class.java).access_token
+                    if (!accessToken.isNullOrEmpty()) {
+                        saveDataIntoSharedPreference(accessToken)
+                        openTaxiInformationScreen()
+                    }
                 }
             })
+
         }
     }
 
@@ -176,8 +173,7 @@ class LoginScreen : AppCompatActivity() {
         }
         if (show) {
             editText!!.setBackgroundResource(R.drawable.red_border)
-            textView!!.text = "* $errorStr"
-            textView.visibility = View.VISIBLE
+            textView!!.apply { text = "* $errorStr"; visibility = View.VISIBLE }
             return
         } else {
             editText!!.setBackgroundResource(R.drawable.grey_border_edit_text)

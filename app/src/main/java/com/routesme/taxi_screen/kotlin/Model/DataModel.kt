@@ -54,4 +54,6 @@ interface ICell
 class LabelCell(val title: String) : ICell
 class DetailCell(val title: String, val value: String, val splitLine: Boolean = false) : ICell
 class ActionCell(val action: String) : ICell
-class DetailActionCell(val title: String, val value: String, val splitLine: Boolean = false) : ICell
+class DetailActionCell(val title: String, val status: DetailActionStatus, val action: String) : ICell
+
+enum class DetailActionStatus{DONE, PENDING}

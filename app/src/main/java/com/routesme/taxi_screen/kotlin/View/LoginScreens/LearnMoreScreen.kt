@@ -26,13 +26,13 @@ class LearnMoreScreen : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun showRoutesWebsite() {
         webView_routesWebsite.webViewClient = WebViewClient()
-        webView_routesWebsite.loadUrl(Helper.getConfigValue(this, "routesWebsiteUrl"))
+        webView_routesWebsite.loadUrl(Helper.getConfigValue("routesWebsiteUrl"))
         val webSettings = webView_routesWebsite.settings
         webSettings.javaScriptEnabled = true
     }
     private fun toolbarSetUp() {
         setSupportActionBar(MyToolBar)
-        supportActionBar!!.title = "Learn more"
+        supportActionBar!!.title = getString(R.string.learn_more)
         if (supportActionBar != null) {
             supportActionBar!!.setDisplayHomeAsUpEnabled(true)
             supportActionBar!!.setDisplayShowHomeEnabled(true)

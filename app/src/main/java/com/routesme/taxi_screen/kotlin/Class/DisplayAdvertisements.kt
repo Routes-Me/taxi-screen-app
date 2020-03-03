@@ -90,7 +90,7 @@ class DisplayAdvertisements(private val activity: FragmentActivity?, private val
         animation1.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                Glide.with(activity).load(uri).apply(options).into(ADS_ImageView)
+                activity?.let { Glide.with(it).load(uri).apply(options).into(ADS_ImageView) }
                 animation2.start()
             }
         })

@@ -74,7 +74,7 @@ class HomeScreen : PermissionsActivity() {
     private fun openPatternClick() {
         clickTimes++
         if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10){
-            homeScreenFunctions.showAdminVerificationDialog(sharedPreferences.getString("tabletPassword", null))
+            homeScreenFunctions.showAdminVerificationDialog(sharedPreferences.getString("tabletPassword", null).toString())
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()

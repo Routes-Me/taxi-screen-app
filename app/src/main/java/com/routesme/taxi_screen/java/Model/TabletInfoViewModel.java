@@ -1,6 +1,7 @@
 package com.routesme.taxi_screen.java.Model;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.widget.Button;
 import androidx.lifecycle.LiveData;
@@ -22,11 +23,11 @@ public class TabletInfoViewModel extends ViewModel {
     private MutableLiveData<TabletInfo> tabletInfo;
 
     private Operations operations;
-    private ProgressDialog dialog;
+    private AlertDialog dialog;
     private Button register_btn;
 
     //we will call this method to get the data
-    public LiveData<TabletInfo> getTabletInfo(Activity activity, String token, TabletCredentials tabletCredentials, ProgressDialog dialog, Button register_btn) {
+    public LiveData<TabletInfo> getTabletInfo(Activity activity, String token, TabletCredentials tabletCredentials, AlertDialog dialog, Button register_btn) {
         operations = new Operations();
         this.dialog = dialog;
         this.register_btn = register_btn;

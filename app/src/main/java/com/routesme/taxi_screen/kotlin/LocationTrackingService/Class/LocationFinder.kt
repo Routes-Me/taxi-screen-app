@@ -48,7 +48,7 @@ class LocationFinder(val context: Context, private val trackingHandler: Tracking
         alertDialog.show()
     }
 
-    private val positiveButtonClick = { dialog: DialogInterface, which: Int -> context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+    private val positiveButtonClick = { _: DialogInterface, which: Int -> context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
     private val negativeButtonClick = { dialog: DialogInterface, which: Int -> dialog.cancel() }
 
     private fun canGetLocation() = isGPSEnabled() || isNetworkEnabled()

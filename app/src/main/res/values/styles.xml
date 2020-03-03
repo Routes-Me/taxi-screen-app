@@ -1,11 +1,9 @@
 <resources>
-
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
     <style name="noActionBar" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="dialogCornerRadius">12dp</item>
@@ -13,7 +11,6 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
-
     <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
@@ -21,7 +18,6 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="editTextStyle">@style/AppTheme.CustomEditText</item>
     </style>
-
     <style name="AppTheme.CustomEditText" parent="android:style/Widget.EditText">
         <item name="android:imeOptions">actionNext</item>
         <item name="android:singleLine">true</item>
@@ -33,7 +29,45 @@
         <item name="android:textStyle">normal</item>
         <item name="android:layout_gravity">start</item>
     </style>
-
+    <style name="AppTheme.scrollingTextView">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+    <style name="AppTheme.CustomTextViewToolbar">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:background">@color/white</item>
+    </style>
+    <style name="AppTheme.CustomTextViewList">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:padding">2dp</item>
+    </style>
+    <style name="AppTheme.counterText">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/black</item>
+        <item name="android:fontFamily">sans-serif-light</item>
+    </style>
+    <style name="AppTheme.CustomTextViewTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+    <style name="AppTheme.CustomButton" parent="Widget.AppCompat.ActionButton">
+        <item name="android:textSize">18sp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/next_button_border_enable</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
     <style name="AppTheme.CustomTextView">
         <item name="android:imeOptions">actionNext</item>
         <item name="android:singleLine">true</item>
@@ -46,65 +80,13 @@
         <item name="android:layout_gravity">start</item>
         <item name="android:clickable">false</item>
     </style>
-
-    <style name="AppTheme.CustomButton">
-        <item name="android:textSize">18sp</item>
-        <item name="android:gravity">center</item>
-        <item name="android:background">@drawable/next_button_border_enable</item>
-        <item name="android:textColor">@color/white</item>
-        <item name="android:textStyle">normal</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="AppTheme.CustomTextViewTitle">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/grey</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-    </style>
-
-    <style name="AppTheme.CustomTextViewToolbar">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/grey</item>
-        <item name="android:textSize">18sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-        <item name="android:background">@color/white</item>
-    </style>
-
-    <style name="AppTheme.CustomTextViewList">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/grey</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif</item>
-        <item name="android:padding">2dp</item>
-    </style>
-
-    <style name="AppTheme.scrollingTextView">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
-
-    <style name="AppTheme.counterText">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-    </style>
-
     <style name="SpotsDialogStyle" parent="android:Theme.DeviceDefault.Dialog">
         <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="android:background">@color/tint_color</item>
         <item name="DialogTitleText">@string/please_wait</item>
-        <item name="DialogSpotColor">@color/colorPrimaryDark</item>
+        <item name="android:textColorTertiary">@color/white</item>
+        <item name="DialogSpotColor">@color/white</item>
         <item name="DialogSpotCount">4</item>
+
     </style>
-
-    <style name="noActionBar.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="windowNoTitle">true</item>
-    </style>
-
-    <style name="noActionBar.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
-
-    <style name="noActionBar.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
 </resources>

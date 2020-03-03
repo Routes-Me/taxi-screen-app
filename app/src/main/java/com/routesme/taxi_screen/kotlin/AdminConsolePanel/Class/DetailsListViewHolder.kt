@@ -21,6 +21,6 @@ class ActionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class DetailActionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val title: TextView = itemView.findViewById(R.id.title)
-    val value: TextView = itemView.findViewById(R.id.value)
-    val splitLine: View = itemView.findViewById(R.id.splitLine)
+    val status: TextView = itemView.findViewById(R.id.status)
+    val action: TextView = itemView.findViewById(R.id.action)
 }

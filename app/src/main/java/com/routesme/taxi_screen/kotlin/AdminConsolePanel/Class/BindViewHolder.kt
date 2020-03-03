@@ -3,6 +3,7 @@ package com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.kotlin.Model.*
+import com.routesme.taxiscreen.R
 
 fun onBindLabel(holder: RecyclerView.ViewHolder, cell: ICell) {
     holder as LabelViewHolder
@@ -31,9 +32,7 @@ fun onBindDetailAction(holder: RecyclerView.ViewHolder, cell: ICell) {
     holder as DetailActionViewHolder
     cell as DetailActionCell
     holder.apply {
-        title.text = cell.title; value.text = cell.value
-        if (cell.splitLine) {
-            holder.splitLine.visibility = View.VISIBLE
-        }
+        title.text = cell.title; status.apply {if (cell.status == DetailActionStatus.DONE) {text = cell.status.toString(); setBackgroundResource(R.drawable.status_done) }}
+        ; action.apply { text = cell.action }
     }
 }

@@ -12,7 +12,7 @@ import com.android.dx.stock.ProxyBuilder;
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-
+@SuppressWarnings("unchecked")
 @RequiresApi(api = Build.VERSION_CODES.O)
 public class MyOreoWifiManager {
     private static final String TAG = MyOreoWifiManager.class.getSimpleName();
