@@ -2,50 +2,36 @@ package com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class
 
 import android.app.Activity
 import com.routesme.taxi_screen.kotlin.Model.*
-import com.routesme.taxiscreen.BuildConfig
 
 class AdminConsoleLists(val activity: Activity) {
 
-    companion object {
-        private const val defaultValue = "- -"
-    }
+    private val adminConsoleHelper = AdminConsoleHelper(activity)
 
-    private val sharedPreferences = activity.getSharedPreferences("userData", Activity.MODE_PRIVATE)
-    val MASTER_ITEMS = listOf(
+    val masterItems = listOf(
             MasterItem(0, MasterItemType.Info),
             MasterItem(1, MasterItemType.Account),
             MasterItem(2, MasterItemType.Settings)
     )
-    val INFO_CELLS = listOf(
+    val infoCells = listOf(
             LabelCell("Vehicle"),
-            DetailCell("Plate Number", "${plateNumber()}", true),
-            DetailCell("Institution Name", "${institutionName()}", false),
+            DetailCell("Plate Number", "${adminConsoleHelper.plateNumber()}", true),
+            DetailCell("Institution Name", "${adminConsoleHelper.institutionName()}", false),
             LabelCell("General"),
-            DetailCell("Channel ID", "#${channelId()}", true),
-            DetailCell("App Version", appVersion(), true),
-            DetailCell("Sim Serial Number", "${simSerialNumber()}", true),
-            DetailCell("Device Serial Number", "${deviceSerialNumber()}", false)
+            DetailCell("Channel ID", "#${adminConsoleHelper.channelId()}", true),
+            DetailCell("App Version", adminConsoleHelper.appVersion(), true),
+            DetailCell("Sim Serial Number", "${adminConsoleHelper.simSerialNumber()}", true),
+            DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)
     )
-    val ACCOUNT_CELLS = listOf(
+    val accountCells = listOf(
             LabelCell("Technician"),
-            DetailCell("User Name", "${technicalUserName()?.capitalize()}", true),
-            DetailCell("Registration Date", "${registrationDate()}", false),
-            ActionCell("Log off")
+            DetailCell("User Name", "${adminConsoleHelper.technicalUserName()?.capitalize()}", true),
+            DetailCell("Registration Date", "${adminConsoleHelper.registrationDate()}", false),
+            ActionCell(Actions.LogOff.title)
     )
-    val SETTINGS_CELLS = listOf(
+    val settingsCells = listOf(
             LabelCell("Launcher"),
-            DetailActionCell("Home App", DetailActionStatus.PENDING, "Open launcher settings"),
+            DetailActionCell("Home App", adminConsoleHelper.isMyAppDefaultLauncher(), Actions.Launcher.title),
             LabelCell("Tracking"),
-            DetailActionCell("Location", DetailActionStatus.PENDING, "Open general settings")
+            DetailActionCell("Location", adminConsoleHelper.isLocationPermissionsAllowed(), Actions.General.title)
     )
-
-    private fun plateNumber() = sharedPreferences?.getString("taxiPlateNumber", defaultValue)
-    private fun institutionName() = sharedPreferences?.getString("institutionName", defaultValue)
-    private fun channelId() = if (getChannelId() != -999) { getChannelId() } else { defaultValue }
-    private fun getChannelId() = sharedPreferences?.getInt("tabletChannelId", -999)
-    private fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
-    private fun simSerialNumber() = sharedPreferences?.getString("simCardNumber", defaultValue)
-    private fun deviceSerialNumber() = sharedPreferences?.getString("tabletSerialNo", defaultValue)
-    private fun technicalUserName() = sharedPreferences?.getString("technicalUserName", defaultValue)
-    private fun registrationDate() = sharedPreferences?.getString("registrationDate", defaultValue)
 }

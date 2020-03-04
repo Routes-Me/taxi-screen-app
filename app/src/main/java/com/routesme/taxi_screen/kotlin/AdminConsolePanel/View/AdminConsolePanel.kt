@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.kotlin.AdminConsolePanel.View
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class.MasterItemsAdapter
@@ -23,6 +22,9 @@ class AdminConsolePanel : AppCompatActivity() {
     }
     private fun initialize(){
         toolbarSetUp()
+    }
+    override fun onResume() {
+        super.onResume()
         setUpItemDetailFragment()
         setupRecyclerView(masterRecyclerView)
     }
@@ -37,7 +39,7 @@ class AdminConsolePanel : AppCompatActivity() {
         supportFragmentManager.beginTransaction().replace(R.id.item_detail_container, fragment).commit()
     }
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.apply { adapter = MasterItemsAdapter(this@AdminConsolePanel, AdminConsoleLists(this@AdminConsolePanel).MASTER_ITEMS) }
+        recyclerView.apply { adapter = MasterItemsAdapter(this@AdminConsolePanel, AdminConsoleLists(this@AdminConsolePanel).masterItems) }
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
@@ -45,4 +47,5 @@ class AdminConsolePanel : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
+
 }

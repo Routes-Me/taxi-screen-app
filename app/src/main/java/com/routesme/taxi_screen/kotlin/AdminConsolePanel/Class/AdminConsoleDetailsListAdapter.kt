@@ -7,16 +7,13 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.kotlin.Class.App
-import com.routesme.taxi_screen.kotlin.Model.ActionCell
-import com.routesme.taxi_screen.kotlin.Model.DetailCell
-import com.routesme.taxi_screen.kotlin.Model.ICell
-import com.routesme.taxi_screen.kotlin.Model.LabelCell
+import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen
 import com.routesme.taxiscreen.R
 
 class AdminConsoleDetailsListAdapter(private val activity: Activity,private val list: List<ICell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
-    private val sharedPreferences = App.instance?.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+    private val adminConsoleHelper = AdminConsoleHelper(activity)
     companion object {
         private const val TYPE_LABEL = 0
         private const val TYPE_DETAIL = 1
@@ -30,16 +27,16 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity,private val 
         TYPE_ACTION -> ActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.action_cell_row, parent, false)).listen { pos, _ ->
             val actionCell = list[pos] as ActionCell
             when(actionCell.action){
-                "Log off" -> logOff() //Toast.makeText(activity,"logOff clicked!",Toast.LENGTH_SHORT).show()
-
+                Actions.LogOff.title -> adminConsoleHelper.logOff()
             }
         }
-        else -> DetailActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_action_cell_row, parent, false))
-    }
-
-    private fun logOff() {
-        sharedPreferences?.edit()?.clear()?.apply()
-        activity.apply {startActivity(Intent(this, LoginScreen::class.java)); finish() }
+        else -> DetailActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_action_cell_row, parent, false)).listen { pos, _ ->
+            val detailActionCell = list[pos] as DetailActionCell
+            when(detailActionCell.action){
+                Actions.Launcher.title -> adminConsoleHelper.openDefaultLauncherSetting()
+                Actions.General.title -> adminConsoleHelper.openAppGeneralSettings()
+            }
+        }
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder.itemViewType) {

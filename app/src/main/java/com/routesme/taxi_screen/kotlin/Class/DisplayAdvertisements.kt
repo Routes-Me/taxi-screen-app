@@ -3,7 +3,9 @@ package com.routesme.taxi_screen.kotlin.Class
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.animation.ObjectAnimator
+import android.media.MediaPlayer
 import android.net.Uri
+import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
@@ -17,7 +19,8 @@ import com.routesme.taxi_screen.kotlin.Model.VideoModel
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*
 
-class DisplayAdvertisements(private val activity: FragmentActivity?, private val videoRingProgressBar: RingProgressBar, private val ADS_VideoView: VideoView, private val ADS_ImageView: ImageView) {
+
+class DisplayAdvertisements(private val activity: FragmentActivity?, private val videoRingProgressBar: RingProgressBar, private val videoView: VideoView, private val ADS_ImageView: ImageView) {
 
     private var currentVideoIndex = 0
     private var currentBannerIndex = 0
@@ -34,19 +37,43 @@ class DisplayAdvertisements(private val activity: FragmentActivity?, private val
         animation2.interpolator = AccelerateDecelerateInterpolator()
         videoRingProgressBar.progress = 0
         videoRingProgressBar.max = 100
-        ADS_VideoView.requestFocus()
+        videoView.requestFocus()
     }
 
+
+    fun displayAdvertisementVideoList(videos: List<VideoModel>) {
+        videoView.setVideoPath(getVideoProxyUrl(Uri.parse(videos[currentVideoIndex].advertisement_URL)))
+        videoView.setOnPreparedListener {
+            videoView.start()
+            videoDuration = videoView.duration
+            videoRingProgressBarTimerCounter()
+        }
+        videoView.setOnCompletionListener {
+            currentVideoIndex++
+            it.reset()
+            if (currentVideoIndex < videos.size) {
+                videoView.setVideoPath(getVideoProxyUrl(Uri.parse(videos[currentVideoIndex].advertisement_URL)))
+            } else {
+                currentVideoIndex = 0
+                videoView.setVideoPath(getVideoProxyUrl(Uri.parse(videos[currentVideoIndex].advertisement_URL)))
+            }
+        }
+    }
+
+    private fun getVideoProxyUrl(videoUrl: Uri) = proxy?.getProxyUrl(videoUrl.toString())
+
+
+    /*
     fun displayAdvertisementVideoList(videos: List<VideoModel>) {
         if (currentVideoIndex < videos.size) {
             val videoUri = Uri.parse(videos[currentVideoIndex].advertisement_URL)
-            ADS_VideoView.setVideoPath(proxy?.getProxyUrl(videoUri.toString()))
-            ADS_VideoView.setOnPreparedListener {
-                ADS_VideoView.start()
-                videoDuration = ADS_VideoView.duration
+            videoView.setVideoPath(proxy?.getProxyUrl(videoUri.toString()))
+            videoView.setOnPreparedListener {
+                videoView.start()
+                videoDuration = videoView.duration
                 videoRingProgressBarTimerCounter()
             }
-            ADS_VideoView.setOnCompletionListener {
+            videoView.setOnCompletionListener {
                 currentVideoIndex++
                 displayAdvertisementVideoList(videos)
             }
@@ -55,6 +82,8 @@ class DisplayAdvertisements(private val activity: FragmentActivity?, private val
             displayAdvertisementVideoList(videos)
         }
     }
+    */
+
     private fun videoRingProgressBarTimerCounter() {
         ringProgressBarTimer = Timer()
         val task: TimerTask = object : TimerTask() {
@@ -64,14 +93,16 @@ class DisplayAdvertisements(private val activity: FragmentActivity?, private val
         }
         ringProgressBarTimer!!.schedule(task, 0, 1000)
     }
+
     private fun updateRingProgressBar() {
         if (videoRingProgressBar.progress >= 100) {
             ringProgressBarTimer?.cancel()
         }
-        val current = ADS_VideoView.currentPosition
+        val current = videoView.currentPosition
         val progress = current * 100 / videoDuration
         videoRingProgressBar.progress = progress
     }
+
     fun displayAdvertisementBannerList(banners: List<BannerModel>) {
         bannerRunnable = Runnable {
             if (currentBannerIndex < banners.size) {
@@ -86,6 +117,7 @@ class DisplayAdvertisements(private val activity: FragmentActivity?, private val
         }
         ADS_ImageView.postDelayed(bannerRunnable, 1)
     }
+
     private fun showBannerIntoImageView(uri: Uri) {
         animation1.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {

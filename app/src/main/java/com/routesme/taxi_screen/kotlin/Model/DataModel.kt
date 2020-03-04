@@ -57,3 +57,4 @@ class ActionCell(val action: String) : ICell
 class DetailActionCell(val title: String, val status: DetailActionStatus, val action: String) : ICell
 
 enum class DetailActionStatus{DONE, PENDING}
+enum class Actions(val title: String) {Launcher("Open launcher settings"), General("Open general settings"), LogOff("Log off")}

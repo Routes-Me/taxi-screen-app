@@ -66,7 +66,6 @@ class HomeScreenFunctions(val activity: Activity) {
 
                 if (finalPattern == tabletPassword) {
                     adminVerificationDialog.dismiss()
-                   // openSettings();
                     openAdminConsolePanel()
                 } else {
                     adminVerificationPattern.clearPattern();
@@ -78,14 +77,6 @@ class HomeScreenFunctions(val activity: Activity) {
             override fun onProgress(progressPattern: MutableList<PatternLockView.Dot>?) {}
         })
     }
-
-    private fun openSettings() {
-        val settingIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) Intent(Settings.ACTION_HOME_SETTINGS) else Intent(Settings.ACTION_SETTINGS)
-        activity.startActivity(settingIntent)
-        activity.finish()
-        exitProcess(0)
-    }
-
     private fun openAdminConsolePanel() {
       activity.apply { startActivity(Intent(activity,AdminConsolePanel::class.java)); finish() }
     }

@@ -112,9 +112,9 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
                 intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
-                activity!!.registerReceiver(connectivityReceiver, intentFilter)
+                requireActivity().registerReceiver(connectivityReceiver, intentFilter)
             } else {
-                activity!!.unregisterReceiver(connectivityReceiver)
+                requireActivity().unregisterReceiver(connectivityReceiver)
             }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()

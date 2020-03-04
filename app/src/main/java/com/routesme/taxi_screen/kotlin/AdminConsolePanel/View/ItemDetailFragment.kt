@@ -20,7 +20,7 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     private val adminConsoleLists = AdminConsoleLists(activity)
 
 
-    private var detailsList = adminConsoleLists.INFO_CELLS
+    private var detailsList = adminConsoleLists.infoCells
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,11 +31,11 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     private fun getSelectedItemList(){
         arguments?.let {
             if (it.containsKey(ARG_ITEM_ID)) {
-                val item = adminConsoleLists.MASTER_ITEMS[it.getInt(ARG_ITEM_ID)]
+                val item = adminConsoleLists.masterItems[it.getInt(ARG_ITEM_ID)]
                 detailsList = when (item.type) {
-                    MasterItemType.Account -> adminConsoleLists.ACCOUNT_CELLS
-                    MasterItemType.Settings -> adminConsoleLists.SETTINGS_CELLS
-                    else -> adminConsoleLists.INFO_CELLS
+                    MasterItemType.Account -> adminConsoleLists.accountCells
+                    MasterItemType.Settings -> adminConsoleLists.settingsCells
+                    else -> adminConsoleLists.infoCells
                 }
             }
         }
