@@ -64,7 +64,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     }
 
     private fun initialize() {
-        sharedPreferences = context!!.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+        sharedPreferences = requireContext().getSharedPreferences("userData", Activity.MODE_PRIVATE)
         initAdvertiseViews(this)
         firebaseAnalyticsSetUp(this)
         checkConnection()
