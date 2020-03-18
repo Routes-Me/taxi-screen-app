@@ -58,3 +58,9 @@ class DetailActionCell(val title: String, val status: DetailActionStatus, val ac
 
 enum class DetailActionStatus{DONE, PENDING}
 enum class Actions(val title: String) {Launcher("Open launcher settings"), General("Open general settings"), LogOff("Log off")}
+
+//ThemeMode Interface
+interface IThemeMode {
+    val mode:ThemMode
+}
+enum class ThemMode { Light, Dark }

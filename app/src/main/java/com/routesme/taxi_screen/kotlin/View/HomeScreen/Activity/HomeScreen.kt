@@ -5,7 +5,10 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi_screen.kotlin.Class.DisplayManager
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
@@ -27,9 +30,15 @@ class HomeScreen : PermissionsActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_screen)
 
+        val displayManager = DisplayManager()
+        Log.d("DispalyManager", "From HomeScreen .. Mode: ${displayManager.mode}")
+
+
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
         openPattern.setOnClickListener {openPatternClick()}
+
+
     }
 
     override fun onResume() {
