@@ -19,13 +19,11 @@ open class DisplayManager(context: Context) {
     }
 
     private fun isAnteMeridiem() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("18:00"))
-
     private fun currentDate(): Date {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
         val minute = calendar.get(Calendar.MINUTE)
         return parseDate("$hour:$minute")
     }
-
     private fun parseDate(time: String) = simpleDateFormat.parse(time)!!
 }
