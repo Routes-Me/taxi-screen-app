@@ -32,7 +32,6 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
         setContentView(R.layout.home_screen)
 
         DisplayManager(this)
-
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
         openPattern.setOnClickListener {openPatternClick()}
