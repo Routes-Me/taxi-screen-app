@@ -11,13 +11,15 @@ import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.kotlin.Class.DisplayManager
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
+import com.routesme.taxi_screen.kotlin.Model.IThemeMode
+import com.routesme.taxi_screen.kotlin.Model.ThemeMode
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
 @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
-class HomeScreen : PermissionsActivity() {
+class HomeScreen : PermissionsActivity(),IThemeMode {
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -30,15 +32,11 @@ class HomeScreen : PermissionsActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_screen)
 
-        val displayManager = DisplayManager()
-        Log.d("DispalyManager", "From HomeScreen .. Mode: ${displayManager.mode}")
-
+        DisplayManager(this)
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
         openPattern.setOnClickListener {openPatternClick()}
-
-
     }
 
     override fun onResume() {
@@ -87,5 +85,9 @@ class HomeScreen : PermissionsActivity() {
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()
+    }
+
+    override fun mode(themeMode: ThemeMode) {
+        Log.d("DispalyManager", "From HomeScreen .. Mode: ${themeMode}")
     }
 }
