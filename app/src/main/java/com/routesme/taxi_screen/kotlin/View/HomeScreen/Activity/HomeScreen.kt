@@ -18,7 +18,6 @@ import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-@Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
 class HomeScreen : PermissionsActivity(),IThemeMode {
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
