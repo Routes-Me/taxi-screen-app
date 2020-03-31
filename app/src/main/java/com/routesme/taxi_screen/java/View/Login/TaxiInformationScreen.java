@@ -35,6 +35,7 @@ import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
 
+import java.util.Date;
 import java.util.Objects;
 
 import dmax.dialog.SpotsDialog;
@@ -274,7 +275,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             editor = sharedPreferences.edit();
         }
         editor.putString("technicalUserName", Objects.requireNonNull(app.getAuthCredentials()).getUsername());
-        editor.putString("registrationDate", new DateOperations().registrationDate());
+        editor.putString("registrationDate", new DateOperations().registrationDate(new Date()));
         editor.putString("tabletPassword", tabletInfo.getTabletPassword());
         editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
         editor.putInt("taxiOfficeId", tabletCredentials.getTaxiOfficeId());

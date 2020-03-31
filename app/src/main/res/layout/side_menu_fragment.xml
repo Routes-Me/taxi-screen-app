@@ -60,31 +60,16 @@
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/timeClock_tv"
-                    style="@style/AppTheme.counterText"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center_vertical|start"
-                    android:autoSizeTextType="uniform"
-                    android:fontFamily="sans-serif-light"
-                    android:lines="1"
-                    android:text="Time"
-                    android:textSize="32sp"
-                    android:textStyle="normal"
-                    app:autoSizeMaxTextSize="32sp"
-                    app:autoSizeMinTextSize="24sp"
-                    app:autoSizeStepGranularity="1sp" />
 
                 <TextView
                     android:id="@+id/timeDate_tv"
                     style="@style/AppTheme.counterText"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|start"
                     android:autoSizeTextType="uniform"
                     android:fontFamily="sans-serif-light"
-                    android:lines="2"
+                    android:lines="3"
                     android:text="Date"
                     android:textSize="32sp"
                     android:textStyle="normal"

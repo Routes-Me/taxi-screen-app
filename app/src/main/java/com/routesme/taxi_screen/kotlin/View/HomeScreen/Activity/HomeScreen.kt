@@ -31,7 +31,7 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.home_screen)
 
-        DisplayManager(this)
+       // DisplayManager(this)
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
         openPattern.setOnClickListener {openPatternClick()}
@@ -86,6 +86,15 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
     }
 
     override fun mode(themeMode: ThemeMode) {
-        Log.d("DispalyManager", "From HomeScreen .. Mode: ${themeMode}")
+        Log.d("DispalyManager", "From HomeScreen .. Mode: $themeMode")
+        setStyle(themeMode)
+    }
+
+    private fun setStyle(themeMode: ThemeMode) {
+        if (themeMode == ThemeMode.Light){
+           homeScreenLayout.setBackgroundResource(R.color.white)
+        }else{
+            homeScreenLayout.setBackgroundResource(R.color.black)
+        }
     }
 }

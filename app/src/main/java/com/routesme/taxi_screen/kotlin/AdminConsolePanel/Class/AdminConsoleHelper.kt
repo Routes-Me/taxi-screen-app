@@ -27,19 +27,19 @@ class AdminConsoleHelper(val activity: Activity) {
         private const val defaultValue = "- -"
     }
 
-    fun plateNumber() = sharedPreferences?.getString("taxiPlateNumber", defaultValue)
-    fun institutionName() = sharedPreferences?.getString("institutionName", defaultValue)
+    fun plateNumber() = sharedPreferences.getString("taxiPlateNumber", defaultValue)
+    fun institutionName() = sharedPreferences.getString("institutionName", defaultValue)
     fun channelId() = if (getChannelId() != -999) {
         getChannelId()
     } else {
         defaultValue
     }
-    private fun getChannelId() = sharedPreferences?.getInt("tabletChannelId", -999)
+    private fun getChannelId() = sharedPreferences.getInt("tabletChannelId", -999)
     fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
-    fun simSerialNumber() = sharedPreferences?.getString("simCardNumber", defaultValue)
-    fun deviceSerialNumber() = sharedPreferences?.getString("tabletSerialNo", defaultValue)
-    fun technicalUserName() = sharedPreferences?.getString("technicalUserName", defaultValue)
-    fun registrationDate() = sharedPreferences?.getString("registrationDate", defaultValue)
+    fun simSerialNumber() = sharedPreferences.getString("simCardNumber", defaultValue)
+    fun deviceSerialNumber() = sharedPreferences.getString("tabletSerialNo", defaultValue)
+    fun technicalUserName() = sharedPreferences.getString("technicalUserName", defaultValue)
+    fun registrationDate() = sharedPreferences.getString("registrationDate", defaultValue)
     fun isMyAppDefaultLauncher(): DetailActionStatus {
         val filters: MutableList<IntentFilter> = ArrayList()
         val activities: List<ComponentName> = ArrayList()
@@ -67,7 +67,7 @@ class AdminConsoleHelper(val activity: Activity) {
     }
 
     fun logOff() {
-        sharedPreferences?.edit()?.clear()?.apply()
+        sharedPreferences.edit().clear().apply()
         activity.apply { startActivity(Intent(this, LoginScreen::class.java)); finish() }
     }
     fun isLocationProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
