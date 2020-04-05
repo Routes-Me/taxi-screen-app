@@ -29,6 +29,7 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setTheme(R.style.FullScreen_Light_Mode)
         setContentView(R.layout.home_screen)
 
        // DisplayManager(this)
@@ -92,9 +93,9 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
 
     private fun setStyle(themeMode: ThemeMode) {
         if (themeMode == ThemeMode.Light){
-           homeScreenLayout.setBackgroundResource(R.color.white)
+         //  homeScreenLayout.setBackgroundResource(R.color.white)
         }else{
-            homeScreenLayout.setBackgroundResource(R.color.black)
+         //   homeScreenLayout.setBackgroundResource(R.color.black)
         }
     }
 }

@@ -118,7 +118,7 @@
             android:paddingRight="1dp"
             android:scrollHorizontally="true"
             android:singleLine="true"
-            android:textColor="@color/black" />
+            android:textColor="?text_color" />
 
     </LinearLayout>
 

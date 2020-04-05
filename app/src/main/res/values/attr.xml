@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <attr name="homeScreenBackground_color" format="reference" />
+    <attr name="cardViewBackground_color" format="reference" />
+    <attr name="text_color" format="reference" />
+    <attr name="wifi_icon" format="reference" />
+    <attr name="key_icon" format="reference" />
+</resources>

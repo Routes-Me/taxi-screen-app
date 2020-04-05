@@ -45,7 +45,9 @@ class SideMenuFragment : Fragment() {
     private fun timeSetUp() {
         counterOperations = DateOperations()
         runnableTime = Runnable {
-            sideMenuFragmentView.timeDate_tv.text = counterOperations.timeDate(Date())
+            sideMenuFragmentView.clock_tv.text = counterOperations.timeClock(Date())
+            sideMenuFragmentView.dayOfWeek_tv.text = "${counterOperations.dayOfWeek(Date())},"
+            sideMenuFragmentView.dayOfMonth_tv.text = counterOperations.date(Date())
 
             if (currentDate() == parseDate("06:01") || currentDate() == parseDate("18:01")){
                 if (isAnteMeridiem()){iThemeMode.mode(ThemeMode.Light)}else{iThemeMode.mode(ThemeMode.Dark)}

@@ -28,14 +28,14 @@
         android:roundIcon="@mipmap/taxi_screen_icon"
         android:screenOrientation="landscape"
         android:supportsRtl="false"
-        android:theme="@style/noActionBar"
+        android:theme="@style/FullScreen_Light_Mode"
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
         <activity
             android:name="com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.AdminConsolePanel"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing">
 
 
@@ -43,21 +43,21 @@
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+            android:theme="@style/FullScreen_Light_Mode" />
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LearnMoreScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
+            android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustPan" />
+
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing" />
+
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
             android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -68,12 +68,10 @@
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" />
+            android:screenOrientation="landscape" />
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationListScreen"
-            android:screenOrientation="landscape"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar.FullScreen" /> <!-- Detect Internet Connection Status -->
+            android:screenOrientation="landscape" /> <!-- Detect Internet Connection Status -->
         <receiver
             android:name="com.routesme.taxi_screen.kotlin.Class.ConnectivityReceiver"
             android:enabled="true">

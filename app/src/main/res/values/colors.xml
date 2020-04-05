@@ -17,4 +17,7 @@
 
     <color name="pending_color">#ff5a55</color>
     <color name="done_color">#4ae869</color>
+
+    <color name="cardView_darkBackground">#28ffffff</color>
+    <color name="homeScreen_lightBackground">#00ffffff</color>
 </resources>
