@@ -26,10 +26,11 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
     private lateinit var sharedPreferences: SharedPreferences
     private var pressedTime: Long = 0
     private var clickTimes = 0
+    private val displayManager = DisplayManager()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setTheme(R.style.FullScreen_Light_Mode)
+        if(displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
        // DisplayManager(this)
