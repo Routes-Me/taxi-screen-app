@@ -1,21 +1,38 @@
 package com.routesme.taxi_screen.kotlin.Class
 
 import android.annotation.SuppressLint
-import android.content.Context
-import com.routesme.taxi_screen.kotlin.Model.IThemeMode
-import com.routesme.taxi_screen.kotlin.Model.ThemeMode
+import android.app.Activity
+import android.os.Handler
+import com.routesme.taxi_screen.kotlin.Model.IModeChanging
 import java.text.SimpleDateFormat
 import java.util.*
 
-open class DisplayManager() {
+open class DisplayManager(val activity: Activity) {
 
-    //private var iThemeMode = context as IThemeMode
+    private val iModeChanging = activity as IModeChanging
+    private lateinit var handlerTime: Handler
+    private lateinit var runnableTime: Runnable
+    private val second: Long = 1000
 
     @SuppressLint("SimpleDateFormat")
     val simpleDateFormat = SimpleDateFormat("HH:mm")
 
     init {
-       // if (isAnteMeridiem()){iThemeMode.mode(ThemeMode.Light)}else{iThemeMode.mode(ThemeMode.Dark)}
+        startHandler()
+    }
+
+    @SuppressLint("SetTextI18n")
+     fun startHandler() {
+        runnableTime = Runnable {
+
+            if (currentDate() == parseDate("06:01") || currentDate() == parseDate("18:01")){
+                iModeChanging.onModeChange()
+            }
+
+            handlerTime.postDelayed(runnableTime, second * 60)
+        }
+        handlerTime = Handler()
+        handlerTime.postDelayed(runnableTime, second)
     }
 
     fun isAnteMeridiem() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("18:00"))

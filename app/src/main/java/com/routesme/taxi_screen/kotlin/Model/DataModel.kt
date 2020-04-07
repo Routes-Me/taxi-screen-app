@@ -60,7 +60,6 @@ enum class DetailActionStatus{DONE, PENDING}
 enum class Actions(val title: String) {Launcher("Open launcher settings"), General("Open general settings"), LogOff("Log off")}
 
 //ThemeMode Interface
-interface IThemeMode {
-    fun mode(themeMode: ThemeMode)
+interface IModeChanging {
+    fun onModeChange()
 }
-enum class ThemeMode { Light, Dark }

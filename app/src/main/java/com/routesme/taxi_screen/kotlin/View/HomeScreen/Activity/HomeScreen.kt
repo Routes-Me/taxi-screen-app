@@ -5,20 +5,17 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
-import android.widget.Toast
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.kotlin.Class.DisplayManager
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
-import com.routesme.taxi_screen.kotlin.Model.IThemeMode
-import com.routesme.taxi_screen.kotlin.Model.ThemeMode
+import com.routesme.taxi_screen.kotlin.Model.IModeChanging
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-class HomeScreen : PermissionsActivity(),IThemeMode {
+class HomeScreen : PermissionsActivity() ,IModeChanging{
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -26,14 +23,13 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
     private lateinit var sharedPreferences: SharedPreferences
     private var pressedTime: Long = 0
     private var clickTimes = 0
-    private val displayManager = DisplayManager()
+    private val displayManager = DisplayManager(this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         if(displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
-       // DisplayManager(this)
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
         openPattern.setOnClickListener {openPatternClick()}
@@ -87,16 +83,7 @@ class HomeScreen : PermissionsActivity(),IThemeMode {
         pressedTime = System.currentTimeMillis()
     }
 
-    override fun mode(themeMode: ThemeMode) {
-        Log.d("DispalyManager", "From HomeScreen .. Mode: $themeMode")
-        setStyle(themeMode)
-    }
-
-    private fun setStyle(themeMode: ThemeMode) {
-        if (themeMode == ThemeMode.Light){
-         //  homeScreenLayout.setBackgroundResource(R.color.white)
-        }else{
-         //   homeScreenLayout.setBackgroundResource(R.color.black)
-        }
+    override fun onModeChange() {
+        recreate()
     }
 }
