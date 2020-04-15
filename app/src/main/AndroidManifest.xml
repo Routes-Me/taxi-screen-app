@@ -3,12 +3,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.routesme.taxiscreen">
 
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- Phone Info Permissions -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <!-- Tracking Permissions -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <!-- Hotspot Permissions -->
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -61,6 +59,7 @@
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -71,7 +70,8 @@
             android:screenOrientation="landscape" />
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationListScreen"
-            android:screenOrientation="landscape" /> <!-- Detect Internet Connection Status -->
+            android:screenOrientation="landscape" />
+
         <receiver
             android:name="com.routesme.taxi_screen.kotlin.Class.ConnectivityReceiver"
             android:enabled="true">
@@ -82,7 +82,7 @@
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
-        </receiver> <!-- Hotspot Configuration -->
+        </receiver>
         <activity android:name="com.routesme.taxi_screen.java.Hotspot_Configuration.MagicActivity">
             <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE" />
@@ -108,6 +108,9 @@
                 <action android:name="com.fitc.wifihotspot.TURN_OFF" />
             </intent-filter>
         </receiver>
+
+        <receiver android:name="com.routesme.taxi_screen.kotlin.Class.TimeChangesReceiver" />
+
     </application>
 
 </manifest>

@@ -15,7 +15,7 @@ import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-class HomeScreen : PermissionsActivity() ,IModeChanging{
+class HomeScreen : PermissionsActivity(), IModeChanging {
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -23,16 +23,21 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private lateinit var sharedPreferences: SharedPreferences
     private var pressedTime: Long = 0
     private var clickTimes = 0
-    private val displayManager = DisplayManager(this)
+    private lateinit var displayManager: DisplayManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        if(displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
+        displayManager = DisplayManager(this)
+        if (displayManager.isAnteMeridiem()) {
+            setTheme(R.style.FullScreen_Light_Mode)
+        } else {
+            setTheme(R.style.FullScreen_Dark_Mode)
+        }
         setContentView(R.layout.home_screen)
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
-        openPattern.setOnClickListener {openPatternClick()}
+        openPattern.setOnClickListener { openPatternClick() }
     }
 
     override fun onResume() {
@@ -74,9 +79,10 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
             sendBroadcast(Intent(i))
         }
     }
+
     private fun openPatternClick() {
         clickTimes++
-        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10){
+        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
             homeScreenFunctions.showAdminVerificationDialog(sharedPreferences.getString("tabletPassword", null).toString())
             clickTimes = 0
         }
