@@ -61,5 +61,6 @@ enum class Actions(val title: String) {Launcher("Open launcher settings"), Gener
 
 //ThemeMode Interface
 interface IModeChanging {
-    fun onModeChange()
+    fun onModeChange(mode: Mode)
 }
+enum class Mode{Light, Dark}

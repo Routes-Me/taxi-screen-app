@@ -109,7 +109,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.routesme.taxi_screen.kotlin.Class.TimeChangesReceiver" />
+        <receiver android:name="com.routesme.taxi_screen.kotlin.Class.ModeChangesReceiver" />
 
     </application>
 

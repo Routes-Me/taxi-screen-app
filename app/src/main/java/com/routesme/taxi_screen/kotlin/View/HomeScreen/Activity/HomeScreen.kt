@@ -10,12 +10,13 @@ import com.routesme.taxi_screen.kotlin.Class.DisplayManager
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.IModeChanging
+import com.routesme.taxi_screen.kotlin.Model.Mode
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-class HomeScreen : PermissionsActivity(), IModeChanging {
+class HomeScreen : PermissionsActivity() ,IModeChanging{
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -23,21 +24,21 @@ class HomeScreen : PermissionsActivity(), IModeChanging {
     private lateinit var sharedPreferences: SharedPreferences
     private var pressedTime: Long = 0
     private var clickTimes = 0
-    private lateinit var displayManager: DisplayManager
+    private val displayManager = DisplayManager.instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        displayManager = DisplayManager(this)
-        if (displayManager.isAnteMeridiem()) {
-            setTheme(R.style.FullScreen_Light_Mode)
-        } else {
-            setTheme(R.style.FullScreen_Dark_Mode)
-        }
+        displayManager.registerActivity(this)
         setContentView(R.layout.home_screen)
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
         homeScreenFunctions.requestRuntimePermissions()
-        openPattern.setOnClickListener { openPatternClick() }
+        openPattern.setOnClickListener {openPatternClick()}
+    }
+
+    override fun onDestroy() {
+        displayManager.unregisterActivity(this)
+        super.onDestroy()
     }
 
     override fun onResume() {
@@ -79,17 +80,16 @@ class HomeScreen : PermissionsActivity(), IModeChanging {
             sendBroadcast(Intent(i))
         }
     }
-
     private fun openPatternClick() {
         clickTimes++
-        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
+        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10){
             homeScreenFunctions.showAdminVerificationDialog(sharedPreferences.getString("tabletPassword", null).toString())
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()
     }
 
-    override fun onModeChange() {
-        recreate()
+    override fun onModeChange(mode: Mode) {
+        if(mode == Mode.Light){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
     }
 }
