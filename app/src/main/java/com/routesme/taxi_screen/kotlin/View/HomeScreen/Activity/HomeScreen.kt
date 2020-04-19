@@ -28,7 +28,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        displayManager.registerActivity(this)
+        if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
@@ -36,12 +36,8 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         openPattern.setOnClickListener {openPatternClick()}
     }
 
-    override fun onDestroy() {
-        displayManager.unregisterActivity(this)
-        super.onDestroy()
-    }
-
     override fun onResume() {
+        displayManager.registerActivity(this)
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         showFragments()
@@ -51,6 +47,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     }
 
     override fun onPause() {
+        displayManager.unregisterActivity(this)
         if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
         super.onPause()
     }
@@ -89,7 +86,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         pressedTime = System.currentTimeMillis()
     }
 
-    override fun onModeChange(mode: Mode) {
-        if(mode == Mode.Light){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
+    override fun onModeChange() {
+        recreate()
     }
 }

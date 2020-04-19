@@ -20,18 +20,18 @@ open class DisplayManager() {
     private val registeredActivities = ArrayList<Activity>()
 
     companion object {
-         val instance = DisplayManager()
+        val instance = DisplayManager()
     }
 
     fun setAlarm(context: Context) {
         val cal1 = Calendar.getInstance()
         cal1[Calendar.HOUR_OF_DAY] = 6
-        cal1[Calendar.MINUTE] = 0
+        cal1[Calendar.MINUTE] = 1
         cal1[Calendar.SECOND] = 0
 
         val cal2 = Calendar.getInstance()
         cal2[Calendar.HOUR_OF_DAY] = 18
-        cal2[Calendar.MINUTE] = 0
+        cal2[Calendar.MINUTE] = 1
         cal2[Calendar.SECOND] = 0
 
         val now = Calendar.getInstance()
@@ -43,13 +43,8 @@ open class DisplayManager() {
         eveningAlarm = PendingIntent.getBroadcast(context, 1, intent, 0)
 
         alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal1.timeInMillis,  morningAlarm)
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis,  eveningAlarm)
-    }
-
-    fun releaseAlarm() {
-        alarmManager.cancel(morningAlarm)
-        alarmManager.cancel(eveningAlarm)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal1.timeInMillis, morningAlarm)
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis, eveningAlarm)
     }
 
     fun isAnteMeridiem() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("18:00"))
@@ -63,14 +58,17 @@ open class DisplayManager() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)!!
 
-
     fun registerActivity(activity: Activity) {
         registeredActivities.add(activity)
-        val iModeChanging =  (activity as IModeChanging)
-        if (isAnteMeridiem()){iModeChanging.onModeChange(Mode.Light)}else{iModeChanging.onModeChange(Mode.Dark)}
     }
 
     fun unregisterActivity(activity: Activity) {
         registeredActivities.remove(activity)
+    }
+
+    fun notifyRegisteredActivity() {
+        for (activity in registeredActivities) {
+            (activity as IModeChanging).onModeChange()
+        }
     }
 }

@@ -109,7 +109,9 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.routesme.taxi_screen.kotlin.Class.ModeChangesReceiver" />
+        <receiver android:name="com.routesme.taxi_screen.kotlin.Class.ModeChangesReceiver"
+            android:enabled="true"
+            android:exported="true"/>
 
     </application>
 
