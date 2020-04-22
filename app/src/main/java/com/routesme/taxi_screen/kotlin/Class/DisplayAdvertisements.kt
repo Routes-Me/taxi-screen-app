@@ -1,52 +1,52 @@
 package com.routesme.taxi_screen.kotlin.Class
 
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
-import android.media.MediaPlayer
 import android.net.Uri
-import android.util.Log
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
+import android.os.Handler
 import android.widget.ImageView
 import android.widget.VideoView
-import androidx.fragment.app.FragmentActivity
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
 import com.routesme.taxi_screen.kotlin.Model.VideoModel
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*
 
 
-class DisplayAdvertisements(private val activity: FragmentActivity?, private val videoRingProgressBar: RingProgressBar, private val videoView: VideoView, private val ADS_ImageView: ImageView) {
+class DisplayAdvertisements() {
 
     private var currentVideoIndex = 0
     private var currentBannerIndex = 0
     private val options = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
-    private val animation1 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 1f, 0f).setDuration(200)
-    private val animation2 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 0f, 1f).setDuration(200)
-    private var bannerRunnable: Runnable? = null
-    private val proxy = activity?.let { App.getProxy(it) }
+   // private val animation1 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 1f, 0f).setDuration(200)
+   // private val animation2 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 0f, 1f).setDuration(200)
+   private lateinit var handlerTime: Handler
+    private lateinit var runnableTime: Runnable
+    private val proxy = App.getProxy()
     private var videoDuration = 0
-    private var ringProgressBarTimer: Timer? = null
+    private lateinit var ringProgressBarTimer: Timer
 
     init {
-        animation1.interpolator = DecelerateInterpolator()
-        animation2.interpolator = AccelerateDecelerateInterpolator()
-        videoRingProgressBar.progress = 0
-        videoRingProgressBar.max = 100
-        videoView.requestFocus()
+        //animation1.interpolator = DecelerateInterpolator()
+        //animation2.interpolator = AccelerateDecelerateInterpolator()
+       // videoRingProgressBar.progress = 0
+       // videoRingProgressBar.max = 100
+        //videoView.requestFocus()
     }
 
+    companion object{
+        val instance = DisplayAdvertisements()
+    }
 
-    fun displayAdvertisementVideoList(videos: List<VideoModel>) {
+    fun displayAdvertisementVideoList(videos: List<VideoModel>,videoView:VideoView, ringProgressBar: RingProgressBar) {
         videoView.setVideoPath(getVideoProxyUrl(Uri.parse(videos[currentVideoIndex].advertisement_URL)))
+        //videoView.setZOrderOnTop(true)
         videoView.setOnPreparedListener {
             videoView.start()
-            videoDuration = videoView.duration
-            videoRingProgressBarTimerCounter()
+            videoView.requestFocus()
+            //videoDuration = videoView.duration
+            progressBarTimerCounter(ringProgressBar,videoView)
         }
         videoView.setOnCompletionListener {
             currentVideoIndex++
@@ -60,72 +60,55 @@ class DisplayAdvertisements(private val activity: FragmentActivity?, private val
         }
     }
 
-    private fun getVideoProxyUrl(videoUrl: Uri) = proxy?.getProxyUrl(videoUrl.toString())
+    private fun getVideoProxyUrl(videoUrl: Uri) = proxy.getProxyUrl(videoUrl.toString())
 
-
-    /*
-    fun displayAdvertisementVideoList(videos: List<VideoModel>) {
-        if (currentVideoIndex < videos.size) {
-            val videoUri = Uri.parse(videos[currentVideoIndex].advertisement_URL)
-            videoView.setVideoPath(proxy?.getProxyUrl(videoUri.toString()))
-            videoView.setOnPreparedListener {
-                videoView.start()
-                videoDuration = videoView.duration
-                videoRingProgressBarTimerCounter()
-            }
-            videoView.setOnCompletionListener {
-                currentVideoIndex++
-                displayAdvertisementVideoList(videos)
-            }
-        } else {
-            currentVideoIndex = 0
-            displayAdvertisementVideoList(videos)
-        }
-    }
-    */
-
-    private fun videoRingProgressBarTimerCounter() {
+    private fun progressBarTimerCounter(ringProgressBar: RingProgressBar, videoView: VideoView) {
         ringProgressBarTimer = Timer()
         val task: TimerTask = object : TimerTask() {
             override fun run() {
-                activity?.runOnUiThread { updateRingProgressBar() }
+                ContentFragment.instance.activity?.runOnUiThread { updateRingProgressBar(ringProgressBar,videoView) }
             }
         }
-        ringProgressBarTimer!!.schedule(task, 0, 1000)
+        ringProgressBarTimer.schedule(task, 0, 1000)
     }
 
-    private fun updateRingProgressBar() {
-        if (videoRingProgressBar.progress >= 100) {
-            ringProgressBarTimer?.cancel()
+
+    private fun updateRingProgressBar(ringProgressBar: RingProgressBar, videoView: VideoView) {
+        if (ringProgressBar.progress >= 100) {
+            ringProgressBarTimer.cancel()
         }
         val current = videoView.currentPosition
-        val progress = current * 100 / videoDuration
-        videoRingProgressBar.progress = progress
+        val progress = current * 100 / videoView.duration
+        ringProgressBar.progress = progress
     }
 
-    fun displayAdvertisementBannerList(banners: List<BannerModel>) {
-        bannerRunnable = Runnable {
+
+    fun displayAdvertisementBannerList(banners: List<BannerModel>, ADS_ImageView:ImageView) {
+        runnableTime = Runnable {
             if (currentBannerIndex < banners.size) {
                 val uri = Uri.parse(banners.get(currentBannerIndex).advertisement_URL)
-                showBannerIntoImageView(uri)
+                //showBannerIntoImageView(uri)
+                Glide.with(ContentFragment.instance).load(uri).apply(options).into(ADS_ImageView)
                 currentBannerIndex++
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0
                 }
-                ADS_ImageView.postDelayed(bannerRunnable, 15000)
+                handlerTime.postDelayed(runnableTime, 15000)
             }
         }
-        ADS_ImageView.postDelayed(bannerRunnable, 1)
+        handlerTime = Handler()
+        handlerTime.postDelayed(runnableTime, 1)
     }
-
+/*
     private fun showBannerIntoImageView(uri: Uri) {
         animation1.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 super.onAnimationEnd(animation)
-                activity?.let { Glide.with(it).load(uri).apply(options).into(ADS_ImageView) }
+                Glide.with(it).load(uri).apply(options).into(ADS_ImageView)
                 animation2.start()
             }
         })
         animation1.start()
     }
+ */
 }

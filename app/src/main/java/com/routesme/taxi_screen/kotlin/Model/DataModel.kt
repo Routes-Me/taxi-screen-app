@@ -14,7 +14,7 @@ data class RequestHeaders(val Authorization: String? = null, val country_code: S
 data class BannerModel(@SerializedName("Adv_ID") val advertisement_ID: Int = 0, @SerializedName("Adv_URL") val advertisement_URL: String? = null)
 
 data class VideoModel(@SerializedName("Video_ID") val advertisement_ID: Int = 0, @SerializedName("Video_URL") val advertisement_URL: String? = null)
-data class ItemAnalytics(val id: Int = 0, val name: String? = null)
+data class ItemAnalytics(val id: Int = 0, val name: String = "item_name")
 
 //Authentication
 data class AuthCredentials(var Username: String = "", var Password: String = "")

@@ -26,35 +26,44 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private var clickTimes = 0
     private val displayManager = DisplayManager.instance
 
+    companion object{
+        @get:Synchronized
+        val instance = HomeScreen()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
+        showFragments()
 
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
-        homeScreenFunctions.requestRuntimePermissions()
+        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
+        homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         openPattern.setOnClickListener {openPatternClick()}
     }
 
+    override fun onDestroy() {
+        displayManager.unregisterActivity(this)
+        super.onDestroy()
+    }
+
     override fun onResume() {
-        displayManager.registerActivity(this)
         homeScreenFunctions.hideNavigationBar()
-        homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
-        showFragments()
+        homeScreenFunctions.requestRuntimePermissions()
         turnOnHotspot()
         startLocationTrackingService()
         super.onResume()
     }
 
     override fun onPause() {
-        displayManager.unregisterActivity(this)
         if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
         super.onPause()
     }
 
     private fun showFragments() {
-        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment()).commit()
-        supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, SideMenuFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment.instance).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, SideMenuFragment.instance).commit()
     }
 
     private fun startLocationTrackingService() {

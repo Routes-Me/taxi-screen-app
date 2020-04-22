@@ -8,8 +8,11 @@ import java.util.*
 @SuppressLint("SimpleDateFormat")
 class DateOperations {
 
+    companion object {
+        val instance = DateOperations()
+    }
+
     fun registrationDate(date: Date) = "${dayOfMonth(date)}, ${monthOfYear(date)} ${timeClockWithAMPM(date)}"
-    //fun timeDate(date: Date)= "${timeClock(date)}\n${dayOfWeek(date)},\n${date(date)}"
     fun timeClock(date: Date) = SimpleDateFormat("hh:mm").format(date) as String
     fun dayOfWeek(date: Date) = DateFormat.format("EEEE", date) as String
     fun date(date: Date) = "${monthOfYear(date)} ${dayOfMonth(date)}"

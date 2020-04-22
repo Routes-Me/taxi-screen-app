@@ -35,10 +35,10 @@ class RetrofitService() {
 
     fun loadVideoList(chId: Int, context: Context): MutableLiveData<List<VideoModel>>? {
         val retrofitCall = create(context).getVideos(chId)
-        retrofitCall?.enqueue(object : Callback<List<VideoModel?>?> {
-            override fun onFailure(call: Call<List<VideoModel?>?>, t: Throwable) {}
-            override fun onResponse(call: Call<List<VideoModel?>?>, response: Response<List<VideoModel?>?>) {
-                if (response.isSuccessful && !response.body().isNullOrEmpty()) videoList.value = response.body() as List<VideoModel>?
+        retrofitCall.enqueue(object : Callback<List<VideoModel>> {
+            override fun onFailure(call: Call<List<VideoModel>>, t: Throwable) {}
+            override fun onResponse(call: Call<List<VideoModel>>, response: Response<List<VideoModel>>) {
+                if (response.isSuccessful && !response.body().isNullOrEmpty()) videoList.value = response.body()
             }
         }
         )
@@ -47,10 +47,10 @@ class RetrofitService() {
 
     fun loadBannerList(chId: Int, context: Context): MutableLiveData<List<BannerModel>>? {
         val retrofitCall = create(context).getBanners(chId)
-        retrofitCall?.enqueue(object : Callback<List<BannerModel?>?> {
-            override fun onFailure(call: Call<List<BannerModel?>?>, t: Throwable) {}
-            override fun onResponse(call: Call<List<BannerModel?>?>, response: Response<List<BannerModel?>?>) {
-                if (response.isSuccessful && !response.body().isNullOrEmpty()) bannerList.value = response.body() as List<BannerModel>?
+        retrofitCall.enqueue(object : Callback<List<BannerModel>> {
+            override fun onFailure(call: Call<List<BannerModel>>, t: Throwable) {}
+            override fun onResponse(call: Call<List<BannerModel>>, response: Response<List<BannerModel>>) {
+                if (response.isSuccessful && !response.body().isNullOrEmpty()) bannerList.value = response.body()
             }
         }
         )
@@ -60,11 +60,11 @@ class RetrofitService() {
     fun getToken(authCredentials: AuthCredentials, dialog: AlertDialog,context: Context): MutableLiveData<JsonElement> {
         val encryptedAuthCredentials = AuthCredentials(encrypt(authCredentials.Username),encrypt(authCredentials.Password))
         val retrofitCall = create(context).loginAuth(encryptedAuthCredentials)
-        retrofitCall?.enqueue(object : Callback<JsonElement?>{
-            override fun onFailure(call: Call<JsonElement?>, t: Throwable) {dialog.dismiss()}
-            override fun onResponse(call: Call<JsonElement?>, response: Response<JsonElement?>) {
+        retrofitCall.enqueue(object : Callback<JsonElement>{
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {dialog.dismiss()}
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 dialog.dismiss()
-                if (response.isSuccessful && !response.body()!!.isJsonNull) tokenJsonElement.value = response.body() as JsonElement
+                if (response.isSuccessful && response.body() != null) tokenJsonElement.value = response.body() as JsonElement
             }
         })
         return tokenJsonElement

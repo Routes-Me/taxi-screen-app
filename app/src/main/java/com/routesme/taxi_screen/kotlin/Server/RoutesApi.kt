@@ -10,7 +10,7 @@ interface RoutesApi {
     //Authentication (Token)...
     @POST("auth")
     @Headers("Content-Type: application/json", "DataServiceVersion: 2.0")
-    fun loginAuth(@Body authCredentials: AuthCredentials?): Call<JsonElement?>?
+    fun loginAuth(@Body authCredentials: AuthCredentials?): Call<JsonElement>
 
 
     //Tablet registration...
@@ -27,10 +27,10 @@ interface RoutesApi {
 
     //Advertisements...
     @GET("Channels")
-    fun getVideos(@Query("channelidvideolist") ch_ID_Videos: Int): Call<List<VideoModel?>?>?
+    fun getVideos(@Query("channelidvideolist") ch_ID_Videos: Int): Call<List<VideoModel>>
 
     @GET("Channels")
-    fun getBanners(@Query("channelidadvlist") ch_ID_Banners: Int): Call<List<BannerModel?>?>?
+    fun getBanners(@Query("channelidadvlist") ch_ID_Banners: Int): Call<List<BannerModel>>
 
 
 }

@@ -16,8 +16,12 @@ class SideMenuFragment : Fragment() {
     private lateinit var sideMenuFragmentView: View
     private lateinit var handlerTime: Handler
     private lateinit var runnableTime: Runnable
-    private lateinit var counterOperations: DateOperations
+    private val dateOperations = DateOperations.instance
     private val second: Long = 1000
+
+    companion object {
+        val instance = SideMenuFragment()
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         sideMenuFragmentView = inflater.inflate(R.layout.side_menu_fragment, container, false)
@@ -25,17 +29,21 @@ class SideMenuFragment : Fragment() {
     }
 
     override fun onResume() {
+        setTime()
         super.onResume()
-        timeSetUp()
+    }
+
+    override fun onPause() {
+        handlerTime.removeCallbacks(runnableTime)
+        super.onPause()
     }
 
     @SuppressLint("SetTextI18n")
-    private fun timeSetUp() {
-        counterOperations = DateOperations()
+    private fun setTime() {
         runnableTime = Runnable {
-            sideMenuFragmentView.clock_tv.text = counterOperations.timeClock(Date())
-            sideMenuFragmentView.dayOfWeek_tv.text = "${counterOperations.dayOfWeek(Date())},"
-            sideMenuFragmentView.dayOfMonth_tv.text = counterOperations.date(Date())
+            sideMenuFragmentView.clock_tv.text = dateOperations.timeClock(Date())
+            sideMenuFragmentView.dayOfWeek_tv.text = "${dateOperations.dayOfWeek(Date())},"
+            sideMenuFragmentView.dayOfMonth_tv.text = dateOperations.date(Date())
 
             handlerTime.postDelayed(runnableTime, second * 60)
         }

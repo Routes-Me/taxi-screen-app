@@ -31,12 +31,10 @@ class App : Application() {
 
     companion object {
         @get:Synchronized
-        var instance: App? = null
-            private set
+        var instance = App()
 
-        fun getProxy(context: Context): HttpProxyCacheServer {
-            val app = context.applicationContext as App
-            return if (app.proxy == null) app.newProxy().also { app.proxy = it } else app.proxy!!
+        fun getProxy(): HttpProxyCacheServer {
+            return if (instance.proxy == null) instance.newProxy() else instance.proxy!!
         }
     }
 }
