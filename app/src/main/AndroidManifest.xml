@@ -112,7 +112,7 @@
         <receiver android:name="com.routesme.taxi_screen.kotlin.Class.ModeChangesReceiver"
             android:enabled="true"
             android:exported="true"/>
-
+        <service android:name="com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService" />
     </application>
 
 </manifest>

@@ -2,6 +2,7 @@ package com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment
 
 import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
@@ -20,7 +21,8 @@ import com.routesme.taxi_screen.kotlin.Class.DisplayAdvertisements
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
 import com.routesme.taxi_screen.kotlin.Model.ItemAnalytics
 import com.routesme.taxi_screen.kotlin.Model.VideoModel
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
+import com.routesme.taxi_screen.kotlin.VideoPlayer.Constants
+import com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.content_fragment.view.*
@@ -35,13 +37,14 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private lateinit var intentFilter: IntentFilter
     private var isConnected = false
     private var isDataFetched = false
-    private val displayAdvertisements = DisplayAdvertisements.instance
+    private lateinit var displayAdvertisements:DisplayAdvertisements
 
     companion object {
         val instance = ContentFragment()
     }
 
     override fun onAttach(context: Context) {
+        displayAdvertisements = DisplayAdvertisements(context)
         contentFragmentContext = context
         sharedPreferences = context.getSharedPreferences("userData", Activity.MODE_PRIVATE)
         val tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
@@ -136,15 +139,24 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
                 displayAdvertisements.displayAdvertisementBannerList(it,view1.advertisementsImageView)
             })
-
     }
 
     private fun fetchVideoList() {
         val model: RoutesViewModel by viewModels()
             model.getVideoList(channelId(), contentFragmentContext)?.observe((instance as LifecycleOwner), Observer<List<VideoModel>> {
-
-                displayAdvertisements.displayAdvertisementVideoList(it,view1.advertisementsVideoView,view1.videoRingProgressBar)
+                startPreLoadingService(it)
+                displayAdvertisements.displayAdvertisementVideoList(it,view1.playerView,view1.videoRingProgressBar)
             })
+    }
+
+    private fun startPreLoadingService(it: List<VideoModel>) {
+        val videoList = ArrayList<String>()
+        for (video in it){
+            videoList.add(video.advertisement_URL.toString())
+        }
+        val preloadingServiceIntent = Intent(context, VideoPreLoadingService::class.java)
+        preloadingServiceIntent.putStringArrayListExtra(Constants.VIDEO_LIST, videoList)
+        context?.startService(preloadingServiceIntent)
     }
 
     private fun channelId() = sharedPreferences.getInt("tabletChannelId", 0)

@@ -59,8 +59,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <VideoView
-                android:id="@+id/advertisementsVideoView"
+            <com.google.android.exoplayer2.ui.PlayerView
+                android:id="@+id/playerView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_alignParentStart="true"
@@ -69,7 +69,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
-                android:scaleType="fitXY" />
+                app:use_controller="false"
+                app:resize_mode="fill"/>
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar
                 android:id="@+id/videoRingProgressBar"
