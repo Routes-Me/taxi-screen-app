@@ -11,7 +11,7 @@ import java.net.URI
 class LocationTrackingService(val context: Context) {
 
     private lateinit var trackingWebSocket: WebSocketClient
-    private lateinit var trackingHandler: TrackingHandler
+    private lateinit var trackingDataLayer: TrackingDataLayer
     private var isHandlerTrackingRunning = false
     private var handlerTracking: Handler? = null
     private var runnableTracking: Runnable? = null
@@ -20,7 +20,7 @@ class LocationTrackingService(val context: Context) {
         val tabletSerialNo = context.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
         if (!tabletSerialNo.isNullOrEmpty()) {
             trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
-            trackingHandler = TrackingHandler(context, trackingWebSocket)
+            trackingDataLayer = TrackingDataLayer(context, trackingWebSocket)
             startTracking()
         }
     }
@@ -33,7 +33,7 @@ class LocationTrackingService(val context: Context) {
             override fun onOpen() {
                 Log.i("trackingWebSocket:  ", "Opened")
                 sendDeviceIdToServer("deviceId:$tabletSerialNo")
-                trackingHandler.sendOfflineTrackingLocationsToServer()
+                trackingDataLayer.sendOfflineTrackingLocationsToServer()
                 handlerTracking?.post(runnableTracking)
             }
             override fun onTextReceived(message: String) {
@@ -63,12 +63,12 @@ class LocationTrackingService(val context: Context) {
     }
 
     private fun startTracking() {
-        val locationFinder = LocationFinder(context, trackingHandler)
-        if (locationFinder.setUpLocationListener()) {
+        val locationReceiver = LocationReceiver(context, trackingDataLayer)
+        if (locationReceiver.setUpLocationListener()) {
             setupTrackingTimer()
             trackingWebSocket.connect()
         } else {
-            locationFinder.showAlertDialog()
+            locationReceiver.showAlertDialog()
         }
     }
 
@@ -76,7 +76,7 @@ class LocationTrackingService(val context: Context) {
         runnableTracking = Runnable {
             isHandlerTrackingRunning = true
             Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
-            trackingHandler.locationChecker()
+            trackingDataLayer.locationChecker()
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
         handlerTracking = Handler()

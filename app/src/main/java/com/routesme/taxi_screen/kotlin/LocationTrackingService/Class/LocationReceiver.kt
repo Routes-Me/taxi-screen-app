@@ -12,7 +12,7 @@ import android.util.Log
 import androidx.appcompat.app.AlertDialog
 import com.routesme.taxi_screen.kotlin.Model.TrackingLocation
 
-class LocationFinder(val context: Context, private val trackingHandler: TrackingHandler) : LocationListener {
+class LocationReceiver(val context: Context, private val trackingDataLayer: TrackingDataLayer) : LocationListener {
 
     private var locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -58,7 +58,7 @@ class LocationFinder(val context: Context, private val trackingHandler: Tracking
     private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     private fun insertLocation(location: Location) {
-        trackingHandler.insertLocation(TrackingLocation(location.latitude, location.longitude))
+        trackingDataLayer.insertLocation(TrackingLocation(location.latitude, location.longitude))
     }
 
     //LocationListener Methods...

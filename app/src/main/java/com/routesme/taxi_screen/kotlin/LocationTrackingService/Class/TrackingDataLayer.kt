@@ -4,15 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.util.Log
-import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.AppDatabase
-import com.routesme.taxi_screen.kotlin.Model.Tracking
+import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.TrackingDatabase
+import com.routesme.taxi_screen.kotlin.Model.VehicleLocation
 import com.routesme.taxi_screen.kotlin.Model.TrackingLocation
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TrackingHandler(val context: Context, private var trackingWebSocket: WebSocketClient) {
-    private val db = AppDatabase(context).trackingDao()
+class TrackingDataLayer(val context: Context, private var trackingWebSocket: WebSocketClient) {
+    private val db = TrackingDatabase(context).trackingDao()
 
     @SuppressLint("SimpleDateFormat")
     private val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")
@@ -29,14 +29,14 @@ class TrackingHandler(val context: Context, private var trackingWebSocket: WebSo
     }
 
     fun insertLocation(trackingLocation: TrackingLocation) {
-        val tracking = Tracking(0, trackingLocation, dateFormat.format(Date()))
+        val currentLocation = VehicleLocation(0, trackingLocation, dateFormat.format(Date()))
         if (db.loadAllLocations().isNullOrEmpty()) {
-            db.insertLocation(tracking)
-            Log.d("trackingWebSocketKotlin", "Insert first location:  $tracking")
+            db.insertLocation(currentLocation)
+            Log.d("trackingWebSocketKotlin", "Insert first location:  $currentLocation")
         } else {
-            if (tracking.location != db.loadLastLocation().location) {
-                db.insertLocation(tracking)
-                Log.d("trackingWebSocketKotlin", "Insert new location:  $tracking")
+            if (currentLocation.location != db.loadLastLocation().location) {
+                db.insertLocation(currentLocation)
+                Log.d("trackingWebSocketKotlin", "Insert new location:  $currentLocation")
             }
         }
     }
@@ -69,8 +69,8 @@ class TrackingHandler(val context: Context, private var trackingWebSocket: WebSo
         Log.d("trackingWebSocketKotlin", "Clear tracking table!")
     }
 
-    private fun sendLocationViaSocket(t: Tracking) {
-        val location = "location:${t.location.latitude},${t.location.longitude};timestamp:${t.timestamp}"
+    private fun sendLocationViaSocket(vehicleLocation: VehicleLocation) {
+        val location = "location:${vehicleLocation.location.latitude},${vehicleLocation.location.longitude};timestamp:${vehicleLocation.timestamp}"
         trackingWebSocket.send(location)
         Log.d("trackingWebSocketKotlin", "Send location : $location")
     }

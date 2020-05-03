@@ -1,9 +1,6 @@
 package com.routesme.taxi_screen.kotlin.Model
 
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
-import androidx.room.Entity
-import androidx.room.PrimaryKey
+import androidx.room.*
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -41,7 +38,7 @@ data class TabletInfo(@SerializedName("tabletRegesterPassword") val tabletPasswo
 
 //Tracking Location Service
 @Entity(tableName = "Tracking")
-data class Tracking(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Embedded var location: TrackingLocation, @ColumnInfo(name = "timestamp") var timestamp: String)
+data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Embedded var location: TrackingLocation, @ColumnInfo(name = "timestamp") var timestamp: String)
 
 data class TrackingLocation(val latitude: Double, val longitude: Double)
 
