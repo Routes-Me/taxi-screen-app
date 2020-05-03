@@ -37,14 +37,13 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private lateinit var intentFilter: IntentFilter
     private var isConnected = false
     private var isDataFetched = false
-    private lateinit var displayAdvertisements:DisplayAdvertisements
+    private val displayAdvertisements = DisplayAdvertisements.instance
 
     companion object {
         val instance = ContentFragment()
     }
 
     override fun onAttach(context: Context) {
-        displayAdvertisements = DisplayAdvertisements(context)
         contentFragmentContext = context
         sharedPreferences = context.getSharedPreferences("userData", Activity.MODE_PRIVATE)
         val tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
@@ -154,7 +153,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         for (video in it){
             videoList.add(video.advertisement_URL.toString())
         }
-        val preloadingServiceIntent = Intent(context, VideoPreLoadingService::class.java)
+        val preloadingServiceIntent = Intent(contentFragmentContext, VideoPreLoadingService::class.java)
         preloadingServiceIntent.putStringArrayListExtra(Constants.VIDEO_LIST, videoList)
         context?.startService(preloadingServiceIntent)
     }

@@ -1,10 +1,8 @@
 package com.routesme.taxi_screen.kotlin.Class
 
-import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.widget.ImageView
-import android.widget.VideoView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -25,51 +23,57 @@ import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*
 
 
-class DisplayAdvertisements(context: Context) {
+class DisplayAdvertisements() {
 
     private var cacheDataSourceFactory: CacheDataSourceFactory? = null
     private var simpleExoPlayer: SimpleExoPlayer? = null
     private var simpleCache: SimpleCache? = null
-
     private var currentVideoIndex = 0
     private var currentBannerIndex = 0
     private val options = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
-   // private val animation1 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 1f, 0f).setDuration(200)
-   // private val animation2 = ObjectAnimator.ofFloat(ADS_ImageView, "scaleY", 0f, 1f).setDuration(200)
-   private lateinit var handlerTime: Handler
-    private lateinit var runnableTime: Runnable
-    //private val proxy = App.getProxy()
-    private var videoDuration = 0
+    private lateinit var handlerBanner: Handler
+    private lateinit var runnableBanner: Runnable
+    //Video progress bar
     private lateinit var ringProgressBarTimer: Timer
+    private lateinit var handlerProgressBar: Handler
+    private lateinit var runnableProgressBar: Runnable
+    private val second: Long = 1000
+
 
     init {
         //animation1.interpolator = DecelerateInterpolator()
         //animation2.interpolator = AccelerateDecelerateInterpolator()
-       // videoRingProgressBar.progress = 0
-       // videoRingProgressBar.max = 100
+        // videoRingProgressBar.progress = 0
+        // videoRingProgressBar.max = 100
         //videoView.requestFocus()
     }
 
-
+    companion object {
+        val instance = DisplayAdvertisements()
+    }
 
     fun displayAdvertisementVideoList(videos: List<VideoModel>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
         initPlayer(playerView)
-        playVideo(videos[currentVideoIndex].advertisement_URL,ringProgressBar)
+        playVideo(videos[currentVideoIndex].advertisement_URL, ringProgressBar)
         simpleExoPlayer?.addListener(object : Player.DefaultEventListener() {
-            override fun onPlayerStateChanged(playWhenReady: Boolean,playbackState: Int) {
+            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when (playbackState) {
-                    Player.STATE_IDLE -> {}
-                    Player.STATE_BUFFERING -> {}
+                    Player.STATE_IDLE -> {
+                    }
+                    Player.STATE_BUFFERING -> {
+                    }
                     Player.STATE_READY -> {
-                        progressBarTimerCounter(ringProgressBar)
+                        // progressBarTimerCounter(ringProgressBar)
+                        progressBarHandlerCounter(ringProgressBar)
                     }
                     Player.STATE_ENDED -> {
+                        handlerProgressBar.removeCallbacks(runnableProgressBar)
                         currentVideoIndex++
                         if (currentVideoIndex < videos.size) {
-                            playVideo(videos[currentVideoIndex].advertisement_URL,ringProgressBar)
+                            playVideo(videos[currentVideoIndex].advertisement_URL, ringProgressBar)
                         } else {
                             currentVideoIndex = 0
-                            playVideo(videos[currentVideoIndex].advertisement_URL,ringProgressBar)
+                            playVideo(videos[currentVideoIndex].advertisement_URL, ringProgressBar)
                         }
                     }
                 }
@@ -80,12 +84,13 @@ class DisplayAdvertisements(context: Context) {
     private fun initPlayer(playerView: PlayerView) {
         simpleExoPlayer = SimpleExoPlayer.Builder(App.instance).build()
         simpleCache = App.simpleCache
-        cacheDataSourceFactory = CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory( Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)) ), CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        cacheDataSourceFactory = CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name))), CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         playerView.player = simpleExoPlayer
         simpleExoPlayer?.playWhenReady = true
         simpleExoPlayer?.seekTo(0, 0)
         simpleExoPlayer?.repeatMode = Player.REPEAT_MODE_OFF
     }
+
     private fun playVideo(videoUrl: String?, ringProgressBar: RingProgressBar) {
         val videoUri = Uri.parse(videoUrl)
         val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(videoUri)
@@ -103,10 +108,20 @@ class DisplayAdvertisements(context: Context) {
         ringProgressBarTimer.schedule(task, 0, 1000)
     }
 
+    private fun progressBarHandlerCounter(ringProgressBar: RingProgressBar) {
+        runnableProgressBar = Runnable {
+            updateRingProgressBar(ringProgressBar)
+
+            handlerProgressBar.postDelayed(runnableProgressBar, second)
+        }
+        handlerProgressBar = Handler()
+        handlerProgressBar.postDelayed(runnableProgressBar, second)
+    }
 
     private fun updateRingProgressBar(ringProgressBar: RingProgressBar) {
         if (ringProgressBar.progress >= 100) {
-            ringProgressBarTimer.cancel()
+            // ringProgressBarTimer.cancel()
+            handlerProgressBar.removeCallbacks(runnableProgressBar)
         }
         val current = (simpleExoPlayer?.currentPosition)!!.toInt()
         val progress = current * 100 / (simpleExoPlayer?.duration)!!.toInt()
@@ -114,8 +129,8 @@ class DisplayAdvertisements(context: Context) {
     }
 
 
-    fun displayAdvertisementBannerList(banners: List<BannerModel>, ADS_ImageView:ImageView) {
-        runnableTime = Runnable {
+    fun displayAdvertisementBannerList(banners: List<BannerModel>, ADS_ImageView: ImageView) {
+        runnableBanner = Runnable {
             if (currentBannerIndex < banners.size) {
                 val uri = Uri.parse(banners.get(currentBannerIndex).advertisement_URL)
                 //showBannerIntoImageView(uri)
@@ -124,22 +139,10 @@ class DisplayAdvertisements(context: Context) {
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0
                 }
-                handlerTime.postDelayed(runnableTime, 15000)
+                handlerBanner.postDelayed(runnableBanner, 15000)
             }
         }
-        handlerTime = Handler()
-        handlerTime.postDelayed(runnableTime, 1)
+        handlerBanner = Handler()
+        handlerBanner.postDelayed(runnableBanner, 1)
     }
-/*
-    private fun showBannerIntoImageView(uri: Uri) {
-        animation1.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                super.onAnimationEnd(animation)
-                Glide.with(it).load(uri).apply(options).into(ADS_ImageView)
-                animation2.start()
-            }
-        })
-        animation1.start()
-    }
- */
 }
