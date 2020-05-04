@@ -8,7 +8,6 @@ import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import com.routesme.taxi_screen.kotlin.Model.IModeChanging
-import com.routesme.taxi_screen.kotlin.Model.Mode
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList

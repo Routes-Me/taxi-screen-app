@@ -30,6 +30,16 @@ class TrackingDataLayer(val context: Context, private var trackingWebSocket: Web
 
     fun insertLocation(trackingLocation: TrackingLocation) {
         val currentLocation = VehicleLocation(0, trackingLocation, dateFormat.format(Date()))
+        val lastLocation = db.loadLastLocation()
+
+
+        if (lastLocation == null || currentLocation.location != lastLocation.location){
+            db.insertLocation(currentLocation)
+            Log.d("trackingWebSocketKotlin", "Insert new location:  $currentLocation")
+        }
+
+
+        /*
         if (db.loadAllLocations().isNullOrEmpty()) {
             db.insertLocation(currentLocation)
             Log.d("trackingWebSocketKotlin", "Insert first location:  $currentLocation")
@@ -39,6 +49,10 @@ class TrackingDataLayer(val context: Context, private var trackingWebSocket: Web
                 Log.d("trackingWebSocketKotlin", "Insert new location:  $currentLocation")
             }
         }
+        */
+// val location = Location("in").apply { latitude=0.66;longitude=2.4 }
+// location
+
     }
 
     fun locationChecker() {
