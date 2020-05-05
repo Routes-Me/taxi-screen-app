@@ -1,6 +1,10 @@
 package com.routesme.taxi_screen.kotlin.Model
 
-import androidx.room.*
+import android.location.Location
+import androidx.room.ColumnInfo
+import androidx.room.Embedded
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
@@ -38,10 +42,15 @@ data class TabletInfo(@SerializedName("tabletRegesterPassword") val tabletPasswo
 
 //Tracking Location Service
 @Entity(tableName = "Tracking")
-data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Embedded var location: TrackingLocation, @ColumnInfo(name = "timestamp") var timestamp: String)
-
-data class TrackingLocation(val latitude: Double, val longitude: Double)
-
+data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: String){
+    val location: Location
+    get() {
+        val location = Location("provider")
+        location.latitude = latitude
+        location.longitude = longitude
+        return location
+    }
+}
 //Admin Console...
 data class MasterItem(val id: Int, val type: MasterItemType)
 
@@ -60,4 +69,3 @@ enum class Actions(val title: String) {Launcher("Open launcher settings"), Gener
 interface IModeChanging {
     fun onModeChange()
 }
-enum class Mode{Light, Dark}

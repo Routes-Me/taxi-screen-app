@@ -6,7 +6,6 @@ import android.location.Location
 import android.util.Log
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi_screen.kotlin.Model.VehicleLocation
-import com.routesme.taxi_screen.kotlin.Model.TrackingLocation
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.text.SimpleDateFormat
 import java.util.*
@@ -28,31 +27,13 @@ class TrackingDataLayer(val context: Context, private var trackingWebSocket: Web
         }
     }
 
-    fun insertLocation(trackingLocation: TrackingLocation) {
-        val currentLocation = VehicleLocation(0, trackingLocation, dateFormat.format(Date()))
+    fun insertLocation(location: Location) {
         val lastLocation = db.loadLastLocation()
-
-
-        if (lastLocation == null || currentLocation.location != lastLocation.location){
+        if (lastLocation == null || (location.latitude != lastLocation.latitude && location.longitude != lastLocation.longitude)){
+            val currentLocation = VehicleLocation(0, location.latitude, location.longitude, dateFormat.format(Date()))
             db.insertLocation(currentLocation)
             Log.d("trackingWebSocketKotlin", "Insert new location:  $currentLocation")
         }
-
-
-        /*
-        if (db.loadAllLocations().isNullOrEmpty()) {
-            db.insertLocation(currentLocation)
-            Log.d("trackingWebSocketKotlin", "Insert first location:  $currentLocation")
-        } else {
-            if (currentLocation.location != db.loadLastLocation().location) {
-                db.insertLocation(currentLocation)
-                Log.d("trackingWebSocketKotlin", "Insert new location:  $currentLocation")
-            }
-        }
-        */
-// val location = Location("in").apply { latitude=0.66;longitude=2.4 }
-// location
-
     }
 
     fun locationChecker() {
@@ -68,15 +49,7 @@ class TrackingDataLayer(val context: Context, private var trackingWebSocket: Web
         }
     }
 
-    private fun distance(firstLocation: TrackingLocation, lastLocation: TrackingLocation) = convertLocation(firstLocation,"firstLocation").distanceTo(convertLocation(lastLocation,"lastLocation"))
-
-
-    private fun convertLocation(trackingLocation: TrackingLocation, providerName:String):Location{
-        val location = Location(providerName)
-        location.latitude = trackingLocation.latitude
-        location.longitude = trackingLocation.longitude
-        return location
-    }
+    private fun distance(firstLocation: Location, lastLocation: Location) = firstLocation.distanceTo(lastLocation)
 
     private fun clearTrackingTable() {
         db.clearTrackingData()
@@ -84,7 +57,7 @@ class TrackingDataLayer(val context: Context, private var trackingWebSocket: Web
     }
 
     private fun sendLocationViaSocket(vehicleLocation: VehicleLocation) {
-        val location = "location:${vehicleLocation.location.latitude},${vehicleLocation.location.longitude};timestamp:${vehicleLocation.timestamp}"
+        val location = "location:${vehicleLocation.latitude},${vehicleLocation.longitude};timestamp:${vehicleLocation.timestamp}"
         trackingWebSocket.send(location)
         Log.d("trackingWebSocketKotlin", "Send location : $location")
     }
