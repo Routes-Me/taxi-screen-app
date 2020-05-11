@@ -1,14 +1,18 @@
 package com.routesme.taxi_screen.kotlin.LocationTrackingService.Class
 
 import android.app.Activity
-import android.content.Context
+import android.app.Service
+import android.content.Intent
+import android.os.Binder
 import android.os.Handler
+import android.os.IBinder
 import android.util.Log
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.net.URI
 
-class LocationTrackingService(val context: Context) {
+class LocationTrackingService(): Service() {
 
     private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var trackingDataLayer: TrackingDataLayer
@@ -17,16 +21,15 @@ class LocationTrackingService(val context: Context) {
     private var runnableTracking: Runnable? = null
 
     init {
-        val tabletSerialNo = context.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
+        val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
         if (!tabletSerialNo.isNullOrEmpty()) {
             trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
-            trackingDataLayer = TrackingDataLayer(context, trackingWebSocket)
+            trackingDataLayer = TrackingDataLayer(trackingWebSocket)
             startTracking()
         }
     }
 
     private fun trackingWebSocketUri()= URI(Helper.getConfigValue("trackingWebSocketUri"))
-
 
     private fun setTrackingWebSocketConfiguration(trackingUri: URI, tabletSerialNo: String): WebSocketClient {
         val webSocket = object : WebSocketClient(trackingUri) {
@@ -63,7 +66,7 @@ class LocationTrackingService(val context: Context) {
     }
 
     private fun startTracking() {
-        val locationReceiver = LocationReceiver(context, trackingDataLayer)
+        val locationReceiver = LocationReceiver(trackingDataLayer)
         if (locationReceiver.setUpLocationListener()) {
             setupTrackingTimer()
             trackingWebSocket.connect()
@@ -93,4 +96,36 @@ class LocationTrackingService(val context: Context) {
     fun stopLocationTrackingService() {
         trackingWebSocket.onCloseReceived()
     }
+
+    override fun onBind(intent: Intent): IBinder {
+        Log.d("LocationTrackingService","onBind")
+       return LocationServiceBinder()
+    }
+
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+         super.onStartCommand(intent, flags, startId)
+        Log.d("LocationTrackingService","onStartCommand")
+         return START_NOT_STICKY
+    }
+
+    override fun onCreate() {
+        super.onCreate()
+        Log.d("LocationTrackingService","onCreate")
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("LocationTrackingService","onDestroy")
+    }
+
+    companion object {
+        @get:Synchronized
+        var instance:LocationTrackingService = LocationTrackingService()
+
+        class LocationServiceBinder : Binder() {
+            val service: LocationTrackingService
+                get() = instance
+        }
+    }
+
 }

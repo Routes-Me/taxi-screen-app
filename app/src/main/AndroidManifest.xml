@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS"
         tools:ignore="ProtectedPermissions" />
@@ -113,6 +114,8 @@
             android:enabled="true"
             android:exported="true"/>
         <service android:name="com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService" />
+
+        <service android:name="com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService"/>
     </application>
 
 </manifest>

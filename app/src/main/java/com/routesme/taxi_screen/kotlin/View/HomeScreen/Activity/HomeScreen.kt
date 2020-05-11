@@ -1,9 +1,7 @@
 package com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity
 
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.os.Bundle
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.kotlin.Class.DisplayManager
@@ -51,22 +49,22 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.requestRuntimePermissions()
         turnOnHotspot()
-        startLocationTrackingService()
+        //startLocationTrackingService()
         super.onResume()
     }
 
+    private fun startLocationTrackingService() {
+        locationTrackingService = LocationTrackingService()
+    }
+
     override fun onPause() {
-        if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
+       // if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
         super.onPause()
     }
 
     private fun showFragments() {
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment.instance).commit()
         supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, SideMenuFragment.instance).commit()
-    }
-
-    private fun startLocationTrackingService() {
-        locationTrackingService = LocationTrackingService(this)
     }
 
     override fun onPermissionsOkay() {}

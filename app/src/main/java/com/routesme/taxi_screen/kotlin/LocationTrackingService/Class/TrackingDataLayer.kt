@@ -4,14 +4,15 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.util.Log
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi_screen.kotlin.Model.VehicleLocation
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.text.SimpleDateFormat
 import java.util.*
 
-class TrackingDataLayer(val context: Context, private var trackingWebSocket: WebSocketClient) {
-    private val db = TrackingDatabase(context).trackingDao()
+class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
+    private val db = TrackingDatabase(App.instance).trackingDao()
 
     @SuppressLint("SimpleDateFormat")
     private val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")

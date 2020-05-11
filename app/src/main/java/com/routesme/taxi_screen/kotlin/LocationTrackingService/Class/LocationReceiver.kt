@@ -10,10 +10,11 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import androidx.appcompat.app.AlertDialog
+import com.routesme.taxi_screen.kotlin.Class.App
 
-class LocationReceiver(val context: Context, private val trackingDataLayer: TrackingDataLayer) : LocationListener {
+class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : LocationListener {
 
-    private var locationManager: LocationManager = context.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
@@ -39,7 +40,7 @@ class LocationReceiver(val context: Context, private val trackingDataLayer: Trac
     }
 
     fun showAlertDialog() {
-        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(this.context)
+        val alertDialog: AlertDialog.Builder = AlertDialog.Builder(App.instance)
                 .setTitle("GPS settings")
                 .setMessage("GPS is not enabled. Do you want to go to settings menu?")
                 .setPositiveButton("Settings", DialogInterface.OnClickListener(function = positiveButtonClick))
@@ -47,7 +48,7 @@ class LocationReceiver(val context: Context, private val trackingDataLayer: Trac
         alertDialog.show()
     }
 
-    private val positiveButtonClick = { _: DialogInterface, which: Int -> context.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
+    private val positiveButtonClick = { _: DialogInterface, which: Int -> App.instance.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
     private val negativeButtonClick = { dialog: DialogInterface, which: Int -> dialog.cancel() }
 
     private fun canGetLocation() = isGPSEnabled() || isNetworkEnabled()
