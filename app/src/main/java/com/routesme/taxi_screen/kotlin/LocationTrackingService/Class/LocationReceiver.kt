@@ -9,6 +9,7 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.routesme.taxi_screen.kotlin.Class.App
 
@@ -58,8 +59,9 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
     //LocationListener Methods...
-    override fun onLocationChanged(location: Location?) {
+    override fun onLocationChanged(location: Location) {
         if (location != null) trackingDataLayer.insertLocation(location)
+        //Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_LONG).show()
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}

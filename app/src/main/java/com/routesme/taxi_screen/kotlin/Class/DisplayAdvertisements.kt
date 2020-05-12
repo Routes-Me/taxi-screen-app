@@ -134,7 +134,7 @@ class DisplayAdvertisements() {
             if (currentBannerIndex < banners.size) {
                 val uri = Uri.parse(banners.get(currentBannerIndex).advertisement_URL)
                 //showBannerIntoImageView(uri)
-                Glide.with(ContentFragment.instance).load(uri).apply(options).into(ADS_ImageView)
+                Glide.with(App.instance).load(uri).apply(options).into(ADS_ImageView)
                 currentBannerIndex++
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0

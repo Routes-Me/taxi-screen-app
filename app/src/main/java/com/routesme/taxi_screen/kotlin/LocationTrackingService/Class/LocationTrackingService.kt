@@ -1,7 +1,6 @@
 package com.routesme.taxi_screen.kotlin.LocationTrackingService.Class
 
-import android.app.Activity
-import android.app.Service
+import android.app.*
 import android.content.Intent
 import android.os.Binder
 import android.os.Handler
@@ -98,24 +97,25 @@ class LocationTrackingService(): Service() {
     }
 
     override fun onBind(intent: Intent): IBinder {
-        Log.d("LocationTrackingService","onBind")
-       return LocationServiceBinder()
+        Log.i("trackingWebSocket:","onBind")
+        return LocationServiceBinder()
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-         super.onStartCommand(intent, flags, startId)
-        Log.d("LocationTrackingService","onStartCommand")
-         return START_NOT_STICKY
+        super.onStartCommand(intent, flags, startId)
+        Log.i("trackingWebSocket:","onStartCommand")
+        return START_NOT_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("LocationTrackingService","onCreate")
+        startForeground(12345678, getNotification())
+        Log.i("trackingWebSocket:","onCreate")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("LocationTrackingService","onDestroy")
+        Log.i("trackingWebSocket:","onDestroy")
     }
 
     companion object {
@@ -126,6 +126,14 @@ class LocationTrackingService(): Service() {
             val service: LocationTrackingService
                 get() = instance
         }
+    }
+
+    private fun getNotification(): Notification {
+        val channel = NotificationChannel("channel_01", "My Channel", NotificationManager.IMPORTANCE_DEFAULT)
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
+        val builder = Notification.Builder(applicationContext, "channel_01").setAutoCancel(true)
+        return builder.build()
     }
 
 }

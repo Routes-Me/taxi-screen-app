@@ -68,14 +68,14 @@ class App : Application() {
             val name = className.className
             if (name.endsWith("LocationTrackingService")) {
                 gpsService = (service as LocationTrackingService.Companion.LocationServiceBinder).service
-                Log.d("LocationTrackingService","onServiceConnected")
+                Log.i("trackingWebSocket:","onServiceConnected")
             }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "LocationTrackingService") {
                 gpsService = null
-                Log.d("LocationTrackingService","onServiceDisconnected")
+                Log.i("trackingWebSocket:","onServiceDisconnected")
             }
         }
     }
