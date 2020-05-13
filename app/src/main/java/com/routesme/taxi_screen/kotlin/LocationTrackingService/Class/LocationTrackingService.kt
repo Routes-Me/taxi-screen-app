@@ -104,7 +104,7 @@ class LocationTrackingService(): Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.i("trackingWebSocket:","onStartCommand")
-        return START_NOT_STICKY
+        return START_STICKY
     }
 
     override fun onCreate() {
