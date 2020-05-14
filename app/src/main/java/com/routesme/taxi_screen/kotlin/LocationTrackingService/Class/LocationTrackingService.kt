@@ -15,18 +15,11 @@ class LocationTrackingService(): Service() {
 
     private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var trackingDataLayer: TrackingDataLayer
+    private lateinit var locationReceiver: LocationReceiver
     private var isHandlerTrackingRunning = false
     private var handlerTracking: Handler? = null
     private var runnableTracking: Runnable? = null
 
-    init {
-        val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
-        if (!tabletSerialNo.isNullOrEmpty()) {
-            trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
-            trackingDataLayer = TrackingDataLayer(trackingWebSocket)
-            startTracking()
-        }
-    }
 
     private fun trackingWebSocketUri()= URI(Helper.getConfigValue("trackingWebSocketUri"))
 
@@ -64,14 +57,21 @@ class LocationTrackingService(): Service() {
         Log.i("trackingWebSocket:  ", "Send message:  $message")
     }
 
-    private fun startTracking() {
-        val locationReceiver = LocationReceiver(trackingDataLayer)
-        if (locationReceiver.setUpLocationListener()) {
-            setupTrackingTimer()
-            trackingWebSocket.connect()
-        } else {
-            locationReceiver.showAlertDialog()
-        }
+     fun startTracking() {
+         val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
+         if (!tabletSerialNo.isNullOrEmpty()) {
+             trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
+             trackingDataLayer = TrackingDataLayer(trackingWebSocket)
+             locationReceiver = LocationReceiver(trackingDataLayer)
+             //startTracking()
+             if (locationReceiver.setUpLocationListener()) {
+                 setupTrackingTimer()
+                 trackingWebSocket.connect()
+             } else {
+                 locationReceiver.showAlertDialog()
+             }
+         }
+
     }
 
     private fun setupTrackingTimer() {

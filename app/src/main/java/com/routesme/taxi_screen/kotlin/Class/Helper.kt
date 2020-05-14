@@ -9,10 +9,10 @@ import java.util.*
 
 object Helper {
     private const val TAG = "Helper"
-    fun getConfigValue(name: String?): String? {
-        val resources = App.instance?.resources
+    fun getConfigValue(name: String): String? {
+        val resources = App.instance.resources
         try {
-            val rawResource = resources?.openRawResource(R.raw.config)
+            val rawResource = resources.openRawResource(R.raw.config)
             val properties = Properties()
             properties.load(rawResource)
             return properties.getProperty(name)
