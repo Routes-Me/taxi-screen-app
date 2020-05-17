@@ -163,7 +163,7 @@ class LocationTrackingService(): Service() {
             Log.i("trackingWebSocket:","startCheckPermissionsHandler")
             if (hasPermissions(*permissions)) {startTracking()}
 
-            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1 * 60 * 1000)
+            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 15 * 60 * 1000)
         }
         handlerCheckPermissions = Handler()
     }
