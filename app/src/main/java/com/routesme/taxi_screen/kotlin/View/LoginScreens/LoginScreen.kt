@@ -60,7 +60,7 @@ class LoginScreen : AppCompatActivity() {
 
     private fun initialize() {
         dialogSetUp()
-        openLoginLayout(app!!.isNewLogin)
+        openLoginLayout(app.isNewLogin)
         btnOpenLoginScreen.setOnClickListener { showLoginView() }
         openPattern.setOnClickListener { openPatternDialog() }
         technical_login_screen.btn_learnMore.setOnClickListener { openLearnMoreScreen() }
@@ -245,7 +245,7 @@ class LoginScreen : AppCompatActivity() {
     }
 
     private fun showSavedCredentials() {
-        if (app?.authCredentials != null) {
+        if (app.authCredentials != null) {
             authCredentials = app.authCredentials!!
             userName = authCredentials.Username
             password = authCredentials.Password
@@ -267,7 +267,7 @@ class LoginScreen : AppCompatActivity() {
         userName = userName_et.text.toString().trim()
         password = password_et.text.toString().trim()
         authCredentials = AuthCredentials(userName, password)
-        app!!.authCredentials = authCredentials
+        app.authCredentials = authCredentials
         app.isNewLogin = true
     }
 }

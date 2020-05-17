@@ -1,11 +1,17 @@
 package com.routesme.taxi_screen.kotlin.LocationTrackingService.Class
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Binder
+import android.os.Build
 import android.os.Handler
 import android.os.IBinder
+import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
 import tech.gusavila92.websocketclient.WebSocketClient
@@ -19,7 +25,9 @@ class LocationTrackingService(): Service() {
     private var isHandlerTrackingRunning = false
     private var handlerTracking: Handler? = null
     private var runnableTracking: Runnable? = null
-
+    private val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE)
+    private var handlerCheckPermissions: Handler? = null
+    private var runnableCheckPermissions: Runnable? = null
 
     private fun trackingWebSocketUri()= URI(Helper.getConfigValue("trackingWebSocketUri"))
 
@@ -57,7 +65,61 @@ class LocationTrackingService(): Service() {
         Log.i("trackingWebSocket:  ", "Send message:  $message")
     }
 
+     @SuppressLint("MissingPermission")
      fun startTracking() {
+
+         if (hasPermissions(*permissions)){
+             handlerCheckPermissions?.removeCallbacksAndMessages(null)
+             val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null)
+             if (!tabletSerialNo.isNullOrEmpty()) {
+                 trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
+                 trackingDataLayer = TrackingDataLayer(trackingWebSocket)
+                 locationReceiver = LocationReceiver(trackingDataLayer)
+                 //startTracking()
+                 if (locationReceiver.setUpLocationListener()) {
+                     setupTrackingHandler()
+                     trackingWebSocket.connect()
+                 } else {
+                     locationReceiver.showAlertDialog()
+                 }
+             }
+         }else{
+             setupCheckPermissionsHandler()
+             handlerCheckPermissions?.postDelayed(runnableCheckPermissions,1000)
+         }
+
+
+
+       //  if (hasPermissions(*permissions)) Log.i("trackingWebSocketPermissions:","Granted") else Log.i("trackingWebSocketPermissions:","Denied")
+
+
+             /*
+         Permissions.check(baseContext , permissions, null, null, object : PermissionHandler() {
+             @SuppressLint("MissingPermission")
+             override fun onGranted() {
+                 val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
+                 val tabletSerialNo = telephonyManager.deviceId
+
+                 if (!tabletSerialNo.isNullOrEmpty()) {
+                     trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
+                     trackingDataLayer = TrackingDataLayer(trackingWebSocket)
+                     locationReceiver = LocationReceiver(trackingDataLayer)
+                     //startTracking()
+                     if (locationReceiver.setUpLocationListener()) {
+                         setupTrackingTimer()
+                         trackingWebSocket.connect()
+                     } else {
+                         locationReceiver.showAlertDialog()
+                     }
+                 }
+             }
+
+             override fun onDenied(context: Context, deniedPermissions: ArrayList<String?>?) {
+                 // permission denied, block the feature.
+             }
+         })
+              */
+/*
          val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
          if (!tabletSerialNo.isNullOrEmpty()) {
              trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
@@ -71,10 +133,21 @@ class LocationTrackingService(): Service() {
                  locationReceiver.showAlertDialog()
              }
          }
-
+*/
     }
 
-    private fun setupTrackingTimer() {
+    private fun hasPermissions(vararg permissions: String?): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (p in permissions) {
+                if (ContextCompat.checkSelfPermission(App.instance, p!!) != PackageManager.PERMISSION_GRANTED) {
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    private fun setupTrackingHandler() {
         runnableTracking = Runnable {
             isHandlerTrackingRunning = true
             Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
@@ -82,6 +155,17 @@ class LocationTrackingService(): Service() {
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
         handlerTracking = Handler()
+    }
+
+    private fun setupCheckPermissionsHandler() {
+        Log.i("trackingWebSocket:","setupCheckPermissionsHandler")
+        runnableCheckPermissions = Runnable {
+            Log.i("trackingWebSocket:","startCheckPermissionsHandler")
+            if (hasPermissions(*permissions)) {startTracking()}
+
+            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1 * 60 * 1000)
+        }
+        handlerCheckPermissions = Handler()
     }
 
     private fun stopTrackingTimer() {
