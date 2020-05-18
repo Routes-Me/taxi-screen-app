@@ -12,11 +12,13 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -35,10 +37,12 @@ import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
 import dmax.dialog.SpotsDialog;
+import kotlin.jvm.internal.Intrinsics;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -66,13 +70,36 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         initialize();
     }
     private void initialize() {
+       // requestRuntimePermissions();
         operations = new Operations();
         app = (App) getApplicationContext();
         tabletCredentials = new TabletCredentials();
         initializeViews();
         sharedPreferencesStorage();
+
         getTabletInfo();
     }
+
+
+    private void requestRuntimePermissions() {
+        String[] permissionsList = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE};
+        if (!hasPermissions(permissionsList)) {
+            ActivityCompat.requestPermissions(this, permissionsList, 1);
+        }
+
+    }
+
+    private boolean hasPermissions(String... permissions) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (String permission : permissions) {
+                if (ActivityCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
     private void initializeViews() {
         toolbarSetUp();
         initLayoutViews();

@@ -9,7 +9,6 @@ import android.os.Binder
 import android.os.Build
 import android.os.Handler
 import android.os.IBinder
-import android.telephony.TelephonyManager
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.routesme.taxi_screen.kotlin.Class.App
@@ -28,6 +27,7 @@ class LocationTrackingService(): Service() {
     private val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE)
     private var handlerCheckPermissions: Handler? = null
     private var runnableCheckPermissions: Runnable? = null
+    private var permissionsHandlerRunning = false
 
     private fun trackingWebSocketUri()= URI(Helper.getConfigValue("trackingWebSocketUri"))
 
@@ -65,11 +65,30 @@ class LocationTrackingService(): Service() {
         Log.i("trackingWebSocket:  ", "Send message:  $message")
     }
 
-     @SuppressLint("MissingPermission")
-     fun startTracking() {
+    fun checkPermissionsGranted(){
+        setupCheckPermissionsHandler()
+        if (hasPermissions(*permissions)){
+            startTracking()
+        }else{
+            permissionsHandlerRunning = true
+            handlerCheckPermissions?.postDelayed(runnableCheckPermissions,1000)
+        }
 
-         if (hasPermissions(*permissions)){
-             handlerCheckPermissions?.removeCallbacksAndMessages(null)
+    }
+    private fun setupCheckPermissionsHandler() {
+        Log.i("trackingWebSocket:","setupCheckPermissionsHandler")
+        runnableCheckPermissions = Runnable {
+
+            if (hasPermissions(*permissions) && permissionsHandlerRunning ) {permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions); instance.startTracking() }
+            Log.i("trackingWebSocket:","startCheckPermissionsHandler")
+
+            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1 * 60 * 1000)
+        }
+        handlerCheckPermissions = Handler()
+    }
+     private fun startTracking() {
+
+            // if (permissionsHandlerRunning) {permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions) }
              val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null)
              if (!tabletSerialNo.isNullOrEmpty()) {
                  trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
@@ -83,15 +102,8 @@ class LocationTrackingService(): Service() {
                      locationReceiver.showAlertDialog()
                  }
              }
-         }else{
-             setupCheckPermissionsHandler()
-             handlerCheckPermissions?.postDelayed(runnableCheckPermissions,1000)
-         }
-
-
 
        //  if (hasPermissions(*permissions)) Log.i("trackingWebSocketPermissions:","Granted") else Log.i("trackingWebSocketPermissions:","Denied")
-
 
              /*
          Permissions.check(baseContext , permissions, null, null, object : PermissionHandler() {
@@ -136,10 +148,10 @@ class LocationTrackingService(): Service() {
 */
     }
 
-    private fun hasPermissions(vararg permissions: String?): Boolean {
+    private fun hasPermissions(vararg permissions: String): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (p in permissions) {
-                if (ContextCompat.checkSelfPermission(App.instance, p!!) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(App.instance, p) != PackageManager.PERMISSION_GRANTED) {
                     return false
                 }
             }
@@ -155,17 +167,6 @@ class LocationTrackingService(): Service() {
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
         handlerTracking = Handler()
-    }
-
-    private fun setupCheckPermissionsHandler() {
-        Log.i("trackingWebSocket:","setupCheckPermissionsHandler")
-        runnableCheckPermissions = Runnable {
-            Log.i("trackingWebSocket:","startCheckPermissionsHandler")
-            if (hasPermissions(*permissions)) {startTracking()}
-
-            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 15 * 60 * 1000)
-        }
-        handlerCheckPermissions = Handler()
     }
 
     private fun stopTrackingTimer() {

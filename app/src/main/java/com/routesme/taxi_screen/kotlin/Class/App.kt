@@ -75,9 +75,10 @@ class App : Application() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val name = className.className
             if (name.endsWith("LocationTrackingService")) {
-                gpsService = (service as LocationTrackingService.Companion.LocationServiceBinder).service
-                LocationTrackingService.instance.startTracking()
                 Log.i("trackingWebSocket:","onServiceConnected")
+                gpsService = (service as LocationTrackingService.Companion.LocationServiceBinder).service
+                LocationTrackingService.instance.checkPermissionsGranted()
+
             }
         }
 

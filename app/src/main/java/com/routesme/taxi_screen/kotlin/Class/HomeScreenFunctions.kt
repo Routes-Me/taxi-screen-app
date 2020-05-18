@@ -44,10 +44,10 @@ class HomeScreenFunctions(val activity: Activity) {
         if (!hasPermissions(*permissionsList)) ActivityCompat.requestPermissions(activity, permissionsList, 1)
     }
 
-    private fun hasPermissions(vararg permissions: String?): Boolean {
+    private fun hasPermissions(vararg permissions: String): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (p in permissions) {
-                if (ActivityCompat.checkSelfPermission(activity, p!!) != PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) {
                     return false
                 }
             }
