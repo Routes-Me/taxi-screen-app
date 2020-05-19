@@ -29,6 +29,7 @@ import kotlinx.android.synthetic.main.content_fragment.view.*
 
 class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.ConnectivityReceiverListener {
 
+    private lateinit var tabletSerialNumber:String
     private lateinit var contentFragmentContext: Context
     private lateinit var view1: View
     private lateinit var sharedPreferences: SharedPreferences
@@ -46,7 +47,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     override fun onAttach(context: Context) {
         contentFragmentContext = context
         sharedPreferences = context.getSharedPreferences("userData", Activity.MODE_PRIVATE)
-        val tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
+        tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
         firebaseAnalytics = FirebaseAnalytics.getInstance(context)
         firebaseAnalytics.setUserId(tabletSerialNumber)
         super.onAttach(context)
@@ -86,6 +87,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     private fun updateFirebaseAnalystics(itemAnalytics: ItemAnalytics) {
         val params = Bundle()
+        params.putString("device_id", tabletSerialNumber)
         params.putInt("id", itemAnalytics.id)
         params.putString("name", itemAnalytics.name)
         firebaseAnalytics.logEvent(itemAnalytics.name, params)

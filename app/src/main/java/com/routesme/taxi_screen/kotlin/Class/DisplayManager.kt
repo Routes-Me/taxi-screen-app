@@ -55,7 +55,7 @@ open class DisplayManager() {
     }
 
     @SuppressLint("SimpleDateFormat")
-    private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)!!
+    private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
 
     fun registerActivity(activity: Activity) {
         registeredActivities.add(activity)
