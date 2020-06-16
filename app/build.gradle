@@ -47,10 +47,8 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'com.android.support:multidex:1.0.3'
-
     //Kotlin ...
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-
     //Firebase Crashlytics
     implementation 'com.google.firebase:firebase-core:17.2.2'
     implementation 'com.crashlytics.sdk.android:crashlytics:2.10.1'
@@ -73,7 +71,6 @@ dependencies {
     implementation 'com.linkedin.dexmaker:dexmaker:2.25.0'
     //Spots progress dialog
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
-
     //retrofit
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
@@ -89,8 +86,6 @@ dependencies {
     implementation 'androidx.fragment:fragment-ktx:1.2.2'
     implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation 'com.google.android.material:material:1.1.0'
-
-
     //Location tracking service by kotlin ...
     //Location Listener
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
@@ -108,11 +103,11 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:1.1.1"
     //WebSocket
     implementation 'tech.gusavila92:java-android-websocket-client:1.2.2'
-
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'
-
     //Runtime Permission Library
     implementation 'com.nabinbhandari.android:permissions:3.8'
+    //Nearby API Library
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
 }

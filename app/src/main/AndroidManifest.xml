@@ -52,12 +52,8 @@
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen"
             android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustNothing" />
+            android:windowSoftInputMode="adjustNothing" >
 
-        <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -65,6 +61,14 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
+        </activity>
+
+        <activity
+            android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustNothing">
+
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen"
@@ -116,6 +120,10 @@
         <service android:name="com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService" />
 
         <service android:name="com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService"/>
+
+        <meta-data
+            android:name="com.google.android.nearby.messages.API_KEY"
+            android:value="AIzaSyAoAYo4ShfpT7cLSG-lfdCLe3P8q_jrQF8" />
     </application>
 
 </manifest>

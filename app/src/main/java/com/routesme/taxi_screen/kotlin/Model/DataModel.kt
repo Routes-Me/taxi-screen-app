@@ -6,6 +6,7 @@ import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
+import com.routesme.taxiscreen.R
 import java.io.Serializable
 
 //Server RequestHeaders
@@ -69,3 +70,6 @@ enum class Actions(val title: String) {Launcher("Open launcher settings"), Gener
 interface IModeChanging {
     fun onModeChange()
 }
+
+//Payment Service...
+data class PaymentData(var deviceId:String = "", var paymentAmount: Double = 0.0) : Serializable

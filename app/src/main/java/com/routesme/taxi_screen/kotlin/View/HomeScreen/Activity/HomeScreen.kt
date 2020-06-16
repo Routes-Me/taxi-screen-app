@@ -3,12 +3,18 @@ package com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity
 import android.app.Activity
 import android.content.*
 import android.os.Bundle
+import androidx.fragment.app.Fragment
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.messages.Message
+import com.google.android.gms.nearby.messages.MessageListener
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.kotlin.Class.DisplayManager
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.IModeChanging
+import com.routesme.taxi_screen.kotlin.Model.PaymentData
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.PaymentFragment
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
@@ -22,6 +28,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private var pressedTime: Long = 0
     private var clickTimes = 0
     private val displayManager = DisplayManager.instance
+    private  var paymentData = PaymentData()
 
     companion object{
         @get:Synchronized
@@ -33,7 +40,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
-        showFragments()
+        //showFragments()
 
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
@@ -94,5 +101,32 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
 
     override fun onModeChange() {
         recreate()
+    }
+
+    //Payment Service...
+    private val messageListener = object : MessageListener() {
+        override fun onFound(paymentMessage: Message) {
+            val dataArray = String(paymentMessage.content).split(",").toTypedArray()
+            paymentData.deviceId = dataArray[0]
+            paymentData.paymentAmount = dataArray[1].toDouble()
+            passPaymentData()
+        }
+        override fun onLost(message: Message?) {}
+    }
+    override fun onStart() {
+        Nearby.getMessagesClient(this).subscribe(messageListener)
+        passPaymentData() //for test only
+        super.onStart()
+    }
+    override fun onStop() {
+        Nearby.getMessagesClient(this).unsubscribe(messageListener)
+        super.onStop()
+    }
+
+    private fun passPaymentData(){
+        paymentData.apply { deviceId = "9347349"; paymentAmount = 1.500 }  //for test only
+        val bundle = Bundle().apply {putSerializable("paymentData", paymentData)}
+        val paymentFragment = PaymentFragment.instance.apply { arguments =bundle }
+        supportFragmentManager.beginTransaction().replace(R.id.paymentFragment_container, paymentFragment).commit()
     }
 }
