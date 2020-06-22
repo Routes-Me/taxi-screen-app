@@ -20,4 +20,10 @@
 
     <color name="cardView_darkBackground">#28ffffff</color>
     <color name="homeScreen_lightBackground">#00ffffff</color>
+
+    <!-- Payment Fragment -->
+    <color name="pf_lightBackground">#f1f5f8</color>
+    <color name="pf_textColorLight">#cc1d1d1f</color>
+    <color name="pf_darkBackground">#28ffffff</color>
+    <color name="pf_copyrightTextColor_light">#18428f</color>
 </resources>

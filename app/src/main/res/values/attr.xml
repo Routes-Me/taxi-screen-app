@@ -5,4 +5,12 @@
     <attr name="text_color" format="reference" />
     <attr name="wifi_icon" format="reference" />
     <attr name="key_icon" format="reference" />
+
+    <!-- Payment Fragment -->
+    <attr name="pfBackground_color" format="reference" />
+    <attr name="pfTopBackground_color" format="reference" />
+    <attr name="pfText_color" format="reference" />
+    <attr name="pfCopyrightTextColor" format="reference" />
+    <attr name="pfRoutesLogo" format="reference" />
+    <attr name="pfQrCodeShadow" format="reference" />
 </resources>

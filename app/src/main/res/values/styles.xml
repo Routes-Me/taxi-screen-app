@@ -17,6 +17,12 @@
         <item name="text_color">@color/black</item>
         <item name="wifi_icon">@mipmap/wifi_black</item>
         <item name="key_icon">@mipmap/key_black</item>
+        <item name="pfBackground_color">@color/pf_lightBackground</item>
+        <item name="pfTopBackground_color">@drawable/pf_blue_background</item>
+        <item name="pfText_color">@color/pf_textColorLight</item>
+        <item name="pfCopyrightTextColor">@color/pf_copyrightTextColor_light</item>
+        <item name="pfRoutesLogo">@mipmap/routes_icon_light</item>
+        <item name="pfQrCodeShadow">@color/pf_copyrightTextColor_light</item>
     </style>
 
     <style name="FullScreen_Dark_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -30,6 +36,12 @@
         <item name="text_color">@color/white</item>
         <item name="wifi_icon">@mipmap/wifi_white</item>
         <item name="key_icon">@mipmap/key_white</item>
+        <item name="pfBackground_color">@color/pf_darkBackground</item>
+        <item name="pfTopBackground_color">@color/pf_darkBackground</item>
+        <item name="pfText_color">@color/white</item>
+        <item name="pfCopyrightTextColor">@color/white</item>
+        <item name="pfRoutesLogo">@mipmap/routes_icon_dark</item>
+        <item name="pfQrCodeShadow">@null</item>
     </style>
 
     <style name="AppTheme.CustomEditText" parent="android:style/Widget.EditText">
