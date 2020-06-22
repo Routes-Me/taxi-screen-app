@@ -72,4 +72,4 @@ interface IModeChanging {
 }
 
 //Payment Service...
-data class PaymentData(var deviceId:String = "", var paymentAmount: Double = 0.0) : Serializable
+data class PaymentData(var driverToken:String = "", var paymentAmount: Double = 0.0) : Serializable

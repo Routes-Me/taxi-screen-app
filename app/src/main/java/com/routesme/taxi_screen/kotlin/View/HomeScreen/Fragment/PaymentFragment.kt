@@ -34,7 +34,7 @@ class PaymentFragment : Fragment() {
 
     private fun initialize(){
         paymentData = arguments?.getSerializable("paymentData") as PaymentData
-      //  Toast.makeText(activity,"Device Id: ${paymentData.deviceId}, Amount: ${paymentData.paymentAmount} KD",Toast.LENGTH_LONG).show()
+        Toast.makeText(activity,"Driver Token: ${paymentData.driverToken}, Amount: ${paymentData.paymentAmount} KD",Toast.LENGTH_LONG).show()
     }
 
 }
