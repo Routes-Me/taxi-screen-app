@@ -111,6 +111,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private val messageListener = object : MessageListener() {
         override fun onFound(paymentMessage: Message) {
            // Toast.makeText(this@HomeScreen,"message: ${String(paymentMessage.content)}",Toast.LENGTH_SHORT).show()
+
             val dataArray = String(paymentMessage.content).split(",").toTypedArray()
 
             paymentData.driverToken = dataArray[0]
@@ -118,6 +119,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
 
             sendReceivedSuccessfullyMessage()
             passPaymentData()
+
         }
         override fun onLost(message: Message?) {}
     }
