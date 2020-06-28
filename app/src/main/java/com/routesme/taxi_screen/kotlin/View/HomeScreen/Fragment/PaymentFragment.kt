@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.routesme.taxi_screen.kotlin.Model.PaymentData
 import com.routesme.taxiscreen.R
+import kotlinx.android.synthetic.main.payment_fragment.view.*
 
 class PaymentFragment : Fragment() {
 
@@ -34,7 +35,7 @@ class PaymentFragment : Fragment() {
 
     private fun initialize(){
         paymentData = arguments?.getSerializable("paymentData") as PaymentData
-        Toast.makeText(activity,"Driver Token: ${paymentData.driverToken}, Amount: ${paymentData.paymentAmount} KD",Toast.LENGTH_LONG).show()
+        //Toast.makeText(activity,"Driver Token: ${paymentData.driverToken}, Amount: ${paymentData.paymentAmount} KD",Toast.LENGTH_LONG).show()
+        paymentFragmentView.amountTv.text = paymentData.paymentAmount.toString()
     }
-
 }
