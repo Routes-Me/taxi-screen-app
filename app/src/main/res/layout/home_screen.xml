@@ -46,7 +46,7 @@
     </RelativeLayout>
 
     <FrameLayout
-        android:id="@+id/paymentFragment_container"
+        android:id="@+id/payment_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintLeft_toLeftOf="parent"

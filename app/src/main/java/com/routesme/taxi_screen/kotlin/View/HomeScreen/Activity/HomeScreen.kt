@@ -1,13 +1,17 @@
 package com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity
 
 import android.app.Activity
-import android.content.*
+import android.content.ComponentName
+import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
-import android.widget.Toast
+import android.os.Handler
+import androidx.fragment.app.Fragment
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.DisplayManager
 import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.Class.Operations
@@ -29,9 +33,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private var pressedTime: Long = 0
     private var clickTimes = 0
     private val displayManager = DisplayManager.instance
-    private  var paymentData = PaymentData()
-    private val operations = Operations.instance
-    private var receivedSuccessfullyMessage: String = ""
+
 
     companion object{
         @get:Synchronized
@@ -40,12 +42,13 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        App.currentActivity = this
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
-        //showFragments()
-        operations.context = this
+        showFragments()
+
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         openPattern.setOnClickListener {openPatternClick()}
@@ -107,42 +110,6 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         recreate()
     }
 
-    //Payment Service...
-    private val messageListener = object : MessageListener() {
-        override fun onFound(paymentMessage: Message) {
-           // Toast.makeText(this@HomeScreen,"message: ${String(paymentMessage.content)}",Toast.LENGTH_SHORT).show()
 
-            val dataArray = String(paymentMessage.content).split(",").toTypedArray()
 
-            paymentData.driverToken = dataArray[0]
-            paymentData.paymentAmount = dataArray[1].toDouble()
-
-            sendReceivedSuccessfullyMessage()
-            passPaymentData()
-
-        }
-        override fun onLost(message: Message?) {}
-    }
-
-    private fun sendReceivedSuccessfullyMessage() {
-        receivedSuccessfullyMessage = "${getString(R.string.received)},${paymentData.paymentAmount}"
-        operations.publish(receivedSuccessfullyMessage)
-    }
-    override fun onStart() {
-        Nearby.getMessagesClient(this).subscribe(messageListener)
-        //passPaymentData() //for test only
-        super.onStart()
-    }
-    override fun onStop() {
-        if (receivedSuccessfullyMessage.isNotEmpty()) operations.unPublish(receivedSuccessfullyMessage)
-        Nearby.getMessagesClient(this).unsubscribe(messageListener)
-        super.onStop()
-    }
-
-    private fun passPaymentData(){
-        //paymentData.apply { driverToken = "9347349"; paymentAmount = 1.500 }  //for test only
-        val bundle = Bundle().apply {putSerializable("paymentData", paymentData)}
-        val paymentFragment = PaymentFragment.instance.apply { arguments =bundle }
-        supportFragmentManager.beginTransaction().replace(R.id.paymentFragment_container, paymentFragment).commit()
-    }
 }

@@ -1,27 +1,31 @@
 package com.routesme.taxi_screen.kotlin.Class
 
-import android.Manifest
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
 import android.telephony.TelephonyManager
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import com.danikula.videocache.HttpProxyCacheServer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.messages.Message
+import com.google.android.gms.nearby.messages.MessageListener
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
+import com.routesme.taxi_screen.kotlin.Model.PaymentData
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.PaymentScreen
+import com.routesme.taxiscreen.R
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -35,6 +39,10 @@ class App : Application() {
     var taxiOfficeName: String? = null
     private var gpsService: LocationTrackingService? = null
     private lateinit var telephonyManager: TelephonyManager
+    private  var paymentData = PaymentData()
+    private val operations = Operations.instance
+    private var receivedSuccessfullyMessage: String = ""
+    private var minute = 60 * 1000
 
 
     companion object {
@@ -47,6 +55,7 @@ class App : Application() {
         var exoDatabaseProvider: ExoDatabaseProvider? = null
         var exoPlayerCacheSize: Long = 90 * 1024 * 1024
         //val firebaseAnalytics = FirebaseAnalytics.getInstance(App.instance)
+        lateinit var currentActivity:Context
     }
 
     override fun onCreate() {
@@ -54,6 +63,7 @@ class App : Application() {
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
+        operations.context = this
 
         //video player...
         if (leastRecentlyUsedCacheEvictor == null) {
@@ -72,6 +82,8 @@ class App : Application() {
         this.startService(intent)
         //this.getApplication().startForegroundService(intent);
         this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+
+        Nearby.getMessagesClient(baseContext).subscribe(messageListener)
     }
 
     fun setConnectivityListener(listener: ConnectivityReceiver.ConnectivityReceiverListener?) {
@@ -118,4 +130,67 @@ class App : Application() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
+
+
+    //Payment Service...
+    private val messageListener = object : MessageListener() {
+        override fun onFound(paymentMessage: Message) {
+            // Toast.makeText(this@HomeScreen,"message: ${String(paymentMessage.content)}",Toast.LENGTH_SHORT).show()
+
+            val dataArray = String(paymentMessage.content).split(",").toTypedArray()
+
+            paymentData.driverToken = dataArray[0]
+            paymentData.paymentAmount = dataArray[1].toDouble()
+
+            sendReceivedSuccessfullyMessage()
+            passPaymentData()
+
+        }
+        override fun onLost(message: Message?) {}
+    }
+
+    private fun sendReceivedSuccessfullyMessage() {
+        receivedSuccessfullyMessage = "${getString(R.string.received)},${paymentData.paymentAmount}"
+        operations.publish(receivedSuccessfullyMessage)
+    }
+
+    /*
+    override fun onStop() {
+        if (receivedSuccessfullyMessage.isNotEmpty()) operations.unPublish(receivedSuccessfullyMessage)
+        Nearby.getMessagesClient(this).unsubscribe(messageListener)
+        super.onStop()
+    }
+*/
+    private fun passPaymentData(){
+       // hideFragment(PaymentFragment.instance)
+        //paymentData.apply { driverToken = "9347349"; paymentAmount = 1.500 }  //for test only
+      //  val bundle = Bundle().apply {putSerializable("paymentData", paymentData)}
+      //  val paymentFragment = PaymentFragment.instance.apply { arguments =bundle }
+        startActivity(Intent(this,PaymentScreen::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("paymentData",paymentData))
+
+        val runnableBanner = Runnable {
+            PaymentScreen().finish()
+        }
+        val handlerBanner = Handler()
+        handlerBanner.postDelayed(runnableBanner, (30 * 1000).toLong())
+
+        //supportFragmentManager.beginTransaction().replace(R.id.paymentFragment_container, paymentFragment).commit()
+
+    }
+
+    /*
+    private fun showFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            if (fragment.isAdded) show(fragment)
+            else add(R.id.payment_container, fragment)
+            supportFragmentManager.fragments.forEach { if (it != fragment && it.isAdded) hide(it) }
+        }.commit()
+    }
+
+    private fun hideFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().apply {
+            if (fragment.isAdded && fragment.isVisible) hide(fragment)
+        }.commit()
+    }
+*/
 }

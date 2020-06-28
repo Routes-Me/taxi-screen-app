@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:tools="http://schemas.android.com/tools"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+tools:context=".kotlin.View.HomeScreen.Activity.PaymentScreen">
+
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="1">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:background="?pfTopBackground_color"/>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="0.5"
+            android:background="?pfBackground_color"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:gravity="end">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="?pfRoutesLogo"
+            android:layout_marginEnd="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:fontFamily="sans-serif-medium"
+            android:textStyle="normal"
+            android:textColor="?pfCopyrightTextColor"
+            android:text="@string/copyright_2020_routes_co" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingBottom="15dp"
+        android:paddingRight="15dp"
+        android:paddingLeft="15dp"
+        android:gravity="center_horizontal"
+        android:weightSum="6">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal"
+            android:paddingTop="30dp"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="40sp"
+                android:textColor="@color/white"
+                android:text="@string/kwd"
+                android:fontFamily="@font/montserrat_regular"
+                android:layout_marginEnd="8dp"/>
+
+            <TextView
+                android:id="@+id/amountTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="70sp"
+                android:textColor="@color/white"
+                android:text="3.500"
+                android:fontFamily="@font/montserrat_regular"/>
+
+        </LinearLayout>
+
+        <carbon.widget.LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <carbon.widget.LinearLayout
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                android:layout_margin="@dimen/carbon_margin"
+                android:background="@color/white"
+                app:carbon_cornerRadius="8dp"
+                app:carbon_elevation="8dp"
+                app:carbon_elevationShadowColor="?pfQrCodeShadow">
+
+                <carbon.widget.ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/routes_qrcode"
+                    android:layout_gravity="center"/>
+
+
+            </carbon.widget.LinearLayout>
+
+        </carbon.widget.LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="4"
+            android:gravity="center"
+            android:visibility="gone">
+
+            <carbon.widget.RelativeLayout
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                android:layout_margin="@dimen/carbon_padding"
+                android:background="@color/white"
+                app:carbon_cornerRadius="8dp"
+                app:carbon_elevation="8dp"
+                app:carbon_elevationShadowColor="?pfQrCodeShadow">
+                <carbon.widget.ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/routes_qrcode"
+                    android:layout_gravity="center"/>
+            </carbon.widget.RelativeLayout>
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="500dp"
+                android:layout_height="500dp"
+                xmlns:cardView="http://schemas.android.com/apk/res-auto"
+                cardView:cardCornerRadius="8dp"
+                cardView:cardElevation="8dp"
+                android:visibility="gone">
+
+                <RelativeLayout
+                    android:id="@+id/btn_status"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@drawable/qrcode_card_view_shape"
+                    android:gravity="center"
+                    android:layout_gravity="center">
+
+                    <ImageView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:src="@drawable/routes_qrcode"
+                        android:layout_gravity="center"/>
+                </RelativeLayout>
+
+            </androidx.cardview.widget.CardView>
+
+
+        </RelativeLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="36sp"
+                android:fontFamily="sans-serif-light"
+                android:textStyle="normal"
+                android:textColor="?pfText_color"
+                android:text="@string/waiting_payment"
+                android:layout_marginBottom="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="30sp"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:textColor="?pfText_color"
+                android:text="@string/open_camera_scan_qr_code_to_pay_taxi_fare_and_learn_more"
+                />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+
+</RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

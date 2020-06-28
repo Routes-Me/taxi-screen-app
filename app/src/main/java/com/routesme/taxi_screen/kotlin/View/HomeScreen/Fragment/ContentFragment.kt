@@ -47,9 +47,9 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     override fun onAttach(context: Context) {
         contentFragmentContext = context
         sharedPreferences = context.getSharedPreferences("userData", Activity.MODE_PRIVATE)
-        tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
-        firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-        firebaseAnalytics.setUserId(tabletSerialNumber)
+       // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
+       // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+       // firebaseAnalytics.setUserId(tabletSerialNumber)
         super.onAttach(context)
     }
 
@@ -57,7 +57,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         view1 = inflater.inflate(R.layout.content_fragment, container, false)
 
         initAdvertiseViews()
-        checkConnection()
+       // checkConnection()
 
         return view1
     }
