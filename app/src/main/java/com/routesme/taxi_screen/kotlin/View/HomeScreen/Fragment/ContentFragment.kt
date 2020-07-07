@@ -80,8 +80,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     override fun onClick(view: View?) {
         when (view?.id) {
-            R.id.Advertisement_Banner_CardView -> updateFirebaseAnalystics(ItemAnalytics(2, "click_banner"))
-            R.id.Advertisement_Video_CardView -> updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
+           // R.id.Advertisement_Banner_CardView -> updateFirebaseAnalystics(ItemAnalytics(2, "click_banner"))
+           // R.id.Advertisement_Video_CardView -> updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
         }
     }
 
