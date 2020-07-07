@@ -2,11 +2,9 @@ package com.routesme.taxi_screen.kotlin.Model
 
 import android.location.Location
 import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
-import com.routesme.taxiscreen.R
 import java.io.Serializable
 
 //Server RequestHeaders
@@ -73,3 +71,13 @@ interface IModeChanging {
 
 //Payment Service...
 data class PaymentData(var driverToken:String = "", var paymentAmount: Double = 0.0) : Serializable
+
+data class PaymentMessage(var identifier: String? = null, var udid: String? = null, var amount: Double? = null, var status: String? = null) : Serializable
+data class PaymentProgressMessage(var identifier: String? = null, var status: String? = null) : Serializable
+enum class PaymentStatus(val text: String){Initiate("initiate"), Cancel("cancel"), Paid("paid"), Timeout("timeout")}
+/*
+Identifier: userid + timestamp,
+udid: token,
+amount: 3
+Status: initiate
+ */

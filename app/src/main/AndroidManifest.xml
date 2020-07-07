@@ -31,7 +31,7 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.PaymentScreen"></activity>
+        <activity android:name="com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentScreen"></activity>
         <activity
             android:name="com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.AdminConsolePanel"
             android:screenOrientation="landscape"

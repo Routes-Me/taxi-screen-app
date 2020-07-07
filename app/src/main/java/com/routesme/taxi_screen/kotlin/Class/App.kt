@@ -1,7 +1,6 @@
 package com.routesme.taxi_screen.kotlin.Class
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.Application
 import android.content.ComponentName
 import android.content.Context
@@ -23,8 +22,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 import com.routesme.taxi_screen.kotlin.Model.PaymentData
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.PaymentScreen
+import com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentScreen
 import com.routesme.taxiscreen.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -82,8 +80,6 @@ class App : Application() {
         this.startService(intent)
         //this.getApplication().startForegroundService(intent);
         this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-
-        Nearby.getMessagesClient(baseContext).subscribe(messageListener)
     }
 
     fun setConnectivityListener(listener: ConnectivityReceiver.ConnectivityReceiverListener?) {
@@ -166,7 +162,7 @@ class App : Application() {
         //paymentData.apply { driverToken = "9347349"; paymentAmount = 1.500 }  //for test only
       //  val bundle = Bundle().apply {putSerializable("paymentData", paymentData)}
       //  val paymentFragment = PaymentFragment.instance.apply { arguments =bundle }
-        startActivity(Intent(this,PaymentScreen::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("paymentData",paymentData))
+        startActivity(Intent(this, PaymentScreen::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("paymentData",paymentData))
 
         val runnableBanner = Runnable {
             PaymentScreen().finish()

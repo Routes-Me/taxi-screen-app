@@ -1,15 +1,10 @@
 package com.routesme.taxi_screen.kotlin.AdminConsolePanel.Class
 
 import android.app.Activity
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Model.*
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen
 import com.routesme.taxiscreen.R
 
 class AdminConsoleDetailsListAdapter(private val activity: Activity,private val list: List<ICell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
