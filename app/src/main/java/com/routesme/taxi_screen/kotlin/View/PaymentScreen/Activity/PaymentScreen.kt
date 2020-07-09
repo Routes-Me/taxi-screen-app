@@ -18,7 +18,6 @@ import com.routesme.taxi_screen.kotlin.View.PaymentScreen.Fragment.PaymentFragme
 import com.routesme.taxiscreen.R
 import org.json.JSONTokener
 
-
 class PaymentScreen : AppCompatActivity() {
 
     private lateinit var paymentMessage:PaymentMessage
@@ -41,21 +40,28 @@ class PaymentScreen : AppCompatActivity() {
             paymentMessage = intent.getSerializableExtra(PAYMENT_MESSAGE) as PaymentMessage
             if (paymentMessage.amount != null){
 
-                val confirmationPaymentMessage = PaymentProgressMessage(paymentMessage.identifier, PaymentStatus.Initiate.text)
-                val jsonConfirmationPaymentMessage = Gson().toJson(confirmationPaymentMessage)
-                operations.publish(jsonConfirmationPaymentMessage)
-
                 val bundle = Bundle().apply { putDouble(PaymentFragment.instance.PAYMENT_AMOUNT, paymentMessage.amount!!) }
                 val paymentFragment = PaymentFragment.instance.apply { arguments = bundle }
                 showFragment(paymentFragment)
                 setupTimeoutHandler()
-                timeoutHandler.postDelayed(timeoutRunnable, 10 * 60 * 1000)
+                timeoutHandler.postDelayed(timeoutRunnable, 1 * 60 * 1000)
+
+                val confirmationPaymentMessage = PaymentProgressMessage(paymentMessage.identifier, PaymentStatus.Initiate.text)
+                val jsonConfirmationPaymentMessage = Gson().toJson(confirmationPaymentMessage)
+                operations.publish(jsonConfirmationPaymentMessage)
             }
         }
     }
 
     private fun showFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction().replace(R.id.payment_container, fragment).commit()
+        /*
+        supportFragmentManager.beginTransaction().apply {
+            if (fragment.isAdded) show(fragment)
+            else add(R.id.payment_container, fragment)
+            supportFragmentManager.fragments.forEach { if (it != fragment && it.isAdded) hide(it) }
+        }.commit()
+        */
     }
 
     private fun setupTimeoutHandler() {
@@ -70,18 +76,20 @@ class PaymentScreen : AppCompatActivity() {
             timeoutHandler.removeCallbacks(timeoutRunnable)
     }
 
+
     private val paymentCancellationMessageListener = object : MessageListener() {
         override fun onFound(message: Message) {
             if (message.content != null && message.content.isNotEmpty()){
                 val json = JSONTokener(String(message.content)).nextValue()
 
-                if (json is PaymentProgressMessage) {
+                //if (json is PaymentProgressMessage) {
                     val paymentCancellationMessage = Gson().fromJson(String(message.content), PaymentProgressMessage::class.java)
                     if (paymentCancellationMessage.identifier.equals(paymentMessage.identifier) && paymentCancellationMessage.status.equals(PaymentStatus.Cancel.text)) {
+
                         setResult(Activity.RESULT_CANCELED)
                         finish()
                     }
-                }
+               // }
             }
         }
         override fun onLost(message: Message?) {}

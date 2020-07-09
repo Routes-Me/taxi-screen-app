@@ -5,6 +5,7 @@ import android.content.ComponentName
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
@@ -50,9 +51,6 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
-
-        showFragments()
-
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         openPattern.setOnClickListener {openPatternClick()}
@@ -68,6 +66,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         homeScreenFunctions.requestRuntimePermissions()
         turnOnHotspot()
         //startLocationTrackingService()
+        showFragments()
 
         Nearby.getMessagesClient(this).subscribe(paymentMessageListener)
         super.onResume()
@@ -120,14 +119,17 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private val paymentMessageListener = object : MessageListener() {
         override fun onFound(message: Message) {
             if (message.content != null && message.content.isNotEmpty()){
+
+
                 val json = JSONTokener(String(message.content)).nextValue()
-                if (json is PaymentMessage) {
+               // if (json is PaymentMessage) {
+                   // Toast.makeText(this@HomeScreen,"${message.content}",Toast.LENGTH_LONG).show()
                     paymentMessage = Gson().fromJson(String(message.content), PaymentMessage::class.java)
                     if (paymentMessage.status == PaymentStatus.Initiate.text) {
                         val intent = Intent(this@HomeScreen,PaymentScreen::class.java).putExtra(PaymentScreen.instance.PAYMENT_MESSAGE,paymentMessage)
                         startActivityForResult(intent,PAYMENT_STATUS_REQUEST_CODE)
                     }
-                }
+                //}
             }
         }
         override fun onLost(message: Message?) {}
@@ -138,14 +140,17 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         if(requestCode == PAYMENT_STATUS_REQUEST_CODE) {
             if (resultCode == Activity.RESULT_CANCELED) {
                 //Cancel Status...
+                Toast.makeText(this, "Status: Canceled", Toast.LENGTH_LONG).show()
+
                 //Publish confirmation message for cancellation message
                 val confirmationCancellationMessage = PaymentProgressMessage(paymentMessage.identifier, PaymentStatus.Cancel.text)
                 val jsonConfirmationCancellationMessage = Gson().toJson(confirmationCancellationMessage)
                 operations.publish(jsonConfirmationCancellationMessage)
 
+
             } else if(resultCode == Activity.RESULT_OK && data != null && data.hasExtra(PaymentScreen.instance.STATUS)) {
-                //Timeout
                 val status= data.getStringExtra(PaymentScreen.instance.STATUS)
+                Toast.makeText(this, "Status: $status", Toast.LENGTH_LONG).show()
                 val progressMessage = PaymentProgressMessage(paymentMessage.identifier,status)
                 val jsonProgressMessage = Gson().toJson(progressMessage)
                 operations.publish(jsonProgressMessage)
