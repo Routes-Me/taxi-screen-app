@@ -68,7 +68,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         //startLocationTrackingService()
         showFragments()
 
-        Nearby.getMessagesClient(this).subscribe(paymentMessageListener)
+        Nearby.getMessagesClient(this).subscribe(paymentMessageListener, App.nearbySubscribeOptions)
         super.onResume()
     }
 

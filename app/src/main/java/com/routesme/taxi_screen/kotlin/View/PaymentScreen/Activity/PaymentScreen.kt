@@ -10,6 +10,7 @@ import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.messages.Message
 import com.google.android.gms.nearby.messages.MessageListener
 import com.google.gson.Gson
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Model.PaymentMessage
 import com.routesme.taxi_screen.kotlin.Model.PaymentProgressMessage
@@ -40,15 +41,16 @@ class PaymentScreen : AppCompatActivity() {
             paymentMessage = intent.getSerializableExtra(PAYMENT_MESSAGE) as PaymentMessage
             if (paymentMessage.amount != null){
 
+                val confirmationPaymentMessage = PaymentProgressMessage(paymentMessage.identifier, PaymentStatus.Initiate.text)
+                val jsonConfirmationPaymentMessage = Gson().toJson(confirmationPaymentMessage)
+                operations.publish(jsonConfirmationPaymentMessage)
+
                 val bundle = Bundle().apply { putDouble(PaymentFragment.instance.PAYMENT_AMOUNT, paymentMessage.amount!!) }
                 val paymentFragment = PaymentFragment.instance.apply { arguments = bundle }
                 showFragment(paymentFragment)
                 setupTimeoutHandler()
                 timeoutHandler.postDelayed(timeoutRunnable, 1 * 60 * 1000)
 
-                val confirmationPaymentMessage = PaymentProgressMessage(paymentMessage.identifier, PaymentStatus.Initiate.text)
-                val jsonConfirmationPaymentMessage = Gson().toJson(confirmationPaymentMessage)
-                operations.publish(jsonConfirmationPaymentMessage)
             }
         }
     }
@@ -96,7 +98,7 @@ class PaymentScreen : AppCompatActivity() {
     }
 
     override fun onStart() {
-        Nearby.getMessagesClient(this).subscribe(paymentCancellationMessageListener)
+        Nearby.getMessagesClient(this).subscribe(paymentCancellationMessageListener, App.nearbySubscribeOptions)
         super.onStart()
     }
 
