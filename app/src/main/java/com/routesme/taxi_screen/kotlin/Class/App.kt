@@ -15,10 +15,7 @@ import com.danikula.videocache.HttpProxyCacheServer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
-import com.google.android.gms.nearby.messages.Message
-import com.google.android.gms.nearby.messages.MessageListener
-import com.google.android.gms.nearby.messages.Strategy
-import com.google.android.gms.nearby.messages.SubscribeOptions
+import com.google.android.gms.nearby.messages.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
@@ -57,8 +54,20 @@ class App : Application() {
         lateinit var currentActivity:Context
 
         val nearbySubscribeOptions: SubscribeOptions = SubscribeOptions.Builder()
-                .setStrategy(Strategy.BLE_ONLY)
+                .setStrategy(nearbyStrategy())
                 .build()
+
+
+        val nearbyPublishOptions: PublishOptions = PublishOptions.Builder()
+                .setStrategy(nearbyStrategy())
+                .build()
+
+        private fun nearbyStrategy(): Strategy {
+            return Strategy.Builder()
+                    .setTtlSeconds(Strategy.TTL_SECONDS_MAX)
+                   // .setDistanceType(Strategy.DISTANCE_TYPE_EARSHOT)
+                    .build()
+        }
     }
 
     override fun onCreate() {
@@ -152,7 +161,7 @@ class App : Application() {
 
     private fun sendReceivedSuccessfullyMessage() {
         receivedSuccessfullyMessage = "${getString(R.string.received)},${paymentData.paymentAmount}"
-        operations.publish(receivedSuccessfullyMessage)
+       // operations.publish(receivedSuccessfullyMessage)
     }
 
     /*

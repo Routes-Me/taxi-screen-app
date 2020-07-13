@@ -1,9 +1,11 @@
 package com.routesme.taxi_screen.kotlin.Class
 
+import android.app.Activity
 import android.content.Context
 import android.widget.Button
 import com.google.android.gms.nearby.Nearby
 import com.google.android.gms.nearby.messages.Message
+import com.google.android.gms.nearby.messages.PublishOptions
 import com.routesme.taxiscreen.R
 
 class Operations {
@@ -25,12 +27,12 @@ class Operations {
         }
     }
 
-    fun publish(message: String) {
-        Nearby.getMessagesClient(context).publish(nearbyMessage(message))
+    fun publish(message: String, activity: Activity) {
+        Nearby.getMessagesClient(activity).publish(nearbyMessage(message), App.nearbyPublishOptions)
     }
 
-    fun unPublish(message: String) {
-        Nearby.getMessagesClient(context).unpublish(nearbyMessage(message))
+    fun unPublish(message: String, activity: Activity) {
+        Nearby.getMessagesClient(activity).unpublish(nearbyMessage(message))
     }
 
     private fun nearbyMessage(s: String) = Message(s.toByteArray())
