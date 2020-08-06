@@ -19,21 +19,26 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
 
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
-            if (isGPSEnabled())
-                setLocationManagerProvider(LocationManager.GPS_PROVIDER)
-            else if (isNetworkEnabled())
-                setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
+         //   Toast.makeText(App.instance,"Can get location",Toast.LENGTH_SHORT).show()
 
+            if (isGPSEnabled()) {
+                Toast.makeText(App.instance,"GPS Enabled",Toast.LENGTH_SHORT).show()
+                setLocationManagerProvider(LocationManager.GPS_PROVIDER)
+            }else if (isNetworkEnabled()) {
+                Toast.makeText(App.instance,"Network Enabled",Toast.LENGTH_SHORT).show()
+                setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
+            }
             true
-        } else {
-            false
+      } else {
+           false
         }
     }
 
     private fun setLocationManagerProvider(Provider: String) {
         if (Provider.isNotEmpty()) {
             try {
-                locationManager.requestLocationUpdates(Provider, 1000L, 2F, this) //Location update with .. (Min Time = 1 second & Min Distance = 2 meters)
+               // locationManager.requestLocationUpdates(Provider, 1000L, 2F, this) //Location update with .. (Min Time = 1 second & Min Distance = 2 meters)
+                locationManager.requestLocationUpdates(Provider, 0L, 0F, this) //For testing only
             } catch (ex: SecurityException) {
                 Log.d("LocationManagerProvider", "Security Exception, no location available")
             }
@@ -52,7 +57,7 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     private val positiveButtonClick = { _: DialogInterface, which: Int -> App.instance.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
     private val negativeButtonClick = { dialog: DialogInterface, which: Int -> dialog.cancel() }
 
-    private fun canGetLocation() = isGPSEnabled() || isNetworkEnabled()
+    private fun canGetLocation() =  isGPSEnabled() || isNetworkEnabled()
 
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
@@ -61,7 +66,7 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     //LocationListener Methods...
     override fun onLocationChanged(location: Location) {
         if (location != null) trackingDataLayer.insertLocation(location)
-        //Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_LONG).show()
+        Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}

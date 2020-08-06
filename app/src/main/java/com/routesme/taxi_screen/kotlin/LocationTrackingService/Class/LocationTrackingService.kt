@@ -40,7 +40,7 @@ class LocationTrackingService(): Service() {
                 handlerTracking?.post(runnableTracking)
             }
             override fun onTextReceived(message: String) {
-                Log.i("trackingWebSocket:  ", "Received : $message")
+                Log.i("trackingWebSocket:  ", "Received-> $message")
             }
             override fun onBinaryReceived(data: ByteArray) {}
             override fun onPingReceived(data: ByteArray) {}
@@ -56,13 +56,13 @@ class LocationTrackingService(): Service() {
         }
         webSocket.setConnectTimeout(10000)
         webSocket.setReadTimeout(60000)
-        webSocket.enableAutomaticReconnection(5000)
+        webSocket.enableAutomaticReconnection(10000)
         return webSocket
     }
 
     private fun sendDeviceIdToServer(message: String) {
         trackingWebSocket.send(message)
-        Log.i("trackingWebSocket:  ", "Send message:  $message")
+        Log.i("trackingWebSocket:  ", "Send-> $message")
     }
 
     fun checkPermissionsGranted(){
@@ -89,7 +89,8 @@ class LocationTrackingService(): Service() {
      private fun startTracking() {
 
             // if (permissionsHandlerRunning) {permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions) }
-             val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null)
+            // val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null)
+         val tabletSerialNo = "226987965456" //Testing only
              if (!tabletSerialNo.isNullOrEmpty()) {
                  trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
                  trackingDataLayer = TrackingDataLayer(trackingWebSocket)
@@ -99,7 +100,7 @@ class LocationTrackingService(): Service() {
                      setupTrackingHandler()
                      trackingWebSocket.connect()
                  } else {
-                     locationReceiver.showAlertDialog()
+                    // locationReceiver.showAlertDialog()
                  }
              }
 

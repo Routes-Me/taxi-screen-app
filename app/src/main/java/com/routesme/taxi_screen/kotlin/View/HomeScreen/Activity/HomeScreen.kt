@@ -53,7 +53,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.requestRuntimePermissions()
         turnOnHotspot()
-        //startLocationTrackingService()
+        // startLocationTrackingService()
         showFragments()
         super.onResume()
     }
@@ -73,7 +73,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     }
 
     override fun onPause() {
-       // if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
+        // if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
         super.onPause()
     }
 

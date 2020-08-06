@@ -4,8 +4,10 @@ import android.location.Location
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
+
 
 //Server RequestHeaders
 data class RequestHeaders(val Authorization: String? = null, val country_code: String? = null, val app_version: String? = null)
@@ -41,7 +43,7 @@ data class TabletInfo(@SerializedName("tabletRegesterPassword") val tabletPasswo
 
 //Tracking Location Service
 @Entity(tableName = "Tracking")
-data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: String){
+data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long){
     val location: Location
     get() {
         val location = Location("provider")
@@ -50,6 +52,17 @@ data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Co
         return location
     }
 }
+
+class LocationJsonObject(private val vehicleLocation: VehicleLocation) {
+    fun toJSON(): JsonObject {
+        val jo = JsonObject()
+        jo.addProperty("latitude", vehicleLocation.latitude)
+        jo.addProperty("longitude", vehicleLocation.longitude)
+        jo.addProperty("timestamp",vehicleLocation.timestamp)
+        return jo
+    }
+}
+
 //Admin Console...
 data class MasterItem(val id: Int, val type: MasterItemType)
 
