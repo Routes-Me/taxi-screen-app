@@ -38,7 +38,7 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
         if (Provider.isNotEmpty()) {
             try {
                // locationManager.requestLocationUpdates(Provider, 1000L, 2F, this) //Location update with .. (Min Time = 1 second & Min Distance = 2 meters)
-                locationManager.requestLocationUpdates(Provider, 0L, 0F, this) //For testing only
+                locationManager.requestLocationUpdates(Provider, 1000L, 2.77F, this) //For testing only
             } catch (ex: SecurityException) {
                 Log.d("LocationManagerProvider", "Security Exception, no location available")
             }
