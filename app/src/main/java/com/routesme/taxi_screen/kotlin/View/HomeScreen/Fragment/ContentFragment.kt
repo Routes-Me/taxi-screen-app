@@ -57,7 +57,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         view1 = inflater.inflate(R.layout.content_fragment, container, false)
 
         initAdvertiseViews()
-       // checkConnection()
+        checkConnection()
 
         return view1
     }
@@ -97,6 +97,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
             fetchAdvertisementData()
+           // playAds()
         } else {
             networkListener()
         }
@@ -110,6 +111,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
             fetchAdvertisementData()
+           // playAds()
             connectivityReceiverRegistering(false)
         }
     }
@@ -126,6 +128,22 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
+    }
+
+    //for test..
+    private fun playAds(){
+        val videos = mutableListOf<VideoModel>().apply {
+            add(VideoModel(0,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FEid%20Alfiter.mp4?alt=media&token=f8ddfe58-d812-456c-bf4c-37fdcafa731c"))
+            add(VideoModel(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3"))
+            // add(VideoModel(2,"https://drive.google.com/file/d/1EMfDMeQH4UUPg1n0JKp4sl3VX6HHTRLz/view?usp=sharing"))
+        }
+        displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)
+        val images = mutableListOf<BannerModel>().apply {
+            add(BannerModel(0,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FPepsiadvertisingth_1548685296614-HR.jpg?alt=media&token=5f05924f-774f-4b96-a7f2-69626959b8e8"))
+            add(BannerModel(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FAdver--Banners--150x750px-RIOT.jpg?alt=media&token=85154f31-7e4e-4204-acd0-f0153b7eccb3"))
+            add(BannerModel(2,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2F058ca55eae5b86fa8a4d52c1d1e5a4a4.jpg?alt=media&token=e2197a09-df37-4556-a703-f864d0ce6cf2"))
+        }
+        displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
     }
 
     private fun fetchAdvertisementData() {
