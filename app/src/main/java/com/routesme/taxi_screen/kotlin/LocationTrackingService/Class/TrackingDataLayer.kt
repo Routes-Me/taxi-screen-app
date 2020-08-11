@@ -20,9 +20,16 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
     @SuppressLint("SimpleDateFormat")
     private val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")
 
-    private lateinit var results: List<List<VehicleLocation>>
-    private lateinit var filteredResults: List<VehicleLocation>
+   // private lateinit var results: List<List<VehicleLocation>>
+   // private lateinit var filteredResults: List<VehicleLocation>
 
+     fun executeTrackingLogic() {
+       val results = getDatabaseFeeds()
+         if (!results.isNullOrEmpty()){
+             Log.d("Tracking-Logic", "DatabaseFeeds-Result: $results")
+         }
+    }
+/*
     fun sendOfflineTrackingLocationsToServer() {
         results = getLocationFeeds()
         filteredResults = getFilteredFeeds(results)
@@ -37,6 +44,7 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
         }
         */
     }
+    */
 
     private fun getFilteredFeeds(results: List<List<VehicleLocation>>): List<VehicleLocation> {
         return mutableListOf<VehicleLocation>().apply {
@@ -46,7 +54,7 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
         }
     }
 
-    private fun getLocationFeeds(): List<List<VehicleLocation>> {
+    private fun getDatabaseFeeds(): List<List<VehicleLocation>> {
         val feedsList1 = mutableListOf<VehicleLocation>().apply {
             add(VehicleLocation(0,29.256468333333334,47.94098999999999,1597048475))
             add(VehicleLocation(1,29.245983333333335,47.930003333333325,1597048477))
