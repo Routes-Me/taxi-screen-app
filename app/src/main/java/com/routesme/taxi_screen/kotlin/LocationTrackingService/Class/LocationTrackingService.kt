@@ -14,9 +14,11 @@ import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.net.URI
+import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
+    private lateinit var trackingUri: URI
     private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var trackingDataLayer: TrackingDataLayer
     private lateinit var locationReceiver: LocationReceiver
@@ -29,13 +31,18 @@ class LocationTrackingService(): Service() {
     private var permissionsHandlerRunning = false
     private var isWebSocketOpened = false
 
-    private fun trackingWebSocketUri()= URI(Helper.getConfigValue("trackingWebSocketUri"))
 
-    private fun setTrackingWebSocketConfiguration(trackingUri: URI, tabletSerialNo: String): WebSocketClient {
+    private fun setTrackingWebSocketConfiguration(tabletSerialNo: String): WebSocketClient {
+        try {
+            trackingUri = URI(Helper.getConfigValue("trackingWebSocketUri"))
+        }
+        catch (e: URISyntaxException) {
+            e.printStackTrace()
+        }
         val webSocket = object : WebSocketClient(trackingUri) {
             override fun onOpen() {
                 isWebSocketOpened = true
-                Log.d("Tracking-Logic", "WebSocket: $isWebSocketOpened")
+                Log.d("Tracking-Logic", "WebSocket-onOpen: $isWebSocketOpened")
                 /*
                 Log.i("trackingWebSocket:  ", "Opened")
                 sendDeviceIdToServer("deviceId:$tabletSerialNo")
@@ -44,19 +51,19 @@ class LocationTrackingService(): Service() {
                  */
             }
             override fun onTextReceived(message: String) {
-                Log.i("trackingWebSocket:  ", "Received-> $message")
+                Log.d("Tracking-Logic", "WebSocket-onTextReceived: $message")
             }
             override fun onBinaryReceived(data: ByteArray) {}
             override fun onPingReceived(data: ByteArray) {}
             override fun onPongReceived(data: ByteArray) {}
             override fun onException(e: Exception) {
                 isWebSocketOpened = false
-                Log.d("Tracking-Logic", "WebSocket: $isWebSocketOpened")
+                Log.d("Tracking-Logic", "WebSocket-onException: $isWebSocketOpened")
                // stopTrackingTimer()
             }
             override fun onCloseReceived() {
                 isWebSocketOpened = false
-                Log.d("Tracking-Logic", "WebSocket: $isWebSocketOpened")
+                Log.d("Tracking-Logic", "WebSocket-onCloseReceived: $isWebSocketOpened")
                 /*
                 Log.i("trackingWebSocket:  ", "Closed !")
                 stopTrackingTimer()
@@ -98,7 +105,7 @@ class LocationTrackingService(): Service() {
             // val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null)
          val tabletSerialNo = "226987965456" //Testing only
              if (!tabletSerialNo.isNullOrEmpty()) {
-                 trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
+                 trackingWebSocket = setTrackingWebSocketConfiguration( tabletSerialNo)
                  trackingDataLayer = TrackingDataLayer(trackingWebSocket)
                  locationReceiver = LocationReceiver(trackingDataLayer)
                  //startTracking()
@@ -187,8 +194,6 @@ class LocationTrackingService(): Service() {
         handlerTracking = Handler()
         */
     }
-
-
 
     private fun stopTrackingTimer() {
         if (isHandlerTrackingRunning) {
