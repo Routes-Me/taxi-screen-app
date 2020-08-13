@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.routesme.taxi_screen.kotlin.Model.VehicleLocation
+import com.routesme.taxi_screen.kotlin.Model.LocationFeed
+import com.routesme.taxi_screen.kotlin.Model.MessageFeed
 
-@Database(entities = arrayOf(VehicleLocation::class), version = 1 ,exportSchema = false)
+@Database(entities = [LocationFeed::class, MessageFeed::class], version = 1 ,exportSchema = false)
 abstract class TrackingDatabase  : RoomDatabase(){
-    abstract fun trackingDao(): TrackingDao
+    abstract fun locationFeedsDao(): LocationFeedsDao
+    abstract fun messageFeedsDao(): MessageFeedsDao
 
     companion object {
         @Volatile private var instance: TrackingDatabase? = null

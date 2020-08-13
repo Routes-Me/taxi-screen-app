@@ -42,8 +42,10 @@ data class ItemType(val itemName: String? = null, val isHeader: Boolean = false,
 data class TabletInfo(@SerializedName("tabletRegesterPassword") val tabletPassword: String? = null, @SerializedName("tabletRegesterChannelID") val tabletChannelId: Int = 0)
 
 //Tracking Location Service
-@Entity(tableName = "Tracking")
-data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long){
+
+//Location Feeds Table entity
+@Entity(tableName = "LocationFeeds")
+data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long){
     val location: Location
     get() {
         val location = Location("provider")
@@ -53,12 +55,18 @@ data class VehicleLocation(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Co
     }
 }
 
-class LocationJsonObject(private val vehicleLocation: VehicleLocation) {
+//Message Feed Table entity
+@Entity(tableName = "MessageFeeds")
+data class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: Int)
+
+// id: 1, message: 10010010101010101010101010101010,
+
+class LocationJsonObject(private val locationFeed: LocationFeed) {
     fun toJSON(): JsonObject {
         val jo = JsonObject()
-        jo.addProperty("latitude", vehicleLocation.latitude)
-        jo.addProperty("longitude", vehicleLocation.longitude)
-        jo.addProperty("timestamp",vehicleLocation.timestamp)
+        jo.addProperty("latitude", locationFeed.latitude)
+        jo.addProperty("longitude", locationFeed.longitude)
+        jo.addProperty("timestamp",locationFeed.timestamp)
         return jo
     }
 }
