@@ -113,7 +113,6 @@ class LocationTrackingService(): Service() {
                      trackingWebSocket.connect()
                      setupTrackingHandler()
                      handlerTracking?.post(runnableTracking)
-
                  } else {
                     // locationReceiver.showAlertDialog()
                  }

@@ -57,7 +57,7 @@ data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Colum
 
 //Message Feed Table entity
 @Entity(tableName = "MessageFeeds")
-data class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: Int)
+data class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
 
 // id: 1, message: 10010010101010101010101010101010,
 

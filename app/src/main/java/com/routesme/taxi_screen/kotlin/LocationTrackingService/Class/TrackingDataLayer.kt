@@ -1,39 +1,64 @@
 package com.routesme.taxi_screen.kotlin.LocationTrackingService.Class
 
-import android.annotation.SuppressLint
 import android.location.Location
+import android.os.Handler
 import android.util.Log
+import android.widget.Toast
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi_screen.kotlin.Model.LocationJsonObject
 import com.routesme.taxi_screen.kotlin.Model.LocationFeed
+import com.routesme.taxi_screen.kotlin.Model.MessageFeed
 import org.json.JSONException
+import org.json.JSONObject
 import tech.gusavila92.websocketclient.WebSocketClient
-import java.text.SimpleDateFormat
-
 
 class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
     private val locationFeedsDao = TrackingDatabase(App.instance).locationFeedsDao()
-
-    @SuppressLint("SimpleDateFormat")
-    private val dateFormat = SimpleDateFormat("dd-MMM-yyyy hh:mm:ss aa")
-
-   // private lateinit var results: List<List<VehicleLocation>>
-   // private lateinit var filteredResults: List<VehicleLocation>
+    private val messageFeedsDao = TrackingDatabase(App.instance).messageFeedsDao()
+    private lateinit var sendFeedsHandler: Handler
+    private lateinit var sendFeedsRunnable: Runnable
 
      fun executeTrackingLogic() {
        val databaseFeeds = getDatabaseFeeds()
-        //  Log.d("\n\n Tracking-Logic", "databaseFeeds: $databaseFeeds")
-
          if (!databaseFeeds.isNullOrEmpty()){
-
              val filteredResult = getMajorFeeds(databaseFeeds)
-            //  Log.d("\n\n Tracking-Logic", "filteredResult: $filteredResult")
-
-             //sendLocationViaSocket(filteredResult)
+          //   filteredResult
+             val listOfFeeds = filteredResult.chunked(100)
+             val listOfStringFeeds = listOfFeeds.map {MessageFeed(message = getJsonArray(it).toString()) }
+             messageFeedsDao.insertFeeds(listOfStringFeeds)
+             sendFeedsHandlerSetup()
+             sendFeedsHandler.post(sendFeedsRunnable)
          }
+    }
+
+    private fun sendFeedsHandlerSetup() {
+        var i = 0
+        val feeds = messageFeedsDao.getAllMessages()
+       // feeds.size
+        sendFeedsRunnable = Runnable {
+            if (i < feeds.size){
+                sendFeedsViaSocket(feeds[i].message)
+                messageFeedsDao.delete(feeds[i])
+                i++
+            }else{
+                sendFeedsHandler.removeCallbacks(sendFeedsRunnable)
+            }
+
+            sendFeedsHandler.postDelayed(sendFeedsRunnable, 200)
+        }
+        sendFeedsHandler = Handler()
+    }
+
+    private fun getJsonArray(locationFeeds: List<LocationFeed>):JsonArray {
+        val locationJsonArray = JsonArray()
+        for (l in locationFeeds){
+            val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
+            locationJsonArray.add(locationJsonObject)
+        }
+        return locationJsonArray
     }
 
     private fun getMajorFeeds(databaseFeeds: List<MutableList<LocationFeed>>): Set<LocationFeed> {
@@ -204,6 +229,14 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
             add(LocationFeed(83,29.376957, 47.992439,1597048486))
             add(LocationFeed(84,29.377097, 47.993059,1597048487))
         }
+        val feedsList18 = mutableListOf<LocationFeed>().apply {
+            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+        }
 
         return mutableListOf<MutableList<LocationFeed>>().apply {
 
@@ -214,16 +247,17 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
             add(feedsList5)
             add(feedsList6)
             add(feedsList7)
-            add(feedsList8)
-            add(feedsList9)
-            add(feedsList10)
-            add(feedsList11)
-            add(feedsList12)
+           add(feedsList8)
+          add(feedsList9)
+           add(feedsList10)
+           add(feedsList11)
+           add(feedsList12)
             add(feedsList13)
             add(feedsList14)
             add(feedsList15)
-            add(feedsList16)
+           add(feedsList16)
             add(feedsList17)
+            add(feedsList18)
         }
     }
 
@@ -235,7 +269,7 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
           //  Log.d("Tracking-Logic", "Insert new location:  $currentLocation")
 
             val lastLocationAdded = locationFeedsDao.loadLastLocation()
-            Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
+           Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
         }
     }
 
@@ -248,7 +282,7 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
                     val vehicleLocation= mutableSetOf<LocationFeed>().apply {
                         add(locationFeedsDao.loadLastLocation())
                     }
-                    sendLocationViaSocket(vehicleLocation)
+                   //sendLocationViaSocket(vehicleLocation)
                     clearTrackingTable()
                 }
             }
@@ -262,22 +296,22 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
         Log.d("trackingWebSocketKotlin", "Clear tracking table!")
     }
 
-    private fun sendLocationViaSocket(locationFeeds: Set<LocationFeed>){
+    private fun sendFeedsViaSocket(messageFeeds: String){
+        /*
         val locationJsonArray = JsonArray()
         for (l in locationFeeds){
             val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
             locationJsonArray.add(locationJsonObject)
         }
+         */
 
-        val sendLocationObject = JsonObject()
-
-        try { // Add the JSONArray to the JSONObject
-            sendLocationObject.add("SendLocation", locationJsonArray)
+        val messageObject = JSONObject()
+        try {
+            messageObject.put("SendLocationFeeds", messageFeeds)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
 
-       // Log.i("trackingWebSocket:  ", "Send-> $sendLocationObject")
-        trackingWebSocket.send(sendLocationObject.toString())
+        trackingWebSocket.send(messageFeeds)
     }
 }
