@@ -19,8 +19,6 @@ import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
-    private val sharedPreferences = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE)
-    private lateinit var authorityUrl: URI
     private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var trackingDataLayer: TrackingDataLayer
     private lateinit var locationReceiver: LocationReceiver
@@ -32,19 +30,30 @@ class LocationTrackingService(): Service() {
     private var runnableCheckPermissions: Runnable? = null
     private var permissionsHandlerRunning = false
     private var isWebSocketOpened = false
+    private val sharedPreferences = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+    private lateinit var authorityUrl: URI
+    private var vehicleId: String? = null
+    private var institutionId: Int = 0
+    private var deviceId: String? = null
+
+    companion object {
+        @get:Synchronized
+        var instance:LocationTrackingService = LocationTrackingService()
+
+        class LocationServiceBinder : Binder() {
+            val service: LocationTrackingService
+                get() = instance
+        }
+    }
 
     private fun setTrackingWebSocketConfiguration(): WebSocketClient {
-       // val  webSocketUrl = URI(Helper.getConfigValue("trackingWebSocketUrl"))
-        val webSocket = object : WebSocketClient(getTrackingUrl()) {
+        val trackingUrl = getTrackingUrl()
+        val testingTrackingUrl = URI(Helper.getConfigValue("trackingWebSocketUrl"))
+
+        val webSocket = object : WebSocketClient(testingTrackingUrl) {
             override fun onOpen() {
                 isWebSocketOpened = true
                 Log.d("Tracking-Logic", "WebSocket-onOpen: $isWebSocketOpened")
-                /*
-                Log.i("trackingWebSocket:  ", "Opened")
-                sendDeviceIdToServer("deviceId:$tabletSerialNo")
-                trackingDataLayer.sendOfflineTrackingLocationsToServer()
-                handlerTracking?.post(runnableTracking)
-                 */
             }
             override fun onTextReceived(message: String) {
                 Log.d("Tracking-Logic", "WebSocket-onTextReceived: $message")
@@ -55,15 +64,10 @@ class LocationTrackingService(): Service() {
             override fun onException(e: Exception) {
                 isWebSocketOpened = false
                 Log.d("Tracking-Logic", "WebSocket-onException: $isWebSocketOpened")
-               // stopTrackingTimer()
             }
             override fun onCloseReceived() {
                 isWebSocketOpened = false
                 Log.d("Tracking-Logic", "WebSocket-onCloseReceived: $isWebSocketOpened")
-                /*
-                Log.i("trackingWebSocket:  ", "Closed !")
-                stopTrackingTimer()
-                 */
             }
         }
         webSocket.setConnectTimeout(10000)
@@ -84,15 +88,10 @@ class LocationTrackingService(): Service() {
         builder.scheme("http")
                 .authority(authorityUrl.toString())
                 .appendPath("trackServiceHub")
-                .appendQueryParameter("vehicleId", getVehicleId())
-                .appendQueryParameter("institutionId", getInstitutionId().toString())
-                .appendQueryParameter("deviceId", getDeviceId())
+                .appendQueryParameter("vehicleId", vehicleId)
+                .appendQueryParameter("institutionId", institutionId.toString())
+                .appendQueryParameter("deviceId", deviceId)
         return URI(builder.build().toString())
-    }
-
-    private fun sendDeviceIdToServer(message: String) {
-        trackingWebSocket.send(message)
-        Log.i("trackingWebSocket:  ", "Send-> $message")
     }
 
     fun checkPermissionsGranted(){
@@ -109,13 +108,16 @@ class LocationTrackingService(): Service() {
         runnableCheckPermissions = Runnable {
             if (hasPermissions(*permissions) && permissionsHandlerRunning ) {permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions); instance.startTracking() }
             Log.i("trackingWebSocket:","startCheckPermissionsHandler")
-
             handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1 * 60 * 1000)
         }
         handlerCheckPermissions = Handler()
     }
      private fun startTracking() {
-             if (!getVehicleId().isNullOrEmpty() && getInstitutionId() != 0 && !getDeviceId().isNullOrEmpty()) {
+         vehicleId = getVehicleId()
+         institutionId = getInstitutionId()
+         deviceId = getDeviceId()
+         testingSetup()
+             if (!vehicleId.isNullOrEmpty() && institutionId != 0 && !deviceId.isNullOrEmpty()) {
                  trackingWebSocket = setTrackingWebSocketConfiguration()
                  trackingDataLayer = TrackingDataLayer(trackingWebSocket)
                  locationReceiver = LocationReceiver(trackingDataLayer)
@@ -125,6 +127,12 @@ class LocationTrackingService(): Service() {
                      handlerTracking?.post(runnableTracking)
                  }
              }else return
+    }
+
+    private fun testingSetup() {
+        vehicleId = "2253-14"
+        institutionId = 9
+        deviceId = "57260788943767"
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
@@ -142,34 +150,10 @@ class LocationTrackingService(): Service() {
         runnableTracking = Runnable {
             isHandlerTrackingRunning = true
             Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
-
             if (isWebSocketOpened) trackingDataLayer.executeTrackingLogic()
-
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
         handlerTracking = Handler()
-
-        /*
-        runnableTracking = Runnable {
-            isHandlerTrackingRunning = true
-            Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
-            trackingDataLayer.locationChecker()
-            handlerTracking?.postDelayed(runnableTracking, 5000)
-        }
-        handlerTracking = Handler()
-        */
-    }
-
-    private fun stopTrackingTimer() {
-        if (isHandlerTrackingRunning) {
-            handlerTracking?.removeCallbacks(runnableTracking)
-            isHandlerTrackingRunning = false
-            Log.i("trackingWebSocketKotlin", "Tracking Timer stop ...")
-        }
-    }
-
-    fun stopLocationTrackingService() {
-        trackingWebSocket.onCloseReceived()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -194,16 +178,6 @@ class LocationTrackingService(): Service() {
         Log.i("trackingWebSocket:","onDestroy")
     }
 
-    companion object {
-        @get:Synchronized
-        var instance:LocationTrackingService = LocationTrackingService()
-
-        class LocationServiceBinder : Binder() {
-            val service: LocationTrackingService
-                get() = instance
-        }
-    }
-
     private fun getNotification(): Notification {
         val channel = NotificationChannel("channel_01", "My Channel", NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager = getSystemService(NotificationManager::class.java)
@@ -214,5 +188,5 @@ class LocationTrackingService(): Service() {
 
     private fun getVehicleId() = sharedPreferences.getString("taxiPlateNumber", null)
     private fun getInstitutionId() = sharedPreferences.getInt("taxiOfficeId", 0)
-    private fun getDeviceId() = sharedPreferences.getString("tabletSerialNo", null)
+    private fun getDeviceId() =  sharedPreferences.getString("tabletSerialNo", null)
 }

@@ -59,12 +59,12 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     }
 
     override fun onStart() {
-        operations.publish(deviceToken(),this)
+       // operations.publish(deviceToken(),this)
         super.onStart()
     }
 
     override fun onStop() {
-        operations.unPublish(deviceToken(),this)
+       // operations.unPublish(deviceToken(),this)
         super.onStop()
     }
 

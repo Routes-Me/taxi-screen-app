@@ -25,7 +25,6 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
        val databaseFeeds = getDatabaseFeeds()
          if (!databaseFeeds.isNullOrEmpty()){
              val filteredResult = getMajorFeeds(databaseFeeds)
-          //   filteredResult
              val listOfFeeds = filteredResult.chunked(100)
              val listOfStringFeeds = listOfFeeds.map {MessageFeed(message = getJsonArray(it).toString()) }
              messageFeedsDao.insertFeeds(listOfStringFeeds)
@@ -37,7 +36,6 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
     private fun sendFeedsHandlerSetup() {
         var i = 0
         val feeds = messageFeedsDao.getAllMessages()
-      //feeds
         sendFeedsRunnable = Runnable {
             if (i < feeds.size){
                 sendFeedsViaSocket(feeds[i].message)
@@ -46,7 +44,6 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
             }else{
                 sendFeedsHandler.removeCallbacks(sendFeedsRunnable)
             }
-
             sendFeedsHandler.postDelayed(sendFeedsRunnable, 200)
         }
         sendFeedsHandler = Handler()
@@ -83,30 +80,6 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
             }
         }
         return majorFeeds
-    }
-/*
-    fun sendOfflineTrackingLocationsToServer() {
-        results = getLocationFeeds()
-        filteredResults = getFilteredFeeds(results)
-        Log.d("OfflineFeeds", "$filteredResults")
-
-        /*
-        if (!db.loadAllLocations().isNullOrEmpty()) {
-                sendLocationViaSocket(db.loadAllLocations())
-            clearTrackingTable()
-        } else {
-            Log.d("trackingWebSocketKotlin", "No offline location is exists!")
-        }
-        */
-    }
-    */
-
-    private fun getFilteredFeeds(results: List<List<LocationFeed>>): List<LocationFeed> {
-        return mutableListOf<LocationFeed>().apply {
-            for (r in results){
-                add(r[r.lastIndex])
-            }
-        }
     }
 
     private fun getDatabaseFeeds(): List<MutableList<LocationFeed>> {
@@ -266,35 +239,12 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
         if (lastLocation == null || (location.latitude != lastLocation.latitude && location.longitude != lastLocation.longitude)){
             val currentLocation = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
             locationFeedsDao.insertLocation(currentLocation)
-          //  Log.d("Tracking-Logic", "Insert new location:  $currentLocation")
-
             val lastLocationAdded = locationFeedsDao.loadLastLocation()
            Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
         }
     }
 
-    fun locationChecker() {
-        if (!locationFeedsDao.loadAllLocations().isNullOrEmpty()) {
-            val firstLocation = locationFeedsDao.loadFirstLocation().location
-            val lastLocation = locationFeedsDao.loadLastLocation().location
-            if (firstLocation != lastLocation) {
-                if (distance(firstLocation, lastLocation) >= 2) {
-                    val vehicleLocation= mutableSetOf<LocationFeed>().apply {
-                        add(locationFeedsDao.loadLastLocation())
-                    }
-                   //sendLocationViaSocket(vehicleLocation)
-                    clearTrackingTable()
-                }
-            }
-        }
-    }
-
     private fun distance(firstLocation: Location, lastLocation: Location) = firstLocation.distanceTo(lastLocation)
-
-    private fun clearTrackingTable() {
-        locationFeedsDao.clearLocationFeedsTable()
-        Log.d("trackingWebSocketKotlin", "Clear tracking table!")
-    }
 
     private fun sendFeedsViaSocket(messageFeeds: String){
         val messageObject = JSONObject()
