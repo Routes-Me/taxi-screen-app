@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -18,7 +19,8 @@ import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
-    private lateinit var trackingUri: URI
+    private val sharedPreferences = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+    private lateinit var authorityUrl: URI
     private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var trackingDataLayer: TrackingDataLayer
     private lateinit var locationReceiver: LocationReceiver
@@ -31,15 +33,9 @@ class LocationTrackingService(): Service() {
     private var permissionsHandlerRunning = false
     private var isWebSocketOpened = false
 
-
-    private fun setTrackingWebSocketConfiguration(tabletSerialNo: String): WebSocketClient {
-        try {
-            trackingUri = URI(Helper.getConfigValue("trackingWebSocketUri"))
-        }
-        catch (e: URISyntaxException) {
-            e.printStackTrace()
-        }
-        val webSocket = object : WebSocketClient(trackingUri) {
+    private fun setTrackingWebSocketConfiguration(): WebSocketClient {
+       // val  webSocketUrl = URI(Helper.getConfigValue("trackingWebSocketUrl"))
+        val webSocket = object : WebSocketClient(getTrackingUrl()) {
             override fun onOpen() {
                 isWebSocketOpened = true
                 Log.d("Tracking-Logic", "WebSocket-onOpen: $isWebSocketOpened")
@@ -76,6 +72,24 @@ class LocationTrackingService(): Service() {
         return webSocket
     }
 
+    private fun getTrackingUrl(): URI {
+        try {
+            authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl"))
+        }
+        catch (e: URISyntaxException) {
+            e.printStackTrace()
+        }
+
+        val builder: Uri.Builder = Uri.Builder()
+        builder.scheme("http")
+                .authority(authorityUrl.toString())
+                .appendPath("trackServiceHub")
+                .appendQueryParameter("vehicleId", getVehicleId())
+                .appendQueryParameter("institutionId", getInstitutionId().toString())
+                .appendQueryParameter("deviceId", getDeviceId())
+        return URI(builder.build().toString())
+    }
+
     private fun sendDeviceIdToServer(message: String) {
         trackingWebSocket.send(message)
         Log.i("trackingWebSocket:  ", "Send-> $message")
@@ -101,64 +115,16 @@ class LocationTrackingService(): Service() {
         handlerCheckPermissions = Handler()
     }
      private fun startTracking() {
-            // if (permissionsHandlerRunning) {permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions) }
-            // val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null)
-         val tabletSerialNo = "226987965456" //Testing only
-             if (!tabletSerialNo.isNullOrEmpty()) {
-                 trackingWebSocket = setTrackingWebSocketConfiguration( tabletSerialNo)
+             if (!getVehicleId().isNullOrEmpty() && getInstitutionId() != 0 && !getDeviceId().isNullOrEmpty()) {
+                 trackingWebSocket = setTrackingWebSocketConfiguration()
                  trackingDataLayer = TrackingDataLayer(trackingWebSocket)
                  locationReceiver = LocationReceiver(trackingDataLayer)
-                 //startTracking()
                  if (locationReceiver.setUpLocationListener()) {
                      trackingWebSocket.connect()
                      setupTrackingHandler()
                      handlerTracking?.post(runnableTracking)
-                 } else {
-                    // locationReceiver.showAlertDialog()
                  }
-             }
-       //  if (hasPermissions(*permissions)) Log.i("trackingWebSocketPermissions:","Granted") else Log.i("trackingWebSocketPermissions:","Denied")
-             /*
-         Permissions.check(baseContext , permissions, null, null, object : PermissionHandler() {
-             @SuppressLint("MissingPermission")
-             override fun onGranted() {
-                 val telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-                 val tabletSerialNo = telephonyManager.deviceId
-
-                 if (!tabletSerialNo.isNullOrEmpty()) {
-                     trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
-                     trackingDataLayer = TrackingDataLayer(trackingWebSocket)
-                     locationReceiver = LocationReceiver(trackingDataLayer)
-                     //startTracking()
-                     if (locationReceiver.setUpLocationListener()) {
-                         setupTrackingTimer()
-                         trackingWebSocket.connect()
-                     } else {
-                         locationReceiver.showAlertDialog()
-                     }
-                 }
-             }
-
-             override fun onDenied(context: Context, deniedPermissions: ArrayList<String?>?) {
-                 // permission denied, block the feature.
-             }
-         })
-              */
-/*
-         val tabletSerialNo = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString("tabletSerialNo", null);
-         if (!tabletSerialNo.isNullOrEmpty()) {
-             trackingWebSocket = setTrackingWebSocketConfiguration(trackingWebSocketUri(), tabletSerialNo)
-             trackingDataLayer = TrackingDataLayer(trackingWebSocket)
-             locationReceiver = LocationReceiver(trackingDataLayer)
-             //startTracking()
-             if (locationReceiver.setUpLocationListener()) {
-                 setupTrackingTimer()
-                 trackingWebSocket.connect()
-             } else {
-                 locationReceiver.showAlertDialog()
-             }
-         }
-*/
+             }else return
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
@@ -245,4 +211,8 @@ class LocationTrackingService(): Service() {
         val builder = Notification.Builder(applicationContext, "channel_01").setAutoCancel(true)
         return builder.build()
     }
+
+    private fun getVehicleId() = sharedPreferences.getString("taxiPlateNumber", null)
+    private fun getInstitutionId() = sharedPreferences.getInt("taxiOfficeId", 0)
+    private fun getDeviceId() = sharedPreferences.getString("tabletSerialNo", null)
 }
