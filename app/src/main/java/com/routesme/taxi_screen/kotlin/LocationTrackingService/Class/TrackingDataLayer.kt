@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.kotlin.LocationTrackingService.Class
 import android.location.Location
 import android.os.Handler
 import android.util.Log
-import android.widget.Toast
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi_screen.kotlin.Class.App
@@ -11,6 +10,7 @@ import com.routesme.taxi_screen.kotlin.LocationTrackingService.Database.Tracking
 import com.routesme.taxi_screen.kotlin.Model.LocationJsonObject
 import com.routesme.taxi_screen.kotlin.Model.LocationFeed
 import com.routesme.taxi_screen.kotlin.Model.MessageFeed
+import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import tech.gusavila92.websocketclient.WebSocketClient
@@ -37,7 +37,7 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
     private fun sendFeedsHandlerSetup() {
         var i = 0
         val feeds = messageFeedsDao.getAllMessages()
-       // feeds.size
+      //feeds
         sendFeedsRunnable = Runnable {
             if (i < feeds.size){
                 sendFeedsViaSocket(feeds[i].message)
@@ -230,12 +230,12 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
             add(LocationFeed(84,29.377097, 47.993059,1597048487))
         }
         val feedsList18 = mutableListOf<LocationFeed>().apply {
-            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
-            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
-            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
-            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
-            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
-            add(LocationFeed(latitude = 29.376759, longitude = 47.992187,timestamp = 1597048484))
+            add(LocationFeed(85,29.375576, 47.986235,1597048506))
+            add(LocationFeed(86,29.376610, 47.988795,1597048503))
+            add(LocationFeed(87,29.375243, 47.987125,1597048497))
+            add(LocationFeed(88,29.377335, 47.989743,1597048503))
+            add(LocationFeed(89,29.378467, 47.991241,1597048487))
+            add(LocationFeed(90,29.376725, 47.992160,1597048486))
         }
 
         return mutableListOf<MutableList<LocationFeed>>().apply {
@@ -297,21 +297,13 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
     }
 
     private fun sendFeedsViaSocket(messageFeeds: String){
-        /*
-        val locationJsonArray = JsonArray()
-        for (l in locationFeeds){
-            val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
-            locationJsonArray.add(locationJsonObject)
-        }
-         */
-
         val messageObject = JSONObject()
+           val feedsArray = JSONArray(messageFeeds)
         try {
-            messageObject.put("SendLocationFeeds", messageFeeds)
+            messageObject.put("SendLocationFeeds", feedsArray)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-
-        trackingWebSocket.send(messageFeeds)
+        trackingWebSocket.send(messageObject.toString())
     }
 }
