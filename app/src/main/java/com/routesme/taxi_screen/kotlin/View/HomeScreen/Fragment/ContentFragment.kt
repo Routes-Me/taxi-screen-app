@@ -74,6 +74,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     }
 
     override fun onDestroy() {
+
         connectivityReceiverRegistering(false)
         super.onDestroy()
     }
@@ -96,8 +97,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private fun checkConnection() {
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
-            fetchAdvertisementData()
-           // playAds()
+           // fetchAdvertisementData()
+            testingPlayAds()
         } else {
             networkListener()
         }
@@ -110,8 +111,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
-            fetchAdvertisementData()
-           // playAds()
+           // fetchAdvertisementData()
+            testingPlayAds()
             connectivityReceiverRegistering(false)
         }
     }
@@ -131,7 +132,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     }
 
     //for test..
-    private fun playAds(){
+    private fun testingPlayAds(){
         val videos = mutableListOf<VideoModel>().apply {
             add(VideoModel(0,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FEid%20Alfiter.mp4?alt=media&token=f8ddfe58-d812-456c-bf4c-37fdcafa731c"))
             add(VideoModel(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3"))

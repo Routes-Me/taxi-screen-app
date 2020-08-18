@@ -42,8 +42,13 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         openPattern.setOnClickListener {openPatternClick()}
+
+//        setupTestingEnvironment()
     }
 
+    fun setupTestingEnvironment() {
+
+    }
     override fun onDestroy() {
         displayManager.unregisterActivity(this)
         super.onDestroy()

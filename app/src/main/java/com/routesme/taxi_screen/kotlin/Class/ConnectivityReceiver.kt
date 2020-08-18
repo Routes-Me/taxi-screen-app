@@ -7,14 +7,24 @@ import android.net.ConnectivityManager
 import com.routesme.taxi_screen.kotlin.Class.App.Companion.instance
 import java.util.*
 
-class ConnectivityReceiver : BroadcastReceiver() {
-    override fun onReceive(context: Context, intent: Intent) {
-        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        val isConnected = activeNetwork != null && activeNetwork.isConnected
-        if (connectivityReceiverListener != null) {
-            connectivityReceiverListener!!.onNetworkConnectionChanged(isConnected)
+
+class ConnectivityReceiver: BroadcastReceiver()  {
+
+    private val connectivityStatus: Boolean
+        get () {
+            val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+            val activeNetwork = cm.activeNetworkInfo
+
+            return activeNetwork != null && activeNetwork.isConnected
         }
+
+
+
+    lateinit var context: Context
+    override fun onReceive(context: Context, intent: Intent) {
+        this.context = context
+        connectivityReceiverListener?.onNetworkConnectionChanged(connectivityStatus)
+
     }
 
     interface ConnectivityReceiverListener {
@@ -25,9 +35,11 @@ class ConnectivityReceiver : BroadcastReceiver() {
         var connectivityReceiverListener: ConnectivityReceiverListener? = null
         val isConnected: Boolean
             get() {
-                val cm = Objects.requireNonNull(instance)!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-                val activeNetwork = cm.activeNetworkInfo
-                return activeNetwork != null && activeNetwork.isConnected
+                return false
+//                val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+//                val activeNetwork = cm.activeNetworkInfo
+//
+//                return activeNetwork != null && activeNetwork.isConnected
             }
     }
 }

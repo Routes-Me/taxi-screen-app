@@ -33,7 +33,7 @@ class App : Application() {
     var taxiOfficeId = 0
     var taxiPlateNumber: String? = null
     var taxiOfficeName: String? = null
-    private var gpsService: LocationTrackingService? = null
+    private var trackingService: LocationTrackingService? = null
     private lateinit var telephonyManager: TelephonyManager
     private  var paymentData = PaymentData()
     private val operations = Operations.instance
@@ -105,7 +105,7 @@ class App : Application() {
             val name = className.className
             if (name.endsWith("LocationTrackingService")) {
                 Log.i("trackingWebSocket:", "onServiceConnected")
-                gpsService = (service as LocationTrackingService.Companion.LocationServiceBinder).service
+                trackingService = (service as LocationTrackingService.Companion.LocationServiceBinder).service
                 LocationTrackingService.instance.checkPermissionsGranted()
 
             }
@@ -113,7 +113,7 @@ class App : Application() {
 
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "LocationTrackingService") {
-                gpsService = null
+                trackingService = null
                 Log.i("trackingWebSocket:", "onServiceDisconnected")
             }
         }
@@ -126,10 +126,10 @@ class App : Application() {
         FirebaseAnalytics.getInstance(this).logEvent("application_starting_period", params)
     }
     private fun currentPeriod(): TimePeriod {
-        if (currentDate().after(parseDate("04:00")) && currentDate().before(parseDate("12:00"))) return TimePeriod.Morning
-        else if (currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("17:00"))) return TimePeriod.Noon
-        else if (currentDate().after(parseDate("17:00")) && currentDate().before(parseDate("24:00"))) return TimePeriod.Evening
-        else return TimePeriod.Night
+        return if (currentDate().after(parseDate("04:00")) && currentDate().before(parseDate("12:00"))) TimePeriod.Morning
+        else if (currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("17:00"))) TimePeriod.Noon
+        else if (currentDate().after(parseDate("17:00")) && currentDate().before(parseDate("24:00"))) TimePeriod.Evening
+        else TimePeriod.Night
     }
     private fun currentDate(): Date {
         val calendar = Calendar.getInstance()
