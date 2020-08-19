@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".kotlin.View.Home_Screen_Fragments.SideMenuFragment">
+    >
 
     <ScrollView
         android:layout_width="match_parent"
@@ -12,17 +12,18 @@
         android:fillViewport="true">
 
         <LinearLayout
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:orientation="horizontal"
             android:paddingStart="6dp"
             android:paddingEnd="15dp"
             android:paddingTop="10dp"
-            android:paddingBottom="10dp">
+            android:paddingBottom="10dp"
+            android:layout_gravity="end">
 
 
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="?cardViewBackground_color"
                 app:cardCornerRadius="8dp">
@@ -92,11 +93,11 @@
             </androidx.cardview.widget.CardView>
 
             <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 app:cardBackgroundColor="?cardViewBackground_color"
                 app:cardCornerRadius="8dp"
-                android:layout_marginTop="10dp">
+                >
 
             <LinearLayout
                 android:layout_width="match_parent"

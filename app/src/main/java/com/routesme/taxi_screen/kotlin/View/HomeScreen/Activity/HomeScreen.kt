@@ -108,7 +108,8 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private fun openPatternClick() {
         clickTimes++
         if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10){
-            homeScreenFunctions.showAdminVerificationDialog(sharedPreferences.getString("tabletPassword", null).toString())
+            val tabletPassword = sharedPreferences.getString("tabletPassword", null)
+            if (!tabletPassword.isNullOrEmpty()) homeScreenFunctions.showAdminVerificationDialog(tabletPassword)
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()
