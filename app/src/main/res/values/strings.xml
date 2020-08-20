@@ -21,4 +21,6 @@
     <string name="received">received</string>
     <string name="payment_successful">PAYMENT SUCCESSFUL</string>
     <string name="thank_you_for_paying_through_routes_pay">Thank you for paying through Routes Pay</string>
+    <string name="wifi_name">Routes</string>
+    <string name="wifi_password">12345678</string>
 </resources>

@@ -102,3 +102,8 @@ udid: token,
 amount: 3
 Status: initiate
  */
+
+interface ISideFragmentCell
+class DiscountCell(val title: String, val QRCode: String) : ISideFragmentCell
+class WifiCell(val name: String, val password: String) : ISideFragmentCell
+class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
