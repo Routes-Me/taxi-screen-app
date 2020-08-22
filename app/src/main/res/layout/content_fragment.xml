@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -10,14 +11,14 @@
         android:id="@+id/Advertisement_Video_CardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardPreventCornerOverlap="true"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="3dp"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardPreventCornerOverlap="false"
+        card_view:cardUseCompatPadding="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
         app:layout_constraintDimensionRatio="H,3067: 5450"
-        app:layout_constraintHorizontal_chainStyle="spread">
+        app:layout_constraintHorizontal_chainStyle="spread_inside">
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -57,9 +58,9 @@
         android:id="@+id/Advertisement_Banner_CardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="3dp"
-        app:cardPreventCornerOverlap="true"
+        card_view:cardCornerRadius="8dp"
+        card_view:cardPreventCornerOverlap="false"
+        card_view:cardUseCompatPadding="true"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/Advertisement_Video_CardView"
         app:layout_constraintTop_toTopOf="parent"

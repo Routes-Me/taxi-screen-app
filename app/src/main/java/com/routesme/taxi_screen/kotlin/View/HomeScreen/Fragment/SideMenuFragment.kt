@@ -50,7 +50,7 @@ class SideMenuFragment : Fragment() {
 
     private fun setupRecyclerView() {
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
-            add(DiscountCell("KFC offers a 60% discount", ""))
+            add(DiscountCell("Macdonalds offers a 30% discount", ""))
             add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
             add(DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date())))
         }

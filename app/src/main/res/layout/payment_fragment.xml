@@ -129,7 +129,7 @@
                     <carbon.widget.ImageView
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
-                        android:src="@drawable/routes_qrcode"
+                        android:src="@drawable/qrcode"
                         android:layout_gravity="center"/>
 
 

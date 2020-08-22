@@ -5,7 +5,8 @@
     android:id="@+id/tabletLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen">
+    tools:context="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen"
+    android:background="?homeScreenBackground_color">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"
@@ -41,10 +42,10 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@+id/sideMenuFragment_container"
-        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.767"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="spread_inside"
         />
@@ -54,8 +55,8 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@+id/contentFragment_container"
         />
 
@@ -65,23 +66,22 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.746" />
+        app:layout_constraintGuide_percent="0.725" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineDividerAccessoryStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.014" />
+        app:layout_constraintGuide_percent="0.018" />
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@mipmap/divider_accessory_icon"
+        android:src="@drawable/ic_divider_accessory"
         app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
-        app:layout_constraintDimensionRatio="H,5 : 31"/>
-
+        app:layout_constraintDimensionRatio="H,5 : 24"/>
 
     <ImageView
         android:id="@+id/openPattern"
