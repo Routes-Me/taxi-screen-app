@@ -97,8 +97,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private fun checkConnection() {
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
-           // fetchAdvertisementData()
-            testingPlayAds()
+            fetchAdvertisementData()
+            //testingPlayAds()
         } else {
             networkListener()
         }
@@ -111,8 +111,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
-           // fetchAdvertisementData()
-            testingPlayAds()
+            fetchAdvertisementData()
+            //testingPlayAds()
             connectivityReceiverRegistering(false)
         }
     }
@@ -147,8 +147,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     }
 
     private fun fetchAdvertisementData() {
-        fetchBannerList()
-        fetchVideoList()
+        //fetchBannerList()
+        //fetchVideoList()
         isDataFetched = true
     }
 

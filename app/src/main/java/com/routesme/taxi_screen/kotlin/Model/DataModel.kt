@@ -8,7 +8,6 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-
 //Server RequestHeaders
 data class RequestHeaders(val Authorization: String? = null, val country_code: String? = null, val app_version: String? = null)
 
@@ -107,3 +106,11 @@ interface ISideFragmentCell
 class DiscountCell(val title: String, val QRCode: String) : ISideFragmentCell
 class WifiCell(val name: String, val password: String) : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
+
+
+//New Content Model
+data class Pagination( val total: Int = 0, val offset: Int = 0, val limit: Int = 0)
+data class QrCode( val details: Int = 0, val url: Int = 0)
+data class Data ( val qrCode: QrCode? = null, val content_id: String? = null, val type: String? = null, val url: String? = null )
+data class Content (val pagination: Pagination? = null, val data: List<Data>, val responseCode: String? = null)
+
