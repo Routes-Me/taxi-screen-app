@@ -24,12 +24,12 @@ open class DisplayManager() {
 
     fun setAlarm(context: Context) {
         val cal1 = Calendar.getInstance()
-        cal1[Calendar.HOUR_OF_DAY] = 0
+        cal1[Calendar.HOUR_OF_DAY] = 6
         cal1[Calendar.MINUTE] = 1
         cal1[Calendar.SECOND] = 0
 
         val cal2 = Calendar.getInstance()
-        cal2[Calendar.HOUR_OF_DAY] = 12
+        cal2[Calendar.HOUR_OF_DAY] = 18
         cal2[Calendar.MINUTE] = 1
         cal2[Calendar.SECOND] = 0
 
@@ -46,7 +46,7 @@ open class DisplayManager() {
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis, eveningAlarm)
     }
 
-    fun isAnteMeridiem() = currentDate().after(parseDate("00:00")) && currentDate().before(parseDate("12:00"))
+    fun isAnteMeridiem() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("18:00"))
     private fun currentDate(): Date {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -60,6 +60,8 @@ open class DisplayManager() {
     fun registerActivity(activity: Activity) {
         registeredActivities.add(activity)
     }
+
+    fun wasRegistered(activity: Activity) = registeredActivities.contains(activity)
 
     fun unregisterActivity(activity: Activity) {
         registeredActivities.remove(activity)

@@ -35,11 +35,8 @@ class ConnectivityReceiver: BroadcastReceiver()  {
         var connectivityReceiverListener: ConnectivityReceiverListener? = null
         val isConnected: Boolean
             get() {
-                return false
-//                val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-//                val activeNetwork = cm.activeNetworkInfo
-//
-//                return activeNetwork != null && activeNetwork.isConnected
-            }
+                val cm = Objects.requireNonNull(instance)!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+                val activeNetwork = cm.activeNetworkInfo
+                return activeNetwork != null && activeNetwork.isConnected       }
     }
 }

@@ -70,7 +70,7 @@ class SideMenuFragment : Fragment() {
         runnableTime = Runnable {
             sideFragmentCells[2] = DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date()))
             sideFragmentAdapter.notifyDataSetChanged()
-            handlerTime.postDelayed(runnableTime, second)
+            handlerTime.postDelayed(runnableTime, second * 60)
         }
         handlerTime = Handler()
         handlerTime.postDelayed(runnableTime, second)

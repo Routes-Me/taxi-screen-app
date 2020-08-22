@@ -48,7 +48,7 @@ class LocationTrackingService(): Service() {
         }
     }
 
-    val webSocket = object : WebSocketClient(getTrackingUrl()) {
+    private val webSocket = object : WebSocketClient(getTrackingUrl()) {
         override fun onOpen() {
             isAlive = true
             Log.d("Tracking-Logic", "WebSocket-onOpen")
@@ -80,23 +80,22 @@ class LocationTrackingService(): Service() {
     }
 
     private fun getTrackingUrl(): URI {
+       // return URI(Helper.getConfigValue("trackingWebSocketUrl"))
+        try {
+           authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl"))
+        }
+       catch (e: URISyntaxException) {
+            e.printStackTrace()
+       }
 
-        return URI(Helper.getConfigValue("trackingWebSocketUrl"))
-//        try {
-//            authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl"))
-//        }
-//        catch (e: URISyntaxException) {
-//            e.printStackTrace()
-//        }
-//
-//        val builder: Uri.Builder = Uri.Builder()
-//        builder.scheme("http")
-//                .authority(authorityUrl.toString())
-//                .appendPath("trackServiceHub")
-//                .appendQueryParameter("vehicleId", vehicleId)
-//                .appendQueryParameter("institutionId", institutionId.toString())
-//                .appendQueryParameter("deviceId", deviceId)
-//        return URI(builder.build().toString())
+        val builder: Uri.Builder = Uri.Builder()
+       builder.scheme("http")
+               .authority(authorityUrl.toString())
+               .appendPath("trackServiceHub")
+               .appendQueryParameter("vehicleId", vehicleId)
+               .appendQueryParameter("institutionId", institutionId.toString())
+               .appendQueryParameter("deviceId", deviceId)
+       return URI(builder.build().toString())
     }
 
     fun checkPermissionsGranted(){
@@ -104,6 +103,7 @@ class LocationTrackingService(): Service() {
             startTracking()
         }else{
             setupCheckPermissionsHandler()
+            permissionsHandlerRunning = true
             handlerCheckPermissions?.postDelayed(runnableCheckPermissions,1000)
 
         }

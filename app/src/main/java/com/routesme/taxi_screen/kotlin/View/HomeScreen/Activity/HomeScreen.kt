@@ -43,14 +43,10 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         openPattern.setOnClickListener {openPatternClick()}
 
-//        setupTestingEnvironment()
     }
 
-    fun setupTestingEnvironment() {
-
-    }
     override fun onDestroy() {
-        displayManager.unregisterActivity(this)
+        if (displayManager.wasRegistered(this) )displayManager.unregisterActivity(this)
         super.onDestroy()
     }
 
