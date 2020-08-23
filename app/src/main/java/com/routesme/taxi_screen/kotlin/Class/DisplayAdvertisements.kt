@@ -4,8 +4,6 @@ import android.net.Uri
 import android.os.Handler
 import android.widget.ImageView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.request.RequestOptions
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -15,22 +13,21 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi_screen.kotlin.Model.BannerModel
-import com.routesme.taxi_screen.kotlin.Model.VideoModel
+import com.routesme.taxi_screen.kotlin.Model.Content
+import com.routesme.taxi_screen.kotlin.Model.QRCodeCallback
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxiscreen.R
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*
 
 
-class DisplayAdvertisements() {
+class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
 
     private var cacheDataSourceFactory: CacheDataSourceFactory? = null
     private var simpleExoPlayer: SimpleExoPlayer? = null
     private var simpleCache: SimpleCache? = null
     private var currentVideoIndex = 0
     private var currentBannerIndex = 0
-    private val options = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
     private lateinit var handlerBanner: Handler
     private lateinit var runnableBanner: Runnable
     //Video progress bar
@@ -48,14 +45,10 @@ class DisplayAdvertisements() {
         //videoView.requestFocus()
     }
 
-    companion object {
-        val instance = DisplayAdvertisements()
-    }
-
-    fun displayAdvertisementVideoList(videos: List<VideoModel>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
+    fun displayAdvertisementVideoList(videos: List<Content>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
         initPlayer(playerView)
-        playVideo(videos[currentVideoIndex].advertisement_URL, ringProgressBar)
-        simpleExoPlayer?.addListener(object : Player.DefaultEventListener() {
+        playVideo(videos[currentVideoIndex].url, ringProgressBar)
+        simpleExoPlayer?.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when (playbackState) {
                     Player.STATE_IDLE -> {
@@ -63,17 +56,17 @@ class DisplayAdvertisements() {
                     Player.STATE_BUFFERING -> {
                     }
                     Player.STATE_READY -> {
-                        // progressBarTimerCounter(ringProgressBar)
                         progressBarHandlerCounter(ringProgressBar)
+                        qRCodeCallback?.onQRCodeChanged(videos[currentVideoIndex].qrCode)
                     }
                     Player.STATE_ENDED -> {
                         handlerProgressBar.removeCallbacks(runnableProgressBar)
                         currentVideoIndex++
                         if (currentVideoIndex < videos.size) {
-                            playVideo(videos[currentVideoIndex].advertisement_URL, ringProgressBar)
+                            playVideo(videos[currentVideoIndex].url, ringProgressBar)
                         } else {
                             currentVideoIndex = 0
-                            playVideo(videos[currentVideoIndex].advertisement_URL, ringProgressBar)
+                            playVideo(videos[currentVideoIndex].url, ringProgressBar)
                         }
                     }
                 }
@@ -129,12 +122,12 @@ class DisplayAdvertisements() {
     }
 
 
-    fun displayAdvertisementBannerList(banners: List<BannerModel>, ADS_ImageView: ImageView) {
+    fun displayAdvertisementBannerList(banners: List<Content>, ADS_ImageView: ImageView) {
         runnableBanner = Runnable {
             if (currentBannerIndex < banners.size) {
-                val uri = Uri.parse(banners.get(currentBannerIndex).advertisement_URL)
+                val uri = Uri.parse(banners[currentBannerIndex].url)
                 //showBannerIntoImageView(uri)
-                Glide.with(App.instance).load(uri).apply(options).into(ADS_ImageView)
+                Glide.with(App.instance).load(uri).apply(App.imageOptions).into(ADS_ImageView)
                 currentBannerIndex++
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0

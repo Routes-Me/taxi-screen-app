@@ -18,6 +18,6 @@ class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class ViewHolderDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val discountTv: TextView = itemView.findViewById(R.id.discountTv)
+    val detailsTv: TextView = itemView.findViewById(R.id.detailsTv)
     val qrCodeImage: ImageView = itemView.findViewById(R.id.qrCodeImage)
 }

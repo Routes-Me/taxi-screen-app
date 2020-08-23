@@ -6,9 +6,11 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 import com.routesme.taxi_screen.kotlin.Model.BannerModel
+import com.routesme.taxi_screen.kotlin.Model.ContentResponse
 import com.routesme.taxi_screen.kotlin.Model.VideoModel
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,6 +19,7 @@ import retrofit2.Retrofit
 
 class RetrofitService() {
 
+    val contentResponse: MutableLiveData<ContentResponse> = MutableLiveData()
     val videoList: MutableLiveData<List<VideoModel>> = MutableLiveData()
     val bannerList: MutableLiveData<List<BannerModel>> = MutableLiveData()
     val tokenJsonElement:MutableLiveData<JsonElement> = MutableLiveData()
@@ -31,6 +34,17 @@ class RetrofitService() {
                     .build()
                     .create(RoutesApi::class.java)
         }
+    }
+
+    fun content(context: Context): MutableLiveData<ContentResponse> {
+        val retrofitCall = create(context).getContent()
+        retrofitCall.enqueue(object : Callback<ContentResponse> {
+            override fun onFailure(call: Call<ContentResponse>, t: Throwable) {}
+            override fun onResponse(call: Call<ContentResponse>, response: Response<ContentResponse>) {
+                if (response.isSuccessful && response.body() != null) contentResponse.value = response.body()
+            }
+        })
+        return contentResponse
     }
 
     fun loadVideoList(chId: Int, context: Context): MutableLiveData<List<VideoModel>>? {

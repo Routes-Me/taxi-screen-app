@@ -8,10 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.routesme.taxi_screen.kotlin.Class.DateOperations
-import com.routesme.taxi_screen.kotlin.Model.DateCell
-import com.routesme.taxi_screen.kotlin.Model.DiscountCell
-import com.routesme.taxi_screen.kotlin.Model.ISideFragmentCell
-import com.routesme.taxi_screen.kotlin.Model.WifiCell
+import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
@@ -50,7 +47,7 @@ class SideMenuFragment : Fragment() {
 
     private fun setupRecyclerView() {
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
-            add(DiscountCell("Macdonalds offers a 30% discount", ""))
+            add(DiscountCell("", ""))
             add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
             add(DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date())))
         }
@@ -74,5 +71,10 @@ class SideMenuFragment : Fragment() {
         }
         handlerTime = Handler()
         handlerTime.postDelayed(runnableTime, second)
+    }
+
+    fun changeQRCode(qrCode: QrCode?) {
+        sideFragmentCells[0] = if (qrCode != null) DiscountCell(qrCode.details,qrCode.url) else DiscountCell(null,null)
+        sideFragmentAdapter.notifyDataSetChanged()
     }
 }

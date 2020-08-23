@@ -1,7 +1,11 @@
 package com.routesme.taxi_screen.kotlin.SideFragmentAdapter
 
 import android.annotation.SuppressLint
+import android.net.Uri
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Model.DateCell
 import com.routesme.taxi_screen.kotlin.Model.DiscountCell
 import com.routesme.taxi_screen.kotlin.Model.ISideFragmentCell
@@ -23,5 +27,6 @@ fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
 fun onBindDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderDiscount
     cell as DiscountCell
-    holder.apply { discountTv.text = cell.title }
+    holder.apply { if (!cell.details.isNullOrEmpty()) detailsTv.text = cell.details;
+        if (!cell.url.isNullOrEmpty()) Glide.with(App.instance).load(Uri.parse(cell.url)).apply(App.imageOptions).into(qrCodeImage) }
 }

@@ -32,5 +32,6 @@ interface RoutesApi {
     @GET("Channels")
     fun getBanners(@Query("channelidadvlist") ch_ID_Banners: Int): Call<List<BannerModel>>
 
-
+    @GET("Contents")
+    fun getContent(): Call<ContentResponse>
 }

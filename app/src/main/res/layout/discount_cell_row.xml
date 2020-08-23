@@ -78,50 +78,27 @@
                 app:layout_constraintHorizontal_chainStyle="spread" />
 
             <TextView
-                android:id="@+id/discountTv"
+                android:id="@+id/detailsTv"
                 android:layout_width="0dp"
-                android:layout_height="76dp"
+                android:layout_height="114dp"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="start"
-                android:maxLines="2"
-                android:text="Macdonalds offers a 30% discount"
+                android:maxLines="3"
                 android:textColor="?text_color"
                 android:textStyle="normal"
                 app:autoSizeMaxTextSize="100dp"
                 app:autoSizeMinTextSize="16sp"
                 app:autoSizeStepGranularity="3sp"
                 app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toTopOf="@+id/scanNowTv"
-                app:layout_constraintEnd_toStartOf="@id/guidelineTextEnd"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toTopOf="@id/guidelineTop"
-                app:layout_constraintVertical_chainStyle="packed" />
-
-            <TextView
-                android:id="@+id/scanNowTv"
-                android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:fontFamily="sans-serif-medium"
-                android:gravity="start"
-                android:maxLines="1"
-                android:text="Scan Now!"
-                android:textColor="?text_color"
-                android:textStyle="normal"
-                app:autoSizeMaxTextSize="100dp"
-                app:autoSizeMinTextSize="16sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
                 app:layout_constraintEnd_toStartOf="@id/guidelineTextEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@+id/discountTv" />
-
+                app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
             <ImageView
                 android:id="@+id/qrCodeImage"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:src="@drawable/qrcode"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
                 app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
                 app:layout_constraintDimensionRatio="H,1: 1"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"

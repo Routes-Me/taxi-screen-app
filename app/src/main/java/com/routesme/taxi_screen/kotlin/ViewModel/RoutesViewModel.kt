@@ -10,6 +10,7 @@ class RoutesViewModel() : ViewModel() {
 
     private val mService = RetrofitService()
 
+    fun getContent(context: Context) = mService.content(context)
     fun getVideoList(ch_ID: Int, context: Context) = mService.loadVideoList(ch_ID, context)
     fun getBannerList(ch_ID: Int, context: Context) = mService.loadBannerList(ch_ID, context)
     fun getToken(authCredentials: AuthCredentials, dialog: AlertDialog, context: Context) = mService.getToken(authCredentials, dialog, context)

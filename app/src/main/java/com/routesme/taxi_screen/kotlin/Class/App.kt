@@ -11,6 +11,8 @@ import android.os.Handler
 import android.os.IBinder
 import android.telephony.TelephonyManager
 import android.util.Log
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.danikula.videocache.HttpProxyCacheServer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
@@ -41,10 +43,12 @@ class App : Application() {
     private var minute = 60 * 1000
 
 
+
     companion object {
 
         @get:Synchronized
         var instance = App()
+        val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
         //video player...
         var simpleCache: SimpleCache? = null
         var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor? = null

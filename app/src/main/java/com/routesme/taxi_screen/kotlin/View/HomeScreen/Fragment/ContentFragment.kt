@@ -18,9 +18,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.ConnectivityReceiver
 import com.routesme.taxi_screen.kotlin.Class.DisplayAdvertisements
-import com.routesme.taxi_screen.kotlin.Model.BannerModel
-import com.routesme.taxi_screen.kotlin.Model.ItemAnalytics
-import com.routesme.taxi_screen.kotlin.Model.VideoModel
+import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.VideoPlayer.Constants
 import com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
@@ -31,6 +29,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     private lateinit var tabletSerialNumber:String
     private lateinit var contentFragmentContext: Context
+    private var qRCodeCallback: QRCodeCallback? = null
     private lateinit var view1: View
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var firebaseAnalytics: FirebaseAnalytics
@@ -38,7 +37,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private lateinit var intentFilter: IntentFilter
     private var isConnected = false
     private var isDataFetched = false
-    private val displayAdvertisements = DisplayAdvertisements.instance
+    private lateinit var displayAdvertisements: DisplayAdvertisements
 
     companion object {
         val instance = ContentFragment()
@@ -50,7 +49,17 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
        // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
        // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
        // firebaseAnalytics.setUserId(tabletSerialNumber)
+        try {
+            qRCodeCallback = activity as QRCodeCallback
+        } catch (e: ClassCastException) {
+            throw ClassCastException(activity.toString() + " must implement QRCodeCallback")
+        }
         super.onAttach(context)
+    }
+
+    override fun onDetach() {
+        qRCodeCallback = null
+        super.onDetach()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
@@ -138,25 +147,59 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
             add(VideoModel(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3"))
             // add(VideoModel(2,"https://drive.google.com/file/d/1EMfDMeQH4UUPg1n0JKp4sl3VX6HHTRLz/view?usp=sharing"))
         }
-        displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)
+       // displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)
         val images = mutableListOf<BannerModel>().apply {
             add(BannerModel(0,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957"))
             add(BannerModel(1,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5"))
         }
-        displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
+       // displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
     }
 
     private fun fetchAdvertisementData() {
-        //fetchBannerList()
-        //fetchVideoList()
+/*
+        val bannerList = mutableSetOf<Content>()
+        val videoList = mutableSetOf<Content>()
+
+        val model: RoutesViewModel by viewModels()
+        model.getContent(contentFragmentContext).observe((instance as LifecycleOwner), Observer<ContentResponse> {
+            if (!it.data.isNullOrEmpty()){
+              for (content in it.data){
+                  when(content.type){
+                      ContentType.Image.value -> bannerList.add(Content(content.content_id, content.url, content.qrCode))
+                      else -> videoList.add(Content(content.content_id, content.url, content.qrCode))
+                  }
+              }
+
+                displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
+                if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
+                if (!videoList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)
+            }
+        })
+*/
+        test()
         isDataFetched = true
+    }
+    private fun test(){
+        val bannerList = mutableSetOf<Content>()
+        val videoList = mutableSetOf<Content>()
+        videoList.apply {
+            add(Content(0,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FEid%20Alfiter.mp4?alt=media&token=f8ddfe58-d812-456c-bf4c-37fdcafa731c",QrCode("Macdonalds offers a 30% discount \n Scan Now!","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F1.png?alt=media&token=24e4ed47-e77f-489a-bb87-36955ba85b84")))
+            add(Content(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3", QrCode("MAC Offer! Scan Now!","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F2.png?alt=media&token=071c6c0d-0959-4a5e-99fe-49b01eb21977")))
+        }
+        bannerList.apply {
+            add(Content(0,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957"))
+            add(Content(1,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5"))
+        }
+        displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
+        if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
+        if (!videoList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)
     }
 
     private fun fetchBannerList() {
         val model: RoutesViewModel by viewModels()
             model.getBannerList(channelId(), contentFragmentContext)?.observe((instance as LifecycleOwner), Observer<List<BannerModel>> {
 
-                displayAdvertisements.displayAdvertisementBannerList(it,view1.advertisementsImageView)
+              //  displayAdvertisements.displayAdvertisementBannerList(it,view1.advertisementsImageView)
             })
     }
 
@@ -164,7 +207,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         val model: RoutesViewModel by viewModels()
             model.getVideoList(channelId(), contentFragmentContext)?.observe((instance as LifecycleOwner), Observer<List<VideoModel>> {
                 startPreLoadingService(it)
-                displayAdvertisements.displayAdvertisementVideoList(it,view1.playerView,view1.videoRingProgressBar)
+                //displayAdvertisements.displayAdvertisementVideoList(it,view1.playerView,view1.videoRingProgressBar)
             })
     }
 

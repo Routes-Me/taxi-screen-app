@@ -42,8 +42,7 @@
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:orientation="horizontal"
-       />
+        android:orientation="horizontal" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 

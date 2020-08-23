@@ -12,12 +12,14 @@ import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.IModeChanging
+import com.routesme.taxi_screen.kotlin.Model.QRCodeCallback
+import com.routesme.taxi_screen.kotlin.Model.QrCode
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-class HomeScreen : PermissionsActivity() ,IModeChanging{
+class HomeScreen : PermissionsActivity() ,IModeChanging, QRCodeCallback {
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -27,6 +29,8 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private var clickTimes = 0
     private val displayManager = DisplayManager.instance
     private val operations = Operations.instance
+    private lateinit var contentFragment: ContentFragment
+    private lateinit var sideMenuFragment: SideMenuFragment
 
     companion object{
         @get:Synchronized
@@ -42,7 +46,8 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
         sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
         openPattern.setOnClickListener {openPatternClick()}
-
+        contentFragment = ContentFragment.instance
+        sideMenuFragment = SideMenuFragment.instance
     }
 
     override fun onDestroy() {
@@ -81,8 +86,8 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
     private fun deviceToken() = "dF9bQgwjSxmY-Glapm-ZmL:APA91bH2OS7k9nX_fkiH1h6St1JB41Z50aUK0dU0XABvs_C6-5DNQaz78jYgM4bCQuyVC0o1Yju9TmMJl7NFux2cTQOPguGiBS4fevIP1tMoxvsYe3b_qo6K5wTXB56erjiEKyd6Cazc"
 
     private fun showFragments() {
-        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment.instance).commit()
-        supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, SideMenuFragment.instance).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, contentFragment).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment).commit()
     }
 
     override fun onPermissionsOkay() {}
@@ -113,5 +118,9 @@ class HomeScreen : PermissionsActivity() ,IModeChanging{
 
     override fun onModeChange() {
         recreate()
+    }
+
+    override fun onQRCodeChanged(qrCode: QrCode?) {
+        sideMenuFragment.changeQRCode(qrCode)
     }
 }

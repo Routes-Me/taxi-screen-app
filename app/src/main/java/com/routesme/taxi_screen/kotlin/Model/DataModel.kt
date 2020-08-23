@@ -103,14 +103,20 @@ Status: initiate
  */
 
 interface ISideFragmentCell
-class DiscountCell(val title: String, val QRCode: String) : ISideFragmentCell
+class DiscountCell(val details: String?, val url: String?) : ISideFragmentCell
 class WifiCell(val name: String, val password: String) : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 
 
 //New Content Model
 data class Pagination( val total: Int = 0, val offset: Int = 0, val limit: Int = 0)
-data class QrCode( val details: Int = 0, val url: Int = 0)
-data class Data ( val qrCode: QrCode? = null, val content_id: String? = null, val type: String? = null, val url: String? = null )
-data class Content (val pagination: Pagination? = null, val data: List<Data>, val responseCode: String? = null)
+data class QrCode( val details: String? = null, val url: String? = null)
+data class Data ( val qrCode: QrCode? = null, val content_id: Int = 0, val type: String? = null, val url: String? = null )
+data class ContentResponse (val pagination: Pagination? = null, val data: List<Data>, val responseCode: String? = null)
+data class Content (val id: Int = 0, val url: String? = null, val qrCode: QrCode? = null)
+enum class ContentType(val value: String) { Image("image"), Video("video") }
+
+interface QRCodeCallback {
+    fun onQRCodeChanged(qrCode: QrCode?)
+}
 
