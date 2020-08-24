@@ -41,4 +41,5 @@ class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerV
         }
         return this
     }
+
 }

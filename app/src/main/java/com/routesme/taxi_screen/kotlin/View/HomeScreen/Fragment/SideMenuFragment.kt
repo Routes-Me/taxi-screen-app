@@ -11,6 +11,8 @@ import com.routesme.taxi_screen.kotlin.Class.DateOperations
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxiscreen.R
+import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
+import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
 
@@ -54,6 +56,9 @@ class SideMenuFragment : Fragment() {
 
         sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
         v.recyclerView.adapter = sideFragmentAdapter
+        v.recyclerView.itemAnimator = SlideInUpAnimator().apply {
+            changeDuration = 60000
+        }
         /*
         sideFragmentAdapter.onItemClick = {
             val phoneNumberCell = it as PhoneNumberCell
@@ -75,11 +80,11 @@ class SideMenuFragment : Fragment() {
 
     fun changeVideoQRCode(qrCode: QrCode?) {
         sideFragmentCells[0] = if (qrCode != null) DiscountCell(qrCode.details,qrCode.url) else DiscountCell(null,null)
-        sideFragmentAdapter.notifyDataSetChanged()
+        sideFragmentAdapter.notifyItemChanged(0)
     }
 
     fun changeBannerQRCode(qrCode: QrCode?) {
         sideFragmentCells[2] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),null)
-        sideFragmentAdapter.notifyDataSetChanged()
+        sideFragmentAdapter.notifyItemChanged(2)
     }
 }

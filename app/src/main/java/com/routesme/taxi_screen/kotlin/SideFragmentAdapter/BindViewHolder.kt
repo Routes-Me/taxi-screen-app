@@ -22,7 +22,9 @@ fun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
 fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderWifi
     cell as WifiCell
-    holder.apply { nameTv.text = cell.name; passwordTv.text = cell.password
+    holder.apply {
+       // itemView.animate().rotationX(360F).duration = 1000
+        nameTv.text = cell.name; passwordTv.text = cell.password
 
         if (cell.qrCode != null){
             wifiView.visibility = View.GONE
@@ -38,6 +40,8 @@ fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
 fun onBindDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderDiscount
     cell as DiscountCell
-    holder.apply { if (!cell.details.isNullOrEmpty()) detailsTv.text = cell.details;
+    holder.apply {
+       // itemView.animate().rotationX(360F).duration = 1000
+        if (!cell.details.isNullOrEmpty()) detailsTv.text = cell.details;
         if (!cell.url.isNullOrEmpty()) Glide.with(App.instance).load(Uri.parse(cell.url)).apply(App.imageOptions).into(qrCodeImage) }
 }
