@@ -125,3 +125,7 @@ interface QRCodeCallback {
 //New Registration Models
 data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = 0)
 data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = 0, val countryIso: String? = null, val name: String? = null)
+
+data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = 0)
+
+data class VehicleData (var institutionId: String? = null, var modelId: String? = null, var vehicleId: String? = null, var plateNumber: String? = null, var modelYear: String? = null)
