@@ -96,7 +96,7 @@
                 app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
             <ImageView
-                android:id="@+id/qrCodeImage"
+                android:id="@+id/videoQrCodeImage"
                 android:layout_width="150dp"
                 android:layout_height="150dp"
                 app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"

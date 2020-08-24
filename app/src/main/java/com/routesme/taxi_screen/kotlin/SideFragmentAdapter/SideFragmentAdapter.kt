@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.kotlin.SideFragmentAdapter
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.kotlin.Model.DateCell
 import com.routesme.taxi_screen.kotlin.Model.DiscountCell
 import com.routesme.taxi_screen.kotlin.Model.ISideFragmentCell
 import com.routesme.taxi_screen.kotlin.Model.WifiCell

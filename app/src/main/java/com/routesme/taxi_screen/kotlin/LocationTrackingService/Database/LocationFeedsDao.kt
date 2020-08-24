@@ -1,13 +1,15 @@
 package com.routesme.taxi_screen.kotlin.LocationTrackingService.Database
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.routesme.taxi_screen.kotlin.Model.LocationFeed
 
 //Location Feeds Table
 @Dao
 interface LocationFeedsDao {
-    @Query("SELECT * FROM LocationFeeds ORDER BY ID")
-    fun loadAllLocations(): List<LocationFeed>
+    //@Query("SELECT * FROM LocationFeeds ORDER BY ID")
+    @Query("SELECT * FROM LocationFeeds GROUP BY timestamp / 5  ORDER BY ID")
+    fun loadAllLocations(): LiveData<List<LocationFeed>>
 
     @Insert
     fun insertLocation(locationFeed: LocationFeed)

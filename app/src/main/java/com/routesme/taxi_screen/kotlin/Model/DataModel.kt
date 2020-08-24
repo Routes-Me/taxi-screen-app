@@ -104,7 +104,7 @@ Status: initiate
 
 interface ISideFragmentCell
 class DiscountCell(val details: String?, val url: String?) : ISideFragmentCell
-class WifiCell(val name: String, val password: String) : ISideFragmentCell
+class WifiCell(val name: String, val password: String, val qrCode: QrCode?) : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 
 
@@ -117,6 +117,7 @@ data class Content (val id: Int = 0, val url: String? = null, val qrCode: QrCode
 enum class ContentType(val value: String) { Image("image"), Video("video") }
 
 interface QRCodeCallback {
-    fun onQRCodeChanged(qrCode: QrCode?)
+    fun onVideoQRCodeChanged(qrCode: QrCode?)
+    fun onBannerQRCodeChanged(qrCode: QrCode?)
 }
 

@@ -6,17 +6,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_gravity="center">
 
-    <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineCardViewEnd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.9"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="0dp"
@@ -30,102 +19,18 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="@id/guidelineCardViewEnd"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="H,320 : 329">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+      <include layout="@layout/wifi_view"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:visibility="visible"/>
+
+        <include layout="@layout/banner_qrcode_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineTop"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.05" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineBottom"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                app:layout_constraintGuide_percent="0.853" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineStart"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.065" />
-
-            <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineEnd"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.935" />
-
-            <ImageView
-                android:id="@+id/wifiIcon"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:src="?wifi_icon"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toTopOf="@id/guidelineTop"
-                app:layout_constraintDimensionRatio="H,1: 1"
-                card_view:layout_constraintBottom_toTopOf="@id/nameTv"
-                card_view:layout_constraintVertical_chainStyle="spread_inside"/>
-
-            <TextView
-                android:id="@+id/nameTv"
-                android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:textColor="?text_color"
-                android:textStyle="normal"
-                app:autoSizeMaxTextSize="100dp"
-                app:autoSizeMinTextSize="16sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@+id/wifiIcon"/>
-
-            <ImageView
-                android:id="@+id/keyIcon"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:src="?key_icon"
-                android:gravity="center_vertical"
-                app:layout_constraintDimensionRatio="H, 1: 1"
-                app:layout_constraintTop_toTopOf="@id/passwordTv"
-                app:layout_constraintBottom_toBottomOf="@id/passwordTv"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"/>
-
-            <TextView
-                android:id="@+id/passwordTv"
-                android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center_vertical"
-                android:textColor="?text_color"
-                android:textStyle="normal"
-                app:autoSizeMaxTextSize="100dp"
-                app:autoSizeMinTextSize="16sp"
-                app:autoSizeStepGranularity="2sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintStart_toEndOf="@+id/keyIcon"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintTop_toBottomOf="@+id/nameTv"
-                app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"/>
-
-
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            android:visibility="gone"/>
 
     </androidx.cardview.widget.CardView>
 

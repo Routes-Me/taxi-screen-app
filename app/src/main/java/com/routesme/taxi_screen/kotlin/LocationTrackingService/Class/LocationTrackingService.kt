@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -16,7 +15,6 @@ import com.routesme.taxi_screen.kotlin.Class.Helper
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.io.IOException
 import java.net.URI
-import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
@@ -80,7 +78,8 @@ class LocationTrackingService(): Service() {
     }
 
     private fun getTrackingUrl(): URI {
-       // return URI(Helper.getConfigValue("trackingWebSocketUrl"))
+        return URI(Helper.getConfigValue("trackingWebSocketUrl"))
+        /*
         try {
            authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl"))
         }
@@ -96,6 +95,7 @@ class LocationTrackingService(): Service() {
                .appendQueryParameter("institutionId", institutionId.toString())
                .appendQueryParameter("deviceId", deviceId)
        return URI(builder.build().toString())
+        */
     }
 
     fun checkPermissionsGranted(){
@@ -195,6 +195,4 @@ class LocationTrackingService(): Service() {
     private fun getVehicleId() = sharedPreferences.getString("taxiPlateNumber", null)
     private fun getInstitutionId() = sharedPreferences.getInt("taxiOfficeId", 0)
     private fun getDeviceId() =  sharedPreferences.getString("tabletSerialNo", null)
-
-
 }

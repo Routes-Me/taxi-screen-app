@@ -120,7 +120,11 @@ class HomeScreen : PermissionsActivity() ,IModeChanging, QRCodeCallback {
         recreate()
     }
 
-    override fun onQRCodeChanged(qrCode: QrCode?) {
-        sideMenuFragment.changeQRCode(qrCode)
+    override fun onVideoQRCodeChanged(qrCode: QrCode?) {
+        sideMenuFragment.changeVideoQRCode(qrCode)
+    }
+
+    override fun onBannerQRCodeChanged(qrCode: QrCode?) {
+        sideMenuFragment.changeBannerQRCode(qrCode)
     }
 }

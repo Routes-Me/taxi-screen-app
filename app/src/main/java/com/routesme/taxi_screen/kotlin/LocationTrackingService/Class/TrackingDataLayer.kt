@@ -22,7 +22,12 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
     private lateinit var sendFeedsRunnable: Runnable
 
      fun executeTrackingLogic() {
-       val databaseFeeds = getDatabaseFeeds()
+
+      // val databaseFeeds = getDatabaseFeeds()
+         val loadAllLocations = locationFeedsDao.loadAllLocations()
+
+
+/*
          if (!databaseFeeds.isNullOrEmpty()){
              val filteredResult = getMajorFeeds(databaseFeeds)
              val listOfFeeds = filteredResult.chunked(100)
@@ -31,6 +36,7 @@ class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
              sendFeedsHandlerSetup()
              sendFeedsHandler.post(sendFeedsRunnable)
          }
+*/
     }
 
     private fun sendFeedsHandlerSetup() {

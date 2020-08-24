@@ -2,6 +2,7 @@ package com.routesme.taxi_screen.kotlin.SideFragmentAdapter
 
 import android.annotation.SuppressLint
 import android.net.Uri
+import android.view.View
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -21,7 +22,17 @@ fun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
 fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderWifi
     cell as WifiCell
-    holder.apply { nameTv.text = cell.name; passwordTv.text = cell.password }
+    holder.apply { nameTv.text = cell.name; passwordTv.text = cell.password
+
+        if (cell.qrCode != null){
+            wifiView.visibility = View.GONE
+            qrCodeView.visibility = View.VISIBLE
+            if (!cell.qrCode.url.isNullOrEmpty()) Glide.with(App.instance).load(Uri.parse(cell.qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
+        }else{
+            wifiView.visibility = View.VISIBLE
+            qrCodeView.visibility = View.GONE
+        }
+    }
 }
 
 fun onBindDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
