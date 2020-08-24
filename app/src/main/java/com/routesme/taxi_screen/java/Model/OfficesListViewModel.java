@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.routesme.taxi_screen.java.Server.Class.RetrofitClientInstance;
 import com.routesme.taxi_screen.java.Server.Interface.RoutesApi;
-import com.routesme.taxi_screen.kotlin.Model.TaxiOfficeList;
+import com.routesme.taxi_screen.kotlin.Model.Institutions;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -15,24 +15,24 @@ import retrofit2.Response;
 public class OfficesListViewModel extends ViewModel {
 
     //this is the data that we will fetch asynchronously
-    private MutableLiveData<TaxiOfficeList> officesList;
+    private MutableLiveData<Institutions> Institutions;
 
     //we will call this method to get the data
-    public LiveData<TaxiOfficeList> getTaxiOfficesList(Activity activity, String include) {
+    public LiveData<Institutions> getInstitutions(Activity activity, Integer offset, Integer limit) {
         //if the list is null
-        if (officesList == null) {
-            officesList = new MutableLiveData<TaxiOfficeList>();
+        if (Institutions == null) {
+            Institutions = new MutableLiveData<Institutions>();
             //we will load it asynchronously from server in this method
-            loadOfficesList(activity, include);
+            loadInstitutions(activity, offset, limit);
         }
 
         //finally we will return the list
-        return officesList;
+        return Institutions;
     }
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadOfficesList(final Activity activity, String include) {
+    private void loadInstitutions(final Activity activity, Integer offset, Integer limit) {
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){
@@ -40,17 +40,17 @@ public class OfficesListViewModel extends ViewModel {
             }else {
                 return;
             }
-            Call<TaxiOfficeList> call = api.getTaxiOfficeList(include);
+            Call<Institutions> call = api.getInstitutions(offset,limit);
 
-            call.enqueue(new Callback<TaxiOfficeList>() {
+            call.enqueue(new Callback<Institutions>() {
                 @Override
-                public void onResponse(Call<TaxiOfficeList> call, Response<TaxiOfficeList> response) {
+                public void onResponse(Call<Institutions> call, Response<Institutions> response) {
                     if (response.isSuccessful() && response.body() != null){
-                        officesList.setValue(response.body());
+                        Institutions.setValue(response.body());
                     }
                 }
                 @Override
-                public void onFailure(Call<TaxiOfficeList> call, Throwable t) {
+                public void onFailure(Call<Institutions> call, Throwable t) {
                     activity.finish();
                 }
             });

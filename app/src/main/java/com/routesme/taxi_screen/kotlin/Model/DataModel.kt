@@ -30,6 +30,7 @@ data class TabletCredentials(@SerializedName("tabletRegesterTaxiOfficeID") var t
 //Offices list
 data class TaxiOfficeList(@SerializedName("data") val officesData: List<Office?>? = null, @SerializedName("included") val officesIncluded: IncludedOffices? = null)
 
+
 data class IncludedOffices(val recentOffices: List<Office?>? = null)
 data class Office(val taxiOfficeID: Int? = null, val taxiOfficeCarsCount: Int? = null, val taxiOfficeName: String? = null, val taxiOfficePhoneNumber: String? = null)
 //Office plates list
@@ -111,8 +112,8 @@ class DateCell(val clock: String, val weekDay: String, val monthDay: String) : I
 //New Content Model
 data class Pagination( val total: Int = 0, val offset: Int = 0, val limit: Int = 0)
 data class QrCode( val details: String? = null, val url: String? = null)
-data class Data ( val qrCode: QrCode? = null, val content_id: Int = 0, val type: String? = null, val url: String? = null )
-data class ContentResponse (val pagination: Pagination? = null, val data: List<Data>, val responseCode: String? = null)
+data class ContentData (val qrCode: QrCode? = null, val content_id: Int = 0, val type: String? = null, val url: String? = null )
+data class ContentResponse (val pagination: Pagination? = null, @SerializedName("data") val data: List<ContentData>, val responseCode: String? = null)
 data class Content (val id: Int = 0, val url: String? = null, val qrCode: QrCode? = null)
 enum class ContentType(val value: String) { Image("image"), Video("video") }
 
@@ -121,3 +122,6 @@ interface QRCodeCallback {
     fun onBannerQRCodeChanged(qrCode: QrCode?)
 }
 
+//New Registration Models
+data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = 0)
+data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = 0, val countryIso: String? = null, val name: String? = null)

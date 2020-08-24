@@ -13,13 +13,14 @@ import com.routesme.taxi_screen.java.Model.OfficePlatesListViewModel;
 import com.routesme.taxi_screen.java.Model.OfficesListViewModel;
 import com.routesme.taxi_screen.java.Class.OfficesAdapterMultibleViews;
 import com.routesme.taxi_screen.kotlin.Class.App;
+import com.routesme.taxi_screen.kotlin.Model.InstitutionData;
+import com.routesme.taxi_screen.kotlin.Model.Institutions;
 import com.routesme.taxi_screen.kotlin.Model.ItemType;
-import com.routesme.taxi_screen.kotlin.Model.Office;
 import com.routesme.taxi_screen.kotlin.Model.OfficePlatesList;
-import com.routesme.taxi_screen.kotlin.Model.TaxiOfficeList;
 import com.routesme.taxi_screen.kotlin.Model.TaxiPlate;
 import com.routesme.taxiscreen.R;
 import java.util.ArrayList;
+import java.util.List;
 
 public class TaxiInformationListScreen extends AppCompatActivity {
 
@@ -49,14 +50,14 @@ public class TaxiInformationListScreen extends AppCompatActivity {
             recyclerView = findViewById(R.id.recyclerView);
             recyclerView.setHasFixedSize(true);
             recyclerView.setLayoutManager(new LinearLayoutManager(this));
-            getlist();
+            getList();
         }
     }
 
-    private void getlist() {
+    private void getList() {
         switch (listType){
             case Offices_STR:
-                getOfficesList_Sections();
+                getInstitutionsList_Sections();
                 break;
             case Office_Plates_STR:
                 getOfficePlatesList_Sections();
@@ -64,31 +65,34 @@ public class TaxiInformationListScreen extends AppCompatActivity {
         }
     }
 
-
-    private void getOfficesList_Sections() {
+    private void getInstitutionsList_Sections() {
             officesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficesListViewModel.class);
-            officesListViewModel.getTaxiOfficesList(this, "recent").observe((LifecycleOwner) this, new Observer<TaxiOfficeList>() {
+            officesListViewModel.getInstitutions(this, 1,40).observe((LifecycleOwner) this, new Observer<Institutions>() {
                 @Override
-                public void onChanged(TaxiOfficeList taxiOfficeList) {
+                public void onChanged(Institutions institutions) {
                     listOfficesArrayList = new ArrayList<>();
-                    ArrayList<Office> mostRecentOffices = new ArrayList<>() ;
-                    mostRecentOffices.addAll(taxiOfficeList.getOfficesIncluded().getRecentOffices());
-                    ArrayList<Office> allOffices = new ArrayList<>();
-                    allOffices.addAll(taxiOfficeList.getOfficesData());
+                   // ArrayList<Office> mostRecentOffices = new ArrayList<>() ;
+                   // mostRecentOffices.addAll(taxiOfficeList.getOfficesIncluded().getRecentOffices());
+                    //ArrayList<Office> allOffices = new ArrayList<>();
+                    //allOffices.addAll(institutions.getOfficesData());
+
                     //Get Most Offices
+                    /*
                     if (mostRecentOffices.size() > 0) {
                         listOfficesArrayList.add(new ItemType("Most recent", true, false, 0));
                         for (int i=0; i <mostRecentOffices.size() ; i++){
                             listOfficesArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
                         }
                     }
+                    */
                     //Get all Offices
-                    if (allOffices.size() > 0) {
-                        listOfficesArrayList.add(new ItemType("Offices", true, false, 0));
+                    List<InstitutionData> institutionList = institutions.getData();
+                    if (institutionList.size() > 0) {
+                        listOfficesArrayList.add(new ItemType("Institutions", true, false, 0));
 
-                        for (int i = 0; i < allOffices.size(); i++) {
+                        for (int i = 0; i < institutionList.size(); i++) {
 
-                            listOfficesArrayList.add(new ItemType(allOffices.get(i).getTaxiOfficeName(), false, true, allOffices.get(i).getTaxiOfficeID()));
+                            listOfficesArrayList.add(new ItemType(institutionList.get(i).getName(), false, true, institutionList.get(i).getInstitutionId()));
                         }
                     }
                     adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficesArrayList);
@@ -107,7 +111,6 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                 }
             });
     }
-
 
     private void getOfficePlatesList_Sections() {
             officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
@@ -161,7 +164,6 @@ public class TaxiInformationListScreen extends AppCompatActivity {
             getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_close_grey);
         }
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

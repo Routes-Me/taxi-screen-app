@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentials;
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError;
 import com.routesme.taxi_screen.kotlin.Model.BannerModel;
+import com.routesme.taxi_screen.kotlin.Model.Institutions;
 import com.routesme.taxi_screen.kotlin.Model.OfficePlatesList;
 import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
 import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
@@ -25,8 +26,8 @@ public interface RoutesApi {
     @Headers({"Content-Type: application/json", "DataServiceVersion: 2.0"})
     Call<JsonElement> loginAuth(@Body AuthCredentials authCredentials);
     //Taxi Office List
-    @GET("TaxiOffices")
-    Call<TaxiOfficeList> getTaxiOfficeList(@Query("include") String include);
+    @GET("institutions")
+    Call<Institutions> getInstitutions(@Query("offset") Integer offset, @Query("limit") Integer limit);
     //Taxi Offic plates list
     @GET("Tablets")
     Call<OfficePlatesList> getOfficePlatesList(@Query("taxiOfficeId") int taxiOfficeId);

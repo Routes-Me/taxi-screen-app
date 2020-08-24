@@ -11,8 +11,6 @@ import androidx.lifecycle.ViewModelProviders;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.ProgressDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -37,12 +35,10 @@ import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Objects;
 
 import dmax.dialog.SpotsDialog;
-import kotlin.jvm.internal.Intrinsics;
 
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
@@ -79,7 +75,6 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
 
         getTabletInfo();
     }
-
 
     private void requestRuntimePermissions() {
         String[] permissionsList = new String[]{Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE};
@@ -215,7 +210,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 clickOnGetDeviceInfo();
                 break;
             case R.id.taxiOffice_tv:
-                openTaxiOfficesList();
+                openInstitutionList();
                 break;
             case R.id.taxiPlateNumber_tv:
                 openTaxiOfficePlateNumbersList();
@@ -226,7 +221,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
         }
     }
-    private void openTaxiOfficesList() {
+    private void openInstitutionList() {
         taxiOffice_tv.setEnabled(false);
         openDataList(Offices_STR);
         showInputError(false, 0);
