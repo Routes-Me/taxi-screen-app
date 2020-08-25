@@ -16,8 +16,8 @@ import com.routesme.taxi_screen.kotlin.Class.App;
 import com.routesme.taxi_screen.kotlin.Model.InstitutionData;
 import com.routesme.taxi_screen.kotlin.Model.Institutions;
 import com.routesme.taxi_screen.kotlin.Model.ItemType;
-import com.routesme.taxi_screen.kotlin.Model.OfficePlatesList;
-import com.routesme.taxi_screen.kotlin.Model.TaxiPlate;
+import com.routesme.taxi_screen.kotlin.Model.VehicleData;
+import com.routesme.taxi_screen.kotlin.Model.Vehicles;
 import com.routesme.taxiscreen.R;
 import java.util.ArrayList;
 import java.util.List;
@@ -34,7 +34,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
     private RecyclerView recyclerView;
     //Section recyclerView ...
     private OfficesAdapterMultibleViews adapter;
-    private ArrayList<ItemType> listOfficesArrayList, listOfficePlatesArrayList;
+    private ArrayList<ItemType> institutionsArrayList, vehiclesArrayList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,7 +60,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                 getInstitutionsList_Sections();
                 break;
             case Office_Plates_STR:
-                getOfficePlatesList_Sections();
+                getVehiclesList_Sections();
                 break;
         }
     }
@@ -70,7 +70,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
             officesListViewModel.getInstitutions(this, 1,40).observe((LifecycleOwner) this, new Observer<Institutions>() {
                 @Override
                 public void onChanged(Institutions institutions) {
-                    listOfficesArrayList = new ArrayList<>();
+                    institutionsArrayList = new ArrayList<>();
                    // ArrayList<Office> mostRecentOffices = new ArrayList<>() ;
                    // mostRecentOffices.addAll(taxiOfficeList.getOfficesIncluded().getRecentOffices());
                     //ArrayList<Office> allOffices = new ArrayList<>();
@@ -79,31 +79,30 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                     //Get Most Offices
                     /*
                     if (mostRecentOffices.size() > 0) {
-                        listOfficesArrayList.add(new ItemType("Most recent", true, false, 0));
+                        institutionsArrayList.add(new ItemType("Most recent", true, false, 0));
                         for (int i=0; i <mostRecentOffices.size() ; i++){
-                            listOfficesArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
+                            institutionsArrayList.add(new ItemType(mostRecentOffices.get(i).getTaxiOfficeName(),false, false,mostRecentOffices.get(i).getTaxiOfficeID()));
                         }
                     }
                     */
-                    //Get all Offices
                     List<InstitutionData> institutionList = institutions.getData();
                     if (institutionList.size() > 0) {
-                        listOfficesArrayList.add(new ItemType("Institutions", true, false, 0));
+                        institutionsArrayList.add(new ItemType("Institutions", true, false, 0));
 
                         for (int i = 0; i < institutionList.size(); i++) {
-
-                            listOfficesArrayList.add(new ItemType(institutionList.get(i).getName(), false, true, institutionList.get(i).getInstitutionId()));
+                            institutionsArrayList.add(new ItemType(institutionList.get(i).getName(), false, true, institutionList.get(i).getInstitutionId()));
                         }
                     }
-                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficesArrayList);
+                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, institutionsArrayList);
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
                     adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
                         @Override
                         public void onItemClick(int position) {
 
-                            app.setTaxiOfficeId(listOfficesArrayList.get(position).getOfficeId());
-                            app.setTaxiOfficeName(listOfficesArrayList.get(position).getItemName());
+                            app.setInstitutionId(institutionsArrayList.get(position).getId());
+                            app.setInstitutionName(institutionsArrayList.get(position).getItemName());
+                            app.setVehicleId(-999);
                             app.setTaxiPlateNumber(null);
                             finish();
                         }
@@ -112,34 +111,34 @@ public class TaxiInformationListScreen extends AppCompatActivity {
             });
     }
 
-    private void getOfficePlatesList_Sections() {
+    private void getVehiclesList_Sections() {
             officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
-            officePlatesListViewModel.getOfficePlatesList(this,app.getTaxiOfficeId()).observe((LifecycleOwner) this, new Observer<OfficePlatesList>() {
+            officePlatesListViewModel.getVehicles(this,1,150,app.getInstitutionId()).observe((LifecycleOwner) this, new Observer<Vehicles>() {
                 @Override
-                public void onChanged(OfficePlatesList officePlatesList) {
-                    listOfficePlatesArrayList = new ArrayList<>();
-                    ArrayList<TaxiPlate> allOfficePlates = new ArrayList<>();
-                    allOfficePlates.addAll(officePlatesList.getOfficePlatesData());
-                    //Get all Office Plates
-                    if (allOfficePlates.size() > 0) {
-                        listOfficePlatesArrayList.add(new ItemType("Office plates", true, false, 0));
+                public void onChanged(Vehicles vehicles) {
+                    vehiclesArrayList = new ArrayList<>();
+                   // ArrayList<TaxiPlate> allOfficePlates = new ArrayList<>();
+                    //allOfficePlates.addAll(vehicles.getOfficePlatesData());
+                    List<VehicleData> vehiclesList = vehicles.getData();
+                    if (vehiclesList.size() > 0) {
+                        vehiclesArrayList.add(new ItemType("Vehicles", true, false, -1));
 
-                        for (int i=0; i <allOfficePlates.size() ; i++){
-                            listOfficePlatesArrayList.add(new ItemType(allOfficePlates.get(i).getTabletCarPlateNo(),false, true,0));
+                        for (int i=0; i < vehiclesList.size() ; i++){
+                            vehiclesArrayList.add(new ItemType(vehiclesList.get(i).getPlateNumber(),false, true,vehiclesList.get(i).getVehicleId()));
                         }
                     }
 
-                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, listOfficePlatesArrayList);
+                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, vehiclesArrayList);
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
                     adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
                         @Override
                         public void onItemClick(int position) {
-                            app.setTaxiPlateNumber(listOfficePlatesArrayList.get(position).getItemName());
+                            app.setVehicleId(vehiclesArrayList.get(position).getId());
+                            app.setTaxiPlateNumber(vehiclesArrayList.get(position).getItemName());
                             finish();
                         }
                     });
-
                 }
             });
     }

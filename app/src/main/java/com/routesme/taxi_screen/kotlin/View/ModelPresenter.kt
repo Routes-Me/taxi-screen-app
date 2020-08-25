@@ -43,8 +43,8 @@ class ModelPresenter : AppCompatActivity() {
         app.authCredentials!!.Username = ""
         app.authCredentials!!.Password = ""
         app.isNewLogin = false
-        app.taxiOfficeId = 0
-        app.taxiOfficeName = null
+        app.institutionId = 0
+        app.institutionName = null
         app.taxiPlateNumber = null
     }
 

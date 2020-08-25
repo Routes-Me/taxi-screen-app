@@ -18,7 +18,7 @@ public class OfficesListViewModel extends ViewModel {
     private MutableLiveData<Institutions> Institutions;
 
     //we will call this method to get the data
-    public LiveData<Institutions> getInstitutions(Activity activity, Integer offset, Integer limit) {
+    public LiveData<Institutions> getInstitutions(Activity activity, int offset, int limit) {
         //if the list is null
         if (Institutions == null) {
             Institutions = new MutableLiveData<Institutions>();
@@ -32,7 +32,7 @@ public class OfficesListViewModel extends ViewModel {
 
 
     //This method is using Retrofit to get the JSON data from URL
-    private void loadInstitutions(final Activity activity, Integer offset, Integer limit) {
+    private void loadInstitutions(final Activity activity, int offset, int limit) {
             RetrofitClientInstance retrofitClientInstance = new RetrofitClientInstance(activity);
             RoutesApi api = null;
             if (retrofitClientInstance != null){

@@ -16,7 +16,7 @@ interface RoutesApi {
     //Tablet registration...
     @POST("Tablets")
     @Headers("Content-Type: application/json", "DataServiceVersion: 2.0")
-    fun tabletRegister(@Body tabletCredentials: TabletCredentials?): Call<TabletInfo?>?
+    fun tabletRegister(@Body deviceInfo: DeviceInfo?): Call<DeviceRegistrationResponse?>?
 
     @GET("TaxiOffices")
     fun getTaxiOfficeList(@Query("include") include: String?): Call<TaxiOfficeList?>?

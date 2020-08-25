@@ -29,8 +29,8 @@ import com.routesme.taxi_screen.kotlin.Class.App;
 import com.routesme.taxi_screen.kotlin.Class.DateOperations;
 import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
-import com.routesme.taxi_screen.kotlin.Model.TabletCredentials;
-import com.routesme.taxi_screen.kotlin.Model.TabletInfo;
+import com.routesme.taxi_screen.kotlin.Model.DeviceInfo;
+import com.routesme.taxi_screen.kotlin.Model.DeviceRegistrationResponse;
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
@@ -43,10 +43,10 @@ import dmax.dialog.SpotsDialog;
 public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
 
     private App app;
-    private TabletCredentials tabletCredentials;
+    private DeviceInfo deviceInfo;
     private Operations operations;
     public static final int READ_PHONE_STATE_REQUEST_CODE = 101;
-    private static final String List_Type_STR = "List_Type_Key", Offices_STR = "Offices", Office_Plates_STR = "Office_Plates";
+    private static final String List_Type_STR = "List_Type_Key", Institutions_STR = "Offices", Vehicles_STR = "Office_Plates";
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private Toolbar myToolbar;
@@ -54,7 +54,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     private TextView tabletSerialNumber_tv, SimCardNumber_tv, taxiOffice_tv, taxiOffice_error_tv, taxiPlateNumber_tv, taxiPlateNumber_error_tv;
     private Button register_btn;
     private AlertDialog dialog;
-    private int taxiOfficeId = 0;
+    private int institutionId = 0;
     private boolean showRationale = true, getDeviceInfo = false;
 
     @Override
@@ -69,7 +69,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
        // requestRuntimePermissions();
         operations = new Operations();
         app = (App) getApplicationContext();
-        tabletCredentials = new TabletCredentials();
+        deviceInfo = new DeviceInfo();
         initializeViews();
         sharedPreferencesStorage();
 
@@ -138,19 +138,19 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     }
     @Override
     protected void onRestart() {
-        if (tabletCredentials == null){
-            tabletCredentials = new TabletCredentials();
+        if (deviceInfo == null){
+            deviceInfo = new DeviceInfo();
         }
         taxiOffice_tv.setEnabled(true);
         taxiPlateNumber_tv.setEnabled(true);
         operations.enableNextButton(register_btn, true);
         getTabletInfo();
-        taxiOfficeId = app.getTaxiOfficeId();
-        tabletCredentials.setTaxiOfficeId(app.getTaxiOfficeId());
-        tabletCredentials.setTaxiPlateNumber(app.getTaxiPlateNumber());
-
-        taxiOffice_tv.setText(showTaxiOfficeName(app.getTaxiOfficeName()));
-        taxiPlateNumber_tv.setText(showTaxiPlateNumber(tabletCredentials.getTaxiPlateNumber()));
+        institutionId = app.getInstitutionId();
+        //deviceInfo.setTaxiOfficeId(app.getTaxiOfficeId());
+        //deviceInfo.setTaxiPlateNumber(app.getTaxiPlateNumber());
+        deviceInfo.setVehicleId(app.getVehicleId());
+        taxiOffice_tv.setText(showTaxiOfficeName(app.getInstitutionName()));
+        taxiPlateNumber_tv.setText(showTaxiPlateNumber(app.getTaxiPlateNumber()));
 
         super.onRestart();
     }
@@ -169,10 +169,10 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
             return;
         } else {
-            tabletCredentials.setDeviceId(telephonyManager.getDeviceId());
-            tabletCredentials.setSimSerialNumber(telephonyManager.getSimSerialNumber());
-            tabletSerialNumber_tv.setText(tabletCredentials.getDeviceId());
-            SimCardNumber_tv.setText(tabletCredentials.getSimSerialNumber());
+            deviceInfo.setDeviceSerialNumber(telephonyManager.getDeviceId());
+            deviceInfo.setSimSerialNumber(telephonyManager.getSimSerialNumber());
+            tabletSerialNumber_tv.setText(deviceInfo.getDeviceSerialNumber());
+            SimCardNumber_tv.setText(deviceInfo.getSimSerialNumber());
             showTabletInfoError(false);
         }
     }
@@ -204,16 +204,14 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.deviceSerialNumber_tv:
-                clickOnGetDeviceInfo();
-                break;
             case R.id.SimCardNumber_tv:
                 clickOnGetDeviceInfo();
                 break;
             case R.id.taxiOffice_tv:
-                openInstitutionList();
+                openInstitutionsList();
                 break;
             case R.id.taxiPlateNumber_tv:
-                openTaxiOfficePlateNumbersList();
+                openVehiclesList();
                 break;
 
             case R.id.register_btn:
@@ -221,15 +219,15 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
                 break;
         }
     }
-    private void openInstitutionList() {
+    private void openInstitutionsList() {
         taxiOffice_tv.setEnabled(false);
-        openDataList(Offices_STR);
+        openDataList(Institutions_STR);
         showInputError(false, 0);
     }
-    private void openTaxiOfficePlateNumbersList() {
-        if (taxiOfficeId > 0) {
+    private void openVehiclesList() {
+        if (institutionId > 0) {
             taxiPlateNumber_tv.setEnabled(false);
-            openDataList(Office_Plates_STR);
+            openDataList(Vehicles_STR);
         } else {
             showInputError(true, 1);
             return;
@@ -240,42 +238,38 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         startActivity(new Intent(this, TaxiInformationListScreen.class).putExtra(List_Type_STR, listType));
     }
     private void TabletRegister() {
-        if (Token() != null && AllDataExist()) {
+        if (token() != null && AllDataExist()) {
             operations.enableNextButton(register_btn, false);
             dialog.show();
             TabletInfoViewModel tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
-            tabletInfoViewModel.getTabletInfo(this, Token(), tabletCredentials, dialog, register_btn).observe((LifecycleOwner) this, new Observer<TabletInfo>() {
+            tabletInfoViewModel.getTabletInfo(this, token(), deviceInfo, dialog, register_btn).observe((LifecycleOwner) this, new Observer<DeviceRegistrationResponse>() {
                 @Override
-                public void onChanged(TabletInfo tabletInfo) {
-                    saveTabletInfoIntoSharedPreferences(tabletInfo);
+                public void onChanged(DeviceRegistrationResponse response) {
+                    saveTabletInfoIntoSharedPreferences(response);
                     openModelPresenterScreen();
                 }
             });
         }
     }
-    private String Token() {
+    private String token() {
         String savedToken = sharedPreferences.getString("tabToken", null);
         return savedToken != null && !savedToken.isEmpty() ? "Bearer " + savedToken : null;
     }
     private boolean AllDataExist() {
-        if (taxiOfficeIdExist() && taxiPlateNumberExist() && tabletInformationExist()){
-            return true;
-        }else {
-            return false;
-        }
+        return institutionIdExist() && vehicleIdExist() && tabletInformationExist();
     }
-    private boolean taxiOfficeIdExist() {
-        taxiOfficeId = tabletCredentials.getTaxiOfficeId();
-        if (taxiOfficeId <= 0) {
+    private boolean institutionIdExist() {
+        institutionId = app.getInstitutionId();
+        if (institutionId < 0) {
             showInputError(true, 1);
             return false;
         }else {
             return true;
         }
     }
-    private boolean taxiPlateNumberExist() {
-       String taxiPlateNumber = tabletCredentials.getTaxiPlateNumber();
-        if (taxiPlateNumber == null || taxiPlateNumber.isEmpty()) {
+    private boolean vehicleIdExist() {
+       int vehicleId = app.getVehicleId();
+        if (vehicleId < 0) {
             showInputError(true, 2);
             return false;
         }else {
@@ -283,8 +277,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         }
     }
     private boolean tabletInformationExist() {
-       String tabletSerialNumber = tabletCredentials.getDeviceId();
-       String simCardNumber = tabletCredentials.getSimSerialNumber();
+       String tabletSerialNumber = deviceInfo.getDeviceSerialNumber();
+       String simCardNumber = deviceInfo.getSimSerialNumber();
         if (tabletSerialNumber == null || tabletSerialNumber.isEmpty() || simCardNumber == null || simCardNumber.isEmpty()) {
             showTabletInfoError(true);
             return false;
@@ -292,19 +286,19 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             return true;
         }
     }
-    private void saveTabletInfoIntoSharedPreferences(TabletInfo tabletInfo){
+    private void saveTabletInfoIntoSharedPreferences(DeviceRegistrationResponse deviceRegistrationResponse){
         if (editor == null){
             editor = sharedPreferences.edit();
         }
         editor.putString("technicalUserName", Objects.requireNonNull(app.getAuthCredentials()).getUsername());
         editor.putString("registrationDate", new DateOperations().registrationDate(new Date()));
-        editor.putString("tabletPassword", tabletInfo.getTabletPassword());
-        editor.putInt("tabletChannelId", tabletInfo.getTabletChannelId());
-        editor.putInt("taxiOfficeId", tabletCredentials.getTaxiOfficeId());
-        editor.putString("institutionName",app.getTaxiOfficeName());
-        editor.putString("taxiPlateNumber", tabletCredentials.getTaxiPlateNumber());
-        editor.putString("tabletSerialNo", tabletCredentials.getDeviceId());
-        editor.putString("simCardNumber", tabletCredentials.getSimSerialNumber());
+        editor.putInt("institutionId", app.getInstitutionId());
+        editor.putString("institutionName",app.getInstitutionName());
+        editor.putInt("vehicleId",app.getVehicleId());
+        editor.putString("taxiPlateNumber", app.getTaxiPlateNumber());
+        editor.putInt("deviceId",deviceRegistrationResponse.getDeviceId());
+        editor.putString("tabletSerialNo", deviceInfo.getDeviceSerialNumber());
+        editor.putString("simCardNumber", deviceInfo.getSimSerialNumber());
         editor.apply();
     }
     private void openModelPresenterScreen() {

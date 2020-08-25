@@ -24,9 +24,6 @@ data class Token(val access_token: String? = null)
 data class AuthCredentialsError(val ErrorNumber: Int = 0, @SerializedName("ErrorMasseg") val ErrorMessage: String? = null)
 data class Authorization(var isAuthorized: Boolean, var responseCode: Int) : Serializable
 
-//Tablet registration
-data class TabletCredentials(@SerializedName("tabletRegesterTaxiOfficeID") var taxiOfficeId: Int = 0, @SerializedName("tabletRegesterCarPlateNo") var taxiPlateNumber: String? = null, @SerializedName("tabletRegesterSerialNo") var DeviceId: String? = null, @SerializedName("SimSerialNumber") var SimSerialNumber: String? = null)
-
 //Offices list
 data class TaxiOfficeList(@SerializedName("data") val officesData: List<Office?>? = null, @SerializedName("included") val officesIncluded: IncludedOffices? = null)
 
@@ -37,9 +34,9 @@ data class Office(val taxiOfficeID: Int? = null, val taxiOfficeCarsCount: Int? =
 data class OfficePlatesList(@SerializedName("data") val officePlatesData: List<TaxiPlate?>? = null)
 
 data class TaxiPlate(val tabletCarPlateNo: String? = null)
-data class ItemType(val itemName: String? = null, val isHeader: Boolean = false, val isNormalItem: Boolean = false, val officeId: Int = 0)
+data class ItemType(val itemName: String? = null, val isHeader: Boolean = false, val isNormalItem: Boolean = false, val id: Int = -999)
 //Tablet Data
-data class TabletInfo(@SerializedName("tabletRegesterPassword") val tabletPassword: String? = null, @SerializedName("tabletRegesterChannelID") val tabletChannelId: Int = 0)
+//data class DeviceRegistrationResponse(@SerializedName("tabletRegesterPassword") val tabletPassword: String? = null, @SerializedName("tabletRegesterChannelID") val tabletChannelId: Int = 0)
 
 //Tracking Location Service
 
@@ -123,9 +120,11 @@ interface QRCodeCallback {
 }
 
 //New Registration Models
-data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = 0)
-data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = 0, val countryIso: String? = null, val name: String? = null)
+data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)
 
-data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = 0)
+data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
 
-data class VehicleData (var institutionId: String? = null, var modelId: String? = null, var vehicleId: String? = null, var plateNumber: String? = null, var modelYear: String? = null)
+data class DeviceInfo(@SerializedName("DeviceSerialNumber") var DeviceSerialNumber: String? = null, @SerializedName("SimSerialNumber") var SimSerialNumber: String? = null, @SerializedName("VehicleId") var VehicleId: Int = -999)
+data class DeviceRegistrationResponse ( var deviceId: Int = -999, var status: Boolean = false, var message: String? = null, var responseCode: Int = -999)
