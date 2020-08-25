@@ -119,6 +119,10 @@ interface QRCodeCallback {
     fun onBannerQRCodeChanged(qrCode: QrCode?)
 }
 
+//New Login Models
+data class LoginResponse (val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+
+
 //New Registration Models
 data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)
@@ -126,5 +130,5 @@ data class InstitutionData (val createdAt: String? = null, val phoneNumber: Stri
 data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
 
-data class DeviceInfo(@SerializedName("DeviceSerialNumber") var DeviceSerialNumber: String? = null, @SerializedName("SimSerialNumber") var SimSerialNumber: String? = null, @SerializedName("VehicleId") var VehicleId: Int = -999)
-data class DeviceRegistrationResponse ( var deviceId: Int = -999, var status: Boolean = false, var message: String? = null, var responseCode: Int = -999)
+data class DeviceInfo(val DeviceSerialNumber: String? = null, val SimSerialNumber: String? = null, val VehicleId: Int = -999)
+data class DeviceRegistrationResponse ( val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
