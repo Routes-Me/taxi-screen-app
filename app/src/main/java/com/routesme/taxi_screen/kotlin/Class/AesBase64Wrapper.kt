@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
 import android.util.Base64
+import android.util.Log
 import com.routesme.taxi_screen.kotlin.Model.EncryptModel
 import java.io.UnsupportedEncodingException
 import java.security.Key
@@ -13,8 +14,15 @@ import javax.crypto.SecretKeyFactory
 import javax.crypto.spec.IvParameterSpec
 import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
+import kotlin.random.Random
 
 class AesBase64Wrapper() {
+
+    companion object {
+        private  val encrypt: EncryptModel =  EncryptModel()
+        private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+    }
+
     @SuppressLint("NewApi")
     fun encryptAndEncode(raw: String): String {
         return try {
@@ -42,18 +50,17 @@ class AesBase64Wrapper() {
     private fun generateKey(): Key {
         val factory = SecretKeyFactory.getInstance(encrypt.factory)
         val password = encrypt.password.toCharArray()
-        val salt = getBytes(encrypt.salt)
+       // val salt = getBytes(encrypt.salt)
+        val salt = getBytes(randomString)
+        Log.d("Encryption", "RandomString: $randomString, Salt: $salt")
         val spec: KeySpec = PBEKeySpec(password, salt, encrypt.iterationCount, encrypt.keyLength)
         val tmp = factory.generateSecret(spec)
         val encoded = tmp.encoded
         return SecretKeySpec(encoded, encrypt.algorithm)
     }
 
-    companion object {
-        private lateinit var encrypt: EncryptModel
-    }
-
-    init {
-        encrypt = EncryptModel()
-    }
+    private val randomString = (1..15)
+            .map { _ -> Random.nextInt(0, charPool.size) }
+            .map(charPool::get)
+            .joinToString("")
 }

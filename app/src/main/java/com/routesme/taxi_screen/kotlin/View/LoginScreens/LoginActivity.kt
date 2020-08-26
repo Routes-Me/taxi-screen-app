@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -25,6 +26,7 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity
+import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError
@@ -95,7 +97,13 @@ class LoginActivity : AppCompatActivity() {
     private fun buttonNextClick() {
         Operations().enableNextButton(btn_next, false)
         saveAuthCredentials()
-        if (userNameValid() && passwordValid())  signIn()
+        if (userNameValid() && passwordValid())   signIn()  //testEncryption()
+    }
+
+    private fun testEncryption() {
+        val origin = password
+        val encrypted = AesBase64Wrapper().encryptAndEncode(origin)
+        Log.d("Encryption", "Origin: $origin \n Encrypted: $encrypted")
     }
 
     private fun signIn() {
