@@ -24,13 +24,12 @@ import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
-import com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen
-import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
+import com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
-import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError
-import com.routesme.taxi_screen.kotlin.Model.Token
+import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.Model.SignInResponse
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
@@ -40,12 +39,12 @@ import kotlinx.android.synthetic.main.technical_login_layout.*
 import kotlinx.android.synthetic.main.technical_login_layout.view.*
 import kotlin.system.exitProcess
 
-class LoginScreen : AppCompatActivity() {
+class LoginActivity : AppCompatActivity() {
 
     private var pressedTime: Long = 0
     private var clickTimes = 0
     private val app = App.instance
-    private lateinit var authCredentials: AuthCredentials
+    private lateinit var signInCredentials: SignInCredentials
     private lateinit var userName: String
     private lateinit var password: String
     private lateinit var dialog: AlertDialog
@@ -96,16 +95,14 @@ class LoginScreen : AppCompatActivity() {
     private fun buttonNextClick() {
         Operations().enableNextButton(btn_next, false)
         saveAuthCredentials()
-        login()
+        if (userNameValid() && passwordValid())  signIn()
     }
 
-    private fun login() {
-        if (userNameValid() && passwordValid()) {
+    private fun signIn() {
             dialog.show()
-            val authCredentials = AuthCredentials(userName, password)
+            val signInCredentials = SignInCredentials(userName, password)
             val model: RoutesViewModel by viewModels()
-            model.getToken(authCredentials, dialog, this).observe(this, Observer<JsonElement> {
-
+            model.getSignInResponse(signInCredentials, dialog, this).observe(this, Observer<JsonElement> {
                 if (it.isJsonArray) {
                     val authErrors = Gson().fromJson<List<AuthCredentialsError>>(it as JsonArray?, object : TypeToken<List<AuthCredentialsError?>?>() {}.type)
                     if (authErrors != null) {
@@ -116,24 +113,28 @@ class LoginScreen : AppCompatActivity() {
                         }
                     }
                 }else {
-                    val accessToken = Gson().fromJson<Token>(it, Token::class.java).access_token
-                    if (!accessToken.isNullOrEmpty()) {
-                        saveDataIntoSharedPreference(accessToken)
-                        openTaxiInformationScreen()
+                    val signInResponse = Gson().fromJson<SignInResponse>(it, SignInResponse::class.java)
+                    if (signInResponse.status){
+
+                        val token = signInResponse.token
+                        if (!token.isNullOrEmpty()) {
+                            saveDataIntoSharedPreference(token)
+                            openTaxiInformationScreen()
+                        }
+                    }else{
+                        Toast.makeText(this,"${signInResponse.message}",Toast.LENGTH_LONG).show()
                     }
                 }
             })
-
-        }
     }
 
-    private fun saveDataIntoSharedPreference(access_token: String) {
+    private fun saveDataIntoSharedPreference(token: String) {
         val editor = getSharedPreferences("userData", Activity.MODE_PRIVATE).edit()
-        editor.putString("tabToken", access_token).apply()
+        editor.putString("tabToken", token).apply()
     }
 
     private fun openTaxiInformationScreen() {
-        startActivity(Intent(this, TaxiInformationScreen::class.java))
+        startActivity(Intent(this, TaxiInformationActivity::class.java))
         finish()
     }
 
@@ -245,10 +246,10 @@ class LoginScreen : AppCompatActivity() {
     }
 
     private fun showSavedCredentials() {
-        if (app.authCredentials != null) {
-            authCredentials = app.authCredentials!!
-            userName = authCredentials.Username
-            password = authCredentials.Password
+        if (app.signInCredentials != null) {
+            signInCredentials = app.signInCredentials!!
+            userName = signInCredentials.Username
+            password = signInCredentials.Password
             if (userName.isNotEmpty()) {
                 userName_et.setText(userName)
             }
@@ -260,14 +261,14 @@ class LoginScreen : AppCompatActivity() {
 
     private fun openLearnMoreScreen() {
         saveAuthCredentials()
-        startActivity(Intent(this, LearnMoreScreen::class.java))
+        startActivity(Intent(this, LearnMoreActivity::class.java))
     }
 
     private fun saveAuthCredentials() {
         userName = userName_et.text.toString().trim()
         password = password_et.text.toString().trim()
-        authCredentials = AuthCredentials(userName, password)
-        app.authCredentials = authCredentials
+        signInCredentials = SignInCredentials(userName, password)
+        app.signInCredentials = signInCredentials
         app.isNewLogin = true
     }
 }

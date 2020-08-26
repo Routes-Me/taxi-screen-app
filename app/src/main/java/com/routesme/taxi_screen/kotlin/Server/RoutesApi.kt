@@ -9,21 +9,7 @@ interface RoutesApi {
 
     //Authentication (Token)...
     @POST("auth")
-    @Headers("Content-Type: application/json", "DataServiceVersion: 2.0")
-    fun loginAuth(@Body authCredentials: AuthCredentials?): Call<JsonElement>
-
-
-    //Tablet registration...
-    @POST("Tablets")
-    @Headers("Content-Type: application/json", "DataServiceVersion: 2.0")
-    fun tabletRegister(@Body deviceInfo: DeviceInfo?): Call<DeviceRegistrationResponse?>?
-
-    @GET("TaxiOffices")
-    fun getTaxiOfficeList(@Query("include") include: String?): Call<TaxiOfficeList?>?
-
-    @GET("Tablets")
-    fun getOfficePlatesList(@Query("taxiOfficeId") taxiOfficeId: Int): Call<OfficePlatesList?>?
-
+    fun signIn(@Body signInCredentials: SignInCredentials?): Call<JsonElement>
 
     //Advertisements...
     @GET("Channels")
@@ -31,6 +17,7 @@ interface RoutesApi {
 
     @GET("Channels")
     fun getBanners(@Query("channelidadvlist") ch_ID_Banners: Int): Call<List<BannerModel>>
+
 
     @GET("Contents")
     fun getContent(): Call<ContentResponse>

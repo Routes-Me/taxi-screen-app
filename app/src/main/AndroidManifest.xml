@@ -31,23 +31,29 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentScreen"></activity>
+        <activity android:name="com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentActivity"></activity>
         <activity
             android:name="com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.AdminConsolePanel"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing"></activity>
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen"
+            android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode" />
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LearnMoreScreen"
+            android:name="com.routesme.taxi_screen.kotlin.View.LoginScreens.LearnMoreActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen"
+            android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustNothing">
+
+        </activity>
+        <activity
+            android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
@@ -59,14 +65,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustNothing"></activity>
-        <activity
-            android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationScreen"
+            android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity"
             android:screenOrientation="landscape" />
         <activity
-            android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationListScreen"
+            android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationListActivity"
             android:screenOrientation="landscape" />
 
         <receiver

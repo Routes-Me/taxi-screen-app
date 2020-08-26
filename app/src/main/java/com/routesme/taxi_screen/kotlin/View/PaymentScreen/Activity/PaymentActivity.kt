@@ -10,14 +10,14 @@ import com.routesme.taxi_screen.kotlin.Model.PaymentStatus
 import com.routesme.taxi_screen.kotlin.View.PaymentScreen.Fragment.PaymentFragment
 import com.routesme.taxiscreen.R
 
-class PaymentScreen : AppCompatActivity() {
+class PaymentActivity : AppCompatActivity() {
 
     private lateinit var paymentMessage:PaymentMessage
     val PAYMENT_MESSAGE = "PAYMENT_MESSAGE"
 
     companion object{
         @get:Synchronized
-        val instance = PaymentScreen()
+        val instance = PaymentActivity()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

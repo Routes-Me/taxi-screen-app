@@ -8,6 +8,7 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
+
 //Server RequestHeaders
 data class RequestHeaders(val Authorization: String? = null, val country_code: String? = null, val app_version: String? = null)
 
@@ -120,15 +121,15 @@ interface QRCodeCallback {
 }
 
 //New Login Models
-data class LoginResponse (val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
-
+data class SignInCredentials (var Username: String = "", var Password: String = "")
+data class SignInResponse (val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 
 //New Registration Models
+data class RegistrationCredentials(var DeviceSerialNumber: String? = null, var SimSerialNumber: String? = null, var VehicleId: Int = -999)
+data class RegistrationResponse (val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
+
 data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)
 
 data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
-
-data class DeviceInfo(val DeviceSerialNumber: String? = null, val SimSerialNumber: String? = null, val VehicleId: Int = -999)
-data class DeviceRegistrationResponse ( val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)

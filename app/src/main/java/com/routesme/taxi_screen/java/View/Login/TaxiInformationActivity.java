@@ -29,9 +29,9 @@ import com.routesme.taxi_screen.kotlin.Class.App;
 import com.routesme.taxi_screen.kotlin.Class.DateOperations;
 import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
-import com.routesme.taxi_screen.kotlin.Model.DeviceInfo;
-import com.routesme.taxi_screen.kotlin.Model.DeviceRegistrationResponse;
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen;
+import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
+import com.routesme.taxi_screen.kotlin.Model.RegistrationResponse;
+import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
 
@@ -40,10 +40,10 @@ import java.util.Objects;
 
 import dmax.dialog.SpotsDialog;
 
-public class TaxiInformationScreen extends AppCompatActivity implements View.OnClickListener {
+public class TaxiInformationActivity extends AppCompatActivity implements View.OnClickListener {
 
     private App app;
-    private DeviceInfo deviceInfo;
+    private RegistrationCredentials registrationCredentials;
     private Operations operations;
     public static final int READ_PHONE_STATE_REQUEST_CODE = 101;
     private static final String List_Type_STR = "List_Type_Key", Institutions_STR = "Offices", Vehicles_STR = "Office_Plates";
@@ -69,7 +69,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
        // requestRuntimePermissions();
         operations = new Operations();
         app = (App) getApplicationContext();
-        deviceInfo = new DeviceInfo();
+        registrationCredentials = new RegistrationCredentials();
         initializeViews();
         sharedPreferencesStorage();
 
@@ -133,13 +133,13 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         }
     }
     private String welcomeMessage() {
-        String username = app.getAuthCredentials().getUsername();
+        String username = app.getSignInCredentials().getUsername();
         return  "Welcome,  " +  (username != null && !username.isEmpty() ?  username.substring(0, 1).toUpperCase() + username.substring(1) : "");
     }
     @Override
     protected void onRestart() {
-        if (deviceInfo == null){
-            deviceInfo = new DeviceInfo();
+        if (registrationCredentials == null){
+            registrationCredentials = new RegistrationCredentials();
         }
         taxiOffice_tv.setEnabled(true);
         taxiPlateNumber_tv.setEnabled(true);
@@ -148,7 +148,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         institutionId = app.getInstitutionId();
         //deviceInfo.setTaxiOfficeId(app.getTaxiOfficeId());
         //deviceInfo.setTaxiPlateNumber(app.getTaxiPlateNumber());
-        deviceInfo.setVehicleId(app.getVehicleId());
+        registrationCredentials.setVehicleId(app.getVehicleId());
         taxiOffice_tv.setText(showTaxiOfficeName(app.getInstitutionName()));
         taxiPlateNumber_tv.setText(showTaxiPlateNumber(app.getTaxiPlateNumber()));
 
@@ -169,10 +169,10 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.READ_PHONE_STATE}, READ_PHONE_STATE_REQUEST_CODE);
             return;
         } else {
-            deviceInfo.setDeviceSerialNumber(telephonyManager.getDeviceId());
-            deviceInfo.setSimSerialNumber(telephonyManager.getSimSerialNumber());
-            tabletSerialNumber_tv.setText(deviceInfo.getDeviceSerialNumber());
-            SimCardNumber_tv.setText(deviceInfo.getSimSerialNumber());
+            registrationCredentials.setDeviceSerialNumber(telephonyManager.getDeviceId());
+            registrationCredentials.setSimSerialNumber(telephonyManager.getSimSerialNumber());
+            tabletSerialNumber_tv.setText(registrationCredentials.getDeviceSerialNumber());
+            SimCardNumber_tv.setText(registrationCredentials.getSimSerialNumber());
             showTabletInfoError(false);
         }
     }
@@ -235,16 +235,16 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         showInputError(false, 0);
     }
     private void openDataList(String listType) {
-        startActivity(new Intent(this, TaxiInformationListScreen.class).putExtra(List_Type_STR, listType));
+        startActivity(new Intent(this, TaxiInformationListActivity.class).putExtra(List_Type_STR, listType));
     }
     private void TabletRegister() {
         if (token() != null && AllDataExist()) {
             operations.enableNextButton(register_btn, false);
             dialog.show();
             TabletInfoViewModel tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
-            tabletInfoViewModel.getTabletInfo(this, token(), deviceInfo, dialog, register_btn).observe((LifecycleOwner) this, new Observer<DeviceRegistrationResponse>() {
+            tabletInfoViewModel.getTabletInfo(this, token(), registrationCredentials, dialog, register_btn).observe((LifecycleOwner) this, new Observer<RegistrationResponse>() {
                 @Override
-                public void onChanged(DeviceRegistrationResponse response) {
+                public void onChanged(RegistrationResponse response) {
                     saveTabletInfoIntoSharedPreferences(response);
                     openModelPresenterScreen();
                 }
@@ -277,8 +277,8 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         }
     }
     private boolean tabletInformationExist() {
-       String tabletSerialNumber = deviceInfo.getDeviceSerialNumber();
-       String simCardNumber = deviceInfo.getSimSerialNumber();
+       String tabletSerialNumber = registrationCredentials.getDeviceSerialNumber();
+       String simCardNumber = registrationCredentials.getSimSerialNumber();
         if (tabletSerialNumber == null || tabletSerialNumber.isEmpty() || simCardNumber == null || simCardNumber.isEmpty()) {
             showTabletInfoError(true);
             return false;
@@ -286,24 +286,24 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
             return true;
         }
     }
-    private void saveTabletInfoIntoSharedPreferences(DeviceRegistrationResponse deviceRegistrationResponse){
+    private void saveTabletInfoIntoSharedPreferences(RegistrationResponse registrationResponse){
         if (editor == null){
             editor = sharedPreferences.edit();
         }
-        editor.putString("technicalUserName", Objects.requireNonNull(app.getAuthCredentials()).getUsername());
+        editor.putString("technicalUserName", Objects.requireNonNull(app.getSignInCredentials()).getUsername());
         editor.putString("registrationDate", new DateOperations().registrationDate(new Date()));
         editor.putInt("institutionId", app.getInstitutionId());
         editor.putString("institutionName",app.getInstitutionName());
         editor.putInt("vehicleId",app.getVehicleId());
         editor.putString("taxiPlateNumber", app.getTaxiPlateNumber());
-        editor.putInt("deviceId",deviceRegistrationResponse.getDeviceId());
-        editor.putString("tabletSerialNo", deviceInfo.getDeviceSerialNumber());
-        editor.putString("simCardNumber", deviceInfo.getSimSerialNumber());
+        editor.putInt("deviceId", registrationResponse.getDeviceId());
+        editor.putString("tabletSerialNo", registrationCredentials.getDeviceSerialNumber());
+        editor.putString("simCardNumber", registrationCredentials.getSimSerialNumber());
         editor.apply();
     }
     private void openModelPresenterScreen() {
         Authorization authorization = new Authorization(true,200);
-        Intent ModelPresenterScreenIntent = new Intent(TaxiInformationScreen.this, ModelPresenter.class);
+        Intent ModelPresenterScreenIntent = new Intent(TaxiInformationActivity.this, ModelPresenter.class);
         ModelPresenterScreenIntent.putExtra("authorization",authorization);
         startActivity(ModelPresenterScreenIntent);
         finish();
@@ -374,7 +374,7 @@ public class TaxiInformationScreen extends AppCompatActivity implements View.OnC
         // handle arrow click here
         if (item.getItemId() == android.R.id.home) {
             app.setNewLogin(true);
-            startActivity(new Intent(this, LoginScreen.class));
+            startActivity(new Intent(this, LoginActivity.class));
             finish();
         }
         return super.onOptionsItemSelected(item);

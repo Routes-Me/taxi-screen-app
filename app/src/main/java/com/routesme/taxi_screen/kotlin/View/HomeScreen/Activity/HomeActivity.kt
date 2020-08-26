@@ -19,7 +19,7 @@ import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-class HomeScreen : PermissionsActivity() ,IModeChanging, QRCodeCallback {
+class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -34,7 +34,7 @@ class HomeScreen : PermissionsActivity() ,IModeChanging, QRCodeCallback {
 
     companion object{
         @get:Synchronized
-        val instance = HomeScreen()
+        val instance = HomeActivity()
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

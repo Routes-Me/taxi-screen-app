@@ -6,12 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
-import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
-import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
-import com.routesme.taxi_screen.kotlin.Model.BannerModel
-import com.routesme.taxi_screen.kotlin.Model.ContentResponse
-import com.routesme.taxi_screen.kotlin.Model.VideoModel
+import com.routesme.taxi_screen.kotlin.Model.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -22,7 +18,7 @@ class RetrofitService() {
     val contentResponse: MutableLiveData<ContentResponse> = MutableLiveData()
     val videoList: MutableLiveData<List<VideoModel>> = MutableLiveData()
     val bannerList: MutableLiveData<List<BannerModel>> = MutableLiveData()
-    val tokenJsonElement:MutableLiveData<JsonElement> = MutableLiveData()
+    val signInResponse:MutableLiveData<JsonElement> = MutableLiveData()
 
     companion object Factory {
         fun create(context: Context): RoutesApi {
@@ -71,17 +67,17 @@ class RetrofitService() {
         return bannerList
     }
 
-    fun getToken(authCredentials: AuthCredentials, dialog: AlertDialog,context: Context): MutableLiveData<JsonElement> {
-        val encryptedAuthCredentials = AuthCredentials(encrypt(authCredentials.Username),encrypt(authCredentials.Password))
-        val retrofitCall = create(context).loginAuth(encryptedAuthCredentials)
-        retrofitCall.enqueue(object : Callback<JsonElement>{
+    fun signInResponse(signInCredentials: SignInCredentials, dialog: AlertDialog, context: Context): MutableLiveData<JsonElement> {
+        val encryptedCredentials = SignInCredentials(signInCredentials.Username, encrypt(signInCredentials.Password))
+        val call = create(context).signIn(encryptedCredentials)
+        call.enqueue(object : Callback<JsonElement>{
             override fun onFailure(call: Call<JsonElement>, t: Throwable) {dialog.dismiss()}
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 dialog.dismiss()
-                if (response.isSuccessful && response.body() != null) tokenJsonElement.value = response.body() as JsonElement
+                if (response.isSuccessful && response.body() != null) signInResponse.value = response.body() as JsonElement
             }
         })
-        return tokenJsonElement
+        return signInResponse
     }
 
     private fun encrypt(string: String) = AesBase64Wrapper().encryptAndEncode(string)

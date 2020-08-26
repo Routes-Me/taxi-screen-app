@@ -20,9 +20,9 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.gms.nearby.messages.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
-import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
 import com.routesme.taxi_screen.kotlin.Model.PaymentData
-import com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentScreen
+import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentActivity
 import com.routesme.taxiscreen.R
 import java.text.SimpleDateFormat
 import java.util.*
@@ -30,7 +30,7 @@ import java.util.*
 class App : Application() {
     private val displayManager = DisplayManager.instance
     private var proxy: HttpProxyCacheServer? = null
-    var authCredentials: AuthCredentials? = null
+    var signInCredentials: SignInCredentials? = null
     var isNewLogin = false
     var institutionId = -999
     var taxiPlateNumber: String? = null
@@ -181,10 +181,10 @@ class App : Application() {
         //paymentData.apply { driverToken = "9347349"; paymentAmount = 1.500 }  //for test only
       //  val bundle = Bundle().apply {putSerializable("paymentData", paymentData)}
       //  val paymentFragment = PaymentFragment.instance.apply { arguments =bundle }
-        startActivity(Intent(this, PaymentScreen::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("paymentData",paymentData))
+        startActivity(Intent(this, PaymentActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("paymentData",paymentData))
 
         val runnableBanner = Runnable {
-            PaymentScreen().finish()
+            PaymentActivity().finish()
         }
         val handlerBanner = Handler()
         handlerBanner.postDelayed(runnableBanner, (30 * 1000).toLong())

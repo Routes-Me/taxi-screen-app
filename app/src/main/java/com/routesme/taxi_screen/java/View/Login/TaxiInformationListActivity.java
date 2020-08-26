@@ -22,7 +22,7 @@ import com.routesme.taxiscreen.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TaxiInformationListScreen extends AppCompatActivity {
+public class TaxiInformationListActivity extends AppCompatActivity {
 
     private App app;
     private static final String   List_Type_STR = "List_Type_Key", Offices_STR = "Offices", Office_Plates_STR = "Office_Plates";
@@ -66,7 +66,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
     }
 
     private void getInstitutionsList_Sections() {
-            officesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficesListViewModel.class);
+            officesListViewModel = ViewModelProviders.of(TaxiInformationListActivity.this).get(OfficesListViewModel.class);
             officesListViewModel.getInstitutions(this, 1,40).observe((LifecycleOwner) this, new Observer<Institutions>() {
                 @Override
                 public void onChanged(Institutions institutions) {
@@ -93,7 +93,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                             institutionsArrayList.add(new ItemType(institutionList.get(i).getName(), false, true, institutionList.get(i).getInstitutionId()));
                         }
                     }
-                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, institutionsArrayList);
+                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListActivity.this, institutionsArrayList);
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
                     adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {
@@ -112,7 +112,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
     }
 
     private void getVehiclesList_Sections() {
-            officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListScreen.this).get(OfficePlatesListViewModel.class);
+            officePlatesListViewModel = ViewModelProviders.of(TaxiInformationListActivity.this).get(OfficePlatesListViewModel.class);
             officePlatesListViewModel.getVehicles(this,1,150,app.getInstitutionId()).observe((LifecycleOwner) this, new Observer<Vehicles>() {
                 @Override
                 public void onChanged(Vehicles vehicles) {
@@ -128,7 +128,7 @@ public class TaxiInformationListScreen extends AppCompatActivity {
                         }
                     }
 
-                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListScreen.this, vehiclesArrayList);
+                    adapter = new OfficesAdapterMultibleViews(TaxiInformationListActivity.this, vehiclesArrayList);
                     recyclerView.setAdapter(adapter);
                     recyclerView.setLayoutManager(new LinearLayoutManager(getApplicationContext(), LinearLayoutManager.VERTICAL, false));
                     adapter.setOnItemClickListener(new OfficesAdapterMultibleViews.OnItemClickListener() {

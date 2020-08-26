@@ -11,7 +11,7 @@ import com.routesme.taxi_screen.kotlin.Class.Helper
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.learn_more_screen.*
 
-class LearnMoreScreen : AppCompatActivity() {
+class LearnMoreActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,7 +47,7 @@ class LearnMoreScreen : AppCompatActivity() {
     }
     private fun backToLoginScreen() {
         App.instance!!.isNewLogin = true
-        startActivity(Intent(this@LearnMoreScreen, LoginScreen::class.java))
+        startActivity(Intent(this@LearnMoreActivity, LoginActivity::class.java))
         finish()
     }
 }

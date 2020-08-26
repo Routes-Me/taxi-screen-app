@@ -6,8 +6,8 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Model.Authorization
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeScreen
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen
+import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeActivity
+import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
 import com.routesme.taxiscreen.R
 
 class ModelPresenter : AppCompatActivity() {
@@ -40,8 +40,8 @@ class ModelPresenter : AppCompatActivity() {
 
     private fun deleteAuthenticationCredentialsFromAppClass() {
         val app = applicationContext as App
-        app.authCredentials!!.Username = ""
-        app.authCredentials!!.Password = ""
+        app.signInCredentials!!.Username = ""
+        app.signInCredentials!!.Password = ""
         app.isNewLogin = false
         app.institutionId = 0
         app.institutionName = null
@@ -60,8 +60,8 @@ class ModelPresenter : AppCompatActivity() {
 
     private fun openScreen(screen: Screens) {
         when (screen) {
-            Screens.LoginScreen -> startActivity(Intent(this, LoginScreen::class.java))
-            Screens.HomeScreen -> startActivity(Intent(this, HomeScreen::class.java))
+            Screens.LoginScreen -> startActivity(Intent(this, LoginActivity::class.java))
+            Screens.HomeScreen -> startActivity(Intent(this, HomeActivity::class.java))
         }
         this.finish()
     }

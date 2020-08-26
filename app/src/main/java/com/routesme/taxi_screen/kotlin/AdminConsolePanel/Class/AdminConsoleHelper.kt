@@ -11,11 +11,9 @@ import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
-import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Model.DetailActionStatus
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginScreen
+import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
 import com.routesme.taxiscreen.BuildConfig
-import kotlin.system.exitProcess
 
 class AdminConsoleHelper(val activity: Activity) {
     private val sharedPreferences = activity.getSharedPreferences("userData", Activity.MODE_PRIVATE)
@@ -68,7 +66,7 @@ class AdminConsoleHelper(val activity: Activity) {
 
     fun logOff() {
         sharedPreferences.edit().clear().apply()
-        activity.apply { startActivity(Intent(this, LoginScreen::class.java)); finish() }
+        activity.apply { startActivity(Intent(this, LoginActivity::class.java)); finish() }
     }
     fun isLocationProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
