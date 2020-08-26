@@ -86,11 +86,11 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="5dp"
                 android:gravity="start"
-                android:text="Incorrect username"
+                android:text="Email Error"
                 android:textColor="@color/red"
                 android:textSize="16sp"
                 android:textStyle="normal"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
             <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
                 android:id="@+id/password_et"
@@ -113,11 +113,11 @@
                 android:layout_gravity="center"
                 android:layout_marginBottom="5dp"
                 android:gravity="start"
-                android:text="Incorrect password"
+                android:text="Password Error"
                 android:textColor="@color/red"
                 android:textSize="16sp"
                 android:textStyle="normal"
-                android:visibility="visible" />
+                android:visibility="invisible" />
 
         </LinearLayout>
 
