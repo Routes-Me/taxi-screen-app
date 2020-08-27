@@ -80,5 +80,5 @@ class RetrofitService() {
         return signInResponse
     }
 
-    private fun encrypt(string: String) = AesBase64Wrapper().encryptAndEncode(string)
+    private fun encrypt(str: String) = AesBase64Wrapper().getEncryptedString(str)
 }

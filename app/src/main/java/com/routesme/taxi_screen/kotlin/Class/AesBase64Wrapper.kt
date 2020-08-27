@@ -1,12 +1,11 @@
 package com.routesme.taxi_screen.kotlin.Class
 
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.content.Context
 import android.util.Base64
 import android.util.Log
 import com.routesme.taxi_screen.kotlin.Model.EncryptModel
 import java.io.UnsupportedEncodingException
+import java.lang.StringBuilder
 import java.security.Key
 import java.security.spec.KeySpec
 import javax.crypto.Cipher
@@ -21,13 +20,64 @@ class AesBase64Wrapper() {
     companion object {
         private  val encrypt: EncryptModel =  EncryptModel()
         private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        val factory: SecretKeyFactory = SecretKeyFactory.getInstance(encrypt.factory)
+        val password = encrypt.password.toCharArray()
+    }
+/*
+         Log.d("Encryption", "saltIndex: $saltIndexChars")
+         Log.d("Encryption", "${saltIndexChars[0]}: ${saltIndexChars[0].toInt()}")
+         Log.d("Encryption", "${saltIndexChars[1]}: ${saltIndexChars[1].toInt()}")
+         Log.d("Encryption", "index: $saltIndexNumber")
+         Log.d("Encryption", "saltBeginIndex: $saltBeginIndex")
+         Log.d("Encryption", "saltExcluded: $saltExcluded")
+         Log.d("Encryption", "fullSalt: $fullSalt")
+         Log.d("Encryption", "realSalt: $realSalt")
+*/
+
+     fun getEncryptedString(str: String): String {
+         val saltIndexChars = getSalt(2)
+         var saltIndexNumber = 0
+         saltIndexChars.toList().forEach { saltIndexNumber += it.toInt() }
+         val saltBeginIndex = saltIndexNumber % 3
+
+         val saltExcluded = getSalt(3)
+         val fullSalt = getSalt(16)
+         val realSalt = StringBuilder().append(fullSalt).toString().replace("""${saltExcluded.toList()}""".toRegex(), "")
+
+         val encryptStr = encryptAndEncode(str, realSalt)
+
+
+         val encryptedBody = StringBuilder()
+         encryptedBody.append(encryptStr)
+
+         val saltPart1 = fullSalt.substring(0,10)
+         Log.d("Encryption", "saltPart1: $saltPart1")
+         val saltPart2 = fullSalt.substring(10)
+         Log.d("Encryption", "saltPart2: $saltPart2")
+
+         encryptedBody.insert(saltBeginIndex,saltPart1)
+         encryptedBody.insert(saltPart1.length + 1 + saltBeginIndex,saltPart2)
+
+         val result = StringBuilder().append(saltIndexChars).append(saltExcluded).append(encryptedBody)
+
+         Log.d("Encryption", "saltIndex: $saltIndexChars")
+         Log.d("Encryption", "${saltIndexChars[0]}: ${saltIndexChars[0].toInt()}")
+         Log.d("Encryption", "${saltIndexChars[1]}: ${saltIndexChars[1].toInt()}")
+         Log.d("Encryption", "index: $saltIndexNumber")
+         Log.d("Encryption", "saltBeginIndex: $saltBeginIndex")
+         Log.d("Encryption", "saltExcluded: $saltExcluded")
+         Log.d("Encryption", "fullSalt: $fullSalt")
+         Log.d("Encryption", "realSalt: $realSalt")
+         Log.d("Encryption", "encryptStr: $encryptStr")
+
+         return result.toString()
     }
 
     @SuppressLint("NewApi")
-    fun encryptAndEncode(raw: String): String {
+    fun encryptAndEncode(str: String, salt: String): String {
         return try {
-            val cipher = getCipher(Cipher.ENCRYPT_MODE)
-            Base64.encodeToString(cipher.doFinal(raw.toByteArray()), Base64.DEFAULT)
+            val cipher = getCipher(salt)
+            Base64.encodeToString(cipher.doFinal(str.toByteArray()), Base64.DEFAULT)
         } catch (t: Throwable) {
             throw RuntimeException(t)
         }
@@ -39,27 +89,26 @@ class AesBase64Wrapper() {
     }
 
     @Throws(Exception::class)
-    private fun getCipher(mode: Int): Cipher {
+    private fun getCipher(salt: String): Cipher {
         val c = Cipher.getInstance(encrypt.cipher)
         val iv = getBytes(encrypt.iv)
-        c.init(mode, generateKey(), IvParameterSpec(iv))
+        c.init(Cipher.ENCRYPT_MODE, generateKey(salt), IvParameterSpec(iv))
         return c
     }
 
     @Throws(Exception::class)
-    private fun generateKey(): Key {
-        val factory = SecretKeyFactory.getInstance(encrypt.factory)
-        val password = encrypt.password.toCharArray()
+    private fun generateKey(salt: String): Key {
        // val salt = getBytes(encrypt.salt)
-        val salt = getBytes(randomString)
-        Log.d("Encryption", "RandomString: $randomString, Salt: $salt")
-        val spec: KeySpec = PBEKeySpec(password, salt, encrypt.iterationCount, encrypt.keyLength)
+       // Log.d("Encryption", "RandomString: $randomString, Salt: $salt")
+        val spec: KeySpec = PBEKeySpec(password, getBytes(salt), encrypt.iterationCount, encrypt.keyLength)
         val tmp = factory.generateSecret(spec)
         val encoded = tmp.encoded
         return SecretKeySpec(encoded, encrypt.algorithm)
     }
 
-    private val randomString = (1..15)
+
+
+    private fun getSalt(charsNumber: Int): String = (1..charsNumber)
             .map { _ -> Random.nextInt(0, charPool.size) }
             .map(charPool::get)
             .joinToString("")

@@ -95,15 +95,15 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun buttonNextClick() {
-        Operations().enableNextButton(btn_next, false)
+       // Operations().enableNextButton(btn_next, false)
         saveAuthCredentials()
-        if (userNameValid() && passwordValid())   signIn()  //testEncryption()
+        if (userNameValid() && passwordValid()) testEncryption() //signIn()
     }
 
     private fun testEncryption() {
-        val origin = password
-        val encrypted = AesBase64Wrapper().encryptAndEncode(origin)
-        Log.d("Encryption", "Origin: $origin \n Encrypted: $encrypted")
+        val str = password
+        val encrypted = AesBase64Wrapper().getEncryptedString(str)
+        Log.d("Encryption", "Origin: $str \n Encrypted: $encrypted")
     }
 
     private fun signIn() {
