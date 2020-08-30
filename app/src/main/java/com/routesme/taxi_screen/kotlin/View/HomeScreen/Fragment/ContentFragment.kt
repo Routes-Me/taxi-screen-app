@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
 import android.net.ConnectivityManager
+import android.net.ConnectivityManager.CONNECTIVITY_ACTION
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +19,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.ConnectivityReceiver
 import com.routesme.taxi_screen.kotlin.Class.DisplayAdvertisements
+import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.VideoPlayer.Constants
 import com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService
@@ -45,7 +47,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     override fun onAttach(context: Context) {
         contentFragmentContext = context
-        sharedPreferences = context.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+        sharedPreferences = context.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
        // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
        // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
        // firebaseAnalytics.setUserId(tabletSerialNumber)
@@ -107,7 +109,6 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
             fetchAdvertisementData()
-            //testingPlayAds()
         } else {
             networkListener()
         }
@@ -121,7 +122,6 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
             fetchAdvertisementData()
-            //testingPlayAds()
             connectivityReceiverRegistering(false)
         }
     }
@@ -130,7 +130,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         try {
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
-                intentFilter.addAction(ConnectivityManager.CONNECTIVITY_ACTION)
+                intentFilter.addAction(CONNECTIVITY_ACTION)
                 contentFragmentContext.registerReceiver(connectivityReceiver, intentFilter)
             } else {
                 contentFragmentContext.unregisterReceiver(connectivityReceiver)
@@ -138,21 +138,6 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
-    }
-
-    //for test..
-    private fun testingPlayAds(){
-        val videos = mutableListOf<VideoModel>().apply {
-            add(VideoModel(0,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FEid%20Alfiter.mp4?alt=media&token=f8ddfe58-d812-456c-bf4c-37fdcafa731c"))
-            add(VideoModel(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3"))
-            // add(VideoModel(2,"https://drive.google.com/file/d/1EMfDMeQH4UUPg1n0JKp4sl3VX6HHTRLz/view?usp=sharing"))
-        }
-       // displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)
-        val images = mutableListOf<BannerModel>().apply {
-            add(BannerModel(0,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957"))
-            add(BannerModel(1,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5"))
-        }
-       // displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
     }
 
     private fun fetchAdvertisementData() {
@@ -172,7 +157,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
                 displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
                 if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
-                if (!videoList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)
+                if (!videoList.isNullOrEmpty()) {  startPreLoadingService(videoList.toList()); displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)}
             }
         })
 
@@ -192,34 +177,16 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         }
         displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
         if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
-        if (!videoList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)
+        if (!videoList.isNullOrEmpty()) {  startPreLoadingService(videoList.toList()); displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)}
     }
 
-    private fun fetchBannerList() {
-        val model: RoutesViewModel by viewModels()
-            model.getBannerList(channelId(), contentFragmentContext)?.observe((instance as LifecycleOwner), Observer<List<BannerModel>> {
-
-              //  displayAdvertisements.displayAdvertisementBannerList(it,view1.advertisementsImageView)
-            })
-    }
-
-    private fun fetchVideoList() {
-        val model: RoutesViewModel by viewModels()
-            model.getVideoList(channelId(), contentFragmentContext)?.observe((instance as LifecycleOwner), Observer<List<VideoModel>> {
-                startPreLoadingService(it)
-                //displayAdvertisements.displayAdvertisementVideoList(it,view1.playerView,view1.videoRingProgressBar)
-            })
-    }
-
-    private fun startPreLoadingService(it: List<VideoModel>) {
+    private fun startPreLoadingService(it: List<Content>) {
         val videoList = ArrayList<String>()
         for (video in it){
-            videoList.add(video.advertisement_URL.toString())
+            videoList.add(video.url.toString())
         }
-        val preloadingServiceIntent = Intent(contentFragmentContext, VideoPreLoadingService::class.java)
-        preloadingServiceIntent.putStringArrayListExtra(Constants.VIDEO_LIST, videoList)
-        context?.startService(preloadingServiceIntent)
+        val preLoadingServiceIntent = Intent(contentFragmentContext, VideoPreLoadingService::class.java)
+        preLoadingServiceIntent.putStringArrayListExtra(Constants.VIDEO_LIST, videoList)
+        context?.startService(preLoadingServiceIntent)
     }
-
-    private fun channelId() = sharedPreferences.getInt("tabletChannelId", 0)
 }

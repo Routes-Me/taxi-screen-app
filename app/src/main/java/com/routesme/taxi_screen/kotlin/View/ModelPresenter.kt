@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi_screen.kotlin.Class.App
+import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.Authorization
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
@@ -49,8 +50,8 @@ class ModelPresenter : AppCompatActivity() {
     }
 
     private fun isRegistered(): Boolean {
-        val sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
-        return sharedPreferences.getString("tabToken", null) != null && sharedPreferences.getInt("tabletChannelId", -999) != -999
+        val sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+        return sharedPreferences.getString(SharedPreference.token, null) != null && sharedPreferences.getInt(SharedPreference.device_id, -999) != -999
     }
 
     private fun isAuthorized(): Boolean {
