@@ -21,6 +21,7 @@ class AesBase64Wrapper() {
         private  val encrypt: EncryptModel =  EncryptModel()
         private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance(encrypt.factory)
+
         val password = encrypt.password.toCharArray()
     }
 /*
@@ -105,8 +106,6 @@ class AesBase64Wrapper() {
         val encoded = tmp.encoded
         return SecretKeySpec(encoded, encrypt.algorithm)
     }
-
-
 
     private fun getSalt(charsNumber: Int): String = (1..charsNumber)
             .map { _ -> Random.nextInt(0, charPool.size) }

@@ -95,9 +95,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun buttonNextClick() {
-       // Operations().enableNextButton(btn_next, false)
+        Operations().enableNextButton(btn_next, false)
         saveAuthCredentials()
-        if (userNameValid() && passwordValid()) testEncryption() //signIn()
+        if (userNameValid() && passwordValid())  signIn() //testEncryption()
     }
 
     private fun testEncryption() {
