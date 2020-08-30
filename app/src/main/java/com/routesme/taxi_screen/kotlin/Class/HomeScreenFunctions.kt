@@ -54,7 +54,8 @@ class HomeScreenFunctions(val activity: Activity) {
         }
         return true
     }
-    fun showAdminVerificationDialog(tabletPassword: String) {
+    fun showAdminVerificationDialog() {
+        val exitPassword = exitPassword()
         val adminVerificationDialog = Dialog(activity)
         adminVerificationDialog.setContentView(R.layout.exit_pattern_dialog)
         adminVerificationDialog.setCancelable(false)
@@ -64,7 +65,7 @@ class HomeScreenFunctions(val activity: Activity) {
             override fun onComplete(pattern: MutableList<PatternLockView.Dot>?) {
                 val finalPattern = PatternLockUtils.patternToString(adminVerificationPattern, pattern)
 
-                if (finalPattern == tabletPassword) {
+                if (finalPattern == exitPassword) {
                     adminVerificationDialog.dismiss()
                     openAdminConsolePanel()
                 } else {
@@ -80,4 +81,6 @@ class HomeScreenFunctions(val activity: Activity) {
     private fun openAdminConsolePanel() {
       activity.apply { startActivity(Intent(activity,AdminConsolePanel::class.java)); finish() }
     }
+
+    private fun exitPassword(): String? = Helper.getConfigValue("exitPassword", R.raw.config)
 }

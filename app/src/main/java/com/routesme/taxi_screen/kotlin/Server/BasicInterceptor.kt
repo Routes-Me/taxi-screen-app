@@ -25,7 +25,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
         return chain.proceed(request)
     }
 
-    private fun token() = "Bearer ${activity.getSharedPreferences("userData", Activity.MODE_PRIVATE).getString(SharedPreference.token, null)}"
+    private fun token() = "Bearer ${activity.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)}"
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun countryCode() = activity.resources.configuration.locales.get(0).country

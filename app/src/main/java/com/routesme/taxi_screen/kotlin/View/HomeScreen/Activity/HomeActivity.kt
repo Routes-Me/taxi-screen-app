@@ -6,10 +6,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import com.routesme.taxi_screen.java.Hotspot_Configuration.PermissionsActivity
-import com.routesme.taxi_screen.kotlin.Class.App
-import com.routesme.taxi_screen.kotlin.Class.DisplayManager
-import com.routesme.taxi_screen.kotlin.Class.HomeScreenFunctions
-import com.routesme.taxi_screen.kotlin.Class.Operations
+import com.routesme.taxi_screen.kotlin.Class.*
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.IModeChanging
 import com.routesme.taxi_screen.kotlin.Model.QRCodeCallback
@@ -43,8 +40,8 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE)
-        homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString("tabletSerialNo", null))
+        sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+        homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
         openPattern.setOnClickListener {openPatternClick()}
         contentFragment = ContentFragment.instance
         sideMenuFragment = SideMenuFragment.instance
@@ -109,8 +106,7 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
     private fun openPatternClick() {
         clickTimes++
         if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10){
-            val tabletPassword = sharedPreferences.getString("tabletPassword", null)
-            if (!tabletPassword.isNullOrEmpty()) homeScreenFunctions.showAdminVerificationDialog(tabletPassword)
+            homeScreenFunctions.showAdminVerificationDialog()
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()

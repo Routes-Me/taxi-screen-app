@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -17,6 +18,7 @@ import com.routesme.taxiscreen.R
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.io.IOException
 import java.net.URI
+import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
@@ -33,9 +35,9 @@ class LocationTrackingService(): Service() {
 
     private val sharedPreferences = App.instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
     private lateinit var authorityUrl: URI
-    private var vehicleId: String? = null
-    private var institutionId: Int = 0
-    private var deviceId: String? = null
+    private var vehicleId: Int = -999
+    private var institutionId: Int = -999
+    private var deviceId: Int = -999
 
     private var isAlive: Boolean = false
     companion object {
@@ -81,9 +83,9 @@ class LocationTrackingService(): Service() {
 
     private fun getTrackingUrl(): URI {
         return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
-        /*
+       /*
         try {
-           authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl"))
+           authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl",R.raw.config))
         }
        catch (e: URISyntaxException) {
             e.printStackTrace()
@@ -93,11 +95,11 @@ class LocationTrackingService(): Service() {
        builder.scheme("http")
                .authority(authorityUrl.toString())
                .appendPath("trackServiceHub")
-               .appendQueryParameter("vehicleId", vehicleId)
+               .appendQueryParameter("vehicleId", vehicleId.toString())
                .appendQueryParameter("institutionId", institutionId.toString())
-               .appendQueryParameter("deviceId", deviceId)
+               .appendQueryParameter("deviceId", deviceId.toString())
        return URI(builder.build().toString())
-        */
+    */
     }
 
     fun checkPermissionsGranted(){
@@ -124,7 +126,7 @@ class LocationTrackingService(): Service() {
          institutionId = getInstitutionId()
          deviceId = getDeviceId()
         testingSetup()
-             if (!vehicleId.isNullOrEmpty() && institutionId != 0 && !deviceId.isNullOrEmpty()) {
+             if (vehicleId >= 0 && institutionId >= 0 && deviceId >= 0) {
                  trackingWebSocket = setTrackingWebSocketConfiguration()
                  trackingDataLayer = TrackingDataLayer(trackingWebSocket)
                  locationReceiver = LocationReceiver(trackingDataLayer)
@@ -137,9 +139,9 @@ class LocationTrackingService(): Service() {
     }
 
     private fun testingSetup() {
-        vehicleId = "2253-14"
+        vehicleId = 16
         institutionId = 9
-        deviceId = "57260788943767"
+        deviceId = 3
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
@@ -194,7 +196,7 @@ class LocationTrackingService(): Service() {
         return builder.build()
     }
 
-    private fun getVehicleId() = sharedPreferences.getString("taxiPlateNumber", null)
-    private fun getInstitutionId() = sharedPreferences.getInt("taxiOfficeId", 0)
-    private fun getDeviceId() =  sharedPreferences.getString("tabletSerialNo", null)
+    private fun getVehicleId() = sharedPreferences.getInt(SharedPreference.vehicle_id, -999)
+    private fun getInstitutionId() = sharedPreferences.getInt(SharedPreference.institution_id, -999)
+    private fun getDeviceId() =  sharedPreferences.getInt(SharedPreference.device_id, -999)
 }
