@@ -1,18 +1,16 @@
 package com.routesme.taxi_screen.kotlin.Class
 
-import android.content.Context
 import android.content.res.Resources.NotFoundException
 import android.util.Log
-import com.routesme.taxiscreen.R
 import java.io.IOException
 import java.util.*
 
 object Helper {
     private const val TAG = "Helper"
-    fun getConfigValue(name: String): String? {
+    fun getConfigValue(name: String, resourceId: Int): String? {
         val resources = App.instance.resources
         try {
-            val rawResource = resources.openRawResource(R.raw.config)
+            val rawResource = resources.openRawResource(resourceId)
             val properties = Properties()
             properties.load(rawResource)
             return properties.getProperty(name)

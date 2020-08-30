@@ -28,6 +28,7 @@ import com.routesme.taxi_screen.java.Model.TabletInfoViewModel;
 import com.routesme.taxi_screen.kotlin.Class.App;
 import com.routesme.taxi_screen.kotlin.Class.DateOperations;
 import com.routesme.taxi_screen.kotlin.Class.Operations;
+import com.routesme.taxi_screen.kotlin.Class.SharedPreference;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationResponse;
@@ -118,7 +119,7 @@ public class TaxiInformationActivity extends AppCompatActivity implements View.O
         dialog = new SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build();
     }
     private void sharedPreferencesStorage() {
-        sharedPreferences = getSharedPreferences("userData", Activity.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE);
 
     }
     private void toolbarSetUp() {
@@ -252,7 +253,7 @@ public class TaxiInformationActivity extends AppCompatActivity implements View.O
         }
     }
     private String token() {
-        String savedToken = sharedPreferences.getString("tabToken", null);
+        String savedToken = sharedPreferences.getString(SharedPreference.token, null);
         return savedToken != null && !savedToken.isEmpty() ? "Bearer " + savedToken : null;
     }
     private boolean AllDataExist() {
@@ -290,15 +291,15 @@ public class TaxiInformationActivity extends AppCompatActivity implements View.O
         if (editor == null){
             editor = sharedPreferences.edit();
         }
-        editor.putString("technicalUserName", Objects.requireNonNull(app.getSignInCredentials()).getUsername());
-        editor.putString("registrationDate", new DateOperations().registrationDate(new Date()));
-        editor.putInt("institutionId", app.getInstitutionId());
-        editor.putString("institutionName",app.getInstitutionName());
-        editor.putInt("vehicleId",app.getVehicleId());
-        editor.putString("taxiPlateNumber", app.getTaxiPlateNumber());
-        editor.putInt("deviceId", registrationResponse.getDeviceId());
-        editor.putString("tabletSerialNo", registrationCredentials.getDeviceSerialNumber());
-        editor.putString("simCardNumber", registrationCredentials.getSimSerialNumber());
+        editor.putString(SharedPreference.technician_username, Objects.requireNonNull(app.getSignInCredentials()).getUsername());
+        editor.putString(SharedPreference.registration_date, new DateOperations().registrationDate(new Date()));
+        editor.putInt(SharedPreference.institution_id, app.getInstitutionId());
+        editor.putString(SharedPreference.institution_name,app.getInstitutionName());
+        editor.putInt(SharedPreference.vehicle_id,app.getVehicleId());
+        editor.putString(SharedPreference.vehicle_plate_number, app.getTaxiPlateNumber());
+        editor.putInt(SharedPreference.device_id, registrationResponse.getDeviceId());
+        editor.putString(SharedPreference.device_serial_number, registrationCredentials.getDeviceSerialNumber());
+        editor.putString(SharedPreference.sim_serial_number, registrationCredentials.getSimSerialNumber());
         editor.apply();
     }
     private void openModelPresenterScreen() {

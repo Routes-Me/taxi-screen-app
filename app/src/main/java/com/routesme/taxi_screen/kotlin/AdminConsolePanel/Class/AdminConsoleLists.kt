@@ -17,7 +17,7 @@ class AdminConsoleLists(val activity: Activity) {
             DetailCell("Plate Number", "${adminConsoleHelper.plateNumber()}", true),
             DetailCell("Institution Name", "${adminConsoleHelper.institutionName()}", false),
             LabelCell("General"),
-            DetailCell("Channel ID", "#${adminConsoleHelper.channelId()}", true),
+           // DetailCell("Channel ID", "#${adminConsoleHelper.channelId()}", true),
             DetailCell("App Version", adminConsoleHelper.appVersion(), true),
             DetailCell("Sim Serial Number", "${adminConsoleHelper.simSerialNumber()}", true),
             DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)

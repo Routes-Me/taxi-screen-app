@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Build;
 
+import com.routesme.taxi_screen.kotlin.Class.SharedPreference;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.RequestHeaders;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
@@ -39,14 +40,14 @@ public class RetrofitClientInstance {
     public RetrofitClientInstance(final Activity activity) {
         this.activity = activity;
         //sharedPreference Storage
-        sharedPreferences = activity.getSharedPreferences("userData", Activity.MODE_PRIVATE);
+        sharedPreferences = activity.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE);
     }
 
     private OkHttpClient getOkHttpClient(boolean hasToken) {
 
         if (hasToken) {
 
-            savedTabletToken = sharedPreferences.getString("tabToken", null);
+            savedTabletToken = sharedPreferences.getString(SharedPreference.token, null);
             if (savedTabletToken != null) {
                 requestHeaders = new RequestHeaders(getToken(), getCountryCode(), getVersionName());
                 okHttpClient = new OkHttpClient.Builder()

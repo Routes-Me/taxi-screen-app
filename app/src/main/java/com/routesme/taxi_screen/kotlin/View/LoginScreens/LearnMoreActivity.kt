@@ -26,7 +26,7 @@ class LearnMoreActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun showRoutesWebsite() {
         webView_routesWebsite.webViewClient = WebViewClient()
-        webView_routesWebsite.loadUrl(Helper.getConfigValue("routesWebsiteUrl"))
+        webView_routesWebsite.loadUrl(Helper.getConfigValue("routesWebsiteUrl", R.raw.config))
         val webSettings = webView_routesWebsite.settings
         webSettings.javaScriptEnabled = true
     }

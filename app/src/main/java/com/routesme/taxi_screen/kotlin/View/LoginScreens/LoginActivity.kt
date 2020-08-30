@@ -29,6 +29,7 @@ import com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
+import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError
 import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.Model.SignInResponse
@@ -137,8 +138,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun saveDataIntoSharedPreference(token: String) {
-        val editor = getSharedPreferences("userData", Activity.MODE_PRIVATE).edit()
-        editor.putString("tabToken", token).apply()
+        val editor = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).edit()
+        editor.putString(SharedPreference.token, token).apply()
     }
 
     private fun openTaxiInformationScreen() {

@@ -156,7 +156,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     }
 
     private fun fetchAdvertisementData() {
-/*
+
         val bannerList = mutableSetOf<Content>()
         val videoList = mutableSetOf<Content>()
 
@@ -175,7 +175,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
                 if (!videoList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)
             }
         })
-*/
+
         test()
         isDataFetched = true
     }

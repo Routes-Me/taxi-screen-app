@@ -2,12 +2,14 @@ package com.routesme.taxi_screen.kotlin.Server
 
 import android.app.AlertDialog
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.Helper
 import com.routesme.taxi_screen.kotlin.Model.*
+import com.routesme.taxiscreen.R
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -24,7 +26,7 @@ class RetrofitService() {
         fun create(context: Context): RoutesApi {
             return Retrofit.Builder()
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                    .baseUrl(Helper.getConfigValue("baseUrl"))
+                    .baseUrl(Helper.getConfigValue("baseUrl", R.raw.config))
                     .client(ApiWorker(context).client)
                     .addConverterFactory(ApiWorker(context).gsonConverter)
                     .build()
@@ -68,7 +70,10 @@ class RetrofitService() {
     }
 
     fun signInResponse(signInCredentials: SignInCredentials, dialog: AlertDialog, context: Context): MutableLiveData<JsonElement> {
-        val encryptedCredentials = SignInCredentials(signInCredentials.Username, encrypt(signInCredentials.Password))
+        val encryptedPassword = encrypt(signInCredentials.Password)
+        Log.d("Encryption", encryptedPassword)
+
+        val encryptedCredentials = SignInCredentials(signInCredentials.Username, encryptedPassword)
         val call = create(context).signIn(encryptedCredentials)
         call.enqueue(object : Callback<JsonElement>{
             override fun onFailure(call: Call<JsonElement>, t: Throwable) {dialog.dismiss()}

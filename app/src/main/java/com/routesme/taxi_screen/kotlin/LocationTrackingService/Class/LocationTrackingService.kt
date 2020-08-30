@@ -12,6 +12,8 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
+import com.routesme.taxi_screen.kotlin.Class.SharedPreference
+import com.routesme.taxiscreen.R
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.io.IOException
 import java.net.URI
@@ -29,7 +31,7 @@ class LocationTrackingService(): Service() {
     private var runnableCheckPermissions: Runnable? = null
     private var permissionsHandlerRunning = false
 
-    private val sharedPreferences = App.instance.getSharedPreferences("userData", Activity.MODE_PRIVATE)
+    private val sharedPreferences = App.instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
     private lateinit var authorityUrl: URI
     private var vehicleId: String? = null
     private var institutionId: Int = 0
@@ -78,7 +80,7 @@ class LocationTrackingService(): Service() {
     }
 
     private fun getTrackingUrl(): URI {
-        return URI(Helper.getConfigValue("trackingWebSocketUrl"))
+        return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
         /*
         try {
            authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl"))
