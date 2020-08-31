@@ -15,42 +15,46 @@ import org.json.JSONException
 import org.json.JSONObject
 import tech.gusavila92.websocketclient.WebSocketClient
 
-class TrackingDataLayer(private var trackingWebSocket: WebSocketClient) {
+class TrackingDataLayer(private val locationTrackingService: LocationTrackingService, private val trackingWebSocket: WebSocketClient) {
     private val locationFeedsDao = TrackingDatabase(App.instance).locationFeedsDao()
     private val messageFeedsDao = TrackingDatabase(App.instance).messageFeedsDao()
     private lateinit var sendFeedsHandler: Handler
     private lateinit var sendFeedsRunnable: Runnable
 
      fun executeTrackingLogic() {
+         val savedLocationFeeds = locationFeedsDao.loadAllLocations()
 
-      // val databaseFeeds = getDatabaseFeeds()
-         val loadAllLocations = locationFeedsDao.loadAllLocations()
-
-
-/*
-         if (!databaseFeeds.isNullOrEmpty()){
-             val filteredResult = getMajorFeeds(databaseFeeds)
+         if (!savedLocationFeeds.isNullOrEmpty()){
+             val lastFeedId = savedLocationFeeds.last().id
+             val locationFeedGroups = savedLocationFeeds.groupBy { it.timestamp/5 }.values.map { it.toMutableList() }
+             val filteredResult = getMajorFeeds(locationFeedGroups)
              val listOfFeeds = filteredResult.chunked(100)
              val listOfStringFeeds = listOfFeeds.map {MessageFeed(message = getJsonArray(it).toString()) }
              messageFeedsDao.insertFeeds(listOfStringFeeds)
-             sendFeedsHandlerSetup()
-             sendFeedsHandler.post(sendFeedsRunnable)
+             locationFeedsDao.clearLocationFeedsTable(lastFeedId)
+             if (locationTrackingService.isWebSocketAlive) {
+                 sendFeedsHandlerSetup()
+                 sendFeedsHandler.post(sendFeedsRunnable)
+             }
          }
-*/
     }
 
     private fun sendFeedsHandlerSetup() {
         var i = 0
-        val feeds = messageFeedsDao.getAllMessages()
+        val messageFeeds = messageFeedsDao.getAllMessages()
         sendFeedsRunnable = Runnable {
-            if (i < feeds.size){
-                sendFeedsViaSocket(feeds[i].message)
-                messageFeedsDao.delete(feeds[i])
-                i++
+            if (locationTrackingService.isWebSocketAlive) {
+                if (i < messageFeeds.size) {
+                    sendFeedsViaSocket(messageFeeds[i].message)
+                    messageFeedsDao.delete(messageFeeds[i])
+                    i++
+                } else {
+                    sendFeedsHandler.removeCallbacks(sendFeedsRunnable)
+                }
+                sendFeedsHandler.postDelayed(sendFeedsRunnable, 200)
             }else{
                 sendFeedsHandler.removeCallbacks(sendFeedsRunnable)
             }
-            sendFeedsHandler.postDelayed(sendFeedsRunnable, 200)
         }
         sendFeedsHandler = Handler()
     }

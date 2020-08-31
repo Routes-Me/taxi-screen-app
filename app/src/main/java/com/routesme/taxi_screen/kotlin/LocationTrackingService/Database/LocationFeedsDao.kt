@@ -7,9 +7,9 @@ import com.routesme.taxi_screen.kotlin.Model.LocationFeed
 //Location Feeds Table
 @Dao
 interface LocationFeedsDao {
-    //@Query("SELECT * FROM LocationFeeds ORDER BY ID")
-    @Query("SELECT * FROM LocationFeeds GROUP BY timestamp / 5  ORDER BY ID")
-    fun loadAllLocations(): LiveData<List<LocationFeed>>
+
+    @Query("SELECT * FROM LocationFeeds ORDER BY ID")
+    fun loadAllLocations(): List<LocationFeed>
 
     @Insert
     fun insertLocation(locationFeed: LocationFeed)
@@ -32,6 +32,6 @@ interface LocationFeedsDao {
     fun loadLastLocation(): LocationFeed
 
     //Delete LocationFeed Data ...
-    @Query("DELETE FROM LocationFeeds")
-    fun clearLocationFeedsTable()
+    @Query("DELETE FROM LocationFeeds WHERE id <= :id")
+    fun clearLocationFeedsTable(id:Int)
 }

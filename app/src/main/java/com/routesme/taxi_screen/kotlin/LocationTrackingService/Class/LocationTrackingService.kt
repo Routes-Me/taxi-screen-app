@@ -4,7 +4,6 @@ import android.Manifest
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -18,7 +17,6 @@ import com.routesme.taxiscreen.R
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.io.IOException
 import java.net.URI
-import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
@@ -39,7 +37,7 @@ class LocationTrackingService(): Service() {
     private var institutionId: Int = -999
     private var deviceId: Int = -999
 
-    private var isAlive: Boolean = false
+    var isWebSocketAlive: Boolean = false
     companion object {
         @get:Synchronized
         var instance:LocationTrackingService = LocationTrackingService()
@@ -52,7 +50,7 @@ class LocationTrackingService(): Service() {
 
     private val webSocket = object : WebSocketClient(getTrackingUrl()) {
         override fun onOpen() {
-            isAlive = true
+            isWebSocketAlive = true
             Log.d("Tracking-Logic", "WebSocket-onOpen")
         }
         override fun onTextReceived(message: String) {
@@ -63,12 +61,12 @@ class LocationTrackingService(): Service() {
         override fun onPongReceived(data: ByteArray) {}
         override fun onException(e: Exception) {
             if (e is IOException) {
-                isAlive = false
+                isWebSocketAlive = false
             }
             Log.d("Tracking-Logic", "WebSocket-onException")
         }
         override fun onCloseReceived() {
-            isAlive = false
+            isWebSocketAlive = false
             Log.d("Tracking-Logic", "WebSocket-onCloseReceived")
         }
     }
@@ -128,7 +126,7 @@ class LocationTrackingService(): Service() {
         testingSetup()
              if (vehicleId >= 0 && institutionId >= 0 && deviceId >= 0) {
                  trackingWebSocket = setTrackingWebSocketConfiguration()
-                 trackingDataLayer = TrackingDataLayer(trackingWebSocket)
+                 trackingDataLayer = TrackingDataLayer(this, trackingWebSocket)
                  locationReceiver = LocationReceiver(trackingDataLayer)
                  if (locationReceiver.setUpLocationListener()) {
                      trackingWebSocket.connect()
@@ -160,7 +158,7 @@ class LocationTrackingService(): Service() {
             isHandlerTrackingRunning = true
 
             Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
-            if (isAlive) trackingDataLayer.executeTrackingLogic()
+            if (isWebSocketAlive) trackingDataLayer.executeTrackingLogic()
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
         handlerTracking = Handler()
