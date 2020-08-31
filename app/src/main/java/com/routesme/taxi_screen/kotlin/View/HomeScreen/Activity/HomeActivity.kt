@@ -26,8 +26,8 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
     private var clickTimes = 0
     private val displayManager = DisplayManager.instance
     private val operations = Operations.instance
-    private lateinit var contentFragment: ContentFragment
-    private lateinit var sideMenuFragment: SideMenuFragment
+    private var contentFragment: ContentFragment? = null
+    private var sideMenuFragment: SideMenuFragment? = null
 
     companion object{
         @get:Synchronized
@@ -43,21 +43,24 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
         sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
         homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
         openPattern.setOnClickListener {openPatternClick()}
-        contentFragment = ContentFragment.instance
-        sideMenuFragment = SideMenuFragment.instance
+        homeScreenFunctions.hideNavigationBar()
+        homeScreenFunctions.requestRuntimePermissions()
+        turnOnHotspot()
+        addFragments()
     }
 
     override fun onDestroy() {
+        removeFragments()
         if (displayManager.wasRegistered(this) )displayManager.unregisterActivity(this)
         super.onDestroy()
     }
 
     override fun onResume() {
-        homeScreenFunctions.hideNavigationBar()
-        homeScreenFunctions.requestRuntimePermissions()
-        turnOnHotspot()
+        //homeScreenFunctions.hideNavigationBar()
+        //homeScreenFunctions.requestRuntimePermissions()
+        //turnOnHotspot()
         // startLocationTrackingService()
-        showFragments()
+        //showFragments()
         super.onResume()
     }
 
@@ -76,16 +79,24 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
     }
 
     override fun onPause() {
+
         // if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
         super.onPause()
     }
 
-    private fun deviceToken() = "dF9bQgwjSxmY-Glapm-ZmL:APA91bH2OS7k9nX_fkiH1h6St1JB41Z50aUK0dU0XABvs_C6-5DNQaz78jYgM4bCQuyVC0o1Yju9TmMJl7NFux2cTQOPguGiBS4fevIP1tMoxvsYe3b_qo6K5wTXB56erjiEKyd6Cazc"
-
-    private fun showFragments() {
-        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, contentFragment).commit()
-        supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment).commit()
+    private fun addFragments() {
+        contentFragment = ContentFragment.instance
+        sideMenuFragment = SideMenuFragment.instance
+        if(contentFragment != null) supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, contentFragment!!).commit()
+        if(sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!).commit()
     }
+
+    private fun removeFragments() {
+        contentFragment = null
+        sideMenuFragment = null
+    }
+
+    private fun deviceToken() = "dF9bQgwjSxmY-Glapm-ZmL:APA91bH2OS7k9nX_fkiH1h6St1JB41Z50aUK0dU0XABvs_C6-5DNQaz78jYgM4bCQuyVC0o1Yju9TmMJl7NFux2cTQOPguGiBS4fevIP1tMoxvsYe3b_qo6K5wTXB56erjiEKyd6Cazc"
 
     override fun onPermissionsOkay() {}
 
@@ -117,10 +128,10 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
     }
 
     override fun onVideoQRCodeChanged(qrCode: QrCode?) {
-        sideMenuFragment.changeVideoQRCode(qrCode)
+        sideMenuFragment?.changeVideoQRCode(qrCode)
     }
 
     override fun onBannerQRCodeChanged(qrCode: QrCode?) {
-        sideMenuFragment.changeBannerQRCode(qrCode)
+        sideMenuFragment?.changeBannerQRCode(qrCode)
     }
 }
