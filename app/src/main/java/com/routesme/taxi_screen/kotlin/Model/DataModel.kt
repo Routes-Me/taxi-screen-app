@@ -106,7 +106,6 @@ class DiscountCell(val details: String?, val url: String?) : ISideFragmentCell
 class WifiCell(val name: String, val password: String, val qrCode: QrCode?) : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 
-
 //New Content Model
 data class Pagination( val total: Int = 0, val offset: Int = 0, val limit: Int = 0)
 data class QrCode( val details: String? = null, val url: String? = null)
@@ -133,3 +132,6 @@ data class InstitutionData (val createdAt: String? = null, val phoneNumber: Stri
 
 data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
+
+data class ResponseErrors (val errors: List<Errors>)
+data class Errors (val code: Int = -999, val detail: String? = null, val status: Int = -999)
