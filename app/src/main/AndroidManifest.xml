@@ -50,6 +50,12 @@
             android:name="com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
+
+        </activity>
+        <activity
+            android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -57,12 +63,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustNothing">
-
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity"

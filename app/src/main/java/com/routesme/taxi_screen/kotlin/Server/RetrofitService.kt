@@ -15,12 +15,14 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
+
 class RetrofitService() {
 
     val contentResponse: MutableLiveData<ContentResponse> = MutableLiveData()
     val videoList: MutableLiveData<List<VideoModel>> = MutableLiveData()
     val bannerList: MutableLiveData<List<BannerModel>> = MutableLiveData()
     val signInResponse:MutableLiveData<JsonElement> = MutableLiveData()
+    val apiResponse = MutableLiveData<ApiResponse>()
 
     companion object Factory {
         fun create(context: Context): RoutesApi {
@@ -69,20 +71,24 @@ class RetrofitService() {
         return bannerList
     }
 
-    fun signInResponse(signInCredentials: SignInCredentials, dialog: AlertDialog, context: Context): MutableLiveData<JsonElement> {
+    fun signInResponse(signInCredentials: SignInCredentials, context: Context): MutableLiveData<ApiResponse> {
         val encryptedPassword = encrypt(signInCredentials.Password)
         Log.d("Encryption", encryptedPassword)
 
         val encryptedCredentials = SignInCredentials(signInCredentials.Username, encryptedPassword)
         val call = create(context).signIn(encryptedCredentials)
         call.enqueue(object : Callback<JsonElement>{
-            override fun onFailure(call: Call<JsonElement>, t: Throwable) {dialog.dismiss()}
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                dialog.dismiss()
-                if (response.isSuccessful && response.body() != null) signInResponse.value = response.body() as JsonElement
+                if (response.isSuccessful && response.body() != null) {
+                    //signInResponse.value = response.body() as JsonElement
+                    apiResponse.value = ApiResponse(response.body())
+                }
+            }
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                apiResponse.value = ApiResponse(t)
             }
         })
-        return signInResponse
+        return apiResponse
     }
 
     private fun encrypt(str: String) = AesBase64Wrapper().getEncryptedString(str)

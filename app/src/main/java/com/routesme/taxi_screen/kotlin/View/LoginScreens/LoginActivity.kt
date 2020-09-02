@@ -30,6 +30,7 @@ import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
+import com.routesme.taxi_screen.kotlin.Model.ApiResponse
 import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError
 import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.Model.SignInResponse
@@ -40,6 +41,7 @@ import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 import kotlinx.android.synthetic.main.login_screen.*
 import kotlinx.android.synthetic.main.technical_login_layout.*
 import kotlinx.android.synthetic.main.technical_login_layout.view.*
+import java.io.IOException
 import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
@@ -51,6 +53,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var userName: String
     private lateinit var password: String
     private lateinit var dialog: AlertDialog
+    private val operations = Operations.instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +78,7 @@ class LoginActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 showErrorMessage(1, "", false)
-                Operations().enableNextButton(btn_next, true)
+                operations.enableNextButton(btn_next, true)
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -84,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
                 showErrorMessage(2, "", false)
-                Operations().enableNextButton(btn_next, true)
+                operations.enableNextButton(btn_next, true)
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -96,9 +99,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun buttonNextClick() {
-        Operations().enableNextButton(btn_next, false)
+        operations.enableNextButton(btn_next, false)
         saveAuthCredentials()
-        if (userNameValid() && passwordValid())  signIn() //testEncryption()
+        if (userNameValid() && passwordValid()) signIn() //testEncryption()
     }
 
     private fun testEncryption() {
@@ -108,33 +111,57 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signIn() {
-            dialog.show()
-            val signInCredentials = SignInCredentials(userName, password)
-            val model: RoutesViewModel by viewModels()
-            model.getSignInResponse(signInCredentials, dialog, this).observe(this, Observer<JsonElement> {
-                if (it.isJsonArray) {
-                    val authErrors = Gson().fromJson<List<AuthCredentialsError>>(it as JsonArray?, object : TypeToken<List<AuthCredentialsError?>?>() {}.type)
-                    if (authErrors != null) {
-                        for (e in authErrors.indices) {
-                            if (authErrors[e].ErrorNumber == 1 || authErrors[e].ErrorNumber == 2) {
-                                showErrorMessage(authErrors[e].ErrorNumber, authErrors[e].ErrorMessage.toString(), true)
-                            }
-                        }
+        dialog.show()
+        val signInCredentials = SignInCredentials(userName, password)
+        val model: RoutesViewModel by viewModels()
+        model.getSignInResponse(signInCredentials, this).observe(this, Observer<ApiResponse> {
+            if (it != null) {
+                val e = it.error
+            if (e != null) {
+                // call failed.
+                dialog.dismiss()
+                operations.enableNextButton(btn_next, true)
+                    //Toast.makeText(this,"Failure: ${e.message}",Toast.LENGTH_SHORT).show()
+                    if (e is IOException) {
+                        Toast.makeText(this,"Failure: Network Issue !",Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this,"Failure: Conversion Issue !",Toast.LENGTH_SHORT).show()
                     }
-                }else {
-                    val signInResponse = Gson().fromJson<SignInResponse>(it, SignInResponse::class.java)
-                    if (signInResponse.status){
+            } else {
+                // call is successful
+                Toast.makeText(this,"Success",Toast.LENGTH_SHORT).show()
+            }
+            }else{
+                dialog.dismiss()
+                operations.enableNextButton(btn_next, true)
+                Toast.makeText(this,"Api Response : Null",Toast.LENGTH_SHORT).show()
+            }
 
-                        val token = signInResponse.token
-                        if (!token.isNullOrEmpty()) {
-                            saveDataIntoSharedPreference(token)
-                            openTaxiInformationScreen()
-                        }
-                    }else{
-                        Toast.makeText(this,"${signInResponse.message}",Toast.LENGTH_LONG).show()
-                    }
-                }
-            })
+            /*
+             if (it.isJsonArray) {
+                 val authErrors = Gson().fromJson<List<AuthCredentialsError>>(it as JsonArray?, object : TypeToken<List<AuthCredentialsError?>?>() {}.type)
+                 if (authErrors != null) {
+                     for (e in authErrors.indices) {
+                         if (authErrors[e].ErrorNumber == 1 || authErrors[e].ErrorNumber == 2) {
+                             showErrorMessage(authErrors[e].ErrorNumber, authErrors[e].ErrorMessage.toString(), true)
+                         }
+                     }
+                 }
+             }else {
+                 val signInResponse = Gson().fromJson<SignInResponse>(it, SignInResponse::class.java)
+                 if (signInResponse.status){
+
+                     val token = signInResponse.token
+                     if (!token.isNullOrEmpty()) {
+                         saveDataIntoSharedPreference(token)
+                         openTaxiInformationScreen()
+                     }
+                 }else{
+                     Toast.makeText(this,"${signInResponse.message}",Toast.LENGTH_LONG).show()
+                 }
+             }
+             */
+        })
     }
 
     private fun saveDataIntoSharedPreference(token: String) {

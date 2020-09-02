@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -135,3 +136,18 @@ data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, 
 
 data class ResponseErrors (val errors: List<Errors>)
 data class Errors (val code: Int = -999, val detail: String? = null, val status: Int = -999)
+
+class ApiResponse {
+    var posts: JsonElement?
+    var error: Throwable?
+
+    constructor(posts: JsonElement?) {
+        this.posts = posts
+        error = null
+    }
+
+    constructor(error: Throwable?) {
+        this.error = error
+        posts = null
+    }
+}

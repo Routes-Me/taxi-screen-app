@@ -14,6 +14,6 @@ class RoutesViewModel() : ViewModel() {
     fun getContent(context: Context) = mService.content(context)
     fun getVideoList(ch_ID: Int, context: Context) = mService.loadVideoList(ch_ID, context)
     fun getBannerList(ch_ID: Int, context: Context) = mService.loadBannerList(ch_ID, context)
-    fun getSignInResponse(signInCredentials: SignInCredentials, dialog: AlertDialog, context: Context) = mService.signInResponse(signInCredentials, dialog, context)
+    fun getSignInResponse(signInCredentials: SignInCredentials, context: Context) = mService.signInResponse(signInCredentials, context)
 
 }
