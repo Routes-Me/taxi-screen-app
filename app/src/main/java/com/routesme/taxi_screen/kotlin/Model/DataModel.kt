@@ -8,7 +8,6 @@ import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-
 //Server RequestHeaders
 data class RequestHeaders(val Authorization: String? = null, val country_code: String? = null, val app_version: String? = null)
 
@@ -43,14 +42,14 @@ data class ItemType(val itemName: String? = null, val isHeader: Boolean = false,
 
 //Location Feeds Table entity
 @Entity(tableName = "LocationFeeds")
-data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long){
+data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long) {
     val location: Location
-    get() {
-        val location = Location("provider")
-        location.latitude = latitude
-        location.longitude = longitude
-        return location
-    }
+        get() {
+            val location = Location("provider")
+            location.latitude = latitude
+            location.longitude = longitude
+            return location
+        }
 }
 
 //Message Feed Table entity
@@ -64,7 +63,7 @@ class LocationJsonObject(private val locationFeed: LocationFeed) {
         val jo = JsonObject()
         jo.addProperty("latitude", locationFeed.latitude)
         jo.addProperty("longitude", locationFeed.longitude)
-        jo.addProperty("timestamp",locationFeed.timestamp)
+        jo.addProperty("timestamp", locationFeed.timestamp)
         return jo
     }
 }
@@ -80,8 +79,8 @@ class DetailCell(val title: String, val value: String, val splitLine: Boolean = 
 class ActionCell(val action: String) : ICell
 class DetailActionCell(val title: String, val status: DetailActionStatus, val action: String) : ICell
 
-enum class DetailActionStatus{DONE, PENDING}
-enum class Actions(val title: String) {Launcher("Open launcher settings"), General("Open general settings"), LogOff("Log off")}
+enum class DetailActionStatus { DONE, PENDING }
+enum class Actions(val title: String) { Launcher("Open launcher settings"), General("Open general settings"), LogOff("Log off") }
 
 //ThemeMode Interface
 interface IModeChanging {
@@ -89,11 +88,11 @@ interface IModeChanging {
 }
 
 //Payment Service...
-data class PaymentData(var driverToken:String = "", var paymentAmount: Double = 0.0) : Serializable
+data class PaymentData(var driverToken: String = "", var paymentAmount: Double = 0.0) : Serializable
 
 data class PaymentMessage(var identifier: String? = null, var udid: String? = null, var amount: Double? = null, var status: String? = null) : Serializable
 data class PaymentProgressMessage(var identifier: String? = null, var status: String? = null) : Serializable
-enum class PaymentStatus(val text: String){Initiate("initiate"), Cancel("cancel"), Paid("paid"), Timeout("timeout")}
+enum class PaymentStatus(val text: String) { Initiate("initiate"), Cancel("cancel"), Paid("paid"), Timeout("timeout") }
 /*
 Identifier: userid + timestamp,
 udid: token,
@@ -107,11 +106,12 @@ class WifiCell(val name: String, val password: String, val qrCode: QrCode?) : IS
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 
 //New Content Model
-data class Pagination( val total: Int = 0, val offset: Int = 0, val limit: Int = 0)
-data class QrCode( val details: String? = null, val url: String? = null)
-data class ContentData (val qrCode: QrCode? = null, val content_id: Int = 0, val type: String? = null, val url: String? = null )
-data class ContentResponse (val pagination: Pagination? = null, @SerializedName("data") val data: List<ContentData>, val responseCode: String? = null)
-data class Content (val id: Int = 0, val url: String? = null, val qrCode: QrCode? = null)
+data class Pagination(val total: Int = 0, val offset: Int = 0, val limit: Int = 0)
+
+data class QrCode(val details: String? = null, val url: String? = null)
+data class ContentData(val qrCode: QrCode? = null, val content_id: Int = 0, val type: String? = null, val url: String? = null)
+data class ContentResponse(val pagination: Pagination? = null, @SerializedName("data") val data: List<ContentData>, val responseCode: String? = null)
+data class Content(val id: Int = 0, val url: String? = null, val qrCode: QrCode? = null)
 enum class ContentType(val value: String) { Image("image"), Video("video") }
 
 interface QRCodeCallback {
@@ -120,42 +120,58 @@ interface QRCodeCallback {
 }
 
 //New Login Models
-data class SignInCredentials (var Username: String = "", var Password: String = "")
-data class SignInSuccessResponse (val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+data class SignInCredentials(var Username: String = "", var Password: String = "")
+
+data class SignInSuccessResponse(val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 
 //New Registration Models
 data class RegistrationCredentials(var DeviceSerialNumber: String? = null, var SimSerialNumber: String? = null, var VehicleId: Int = -999)
-data class RegistrationResponse (val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
 
-data class Institutions (val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
-data class InstitutionData (val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)
+data class RegistrationResponse(val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
 
-data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
-data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
+data class Institutions(val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+data class InstitutionData(val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)
 
-data class ErrorsResponse (val errors: List<Error>)
-data class Error (val code: Int = -999, val detail: String? = null, val status: Int = -999)
+data class Vehicles(val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+data class VehicleData(val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
+
+
+data class BadRequestResponse(val errors: List<Error>)
+data class Error(val code: Int = -999, val detail: String? = null, val status: Int = -999)
+
+data class ErrorResponse(val code: Int = -999, val message: String? = null)
 
 class ApiResponse {
-     var signInSuccessResponse: SignInSuccessResponse? = null
-     var errorsResponse: ErrorsResponse? = null
-     var throwable: Throwable? = null
+    var signInSuccessResponse: SignInSuccessResponse? = null
+    var badRequestResponse: BadRequestResponse? = null
+    var errorResponse: ErrorResponse? = null
+    var throwable: Throwable? = null
 
     constructor(signInSuccessResponse: SignInSuccessResponse?) {
         this.signInSuccessResponse = signInSuccessResponse
-        this.errorsResponse = null
+        this.badRequestResponse = null
+        this.errorResponse = null
         this.throwable = null
     }
 
-    constructor(errorsResponse: ErrorsResponse?) {
+    constructor(badRequestResponse: BadRequestResponse?) {
         this.signInSuccessResponse = null
-        this.errorsResponse = errorsResponse
+        this.badRequestResponse = badRequestResponse
+        this.errorResponse = null
+        this.throwable = null
+    }
+
+    constructor(errorResponse: ErrorResponse?) {
+        this.signInSuccessResponse = null
+        this.badRequestResponse = null
+        this.errorResponse = errorResponse
         this.throwable = null
     }
 
     constructor(throwable: Throwable?) {
         this.signInSuccessResponse = null
-        this.errorsResponse = null
+        this.badRequestResponse = null
+        this.errorResponse = null
         this.throwable = throwable
     }
 }

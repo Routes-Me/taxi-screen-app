@@ -115,7 +115,8 @@ class LoginActivity : AppCompatActivity() {
             if (it != null) {
                 val throwable = it.throwable
                 val signInSuccessResponse = it.signInSuccessResponse
-                val errorsResponse = it.errorsResponse
+                val badRequestResponse = it.badRequestResponse
+                val errorResponse = it.errorResponse
             if (throwable != null) {
                     if (throwable is IOException) {
                         Toast.makeText(this,"Failure: Network Issue !",Toast.LENGTH_SHORT).show()
@@ -129,18 +130,18 @@ class LoginActivity : AppCompatActivity() {
                     saveDataIntoSharedPreference(token)
                     openTaxiInformationScreen()
                 }
-            }else{
-                if (!errorsResponse?.errors.isNullOrEmpty()) {
-                    for (error in errorsResponse?.errors!!) {
+            }else if (badRequestResponse != null){
+                if (!badRequestResponse.errors.isNullOrEmpty()) {
+                    for (error in badRequestResponse.errors) {
                         if (error.code == 1 || error.code == 2) {
                             showErrorMessage(error, true)
                         }
                     }
                 }
+            }else{
+                Toast.makeText(this,"Error.. Code: ${errorResponse?.code}, Message: ${errorResponse?.message}",Toast.LENGTH_SHORT).show()
             }
             }else{
-                dialog.dismiss()
-                operations.enableNextButton(btn_next, true)
                 Toast.makeText(this,"Api Response : Null",Toast.LENGTH_SHORT).show()
             }
 

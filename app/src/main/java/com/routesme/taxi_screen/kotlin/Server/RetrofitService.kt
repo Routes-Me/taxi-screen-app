@@ -83,13 +83,14 @@ class RetrofitService() {
         call.enqueue(object : Callback<JsonElement>{
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body() as JsonArray?, object : TypeToken<SignInSuccessResponse>() {}.type)
+                    val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
                     apiResponse.value = ApiResponse(signInSuccessResponse)
-                }else if (response.code() == 400){
-                    val errorsResponse = Gson().fromJson<ErrorsResponse>(response.body() as JsonArray?, object : TypeToken<ErrorsResponse>() {}.type)
-                    apiResponse.value = ApiResponse(errorsResponse)
+                }else if (response.code() == 400 && response.body() != null){
+                    val badRequestResponse = Gson().fromJson<BadRequestResponse>(response.body(), BadRequestResponse::class.java)
+                    apiResponse.value = ApiResponse(badRequestResponse)
                 } else{
-                    Toast.makeText(context,"response code: ${response.code()},  ${response.message()}",Toast.LENGTH_LONG).show()
+                    val errorResponse = ErrorResponse(response.code(), response.message())
+                    apiResponse.value = ApiResponse(errorResponse)
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
