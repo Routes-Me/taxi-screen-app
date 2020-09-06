@@ -25,7 +25,7 @@ import java.util.List;
 public class TaxiInformationListActivity extends AppCompatActivity {
 
     private App app;
-    private static final String   List_Type_STR = "List_Type_Key", Offices_STR = "Offices", Office_Plates_STR = "Office_Plates";
+    private static final String   List_Type_STR = "List_Type_Key", Institution_STR = "Institution", Vehicle_STR = "Vehicle";
     private String listType;
     private Toolbar myToolbar;
     //sharedPreference Storage
@@ -56,10 +56,10 @@ public class TaxiInformationListActivity extends AppCompatActivity {
 
     private void getList() {
         switch (listType){
-            case Offices_STR:
+            case Institution_STR:
                 getInstitutionsList_Sections();
                 break;
-            case Office_Plates_STR:
+            case Vehicle_STR:
                 getVehiclesList_Sections();
                 break;
         }
@@ -148,11 +148,11 @@ public class TaxiInformationListActivity extends AppCompatActivity {
         myToolbar = findViewById(R.id.MyToolBar);
         setSupportActionBar(myToolbar);
         switch (listType){
-            case Offices_STR:
+            case Institution_STR:
                 getSupportActionBar().setTitle("Search for taxi offices");
                 break;
 
-            case Office_Plates_STR:
+            case Vehicle_STR:
                 getSupportActionBar().setTitle("Search plate numbers");
                 break;
         }

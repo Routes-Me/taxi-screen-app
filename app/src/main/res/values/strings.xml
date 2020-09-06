@@ -23,4 +23,10 @@
     <string name="thank_you_for_paying_through_routes_pay">Thank you for paying through Routes Pay</string>
     <string name="wifi_name">Routes</string>
     <string name="wifi_password">12345678</string>
+    <string name="phone_permission_required">Phone Permission required</string>
+    <string name="enable_phone_permission_from_app_settings_is_required_to_get_device_information">Enable phone permission from app settings is required to get device information</string>
+    <string name="open_settings">Open settings</string>
+    <string name="later">Later</string>
+    <string name="click_here_to_get_serial_number">Click here to get serial number</string>
+    <string name="click_here_to_get_sim_card_number">Click here to get SIM card number</string>
 </resources>
