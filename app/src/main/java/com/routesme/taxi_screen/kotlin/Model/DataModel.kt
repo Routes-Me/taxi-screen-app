@@ -4,7 +4,6 @@ import android.location.Location
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
@@ -122,7 +121,7 @@ interface QRCodeCallback {
 
 //New Login Models
 data class SignInCredentials (var Username: String = "", var Password: String = "")
-data class SignInResponse (val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
+data class SignInSuccessResponse (val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 
 //New Registration Models
 data class RegistrationCredentials(var DeviceSerialNumber: String? = null, var SimSerialNumber: String? = null, var VehicleId: Int = -999)
@@ -134,20 +133,29 @@ data class InstitutionData (val createdAt: String? = null, val phoneNumber: Stri
 data class Vehicles (val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class VehicleData (val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
 
-data class ResponseErrors (val errors: List<Errors>)
-data class Errors (val code: Int = -999, val detail: String? = null, val status: Int = -999)
+data class ErrorsResponse (val errors: List<Error>)
+data class Error (val code: Int = -999, val detail: String? = null, val status: Int = -999)
 
 class ApiResponse {
-    var posts: JsonElement?
-    var error: Throwable?
+     var signInSuccessResponse: SignInSuccessResponse? = null
+     var errorsResponse: ErrorsResponse? = null
+     var throwable: Throwable? = null
 
-    constructor(posts: JsonElement?) {
-        this.posts = posts
-        error = null
+    constructor(signInSuccessResponse: SignInSuccessResponse?) {
+        this.signInSuccessResponse = signInSuccessResponse
+        this.errorsResponse = null
+        this.throwable = null
     }
 
-    constructor(error: Throwable?) {
-        this.error = error
-        posts = null
+    constructor(errorsResponse: ErrorsResponse?) {
+        this.signInSuccessResponse = null
+        this.errorsResponse = errorsResponse
+        this.throwable = null
+    }
+
+    constructor(throwable: Throwable?) {
+        this.signInSuccessResponse = null
+        this.errorsResponse = null
+        this.throwable = throwable
     }
 }

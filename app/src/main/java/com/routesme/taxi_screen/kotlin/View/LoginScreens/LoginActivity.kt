@@ -21,19 +21,14 @@ import androidx.lifecycle.Observer
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
-import com.google.gson.Gson
-import com.google.gson.JsonArray
-import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
 import com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.ApiResponse
-import com.routesme.taxi_screen.kotlin.Model.AuthCredentialsError
+import com.routesme.taxi_screen.kotlin.Model.Error
 import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
-import com.routesme.taxi_screen.kotlin.Model.SignInResponse
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
@@ -77,7 +72,7 @@ class LoginActivity : AppCompatActivity() {
         userName_et.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                showErrorMessage(1, "", false)
+                showErrorMessage(Error(Field.UserName.code, ""), false)
                 operations.enableNextButton(btn_next, true)
             }
 
@@ -86,7 +81,7 @@ class LoginActivity : AppCompatActivity() {
         password_et.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                showErrorMessage(2, "", false)
+                showErrorMessage(Error(Field.Password.code, ""), false)
                 operations.enableNextButton(btn_next, true)
             }
 
@@ -115,21 +110,33 @@ class LoginActivity : AppCompatActivity() {
         val signInCredentials = SignInCredentials(userName, password)
         val model: RoutesViewModel by viewModels()
         model.getSignInResponse(signInCredentials, this).observe(this, Observer<ApiResponse> {
+             dialog.dismiss()
+             operations.enableNextButton(btn_next, true)
             if (it != null) {
-                val e = it.error
-            if (e != null) {
-                // call failed.
-                dialog.dismiss()
-                operations.enableNextButton(btn_next, true)
-                    //Toast.makeText(this,"Failure: ${e.message}",Toast.LENGTH_SHORT).show()
-                    if (e is IOException) {
+                val throwable = it.throwable
+                val signInSuccessResponse = it.signInSuccessResponse
+                val errorsResponse = it.errorsResponse
+            if (throwable != null) {
+                    if (throwable is IOException) {
                         Toast.makeText(this,"Failure: Network Issue !",Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this,"Failure: Conversion Issue !",Toast.LENGTH_SHORT).show()
                     }
-            } else {
-                // call is successful
+            } else if (signInSuccessResponse != null) {
                 Toast.makeText(this,"Success",Toast.LENGTH_SHORT).show()
+                val token = signInSuccessResponse.token
+                if (!token.isNullOrEmpty()) {
+                    saveDataIntoSharedPreference(token)
+                    openTaxiInformationScreen()
+                }
+            }else{
+                if (!errorsResponse?.errors.isNullOrEmpty()) {
+                    for (error in errorsResponse?.errors!!) {
+                        if (error.code == 1 || error.code == 2) {
+                            showErrorMessage(error, true)
+                        }
+                    }
+                }
             }
             }else{
                 dialog.dismiss()
@@ -177,7 +184,7 @@ class LoginActivity : AppCompatActivity() {
     private fun userNameValid(): Boolean {
         return if (userName.isNotEmpty()) true
         else {
-            showErrorMessage(1, "User Name Required", true)
+            showErrorMessage(Error(Field.UserName.code, "User Name Required"), true)
             false
         }
     }
@@ -185,20 +192,20 @@ class LoginActivity : AppCompatActivity() {
     private fun passwordValid(): Boolean {
         return when {
             password.isEmpty() -> {
-                showErrorMessage(2, "Password Required", true); false
+                showErrorMessage(Error(Field.Password.code, "Password Required"), true); false
             }
             password.length < 6 -> {
-                showErrorMessage(2, "Minimum Password is 6 digit", true); false
+                showErrorMessage(Error(Field.Password.code, "Minimum Password is 6 digit"), true); false
             }
             else -> true
         }
     }
 
     @SuppressLint("SetTextI18n")
-    private fun showErrorMessage(errorId: Int, errorStr: String, show: Boolean) {
+    private fun showErrorMessage(error: Error, show: Boolean) {
         var editText: EditText? = null
         var textView: TextView? = null
-        when (errorId) {
+        when (error.code) {
             1 -> {
                 editText = userName_et
                 textView = userName_error_tv
@@ -209,12 +216,12 @@ class LoginActivity : AppCompatActivity() {
             }
         }
         if (show) {
-            editText!!.setBackgroundResource(R.drawable.red_border)
-            textView!!.apply { text = "* $errorStr"; visibility = View.VISIBLE }
+            editText?.setBackgroundResource(R.drawable.red_border)
+            textView?.apply { text = "* ${error.detail}"; visibility = View.VISIBLE }
             return
         } else {
-            editText!!.setBackgroundResource(R.drawable.grey_border_edit_text)
-            textView!!.visibility = View.INVISIBLE
+            editText?.setBackgroundResource(R.drawable.grey_border_edit_text)
+            textView?.visibility = View.INVISIBLE
         }
     }
 
@@ -308,3 +315,4 @@ class LoginActivity : AppCompatActivity() {
         app.isNewLogin = true
     }
 }
+enum class Field (val code: Int) {UserName(1), Password(2)}

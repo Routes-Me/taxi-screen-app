@@ -1,10 +1,13 @@
 package com.routesme.taxi_screen.kotlin.Server
 
-import android.app.AlertDialog
 import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
+import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
+import com.google.gson.reflect.TypeToken
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.Helper
@@ -80,12 +83,17 @@ class RetrofitService() {
         call.enqueue(object : Callback<JsonElement>{
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    //signInResponse.value = response.body() as JsonElement
-                    apiResponse.value = ApiResponse(response.body())
+                    val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body() as JsonArray?, object : TypeToken<SignInSuccessResponse>() {}.type)
+                    apiResponse.value = ApiResponse(signInSuccessResponse)
+                }else if (response.code() == 400){
+                    val errorsResponse = Gson().fromJson<ErrorsResponse>(response.body() as JsonArray?, object : TypeToken<ErrorsResponse>() {}.type)
+                    apiResponse.value = ApiResponse(errorsResponse)
+                } else{
+                    Toast.makeText(context,"response code: ${response.code()},  ${response.message()}",Toast.LENGTH_LONG).show()
                 }
             }
-            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                apiResponse.value = ApiResponse(t)
+            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
+                apiResponse.value = ApiResponse(throwable)
             }
         })
         return apiResponse
