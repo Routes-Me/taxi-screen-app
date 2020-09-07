@@ -2,12 +2,9 @@ package com.routesme.taxi_screen.kotlin.Server
 
 import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
-import com.google.gson.JsonArray
 import com.google.gson.JsonElement
-import com.google.gson.reflect.TypeToken
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.Helper
@@ -25,7 +22,8 @@ class RetrofitService() {
     val videoList: MutableLiveData<List<VideoModel>> = MutableLiveData()
     val bannerList: MutableLiveData<List<BannerModel>> = MutableLiveData()
     val signInResponse:MutableLiveData<JsonElement> = MutableLiveData()
-    val apiResponse = MutableLiveData<ApiResponse>()
+    val signInApiResponse = MutableLiveData<ApiResponse>()
+    val registerApiResponse = MutableLiveData<ApiResponse>()
 
     companion object Factory {
         fun create(context: Context): RoutesApi {
@@ -84,20 +82,42 @@ class RetrofitService() {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
-                    apiResponse.value = ApiResponse(signInSuccessResponse)
+                    signInApiResponse.value = ApiResponse(signInSuccessResponse)
                 }else if (response.code() == 400 && response.body() != null){
                     val badRequestResponse = Gson().fromJson<BadRequestResponse>(response.body(), BadRequestResponse::class.java)
-                    apiResponse.value = ApiResponse(badRequestResponse)
+                    signInApiResponse.value = ApiResponse(badRequestResponse)
                 } else{
                     val errorResponse = ErrorResponse(response.code(), response.message())
-                    apiResponse.value = ApiResponse(errorResponse)
+                    signInApiResponse.value = ApiResponse(errorResponse)
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                apiResponse.value = ApiResponse(throwable)
+                signInApiResponse.value = ApiResponse(throwable)
             }
         })
-        return apiResponse
+        return signInApiResponse
+    }
+
+    fun registerResponse(registrationCredentials: RegistrationCredentials, context: Context): MutableLiveData<ApiResponse> {
+        val call = create(context).register(registrationCredentials)
+        call.enqueue(object : Callback<JsonElement>{
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                if (response.isSuccessful && response.body() != null) {
+                    val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
+                    registerApiResponse.value = ApiResponse(registrationSuccessResponse)
+                }else if (response.code() == 400 && response.body() != null){
+                    val badRequestResponse = Gson().fromJson<BadRequestResponse>(response.body(), BadRequestResponse::class.java)
+                    registerApiResponse.value = ApiResponse(badRequestResponse)
+                } else{
+                    val errorResponse = ErrorResponse(response.code(), response.message())
+                    registerApiResponse.value = ApiResponse(errorResponse)
+                }
+            }
+            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
+                registerApiResponse.value = ApiResponse(throwable)
+            }
+        })
+        return registerApiResponse
     }
 
     private fun encrypt(str: String) = AesBase64Wrapper().getEncryptedString(str)

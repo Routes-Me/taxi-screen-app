@@ -17,10 +17,10 @@ import java.io.IOException
 internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
-        var request = chain.request().newBuilder()
+        val request = chain.request().newBuilder()
                 .addHeader(Header.Authorization.toString(), token())
-                .addHeader(Header.country_code.toString(), countryCode())
-                .addHeader(Header.app_version.toString(), appVersion())
+                .addHeader(Header.CountryCode.toString(), countryCode())
+                .addHeader(Header.AppVersion.toString(), appVersion())
                 .build()
         return chain.proceed(request)
     }
@@ -49,5 +49,5 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
 }
 
 enum class Header {
-    Authorization, country_code, app_version
+    Authorization, CountryCode, AppVersion
 }

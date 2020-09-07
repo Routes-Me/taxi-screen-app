@@ -7,9 +7,12 @@ import retrofit2.http.*
 
 interface RoutesApi {
 
-    //Authentication (Token)...
-    @POST("auth")
+
+    @POST("v1/signin")
     fun signIn(@Body signInCredentials: SignInCredentials?): Call<JsonElement>
+
+    @POST("devices")
+    fun register(@Body registrationCredentials: RegistrationCredentials?): Call<JsonElement>
 
     //Advertisements...
     @GET("Channels")

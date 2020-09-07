@@ -143,12 +143,22 @@ data class ErrorResponse(val code: Int = -999, val message: String? = null)
 
 class ApiResponse {
     var signInSuccessResponse: SignInSuccessResponse? = null
+    var registrationSuccessResponse: RegistrationSuccessResponse? = null
     var badRequestResponse: BadRequestResponse? = null
     var errorResponse: ErrorResponse? = null
     var throwable: Throwable? = null
 
     constructor(signInSuccessResponse: SignInSuccessResponse?) {
         this.signInSuccessResponse = signInSuccessResponse
+        this.registrationSuccessResponse = null
+        this.badRequestResponse = null
+        this.errorResponse = null
+        this.throwable = null
+    }
+
+    constructor(registrationSuccessResponse: RegistrationSuccessResponse?) {
+        this.signInSuccessResponse = null
+        this.registrationSuccessResponse = registrationSuccessResponse
         this.badRequestResponse = null
         this.errorResponse = null
         this.throwable = null
@@ -156,6 +166,7 @@ class ApiResponse {
 
     constructor(badRequestResponse: BadRequestResponse?) {
         this.signInSuccessResponse = null
+        this.registrationSuccessResponse = null
         this.badRequestResponse = badRequestResponse
         this.errorResponse = null
         this.throwable = null
@@ -163,6 +174,7 @@ class ApiResponse {
 
     constructor(errorResponse: ErrorResponse?) {
         this.signInSuccessResponse = null
+        this.registrationSuccessResponse = null
         this.badRequestResponse = null
         this.errorResponse = errorResponse
         this.throwable = null
@@ -170,6 +182,7 @@ class ApiResponse {
 
     constructor(throwable: Throwable?) {
         this.signInSuccessResponse = null
+        this.registrationSuccessResponse = null
         this.badRequestResponse = null
         this.errorResponse = null
         this.throwable = throwable

@@ -14,6 +14,8 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.FragmentActivity
@@ -27,15 +29,14 @@ import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.DateOperations
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
-import com.routesme.taxi_screen.kotlin.Model.Authorization
-import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials
-import com.routesme.taxi_screen.kotlin.Model.RegistrationListType
-import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse
+import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter
+import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
+import java.io.IOException
 import java.util.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
@@ -170,7 +171,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             R.id.deviceSerialNumber_tv, R.id.SimCardNumber_tv -> clickOnGetDeviceInfo()
             R.id.taxiOffice_tv -> openInstitutionsList()
             R.id.taxiPlateNumber_tv -> openVehiclesList()
-            R.id.register_btn -> register()
+            R.id.register_btn ->   registration() //register()
         }
     }
 
@@ -204,6 +205,47 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 saveTabletInfoIntoSharedPreferences(response)
                 openModelPresenterScreen()
             })
+        }
+    }
+
+    private fun registration(){
+        if (token() != null && allDataExist()) {
+            operations.enableNextButton(register_btn, false)
+            dialog?.show()
+            val model: RoutesViewModel by viewModels()
+            model.getRegistrationResponse(registrationCredentials, this).observe(this, Observer<ApiResponse> {
+                dialog?.dismiss()
+                operations.enableNextButton(register_btn, true)
+                if (it != null) {
+                    val throwable = it.throwable
+                    val registrationSuccessResponse = it.registrationSuccessResponse
+                    val badRequestResponse = it.badRequestResponse
+                    val errorResponse = it.errorResponse
+                    if (throwable != null) {
+                        if (throwable is IOException) {
+                            Toast.makeText(this, "Failure: Network Issue !", Toast.LENGTH_SHORT).show()
+                        } else {
+                            Toast.makeText(this, "Failure: Conversion Issue !", Toast.LENGTH_SHORT).show()
+                        }
+                    } else if (registrationSuccessResponse != null) {
+                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
+                        saveTabletInfoIntoSharedPreferences(registrationSuccessResponse)
+                        openModelPresenterScreen()
+                    } else if (badRequestResponse != null) {
+                        if (!badRequestResponse.errors.isNullOrEmpty()) {
+                            for (error in badRequestResponse.errors) {
+                                Toast.makeText(this, "Error.. Code: ${error.code}, Detail: ${error.detail}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } else if (errorResponse != null) {
+                        Toast.makeText(this, "Error.. Code: ${errorResponse.code}, Message: ${errorResponse.message}", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Toast.makeText(this, "Api Response : Null", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }else{
+            Toast.makeText(this, "Complete required data, please!", Toast.LENGTH_SHORT).show()
         }
     }
 
