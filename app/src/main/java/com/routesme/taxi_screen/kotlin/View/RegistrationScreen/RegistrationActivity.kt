@@ -23,7 +23,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.routesme.taxi_screen.java.Model.TabletInfoViewModel
-import com.routesme.taxi_screen.java.View.Login.TaxiInformationListActivity
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.DateOperations
 import com.routesme.taxi_screen.kotlin.Class.Operations
@@ -192,7 +191,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun openDataList(listType: RegistrationListType) {
-        startActivity(Intent(this, TaxiInformationListActivity::class.java).putExtra(this.listType, listType.toString()))
+        startActivity(Intent(this, VehicleInformationActivity::class.java).putExtra(this.listType, listType.toString()))
     }
 
     private fun register() {
