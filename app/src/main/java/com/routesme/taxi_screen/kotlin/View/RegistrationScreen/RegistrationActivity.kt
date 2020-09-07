@@ -226,6 +226,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         } else {
                             Toast.makeText(this, "Failure: Conversion Issue !", Toast.LENGTH_SHORT).show()
                         }
+                        
                     } else if (registrationSuccessResponse != null) {
                         Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
                         saveTabletInfoIntoSharedPreferences(registrationSuccessResponse)
