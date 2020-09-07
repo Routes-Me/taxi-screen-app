@@ -31,7 +31,7 @@ import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationResponse;
+import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse;
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
@@ -243,9 +243,9 @@ public class TaxiInformationActivity extends AppCompatActivity implements View.O
             operations.enableNextButton(register_btn, false);
             dialog.show();
             TabletInfoViewModel tabletInfoViewModel = ViewModelProviders.of((FragmentActivity) this).get(TabletInfoViewModel.class);
-            tabletInfoViewModel.getTabletInfo(this, token(), registrationCredentials, dialog, register_btn).observe((LifecycleOwner) this, new Observer<RegistrationResponse>() {
+            tabletInfoViewModel.getTabletInfo(this, token(), registrationCredentials, dialog, register_btn).observe((LifecycleOwner) this, new Observer<RegistrationSuccessResponse>() {
                 @Override
-                public void onChanged(RegistrationResponse response) {
+                public void onChanged(RegistrationSuccessResponse response) {
                     saveTabletInfoIntoSharedPreferences(response);
                     openModelPresenterScreen();
                 }
@@ -287,7 +287,7 @@ public class TaxiInformationActivity extends AppCompatActivity implements View.O
             return true;
         }
     }
-    private void saveTabletInfoIntoSharedPreferences(RegistrationResponse registrationResponse){
+    private void saveTabletInfoIntoSharedPreferences(RegistrationSuccessResponse registrationSuccessResponse){
         if (editor == null){
             editor = sharedPreferences.edit();
         }
@@ -297,7 +297,7 @@ public class TaxiInformationActivity extends AppCompatActivity implements View.O
         editor.putString(SharedPreference.institution_name,app.getInstitutionName());
         editor.putInt(SharedPreference.vehicle_id,app.getVehicleId());
         editor.putString(SharedPreference.vehicle_plate_number, app.getTaxiPlateNumber());
-        editor.putInt(SharedPreference.device_id, registrationResponse.getDeviceId());
+        editor.putInt(SharedPreference.device_id, registrationSuccessResponse.getDeviceId());
         editor.putString(SharedPreference.device_serial_number, registrationCredentials.getDeviceSerialNumber());
         editor.putString(SharedPreference.sim_serial_number, registrationCredentials.getSimSerialNumber());
         editor.apply();

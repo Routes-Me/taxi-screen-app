@@ -2,7 +2,7 @@ package com.routesme.taxi_screen.java.Server.Interface;
 
 import com.routesme.taxi_screen.kotlin.Model.Institutions;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationResponse;
+import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse;
 import com.routesme.taxi_screen.kotlin.Model.Vehicles;
 
 import retrofit2.Call;
@@ -21,5 +21,5 @@ public interface RoutesApi {
     Call<Vehicles> getVehicles(@Query("offset") int offset, @Query("limit") int limit, @Query("institutionId") int institutionId);
     //Tablet Register
     @POST("devices")
-    Call<RegistrationResponse> postDevice(@Body RegistrationCredentials registrationCredentials);
+    Call<RegistrationSuccessResponse> postDevice(@Body RegistrationCredentials registrationCredentials);
 }

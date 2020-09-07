@@ -10,7 +10,7 @@ import com.routesme.taxi_screen.java.Server.Class.RetrofitClientInstance;
 import com.routesme.taxi_screen.java.Server.Interface.RoutesApi;
 import com.routesme.taxi_screen.kotlin.Class.Operations;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationResponse;
+import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -19,19 +19,19 @@ import retrofit2.Response;
 public class TabletInfoViewModel extends ViewModel {
 
     //this is the data that we will fetch asynchronously
-    private MutableLiveData<RegistrationResponse> response;
+    private MutableLiveData<RegistrationSuccessResponse> response;
 
     private Operations operations;
     private AlertDialog dialog;
     private Button register_btn;
 
     //we will call this method to get the data
-    public LiveData<RegistrationResponse> getTabletInfo(Activity activity, String token, RegistrationCredentials registrationCredentials, AlertDialog dialog, Button register_btn) {
+    public LiveData<RegistrationSuccessResponse> getTabletInfo(Activity activity, String token, RegistrationCredentials registrationCredentials, AlertDialog dialog, Button register_btn) {
         operations = new Operations();
         this.dialog = dialog;
         this.register_btn = register_btn;
 
-        response = new MutableLiveData<RegistrationResponse>();
+        response = new MutableLiveData<RegistrationSuccessResponse>();
         //we will load it asynchronously from server in this method
         loadTabletInfo(activity, registrationCredentials);
         return response;
@@ -47,10 +47,10 @@ public class TabletInfoViewModel extends ViewModel {
         } else {
             return;
         }
-        Call<RegistrationResponse> call = api.postDevice(registrationCredentials);
-        call.enqueue(new Callback<RegistrationResponse>() {
+        Call<RegistrationSuccessResponse> call = api.postDevice(registrationCredentials);
+        call.enqueue(new Callback<RegistrationSuccessResponse>() {
             @Override
-            public void onResponse(Call<RegistrationResponse> call, Response<RegistrationResponse> response) {
+            public void onResponse(Call<RegistrationSuccessResponse> call, Response<RegistrationSuccessResponse> response) {
                 dialog.dismiss();
                 if (response.isSuccessful() && response.body() != null) {
                     TabletInfoViewModel.this.response.setValue(response.body());
@@ -59,7 +59,7 @@ public class TabletInfoViewModel extends ViewModel {
                 }
             }
             @Override
-            public void onFailure(Call<RegistrationResponse> call, Throwable t) {
+            public void onFailure(Call<RegistrationSuccessResponse> call, Throwable t) {
                 dialog.dismiss();
             }
         });

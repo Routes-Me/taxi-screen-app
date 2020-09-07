@@ -138,8 +138,8 @@ class LoginActivity : AppCompatActivity() {
                         }
                     }
                 }
-            }else{
-                Toast.makeText(this,"Error.. Code: ${errorResponse?.code}, Message: ${errorResponse?.message}",Toast.LENGTH_SHORT).show()
+            }else if (errorResponse != null){
+                Toast.makeText(this,"Error.. Code: ${errorResponse.code}, Message: ${errorResponse.message}",Toast.LENGTH_SHORT).show()
             }
             }else{
                 Toast.makeText(this,"Api Response : Null",Toast.LENGTH_SHORT).show()

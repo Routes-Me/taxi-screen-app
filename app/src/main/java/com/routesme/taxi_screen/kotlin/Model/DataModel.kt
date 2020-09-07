@@ -127,7 +127,7 @@ data class SignInSuccessResponse(val token: String? = null, val message: String?
 //New Registration Models
 enum class RegistrationListType(val value: String) { Institution("Institution"), Vehicle("Vehicle") }
 data class RegistrationCredentials(var DeviceSerialNumber: String? = null, var SimSerialNumber: String? = null, var VehicleId: Int = -999)
-data class RegistrationResponse(val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
+data class RegistrationSuccessResponse(val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
 
 data class Institutions(val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 data class InstitutionData(val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)

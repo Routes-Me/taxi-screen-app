@@ -30,7 +30,7 @@ import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.Authorization
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials
 import com.routesme.taxi_screen.kotlin.Model.RegistrationListType
-import com.routesme.taxi_screen.kotlin.Model.RegistrationResponse
+import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter
 import com.routesme.taxiscreen.R
@@ -245,7 +245,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun saveTabletInfoIntoSharedPreferences(registrationResponse: RegistrationResponse) {
+    private fun saveTabletInfoIntoSharedPreferences(registrationSuccessResponse: RegistrationSuccessResponse) {
         editor.apply {
             putString(SharedPreference.technician_username, app.signInCredentials?.Username)
             putString(SharedPreference.registration_date, DateOperations().registrationDate(Date()))
@@ -253,7 +253,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreference.institution_name, app.institutionName)
             putInt(SharedPreference.vehicle_id, app.vehicleId)
             putString(SharedPreference.vehicle_plate_number, app.taxiPlateNumber)
-            putInt(SharedPreference.device_id, registrationResponse.deviceId)
+            putInt(SharedPreference.device_id, registrationSuccessResponse.deviceId)
             putString(SharedPreference.device_serial_number, registrationCredentials.DeviceSerialNumber)
             putString(SharedPreference.sim_serial_number, registrationCredentials.SimSerialNumber)
         }.apply()
