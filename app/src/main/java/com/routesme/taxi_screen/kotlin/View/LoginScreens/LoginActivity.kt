@@ -21,7 +21,6 @@ import androidx.lifecycle.Observer
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
-import com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
@@ -29,6 +28,7 @@ import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.ApiResponse
 import com.routesme.taxi_screen.kotlin.Model.Error
 import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.View.RegistrationScreen.RegistrationActivity
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
@@ -178,7 +178,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openTaxiInformationScreen() {
-        startActivity(Intent(this, TaxiInformationActivity::class.java))
+        startActivity(Intent(this, RegistrationActivity::class.java))
         finish()
     }
 

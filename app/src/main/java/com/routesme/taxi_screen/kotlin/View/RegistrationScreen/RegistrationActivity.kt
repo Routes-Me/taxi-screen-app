@@ -23,7 +23,6 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.routesme.taxi_screen.java.Model.TabletInfoViewModel
-import com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity
 import com.routesme.taxi_screen.java.View.Login.TaxiInformationListActivity
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.DateOperations
@@ -149,9 +148,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     @SuppressLint("HardwareIds")
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         when (requestCode) {
-            TaxiInformationActivity.READ_PHONE_STATE_REQUEST_CODE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+           READ_PHONE_STATE_REQUEST_CODE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), TaxiInformationActivity.READ_PHONE_STATE_REQUEST_CODE)
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), READ_PHONE_STATE_REQUEST_CODE)
                     return
                 }
                 getTabletInfo()

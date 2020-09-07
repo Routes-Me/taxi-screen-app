@@ -31,7 +31,9 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.RegistrationScreen.RegistrationActivity">
+        <activity android:name="com.routesme.taxi_screen.kotlin.View.RegistrationScreen.RegistrationActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullScreen_Light_Mode">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -40,7 +42,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentActivity" />
+        <activity android:name="com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentActivity"
+            android:screenOrientation="landscape"
+            android:theme="@style/FullScreen_Light_Mode"/>
         <activity
             android:name="com.routesme.taxi_screen.kotlin.AdminConsolePanel.View.AdminConsolePanel"
             android:screenOrientation="landscape"
