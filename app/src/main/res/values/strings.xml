@@ -29,4 +29,7 @@
     <string name="later">Later</string>
     <string name="click_here_to_get_serial_number">Click here to get serial number</string>
     <string name="click_here_to_get_sim_card_number">Click here to get SIM card number</string>
+    <string name="list_type_key">List_Type_Key</string>
+    <string name="search_for_taxi_offices">Search for taxi offices</string>
+    <string name="search_plate_numbers">Search plate numbers</string>
 </resources>

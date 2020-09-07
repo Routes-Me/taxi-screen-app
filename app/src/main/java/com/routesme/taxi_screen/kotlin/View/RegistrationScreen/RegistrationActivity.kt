@@ -42,8 +42,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private val app = App.instance
     private var registrationCredentials = RegistrationCredentials()
     private val operations = Operations.instance
-    val READ_PHONE_STATE_REQUEST_CODE = 101
-    private val listType = "List_Type_Key"
+    private val READ_PHONE_STATE_REQUEST_CODE = 101
+    //private val listTypeKey = getString(R.string.list_type_key)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var telephonyManager: TelephonyManager
@@ -175,14 +175,14 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun openInstitutionsList() {
         taxiOffice_tv.isEnabled = false
-        openDataList(RegistrationListType.Institution)
+        openDataList(VehicleInformationListType.Institution)
         showInputError(false, 0)
     }
 
     private fun openVehiclesList() {
         if (institutionId >= 0) {
             taxiPlateNumber_tv.isEnabled = false
-            openDataList(RegistrationListType.Vehicle)
+            openDataList(VehicleInformationListType.Vehicle)
         } else {
             showInputError(true, 1)
             return
@@ -190,8 +190,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         showInputError(false, 0)
     }
 
-    private fun openDataList(listType: RegistrationListType) {
-        startActivity(Intent(this, VehicleInformationActivity::class.java).putExtra(this.listType, listType.toString()))
+    private fun openDataList(listType: VehicleInformationListType) {
+        val listTypeKey = getString(R.string.list_type_key)
+        startActivity(Intent(this, VehicleInformationActivity::class.java).putExtra(listTypeKey, listType))
     }
 
     private fun register() {

@@ -125,7 +125,7 @@ data class SignInCredentials(var Username: String = "", var Password: String = "
 data class SignInSuccessResponse(val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 
 //New Registration Models
-enum class RegistrationListType(val value: String) { Institution("Institution"), Vehicle("Vehicle") }
+enum class VehicleInformationListType(val value: String) { Institution("Institution"), Vehicle("Vehicle") }
 data class RegistrationCredentials(var DeviceSerialNumber: String? = null, var SimSerialNumber: String? = null, var VehicleId: Int = -999)
 data class RegistrationSuccessResponse(val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
 
