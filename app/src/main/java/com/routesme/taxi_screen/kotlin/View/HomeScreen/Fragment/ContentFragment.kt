@@ -48,9 +48,9 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     override fun onAttach(context: Context) {
         contentFragmentContext = context
         sharedPreferences = context.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
-       // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
-       // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
-       // firebaseAnalytics.setUserId(tabletSerialNumber)
+        // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
+        // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
+        // firebaseAnalytics.setUserId(tabletSerialNumber)
         try {
             qRCodeCallback = activity as QRCodeCallback
         } catch (e: ClassCastException) {
@@ -92,8 +92,8 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     override fun onClick(view: View?) {
         when (view?.id) {
-           // R.id.Advertisement_Banner_CardView -> updateFirebaseAnalystics(ItemAnalytics(2, "click_banner"))
-           // R.id.Advertisement_Video_CardView -> updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
+            // R.id.Advertisement_Banner_CardView -> updateFirebaseAnalystics(ItemAnalytics(2, "click_banner"))
+            // R.id.Advertisement_Video_CardView -> updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
         }
     }
 
@@ -148,12 +148,12 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         val model: RoutesViewModel by viewModels()
         model.getContent(contentFragmentContext).observe((instance as LifecycleOwner), Observer<ContentResponse> {
             if (!it.data.isNullOrEmpty()){
-              for (content in it.data){
-                  when(content.type){
-                      ContentType.Image.value -> bannerList.add(Content(content.content_id, content.url, content.qrCode))
-                      else -> videoList.add(Content(content.content_id, content.url, content.qrCode))
-                  }
-              }
+                for (content in it.data){
+                    when(content.type){
+                        ContentType.Image.value -> bannerList.add(Content(content.content_id, content.url, content.qrCode))
+                        else -> videoList.add(Content(content.content_id, content.url, content.qrCode))
+                    }
+                }
 
                 displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
                 if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)

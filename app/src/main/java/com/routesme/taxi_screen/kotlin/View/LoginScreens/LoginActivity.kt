@@ -110,37 +110,37 @@ class LoginActivity : AppCompatActivity() {
         val signInCredentials = SignInCredentials(userName, password)
         val model: RoutesViewModel by viewModels()
         model.getSignInResponse(signInCredentials, this).observe(this, Observer<ApiResponse> {
-             dialog.dismiss()
-             operations.enableNextButton(btn_next, true)
+            dialog.dismiss()
+            operations.enableNextButton(btn_next, true)
             if (it != null) {
                 val throwable = it.throwable
                 val signInSuccessResponse = it.signInSuccessResponse
                 val badRequestResponse = it.badRequestResponse
                 val errorResponse = it.errorResponse
-            if (throwable != null) {
+                if (throwable != null) {
                     if (throwable is IOException) {
                         Toast.makeText(this,"Failure: Network Issue !",Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this,"Failure: Conversion Issue !",Toast.LENGTH_SHORT).show()
                     }
-            } else if (signInSuccessResponse != null) {
-                Toast.makeText(this,"Success",Toast.LENGTH_SHORT).show()
-                val token = signInSuccessResponse.token
-                if (!token.isNullOrEmpty()) {
-                    saveDataIntoSharedPreference(token)
-                    openTaxiInformationScreen()
-                }
-            }else if (badRequestResponse != null){
-                if (!badRequestResponse.errors.isNullOrEmpty()) {
-                    for (error in badRequestResponse.errors) {
-                        if (error.code == 1 || error.code == 2) {
-                            showErrorMessage(error, true)
+                } else if (signInSuccessResponse != null) {
+                    Toast.makeText(this,"Success",Toast.LENGTH_SHORT).show()
+                    val token = signInSuccessResponse.token
+                    if (!token.isNullOrEmpty()) {
+                        saveDataIntoSharedPreference(token)
+                        openTaxiInformationScreen()
+                    }
+                }else if (badRequestResponse != null){
+                    if (!badRequestResponse.errors.isNullOrEmpty()) {
+                        for (error in badRequestResponse.errors) {
+                            if (error.code == 1 || error.code == 2) {
+                                showErrorMessage(error, true)
+                            }
                         }
                     }
+                }else if (errorResponse != null){
+                    Toast.makeText(this,"Error.. Code: ${errorResponse.code}, Message: ${errorResponse.message}",Toast.LENGTH_SHORT).show()
                 }
-            }else if (errorResponse != null){
-                Toast.makeText(this,"Error.. Code: ${errorResponse.code}, Message: ${errorResponse.message}",Toast.LENGTH_SHORT).show()
-            }
             }else{
                 Toast.makeText(this,"Api Response : Null",Toast.LENGTH_SHORT).show()
             }

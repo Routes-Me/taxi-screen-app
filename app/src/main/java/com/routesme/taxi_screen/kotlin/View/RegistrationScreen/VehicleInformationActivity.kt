@@ -3,6 +3,9 @@ package com.routesme.taxi_screen.kotlin.View.RegistrationScreen
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.routesme.taxi_screen.java.Class.OfficesAdapterMultibleViews
 import com.routesme.taxi_screen.java.Model.OfficePlatesListViewModel
@@ -21,8 +24,8 @@ class VehicleInformationActivity : AppCompatActivity() {
     private lateinit var listType: VehicleInformationListType
     //private lateinit var myToolbar: Toolbar
     //sharedPreference Storage
-    private val officesListViewModel: OfficesListViewModel? = null
-    private val officePlatesListViewModel: OfficePlatesListViewModel? = null
+    private var officesListViewModel: OfficesListViewModel? = null
+    private var officePlatesListViewModel: OfficePlatesListViewModel? = null
     //Section recyclerView ...
     private lateinit var adapter: OfficesAdapterMultibleViews
     private lateinit var institutionsArrayList: ArrayList<ItemType>
@@ -67,6 +70,53 @@ class VehicleInformationActivity : AppCompatActivity() {
     }
 
     private fun getList() {
+        when (listType) {
+            VehicleInformationListType.Institution -> getInstitutionsList_Sections()
+            else -> getVehiclesList_Sections()
+        }
+    }
+    private fun getInstitutionsList_Sections() {
+        officesListViewModel = ViewModelProviders.of(this).get(OfficesListViewModel::class.java)
+        officesListViewModel?.getInstitutions(this, 1, 40)?.observe((this as LifecycleOwner), Observer { (_, institutionList) ->
+            institutionsArrayList = ArrayList()
 
+            if (institutionList.isNotEmpty()) {
+                institutionsArrayList.add(ItemType("Institutions", true, false, 0))
+                for (i in institutionList.indices) {
+                    institutionsArrayList.add(ItemType(institutionList[i].name, false, true, institutionList[i].institutionId))
+                }
+            }
+            adapter = OfficesAdapterMultibleViews(this, institutionsArrayList)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            adapter.setOnItemClickListener { position ->
+                app.institutionId = institutionsArrayList[position].id
+                app.institutionName = institutionsArrayList[position].itemName
+                app.vehicleId = -999
+                app.taxiPlateNumber = null
+                finish()
+            }
+        })
+    }
+
+    private fun getVehiclesList_Sections() {
+        officePlatesListViewModel = ViewModelProviders.of(this).get(OfficePlatesListViewModel::class.java)
+        officePlatesListViewModel?.getVehicles(this, 1, 150, app.institutionId)?.observe((this as LifecycleOwner), Observer { (_, vehiclesList) ->
+            vehiclesArrayList = ArrayList()
+            if (vehiclesList.isNotEmpty()) {
+                vehiclesArrayList.add(ItemType("Vehicles", true, false, -1))
+                for (i in vehiclesList.indices) {
+                    vehiclesArrayList.add(ItemType(vehiclesList[i].plateNumber, false, true, vehiclesList[i].vehicleId))
+                }
+            }
+            adapter = OfficesAdapterMultibleViews(this, vehiclesArrayList)
+            recyclerView.adapter = adapter
+            recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+            adapter.setOnItemClickListener { position ->
+                app.vehicleId = vehiclesArrayList[position].id
+                app.taxiPlateNumber = vehiclesArrayList[position].itemName
+                finish()
+            }
+        })
     }
 }
