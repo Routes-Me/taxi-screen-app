@@ -7,6 +7,8 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -66,7 +68,11 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     //LocationListener Methods...
     override fun onLocationChanged(location: Location) {
         if (location != null) trackingDataLayer.insertLocation(location)
-        Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
+
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(App.instance,"${location.provider}, location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
+        }
+
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
