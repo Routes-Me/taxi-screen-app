@@ -1,11 +1,9 @@
 package com.routesme.taxi_screen.kotlin.ViewModel
 
-import android.app.AlertDialog
 import android.content.Context
 import androidx.lifecycle.ViewModel
-import com.routesme.taxi_screen.kotlin.Model.AuthCredentials
+import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials
-import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.Server.RetrofitService
 
 class RoutesViewModel() : ViewModel() {

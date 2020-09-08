@@ -8,6 +8,7 @@ import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Helper
+import com.routesme.taxi_screen.kotlin.MVVM.View.LoginActivity
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.learn_more_screen.*
 

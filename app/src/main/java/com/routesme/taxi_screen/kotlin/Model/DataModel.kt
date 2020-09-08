@@ -6,6 +6,7 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
+import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInSuccessResponse
 import java.io.Serializable
 
 //Server RequestHeaders
@@ -119,10 +120,6 @@ interface QRCodeCallback {
     fun onBannerQRCodeChanged(qrCode: QrCode?)
 }
 
-//New Login Models
-data class SignInCredentials(var Username: String = "", var Password: String = "")
-
-data class SignInSuccessResponse(val token: String? = null, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
 
 //New Registration Models
 enum class VehicleInformationListType(val value: String) { Institution("Institution"), Vehicle("Vehicle") }
@@ -136,7 +133,7 @@ data class Vehicles(val pagination: Pagination? = null, @SerializedName("data") 
 data class VehicleData(val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
 
 
-data class BadRequestResponse(val errors: List<Error>)
+data class ResponseErrors(val errors: List<Error>)
 data class Error(val code: Int = -999, val detail: String? = null, val status: Int = -999)
 
 data class ErrorResponse(val code: Int = -999, val message: String? = null)
@@ -144,14 +141,14 @@ data class ErrorResponse(val code: Int = -999, val message: String? = null)
 class ApiResponse {
     var signInSuccessResponse: SignInSuccessResponse? = null
     var registrationSuccessResponse: RegistrationSuccessResponse? = null
-    var badRequestResponse: BadRequestResponse? = null
+    var responseErrors: ResponseErrors? = null
     var errorResponse: ErrorResponse? = null
     var throwable: Throwable? = null
 
     constructor(signInSuccessResponse: SignInSuccessResponse?) {
         this.signInSuccessResponse = signInSuccessResponse
         this.registrationSuccessResponse = null
-        this.badRequestResponse = null
+        this.responseErrors = null
         this.errorResponse = null
         this.throwable = null
     }
@@ -159,15 +156,15 @@ class ApiResponse {
     constructor(registrationSuccessResponse: RegistrationSuccessResponse?) {
         this.signInSuccessResponse = null
         this.registrationSuccessResponse = registrationSuccessResponse
-        this.badRequestResponse = null
+        this.responseErrors = null
         this.errorResponse = null
         this.throwable = null
     }
 
-    constructor(badRequestResponse: BadRequestResponse?) {
+    constructor(responseErrors: ResponseErrors?) {
         this.signInSuccessResponse = null
         this.registrationSuccessResponse = null
-        this.badRequestResponse = badRequestResponse
+        this.responseErrors = responseErrors
         this.errorResponse = null
         this.throwable = null
     }
@@ -175,7 +172,7 @@ class ApiResponse {
     constructor(errorResponse: ErrorResponse?) {
         this.signInSuccessResponse = null
         this.registrationSuccessResponse = null
-        this.badRequestResponse = null
+        this.responseErrors = null
         this.errorResponse = errorResponse
         this.throwable = null
     }
@@ -183,8 +180,27 @@ class ApiResponse {
     constructor(throwable: Throwable?) {
         this.signInSuccessResponse = null
         this.registrationSuccessResponse = null
-        this.badRequestResponse = null
+        this.responseErrors = null
         this.errorResponse = null
         this.throwable = throwable
     }
 }
+
+
+open class Response(errors: ResponseErrors?, throwable: Throwable?) {
+    var responseErrors: ResponseErrors? = null
+    var throwable: Throwable? = null
+    init {
+        this.responseErrors = errors
+        this.throwable = throwable
+    }
+}
+
+
+/*
+class Footballer(age: Int, name: String): Response(age, name) {
+    fun playFootball() {
+        println("I play for LA Galaxy.")
+    }
+}
+ */

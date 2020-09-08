@@ -32,7 +32,7 @@ import com.routesme.taxi_screen.kotlin.Class.SharedPreference;
 import com.routesme.taxi_screen.kotlin.Model.Authorization;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
 import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse;
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity;
+import com.routesme.taxi_screen.kotlin.MVVM.View.LoginActivity;
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter;
 import com.routesme.taxiscreen.R;
 

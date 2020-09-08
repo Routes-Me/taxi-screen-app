@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.LoginScreens
+package com.routesme.taxi_screen.kotlin.MVVM.View
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -25,11 +25,12 @@ import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
-import com.routesme.taxi_screen.kotlin.Model.ApiResponse
+import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.MVVM.Model.LoginResponse
+import com.routesme.taxi_screen.kotlin.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi_screen.kotlin.Model.Error
-import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.View.LoginScreens.LearnMoreActivity
 import com.routesme.taxi_screen.kotlin.View.RegistrationScreen.RegistrationActivity
-import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
@@ -108,67 +109,40 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn() {
         dialog.show()
         val signInCredentials = SignInCredentials(userName, password)
-        val model: RoutesViewModel by viewModels()
-        model.getSignInResponse(signInCredentials, this).observe(this, Observer<ApiResponse> {
+        val loginViewModel: LoginViewModel by viewModels()
+        loginViewModel.signIn(signInCredentials, this).observe(this, Observer<LoginResponse> {
             dialog.dismiss()
             operations.enableNextButton(btn_next, true)
             if (it != null) {
+                val isSuccess = it.isSuccess
+                val errorResponse = it.responseErrors
                 val throwable = it.throwable
-                val signInSuccessResponse = it.signInSuccessResponse
-                val badRequestResponse = it.badRequestResponse
-                val errorResponse = it.errorResponse
-                if (throwable != null) {
+                 if (isSuccess) {
+                    val token = it.token
+                   // if (!token.isNullOrEmpty()) {
+                        saveDataIntoSharedPreference(token!!)
+                        openTaxiInformationScreen()
+                  //  }
+                }else if (errorResponse != null){
+                    if (!errorResponse.errors.isNullOrEmpty()) {
+                        for (error in errorResponse.errors) {
+                            if (error.code == 1 || error.code == 2) {
+                                showErrorMessage(error, true)
+                            }else{
+                                Toast.makeText(this,"Error message: ${error.detail}",Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+                }else if (throwable != null) {
                     if (throwable is IOException) {
                         Toast.makeText(this,"Failure: Network Issue !",Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this,"Failure: Conversion Issue !",Toast.LENGTH_SHORT).show()
                     }
-                } else if (signInSuccessResponse != null) {
-                    Toast.makeText(this,"Success",Toast.LENGTH_SHORT).show()
-                    val token = signInSuccessResponse.token
-                    if (!token.isNullOrEmpty()) {
-                        saveDataIntoSharedPreference(token)
-                        openTaxiInformationScreen()
-                    }
-                }else if (badRequestResponse != null){
-                    if (!badRequestResponse.errors.isNullOrEmpty()) {
-                        for (error in badRequestResponse.errors) {
-                            if (error.code == 1 || error.code == 2) {
-                                showErrorMessage(error, true)
-                            }
-                        }
-                    }
-                }else if (errorResponse != null){
-                    Toast.makeText(this,"Error.. Code: ${errorResponse.code}, Message: ${errorResponse.message}",Toast.LENGTH_SHORT).show()
                 }
             }else{
                 Toast.makeText(this,"Api Response : Null",Toast.LENGTH_SHORT).show()
             }
-
-            /*
-             if (it.isJsonArray) {
-                 val authErrors = Gson().fromJson<List<AuthCredentialsError>>(it as JsonArray?, object : TypeToken<List<AuthCredentialsError?>?>() {}.type)
-                 if (authErrors != null) {
-                     for (e in authErrors.indices) {
-                         if (authErrors[e].ErrorNumber == 1 || authErrors[e].ErrorNumber == 2) {
-                             showErrorMessage(authErrors[e].ErrorNumber, authErrors[e].ErrorMessage.toString(), true)
-                         }
-                     }
-                 }
-             }else {
-                 val signInResponse = Gson().fromJson<SignInResponse>(it, SignInResponse::class.java)
-                 if (signInResponse.status){
-
-                     val token = signInResponse.token
-                     if (!token.isNullOrEmpty()) {
-                         saveDataIntoSharedPreference(token)
-                         openTaxiInformationScreen()
-                     }
-                 }else{
-                     Toast.makeText(this,"${signInResponse.message}",Toast.LENGTH_LONG).show()
-                 }
-             }
-             */
         })
     }
 

@@ -20,8 +20,8 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.gms.nearby.messages.*
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
+import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.Model.PaymentData
-import com.routesme.taxi_screen.kotlin.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentActivity
 import com.routesme.taxiscreen.R
 import java.text.SimpleDateFormat

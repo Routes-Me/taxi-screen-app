@@ -13,7 +13,7 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.DetailActionStatus
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
+import com.routesme.taxi_screen.kotlin.MVVM.View.LoginActivity
 import com.routesme.taxiscreen.BuildConfig
 
 class AdminConsoleHelper(val activity: Activity) {

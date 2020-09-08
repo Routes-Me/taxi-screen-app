@@ -28,7 +28,7 @@ import com.routesme.taxi_screen.kotlin.Class.DateOperations
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.*
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
+import com.routesme.taxi_screen.kotlin.MVVM.View.LoginActivity
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
@@ -218,7 +218,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 if (it != null) {
                     val throwable = it.throwable
                     val registrationSuccessResponse = it.registrationSuccessResponse
-                    val badRequestResponse = it.badRequestResponse
+                    val badRequestResponse = it.responseErrors
                     val errorResponse = it.errorResponse
                     if (throwable != null) {
                         if (throwable is IOException) {

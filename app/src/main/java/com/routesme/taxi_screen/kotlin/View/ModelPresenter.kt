@@ -8,7 +8,7 @@ import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.Model.Authorization
 import com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity.HomeActivity
-import com.routesme.taxi_screen.kotlin.View.LoginScreens.LoginActivity
+import com.routesme.taxi_screen.kotlin.MVVM.View.LoginActivity
 import com.routesme.taxiscreen.R
 
 class ModelPresenter : AppCompatActivity() {

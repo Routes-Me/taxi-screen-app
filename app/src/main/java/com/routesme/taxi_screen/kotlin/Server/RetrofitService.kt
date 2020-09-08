@@ -8,6 +8,9 @@ import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.kotlin.Class.Helper
+import com.routesme.taxi_screen.kotlin.MVVM.API.ApiWorker
+import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInSuccessResponse
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxiscreen.R
 import retrofit2.Call
@@ -84,7 +87,7 @@ class RetrofitService() {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
                     signInApiResponse.value = ApiResponse(signInSuccessResponse)
                 }else if (response.code() == 400 && response.body() != null){
-                    val badRequestResponse = Gson().fromJson<BadRequestResponse>(response.body(), BadRequestResponse::class.java)
+                    val badRequestResponse = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
                     signInApiResponse.value = ApiResponse(badRequestResponse)
                 } else{
                     val errorResponse = ErrorResponse(response.code(), response.message())
@@ -106,7 +109,7 @@ class RetrofitService() {
                     val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
                     registerApiResponse.value = ApiResponse(registrationSuccessResponse)
                 }else if (response.code() == 400 && response.body() != null){
-                    val badRequestResponse = Gson().fromJson<BadRequestResponse>(response.body(), BadRequestResponse::class.java)
+                    val badRequestResponse = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
                     registerApiResponse.value = ApiResponse(badRequestResponse)
                 } else{
                     val errorResponse = ErrorResponse(response.code(), response.message())

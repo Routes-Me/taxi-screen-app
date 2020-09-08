@@ -1,8 +1,10 @@
-package com.routesme.taxi_screen.kotlin.Server
+package com.routesme.taxi_screen.kotlin.MVVM.API
 
 import android.app.Activity
 import android.content.Context
 import com.google.gson.GsonBuilder
+import com.routesme.taxi_screen.kotlin.Server.BasicAuthInterceptor
+import com.routesme.taxi_screen.kotlin.Server.UnauthorizedInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyManagementException
