@@ -32,7 +32,7 @@ class LoginRepository(val context: Context) {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
-                    signInResponse.value = LoginResponse(signInSuccessResponse.token)
+                    signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else{
                     if (response.body() != null){
                         val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)

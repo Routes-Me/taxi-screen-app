@@ -33,8 +33,11 @@
     <string name="search_for_taxi_offices">Search for taxi offices</string>
     <string name="search_plate_numbers">Search plate numbers</string>
     <string name="login_error_title">Login error</string>
+    <string name="registration_error_title">Registration error</string>
     <string name="token_is_null_value">Token is null value</string>
+    <string name="device_id_is_null_value">Device ID is null value</string>
     <string name="network_Issue">Network Issue !</string>
     <string name="conversion_Issue">Conversion Issue !</string>
     <string name="unknown_error">unknown error</string>
+    <string name="complete_required_data">Complete required data, please!</string>
 </resources>

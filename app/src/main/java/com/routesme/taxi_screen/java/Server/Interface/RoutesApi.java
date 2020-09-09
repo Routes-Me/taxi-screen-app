@@ -1,9 +1,11 @@
 package com.routesme.taxi_screen.java.Server.Interface;
 
-import com.routesme.taxi_screen.kotlin.Model.Institutions;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse;
-import com.routesme.taxi_screen.kotlin.Model.Vehicles;
+
+
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Institutions;
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials;
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationSuccessResponse;
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Vehicles;
 
 import retrofit2.Call;
 import retrofit2.http.Body;

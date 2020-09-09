@@ -122,22 +122,12 @@ interface QRCodeCallback {
 
 
 //New Registration Models
-enum class VehicleInformationListType(val value: String) { Institution("Institution"), Vehicle("Vehicle") }
-data class RegistrationCredentials(var DeviceSerialNumber: String? = null, var SimSerialNumber: String? = null, var VehicleId: Int = -999)
-data class RegistrationSuccessResponse(val deviceId: Int = -999, val status: Boolean = false, val message: String? = null, val responseCode: Int = -999)
-
-data class Institutions(val pagination: Pagination? = null, @SerializedName("data") val data: List<InstitutionData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
-data class InstitutionData(val createdAt: String? = null, val phoneNumber: String? = null, val institutionId: Int = -999, val countryIso: String? = null, val name: String? = null)
-
-data class Vehicles(val pagination: Pagination? = null, @SerializedName("data") val data: List<VehicleData>, val message: String? = null, val status: Boolean = false, val responseCode: Int = -999)
-data class VehicleData(val institutionId: Int = -999, val modelId: Int = -999, val vehicleId: Int = -999, val plateNumber: String? = null, val modelYear: Int = -999)
-
 
 data class ResponseErrors(val errors: List<Error>)
 data class Error(val code: Int = -999, val detail: String? = null, val status: Int = -999)
 
 data class ErrorResponse(val code: Int = -999, val message: String? = null)
-
+/*
 class ApiResponse {
     var signInSuccessResponse: SignInSuccessResponse? = null
     var registrationSuccessResponse: RegistrationSuccessResponse? = null
@@ -185,7 +175,7 @@ class ApiResponse {
         this.throwable = throwable
     }
 }
-
+*/
 open class Response(errors: ResponseErrors?, throwable: Throwable?) {
     var responseErrors: ResponseErrors? = null
     var throwable: Throwable? = null

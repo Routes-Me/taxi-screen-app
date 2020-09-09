@@ -31,16 +31,22 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi_screen.kotlin.View.RegistrationScreen.VehicleInformationActivity"
+        <activity android:name="com.routesme.taxi_screen.kotlin.MVVM.View.VehicleInformationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
         <activity
-            android:name="com.routesme.taxi_screen.kotlin.View.RegistrationScreen.RegistrationActivity"
+            android:name="com.routesme.taxi_screen.kotlin.MVVM.View.RegistrationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.kotlin.View.PaymentScreen.Activity.PaymentActivity"
@@ -68,13 +74,7 @@
             android:name="com.routesme.taxi_screen.kotlin.View.ModelPresenter"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.HOME" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name="com.routesme.taxi_screen.java.View.Login.TaxiInformationActivity"

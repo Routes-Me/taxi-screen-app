@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.RegistrationScreen
+package com.routesme.taxi_screen.kotlin.MVVM.View
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -14,23 +14,20 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.fragment.app.FragmentActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
-import com.routesme.taxi_screen.java.Model.TabletInfoViewModel
 import com.routesme.taxi_screen.kotlin.Class.App
 import com.routesme.taxi_screen.kotlin.Class.DateOperations
 import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationResponse
+import com.routesme.taxi_screen.kotlin.MVVM.Model.VehicleInformationListType
+import com.routesme.taxi_screen.kotlin.MVVM.ViewModel.RegistrationViewModel
 import com.routesme.taxi_screen.kotlin.Model.*
-import com.routesme.taxi_screen.kotlin.MVVM.View.LoginActivity
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter
-import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
@@ -40,7 +37,7 @@ import java.util.*
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private val app = App.instance
-    private var registrationCredentials = RegistrationCredentials()
+    private var registerCredentials = RegistrationCredentials()
     private val operations = Operations.instance
     private val READ_PHONE_STATE_REQUEST_CODE = 101
     //private val listTypeKey = getString(R.string.list_type_key)
@@ -118,7 +115,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         institutionId = app.institutionId
         //deviceInfo.setTaxiOfficeId(app.getTaxiOfficeId());
         //deviceInfo.setTaxiPlateNumber(app.getTaxiPlateNumber());
-        registrationCredentials.VehicleId = app.vehicleId
+        registerCredentials.VehicleId = app.vehicleId
         taxiOffice_tv.text = showTaxiOfficeName(app.institutionName)
         taxiPlateNumber_tv.text = showTaxiPlateNumber(app.taxiPlateNumber)
         super.onRestart()
@@ -134,7 +131,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), READ_PHONE_STATE_REQUEST_CODE)
             return
         } else {
-            registrationCredentials.apply {
+            registerCredentials.apply {
                 DeviceSerialNumber = telephonyManager.imei
                 SimSerialNumber = telephonyManager.simSerialNumber
                 deviceSerialNumber_tv.text = DeviceSerialNumber
@@ -169,7 +166,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             R.id.deviceSerialNumber_tv, R.id.SimCardNumber_tv -> clickOnGetDeviceInfo()
             R.id.taxiOffice_tv -> openInstitutionsList()
             R.id.taxiPlateNumber_tv -> openVehiclesList()
-            R.id.register_btn ->   registration() //register()
+            R.id.register_btn ->   register() //register()
         }
     }
 
@@ -195,57 +192,45 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(Intent(this, VehicleInformationActivity::class.java).putExtra(listTypeKey, listType))
     }
 
-    private fun register() {
-        if (token() != null && allDataExist()) {
-            operations.enableNextButton(register_btn, false)
-            dialog!!.show()
-            val tabletInfoViewModel = ViewModelProviders.of((this as FragmentActivity)).get(TabletInfoViewModel::class.java)
-            tabletInfoViewModel.getTabletInfo(this, token(), registrationCredentials, dialog, register_btn).observe((this as LifecycleOwner), Observer { response ->
-                saveTabletInfoIntoSharedPreferences(response)
-                openModelPresenterScreen()
-            })
-        }
-    }
-
-    private fun registration(){
+    private fun register(){
         if (token() != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
-            val model: RoutesViewModel by viewModels()
-            model.getRegistrationResponse(registrationCredentials, this).observe(this, Observer<ApiResponse> {
-                dialog?.dismiss()
-                operations.enableNextButton(register_btn, true)
+            val registrationViewModel: RegistrationViewModel by viewModels()
+            registrationViewModel.register(registerCredentials, this).observe(this, Observer<RegistrationResponse> {
+                 dialog?.dismiss()
+                 operations.enableNextButton(register_btn, true)
                 if (it != null) {
-                    val throwable = it.throwable
-                    val registrationSuccessResponse = it.registrationSuccessResponse
-                    val badRequestResponse = it.responseErrors
-                    val errorResponse = it.errorResponse
-                    if (throwable != null) {
-                        if (throwable is IOException) {
-                            Toast.makeText(this, "Failure: Network Issue !", Toast.LENGTH_SHORT).show()
-                        } else {
-                            Toast.makeText(this, "Failure: Conversion Issue !", Toast.LENGTH_SHORT).show()
+                    if (it.isSuccess) {
+                        val deviceId = it.deviceId ?: run {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.device_id_is_null_value))
+                            return@Observer
                         }
-
-                    } else if (registrationSuccessResponse != null) {
-                        Toast.makeText(this, "Success", Toast.LENGTH_SHORT).show()
-                        saveTabletInfoIntoSharedPreferences(registrationSuccessResponse)
+                        saveTabletInfoIntoSharedPreferences(deviceId)
                         openModelPresenterScreen()
-                    } else if (badRequestResponse != null) {
-                        if (!badRequestResponse.errors.isNullOrEmpty()) {
-                            for (error in badRequestResponse.errors) {
-                                Toast.makeText(this, "Error.. Code: ${error.code}, Detail: ${error.detail}", Toast.LENGTH_SHORT).show()
+                    } else {
+                        if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                            it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                        } else if (it.mThrowable != null) {
+                            if (it.mThrowable is IOException) {
+                                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                            } else {
+                                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
                             }
                         }
-                    } else if (errorResponse != null) {
-                        Toast.makeText(this, "Error.. Code: ${errorResponse.code}, Message: ${errorResponse.message}", Toast.LENGTH_SHORT).show()
                     }
                 } else {
-                    Toast.makeText(this, "Api Response : Null", Toast.LENGTH_SHORT).show()
+                    operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
                 }
             })
         }else{
-            Toast.makeText(this, "Complete required data, please!", Toast.LENGTH_SHORT).show()
+            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
+        }
+    }
+
+    private fun displayErrors(errors: List<Error>) {
+        for (error in errors) {
+                operations.displayAlertDialog(this, getString(R.string.registration_error_title), "Error message: ${error.detail}")
         }
     }
 
@@ -277,8 +262,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun tabletInformationExist(): Boolean {
-        val tabletSerialNumber = registrationCredentials.DeviceSerialNumber
-        val simCardNumber = registrationCredentials.SimSerialNumber
+        val tabletSerialNumber = registerCredentials.DeviceSerialNumber
+        val simCardNumber = registerCredentials.SimSerialNumber
         return if (tabletSerialNumber.isNullOrEmpty() || simCardNumber.isNullOrEmpty()) {
             showTabletInfoError(true)
             false
@@ -287,7 +272,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun saveTabletInfoIntoSharedPreferences(registrationSuccessResponse: RegistrationSuccessResponse) {
+    private fun saveTabletInfoIntoSharedPreferences(deviceId: Int) {
         editor.apply {
             putString(SharedPreference.technician_username, app.signInCredentials?.Username)
             putString(SharedPreference.registration_date, DateOperations().registrationDate(Date()))
@@ -295,9 +280,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreference.institution_name, app.institutionName)
             putInt(SharedPreference.vehicle_id, app.vehicleId)
             putString(SharedPreference.vehicle_plate_number, app.taxiPlateNumber)
-            putInt(SharedPreference.device_id, registrationSuccessResponse.deviceId)
-            putString(SharedPreference.device_serial_number, registrationCredentials.DeviceSerialNumber)
-            putString(SharedPreference.sim_serial_number, registrationCredentials.SimSerialNumber)
+            putInt(SharedPreference.device_id, deviceId)
+            putString(SharedPreference.device_serial_number, registerCredentials.DeviceSerialNumber)
+            putString(SharedPreference.sim_serial_number, registerCredentials.SimSerialNumber)
         }.apply()
     }
 

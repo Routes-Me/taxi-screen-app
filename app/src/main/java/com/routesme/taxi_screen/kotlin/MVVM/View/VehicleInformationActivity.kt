@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.RegistrationScreen
+package com.routesme.taxi_screen.kotlin.MVVM.View
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -11,8 +11,8 @@ import com.routesme.taxi_screen.java.Class.OfficesAdapterMultibleViews
 import com.routesme.taxi_screen.java.Model.OfficePlatesListViewModel
 import com.routesme.taxi_screen.java.Model.OfficesListViewModel
 import com.routesme.taxi_screen.kotlin.Class.App
+import com.routesme.taxi_screen.kotlin.MVVM.Model.VehicleInformationListType
 import com.routesme.taxi_screen.kotlin.Model.ItemType
-import com.routesme.taxi_screen.kotlin.Model.VehicleInformationListType
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.activity_vehicle_information.*
 import java.util.*

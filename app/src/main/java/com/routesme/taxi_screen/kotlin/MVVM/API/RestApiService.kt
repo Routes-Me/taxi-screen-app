@@ -4,24 +4,33 @@ import android.content.Context
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.Helper
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Institutions
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Vehicles
 import com.routesme.taxi_screen.kotlin.Model.*
-import com.routesme.taxi_screen.kotlin.Server.RoutesApi
 import com.routesme.taxiscreen.R
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.POST
-import retrofit2.http.Query
+import retrofit2.http.*
+
 
 interface RestApiService {
 
     @POST("v1/signin")
-    fun signIn(@Body signInCredentials: SignInCredentials?): Call<JsonElement>
+    fun signIn(@Body signInCredentials: SignInCredentials): Call<JsonElement>
+
 
     @POST("devices")
-    fun register(@Body registrationCredentials: RegistrationCredentials?): Call<JsonElement>
+    fun register(@Body registrationCredentials: RegistrationCredentials): Call<JsonElement>
+
+    @GET("institutions")
+    fun getInstitutions(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<Institutions>
+
+    @GET("vehicles/{institutionId}")
+    fun getVehicles(@Path("institutionId") institutionId: Int, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<Vehicles>
+
+
 
     //Advertisements...
     @GET("Channels")

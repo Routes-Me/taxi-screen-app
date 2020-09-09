@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.routesme.taxi_screen.java.Server.Class.RetrofitClientInstance;
 import com.routesme.taxi_screen.java.Server.Interface.RoutesApi;
-import com.routesme.taxi_screen.kotlin.Model.Vehicles;
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Vehicles;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -15,7 +15,7 @@ import retrofit2.Response;
 public class OfficePlatesListViewModel extends ViewModel {
 
     //this is the data that we will fetch asynchronously
-    private MutableLiveData<Vehicles> Vehicles;
+    private MutableLiveData<com.routesme.taxi_screen.kotlin.MVVM.Model.Vehicles> Vehicles;
 
     //we will call this method to get the data
     public LiveData<Vehicles> getVehicles(Activity activity, int offset, int limit, int institutionId) {

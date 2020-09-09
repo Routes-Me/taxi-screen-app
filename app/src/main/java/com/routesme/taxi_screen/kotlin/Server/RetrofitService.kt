@@ -25,8 +25,8 @@ class RetrofitService() {
     val videoList: MutableLiveData<List<VideoModel>> = MutableLiveData()
     val bannerList: MutableLiveData<List<BannerModel>> = MutableLiveData()
     val signInResponse:MutableLiveData<JsonElement> = MutableLiveData()
-    val signInApiResponse = MutableLiveData<ApiResponse>()
-    val registerApiResponse = MutableLiveData<ApiResponse>()
+    //val signInApiResponse = MutableLiveData<ApiResponse>()
+   // val registerApiResponse = MutableLiveData<ApiResponse>()
 
     companion object Factory {
         fun create(context: Context): RoutesApi {
@@ -74,7 +74,7 @@ class RetrofitService() {
         )
         return bannerList
     }
-
+/*
     fun signInResponse(signInCredentials: SignInCredentials, context: Context): MutableLiveData<ApiResponse> {
         val encryptedPassword = encrypt(signInCredentials.Password)
         Log.d("Encryption", encryptedPassword)
@@ -122,6 +122,6 @@ class RetrofitService() {
         })
         return registerApiResponse
     }
-
+*/
     private fun encrypt(str: String) = AesBase64Wrapper().getEncryptedString(str)
 }

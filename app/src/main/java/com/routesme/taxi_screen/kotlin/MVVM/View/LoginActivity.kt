@@ -29,7 +29,6 @@ import com.routesme.taxi_screen.kotlin.MVVM.Model.LoginResponse
 import com.routesme.taxi_screen.kotlin.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi_screen.kotlin.Model.Error
 import com.routesme.taxi_screen.kotlin.View.LoginScreens.LearnMoreActivity
-import com.routesme.taxi_screen.kotlin.View.RegistrationScreen.RegistrationActivity
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
@@ -47,7 +46,7 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var signInCredentials: SignInCredentials
     private lateinit var userName: String
     private lateinit var password: String
-    private lateinit var dialog: AlertDialog
+    private var dialog: AlertDialog? = null
     private val operations = Operations.instance
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -106,11 +105,11 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun signIn() {
-        dialog.show()
+        dialog?.show()
         val signInCredentials = SignInCredentials(userName, password)
         val loginViewModel: LoginViewModel by viewModels()
         loginViewModel.signIn(signInCredentials, this).observe(this, Observer<LoginResponse> {
-            dialog.dismiss()
+            dialog?.dismiss()
             operations.enableNextButton(btn_next, true)
             if (it != null) {
                 if (it.isSuccess) {

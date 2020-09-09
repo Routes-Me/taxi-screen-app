@@ -1,6 +1,7 @@
 package com.routesme.taxi_screen.kotlin.Server
 
 import com.google.gson.JsonElement
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
 import com.routesme.taxi_screen.kotlin.Model.*
 import retrofit2.Call

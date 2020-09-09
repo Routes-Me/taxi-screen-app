@@ -9,8 +9,9 @@ import androidx.lifecycle.ViewModel;
 import com.routesme.taxi_screen.java.Server.Class.RetrofitClientInstance;
 import com.routesme.taxi_screen.java.Server.Interface.RoutesApi;
 import com.routesme.taxi_screen.kotlin.Class.Operations;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationCredentials;
-import com.routesme.taxi_screen.kotlin.Model.RegistrationSuccessResponse;
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials;
+import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationSuccessResponse;
+
 
 import retrofit2.Call;
 import retrofit2.Callback;
