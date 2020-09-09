@@ -32,4 +32,9 @@
     <string name="list_type_key">List_Type_Key</string>
     <string name="search_for_taxi_offices">Search for taxi offices</string>
     <string name="search_plate_numbers">Search plate numbers</string>
+    <string name="login_error_title">Login error</string>
+    <string name="token_is_null_value">Token is null value</string>
+    <string name="network_Issue">Network Issue !</string>
+    <string name="conversion_Issue">Conversion Issue !</string>
+    <string name="unknown_error">unknown error</string>
 </resources>

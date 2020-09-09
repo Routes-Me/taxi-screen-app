@@ -186,7 +186,6 @@ class ApiResponse {
     }
 }
 
-
 open class Response(errors: ResponseErrors?, throwable: Throwable?) {
     var responseErrors: ResponseErrors? = null
     var throwable: Throwable? = null
@@ -195,12 +194,3 @@ open class Response(errors: ResponseErrors?, throwable: Throwable?) {
         this.throwable = throwable
     }
 }
-
-
-/*
-class Footballer(age: Int, name: String): Response(age, name) {
-    fun playFootball() {
-        println("I play for LA Galaxy.")
-    }
-}
- */

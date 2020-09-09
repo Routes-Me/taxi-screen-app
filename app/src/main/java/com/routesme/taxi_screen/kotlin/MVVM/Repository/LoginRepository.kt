@@ -33,31 +33,21 @@ class LoginRepository(val context: Context) {
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
                     signInResponse.value = LoginResponse(signInSuccessResponse.token)
-                }
-                /*
-                else if (response.code() == 400 && response.body() != null){
-                    val badRequestResponse = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
-                    signInApiResponse.value = SignInResponse(badRequestResponse)
-                }
-                 */
-                else{
+                } else{
                     if (response.body() != null){
                         val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
-                        signInResponse.value = LoginResponse(errors = errors)
+                        signInResponse.value = LoginResponse(mResponseErrors = errors)
                     }else{
                         val error = Error(detail = response.message(),status = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
 
                         val responseErrors = ResponseErrors(errors)
-                        signInResponse.value = LoginResponse(errors = responseErrors)
+                        signInResponse.value = LoginResponse(mResponseErrors = responseErrors)
                     }
-
-                   // val errorResponse = ErrorResponse(response.code(), response.message())
-                   // this@LoginRepository.response.value = SignInResponse(errorResponse)
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                signInResponse.value = LoginResponse(throwable = throwable)
+                signInResponse.value = LoginResponse(mThrowable = throwable)
             }
         })
         return signInResponse

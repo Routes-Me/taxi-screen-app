@@ -14,7 +14,6 @@ import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -114,36 +113,38 @@ class LoginActivity : AppCompatActivity() {
             dialog.dismiss()
             operations.enableNextButton(btn_next, true)
             if (it != null) {
-                val isSuccess = it.isSuccess
-                val errorResponse = it.responseErrors
-                val throwable = it.throwable
-                 if (isSuccess) {
-                    val token = it.token
-                   // if (!token.isNullOrEmpty()) {
-                        saveDataIntoSharedPreference(token!!)
-                        openTaxiInformationScreen()
-                  //  }
-                }else if (errorResponse != null){
-                    if (!errorResponse.errors.isNullOrEmpty()) {
-                        for (error in errorResponse.errors) {
-                            if (error.code == 1 || error.code == 2) {
-                                showErrorMessage(error, true)
-                            }else{
-                                Toast.makeText(this,"Error message: ${error.detail}",Toast.LENGTH_SHORT).show()
-                            }
+                if (it.isSuccess) {
+                    val token = it.token ?: run {
+                        operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
+                        return@Observer
+                    }
+                    saveDataIntoSharedPreference(token)
+                    openRegistrationActivity()
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.conversion_Issue))
                         }
                     }
-                }else if (throwable != null) {
-                    if (throwable is IOException) {
-                        Toast.makeText(this,"Failure: Network Issue !",Toast.LENGTH_SHORT).show()
-                    } else {
-                        Toast.makeText(this,"Failure: Conversion Issue !",Toast.LENGTH_SHORT).show()
-                    }
                 }
-            }else{
-                Toast.makeText(this,"Api Response : Null",Toast.LENGTH_SHORT).show()
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.unknown_error))
             }
         })
+    }
+
+    private fun displayErrors(errors: List<Error>) {
+        for (error in errors) {
+            if (error.code == 1 || error.code == 2) {
+                showErrorMessage(error, true)
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.login_error_title), "Error message: ${error.detail}")
+            }
+        }
     }
 
     private fun saveDataIntoSharedPreference(token: String) {
@@ -151,7 +152,7 @@ class LoginActivity : AppCompatActivity() {
         editor.putString(SharedPreference.token, token).apply()
     }
 
-    private fun openTaxiInformationScreen() {
+    private fun openRegistrationActivity() {
         startActivity(Intent(this, RegistrationActivity::class.java))
         finish()
     }
@@ -290,4 +291,5 @@ class LoginActivity : AppCompatActivity() {
         app.isNewLogin = true
     }
 }
-enum class Field (val code: Int) {UserName(1), Password(2)}
+
+enum class Field(val code: Int) { UserName(1), Password(2) }
