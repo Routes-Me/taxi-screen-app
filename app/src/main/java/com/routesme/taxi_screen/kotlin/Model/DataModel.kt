@@ -35,7 +35,7 @@ data class Office(val taxiOfficeID: Int? = null, val taxiOfficeCarsCount: Int? =
 data class OfficePlatesList(@SerializedName("data") val officePlatesData: List<TaxiPlate?>? = null)
 
 data class TaxiPlate(val tabletCarPlateNo: String? = null)
-data class ItemType(val itemName: String? = null, val isHeader: Boolean = false, val isNormalItem: Boolean = false, val id: Int = -999)
+data class Item(val id: Int = -999, val itemName: String? = null, val isHeader: Boolean = false)
 //Tablet Data
 //data class DeviceRegistrationResponse(@SerializedName("tabletRegesterPassword") val tabletPassword: String? = null, @SerializedName("tabletRegesterChannelID") val tabletChannelId: Int = 0)
 

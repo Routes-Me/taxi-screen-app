@@ -1,35 +1,41 @@
 package com.routesme.taxi_screen.kotlin.MVVM.View
 
+import android.app.AlertDialog
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.routesme.taxi_screen.java.Class.OfficesAdapterMultibleViews
-import com.routesme.taxi_screen.java.Model.OfficePlatesListViewModel
-import com.routesme.taxi_screen.java.Model.OfficesListViewModel
 import com.routesme.taxi_screen.kotlin.Class.App
-import com.routesme.taxi_screen.kotlin.MVVM.Model.VehicleInformationListType
-import com.routesme.taxi_screen.kotlin.Model.ItemType
+import com.routesme.taxi_screen.kotlin.Class.Operations
+import com.routesme.taxi_screen.kotlin.Class.VehicleInformationAdapter
+import com.routesme.taxi_screen.kotlin.MVVM.Model.VehicleInformationModel.*
+import com.routesme.taxi_screen.kotlin.MVVM.ViewModel.VehicleInformationViewModel
+import com.routesme.taxi_screen.kotlin.Model.Item
+import com.routesme.taxi_screen.kotlin.Model.Error
 import com.routesme.taxiscreen.R
+import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_vehicle_information.*
+import java.io.IOException
 import java.util.*
 
 class VehicleInformationActivity : AppCompatActivity() {
 
     private var app = App.instance
+    private val operations = Operations.instance
+    private var dialog: AlertDialog? = null
     //private val listTypeKey = getString(R.string.list_type_key)
     private lateinit var listType: VehicleInformationListType
     //private lateinit var myToolbar: Toolbar
     //sharedPreference Storage
-    private var officesListViewModel: OfficesListViewModel? = null
-    private var officePlatesListViewModel: OfficePlatesListViewModel? = null
+    //private var officesListViewModel: OfficesListViewModel? = null
+   // private var officePlatesListViewModel: OfficePlatesListViewModel? = null
     //Section recyclerView ...
-    private lateinit var adapter: OfficesAdapterMultibleViews
-    private lateinit var institutionsArrayList: ArrayList<ItemType>
-    private  lateinit var vehiclesArrayList: ArrayList<ItemType>
+    private lateinit var vehicleInformationAdapter: VehicleInformationAdapter
+    private lateinit var institutionsArrayList: ArrayList<Item>
+    private  lateinit var vehiclesArrayList: ArrayList<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,6 +48,7 @@ class VehicleInformationActivity : AppCompatActivity() {
         if (intent.hasExtra(listTypeKey)) {
             listType = intent.getSerializableExtra(listTypeKey) as VehicleInformationListType
             toolbarSetUp()
+            dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
             recyclerView.apply {
                 setHasFixedSize(true)
                 layoutManager = LinearLayoutManager(this@VehicleInformationActivity)
@@ -71,25 +78,26 @@ class VehicleInformationActivity : AppCompatActivity() {
 
     private fun getList() {
         when (listType) {
-            VehicleInformationListType.Institution -> getInstitutionsList_Sections()
-            else -> getVehiclesList_Sections()
+            VehicleInformationListType.Institution -> getInstitutions()
+            else -> getVehicles()
         }
     }
+    /*
     private fun getInstitutionsList_Sections() {
         officesListViewModel = ViewModelProviders.of(this).get(OfficesListViewModel::class.java)
         officesListViewModel?.getInstitutions(this, 1, 40)?.observe((this as LifecycleOwner), Observer { (_, institutionList) ->
             institutionsArrayList = ArrayList()
 
             if (institutionList.isNotEmpty()) {
-                institutionsArrayList.add(ItemType("Institutions", true, false, 0))
+                institutionsArrayList.add(Item("Institutions", -1, true, false))
                 for (i in institutionList.indices) {
-                    institutionsArrayList.add(ItemType(institutionList[i].name, false, true, institutionList[i].institutionId))
+                    institutionsArrayList.add(Item(institutionList[i].name, institutionList[i].institutionId, false, true))
                 }
             }
-            adapter = OfficesAdapterMultibleViews(this, institutionsArrayList)
-            recyclerView.adapter = adapter
+            vehicleInformationAdapter = VehicleInformationAdapter(this, institutionsArrayList)
+            recyclerView.adapter = vehicleInformationAdapter
             recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            adapter.setOnItemClickListener { position ->
+            vehicleInformationAdapter.setOnItemClickListener { position ->
                 app.institutionId = institutionsArrayList[position].id
                 app.institutionName = institutionsArrayList[position].itemName
                 app.vehicleId = -999
@@ -98,25 +106,152 @@ class VehicleInformationActivity : AppCompatActivity() {
             }
         })
     }
-
+*/
+    /*
+     when(type){
+                VehicleInformationListType.Institution ->
+                else -> add(Item(getString(R.string.vehicles), true, false, -1))
+            }
+    */
+    /*
     private fun getVehiclesList_Sections() {
         officePlatesListViewModel = ViewModelProviders.of(this).get(OfficePlatesListViewModel::class.java)
         officePlatesListViewModel?.getVehicles(this, 1, 150, app.institutionId)?.observe((this as LifecycleOwner), Observer { (_, vehiclesList) ->
             vehiclesArrayList = ArrayList()
             if (vehiclesList.isNotEmpty()) {
-                vehiclesArrayList.add(ItemType("Vehicles", true, false, -1))
+                vehiclesArrayList.add(Item("Vehicles", -1, true, false))
                 for (i in vehiclesList.indices) {
-                    vehiclesArrayList.add(ItemType(vehiclesList[i].plateNumber, false, true, vehiclesList[i].vehicleId))
+                    vehiclesArrayList.add(Item(vehiclesList[i].plateNumber, vehiclesList[i].vehicleId, false, true))
                 }
             }
-            adapter = OfficesAdapterMultibleViews(this, vehiclesArrayList)
-            recyclerView.adapter = adapter
+            vehicleInformationAdapter = VehicleInformationAdapter(this, vehiclesArrayList)
+            recyclerView.adapter = vehicleInformationAdapter
             recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            adapter.setOnItemClickListener { position ->
+            vehicleInformationAdapter.setOnItemClickListener { position ->
                 app.vehicleId = vehiclesArrayList[position].id
                 app.taxiPlateNumber = vehiclesArrayList[position].itemName
                 finish()
             }
         })
+    }
+*/
+    private fun getInstitutions(){
+            dialog?.show()
+            val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
+            vehicleInformationViewModel.getInstitutions(1,40,this).observe(this, Observer<InstitutionsResponse> {
+                dialog?.dismiss()
+                if (it != null) {
+                    if (it.isSuccess) {
+                        val list = it.data ?: run {
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
+                            return@Observer
+                        }
+                        if (list.isEmpty()){
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
+                            return@Observer
+                        }else{
+                            displayInstitutionList(list)
+                        }
+                    } else {
+                        if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                            it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                        } else if (it.mThrowable != null) {
+                            if (it.mThrowable is IOException) {
+                                operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.network_Issue))
+                            } else {
+                                operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.conversion_Issue))
+                            }
+                        }
+                    }
+                } else {
+                    operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.unknown_error))
+                }
+            })
+    }
+
+    private fun displayInstitutionList(list: List<InstitutionData>) {
+        val institutions = mutableListOf<Item>().apply {
+            add(Item(-1, getString(R.string.institutions), true))
+            for (institution in list){
+                add(Item(institution.institutionId, institution.name, false))
+            }
+        }.toList()
+
+        vehicleInformationAdapter = VehicleInformationAdapter(this, institutions)
+        vehicleInformationAdapter.onItemClick = {
+            app.apply {
+                institutionId = it.id
+                institutionName = it.itemName
+                vehicleId = -999
+                taxiPlateNumber = null
+            }
+            finish()
+        }
+        recyclerView.apply {
+            adapter = vehicleInformationAdapter
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+        }
+    }
+
+    private fun getVehicles(){
+        dialog?.show()
+        val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
+        vehicleInformationViewModel.getVehicles(app.institutionId,1,150,this).observe(this, Observer<VehiclesResponse> {
+            dialog?.dismiss()
+            if (it != null) {
+                if (it.isSuccess) {
+                    val list = it.data ?: run {
+                        operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
+                        return@Observer
+                    }
+                    if (list.isEmpty()){
+                        operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
+                        return@Observer
+                    }else{
+                        displayVehicleList(list)
+                    }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun displayVehicleList(list: List<VehicleData>) {
+        val vehicles = mutableListOf<Item>().apply {
+            add(Item(-1, getString(R.string.vehicles) , true))
+            for (vehicle in list){
+                add(Item(vehicle.vehicleId, vehicle.plateNumber, false))
+            }
+        }.toList()
+
+        vehicleInformationAdapter = VehicleInformationAdapter(this, vehicles)
+        vehicleInformationAdapter.onItemClick = {
+                app.apply {
+                    vehicleId = it.id
+                    taxiPlateNumber = it.itemName
+                }
+                finish()
+        }
+        recyclerView.apply {
+            adapter = vehicleInformationAdapter
+            layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
+        }
+    }
+
+    private fun displayErrors(errors: List<Error>) {
+        for (error in errors) {
+            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), "Error message: ${error.detail}")
+        }
     }
 }

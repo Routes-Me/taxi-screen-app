@@ -4,10 +4,8 @@ import android.content.Context
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi_screen.kotlin.Class.Helper
-import com.routesme.taxi_screen.kotlin.MVVM.Model.Institutions
 import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInCredentials
-import com.routesme.taxi_screen.kotlin.MVVM.Model.Vehicles
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxiscreen.R
 import retrofit2.Call
@@ -25,10 +23,10 @@ interface RestApiService {
     fun register(@Body registrationCredentials: RegistrationCredentials): Call<JsonElement>
 
     @GET("institutions")
-    fun getInstitutions(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<Institutions>
+    fun getInstitutions(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
     @GET("vehicles/{institutionId}")
-    fun getVehicles(@Path("institutionId") institutionId: Int, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<Vehicles>
+    fun getVehicles(@Path("institutionId") institutionId: Int, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
 
 

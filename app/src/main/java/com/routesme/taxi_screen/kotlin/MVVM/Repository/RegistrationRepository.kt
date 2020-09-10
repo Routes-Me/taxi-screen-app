@@ -15,7 +15,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegistrationRepository(val context: Context) {
-    val registrationResponse = MutableLiveData<RegistrationResponse>()
+    private val registrationResponse = MutableLiveData<RegistrationResponse>()
 
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)

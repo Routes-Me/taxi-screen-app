@@ -16,7 +16,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class LoginRepository(val context: Context) {
-    val signInResponse = MutableLiveData<LoginResponse>()
+    private val signInResponse = MutableLiveData<LoginResponse>()
 
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)

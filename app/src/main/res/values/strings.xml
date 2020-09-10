@@ -34,10 +34,14 @@
     <string name="search_plate_numbers">Search plate numbers</string>
     <string name="login_error_title">Login error</string>
     <string name="registration_error_title">Registration error</string>
+    <string name="vehicle_information_error_title">Vehicle information error</string>
     <string name="token_is_null_value">Token is null value</string>
     <string name="device_id_is_null_value">Device ID is null value</string>
+    <string name="no_data_found">No data found !</string>
     <string name="network_Issue">Network Issue !</string>
     <string name="conversion_Issue">Conversion Issue !</string>
     <string name="unknown_error">unknown error</string>
     <string name="complete_required_data">Complete required data, please!</string>
+    <string name="institutions">Institutions</string>
+    <string name="vehicles">Vehicles</string>
 </resources>

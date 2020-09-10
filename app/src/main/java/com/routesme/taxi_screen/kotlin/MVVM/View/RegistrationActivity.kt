@@ -24,7 +24,7 @@ import com.routesme.taxi_screen.kotlin.Class.Operations
 import com.routesme.taxi_screen.kotlin.Class.SharedPreference
 import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi_screen.kotlin.MVVM.Model.RegistrationResponse
-import com.routesme.taxi_screen.kotlin.MVVM.Model.VehicleInformationListType
+import com.routesme.taxi_screen.kotlin.MVVM.Model.VehicleInformationModel.*
 import com.routesme.taxi_screen.kotlin.MVVM.ViewModel.RegistrationViewModel
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.View.ModelPresenter
