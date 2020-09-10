@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.kotlin.MVVM.View
 import android.app.AlertDialog
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -19,23 +18,14 @@ import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_vehicle_information.*
 import java.io.IOException
-import java.util.*
 
 class VehicleInformationActivity : AppCompatActivity() {
 
     private var app = App.instance
     private val operations = Operations.instance
     private var dialog: AlertDialog? = null
-    //private val listTypeKey = getString(R.string.list_type_key)
     private lateinit var listType: VehicleInformationListType
-    //private lateinit var myToolbar: Toolbar
-    //sharedPreference Storage
-    //private var officesListViewModel: OfficesListViewModel? = null
-   // private var officePlatesListViewModel: OfficePlatesListViewModel? = null
-    //Section recyclerView ...
     private lateinit var vehicleInformationAdapter: VehicleInformationAdapter
-    private lateinit var institutionsArrayList: ArrayList<Item>
-    private  lateinit var vehiclesArrayList: ArrayList<Item>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -82,59 +72,6 @@ class VehicleInformationActivity : AppCompatActivity() {
             else -> getVehicles()
         }
     }
-    /*
-    private fun getInstitutionsList_Sections() {
-        officesListViewModel = ViewModelProviders.of(this).get(OfficesListViewModel::class.java)
-        officesListViewModel?.getInstitutions(this, 1, 40)?.observe((this as LifecycleOwner), Observer { (_, institutionList) ->
-            institutionsArrayList = ArrayList()
-
-            if (institutionList.isNotEmpty()) {
-                institutionsArrayList.add(Item("Institutions", -1, true, false))
-                for (i in institutionList.indices) {
-                    institutionsArrayList.add(Item(institutionList[i].name, institutionList[i].institutionId, false, true))
-                }
-            }
-            vehicleInformationAdapter = VehicleInformationAdapter(this, institutionsArrayList)
-            recyclerView.adapter = vehicleInformationAdapter
-            recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            vehicleInformationAdapter.setOnItemClickListener { position ->
-                app.institutionId = institutionsArrayList[position].id
-                app.institutionName = institutionsArrayList[position].itemName
-                app.vehicleId = -999
-                app.taxiPlateNumber = null
-                finish()
-            }
-        })
-    }
-*/
-    /*
-     when(type){
-                VehicleInformationListType.Institution ->
-                else -> add(Item(getString(R.string.vehicles), true, false, -1))
-            }
-    */
-    /*
-    private fun getVehiclesList_Sections() {
-        officePlatesListViewModel = ViewModelProviders.of(this).get(OfficePlatesListViewModel::class.java)
-        officePlatesListViewModel?.getVehicles(this, 1, 150, app.institutionId)?.observe((this as LifecycleOwner), Observer { (_, vehiclesList) ->
-            vehiclesArrayList = ArrayList()
-            if (vehiclesList.isNotEmpty()) {
-                vehiclesArrayList.add(Item("Vehicles", -1, true, false))
-                for (i in vehiclesList.indices) {
-                    vehiclesArrayList.add(Item(vehiclesList[i].plateNumber, vehiclesList[i].vehicleId, false, true))
-                }
-            }
-            vehicleInformationAdapter = VehicleInformationAdapter(this, vehiclesArrayList)
-            recyclerView.adapter = vehicleInformationAdapter
-            recyclerView.layoutManager = LinearLayoutManager(applicationContext, LinearLayoutManager.VERTICAL, false)
-            vehicleInformationAdapter.setOnItemClickListener { position ->
-                app.vehicleId = vehiclesArrayList[position].id
-                app.taxiPlateNumber = vehiclesArrayList[position].itemName
-                finish()
-            }
-        })
-    }
-*/
     private fun getInstitutions(){
             dialog?.show()
             val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
