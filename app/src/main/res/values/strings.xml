@@ -35,6 +35,7 @@
     <string name="login_error_title">Login error</string>
     <string name="registration_error_title">Registration error</string>
     <string name="vehicle_information_error_title">Vehicle information error</string>
+    <string name="content_error_title">Content error</string>
     <string name="token_is_null_value">Token is null value</string>
     <string name="device_id_is_null_value">Device ID is null value</string>
     <string name="no_data_found">No data found !</string>

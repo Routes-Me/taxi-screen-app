@@ -18,7 +18,6 @@ interface RestApiService {
     @POST("v1/signin")
     fun signIn(@Body signInCredentials: SignInCredentials): Call<JsonElement>
 
-
     @POST("devices")
     fun register(@Body registrationCredentials: RegistrationCredentials): Call<JsonElement>
 
@@ -28,8 +27,10 @@ interface RestApiService {
     @GET("vehicles/{institutionId}")
     fun getVehicles(@Path("institutionId") institutionId: Int, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
+    @GET("campaigns/advertisementsqr")
+    fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
-
+/*
     //Advertisements...
     @GET("Channels")
     fun getVideos(@Query("channelidvideolist") ch_ID_Videos: Int): Call<List<VideoModel>>
@@ -39,6 +40,7 @@ interface RestApiService {
 
     @GET("Contents")
     fun getContent(): Call<ContentResponse>
+*/
 
     companion object {
         fun createCorService(context: Context): RestApiService {

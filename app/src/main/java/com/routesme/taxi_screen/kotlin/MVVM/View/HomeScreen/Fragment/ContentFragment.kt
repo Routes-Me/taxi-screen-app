@@ -1,11 +1,11 @@
-package com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment
+package com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Fragment
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import android.net.ConnectivityManager
 import android.net.ConnectivityManager.CONNECTIVITY_ACTION
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -16,21 +16,25 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi_screen.kotlin.Class.App
-import com.routesme.taxi_screen.kotlin.Class.ConnectivityReceiver
-import com.routesme.taxi_screen.kotlin.Class.DisplayAdvertisements
-import com.routesme.taxi_screen.kotlin.Class.SharedPreference
+import com.routesme.taxi_screen.kotlin.Class.*
+import com.routesme.taxi_screen.kotlin.MVVM.Model.*
+import com.routesme.taxi_screen.kotlin.MVVM.Model.ContentResponse
+import com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Activity.HomeActivity
+import com.routesme.taxi_screen.kotlin.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.VideoPlayer.Constants
 import com.routesme.taxi_screen.kotlin.VideoPlayer.VideoPreLoadingService
 import com.routesme.taxi_screen.kotlin.ViewModel.RoutesViewModel
 import com.routesme.taxiscreen.R
+import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*
+import java.io.IOException
 
 class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.ConnectivityReceiverListener {
 
+    private val operations = Operations.instance
     private lateinit var tabletSerialNumber:String
-    private lateinit var contentFragmentContext: Context
+    private lateinit var mContext: Context
     private var qRCodeCallback: QRCodeCallback? = null
     private lateinit var view1: View
     private lateinit var sharedPreferences: SharedPreferences
@@ -40,13 +44,14 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private var isConnected = false
     private var isDataFetched = false
     private lateinit var displayAdvertisements: DisplayAdvertisements
+    private var dialog: AlertDialog? = null
 
     companion object {
         val instance = ContentFragment()
     }
 
     override fun onAttach(context: Context) {
-        contentFragmentContext = context
+        mContext = context
         sharedPreferences = context.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
         // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
         // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
@@ -74,6 +79,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     }
 
     private fun initAdvertiseViews() {
+        dialog = SpotsDialog.Builder().setContext(mContext).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
         view1.apply {
             Advertisement_Banner_CardView.setOnClickListener(instance)
             Advertisement_Video_CardView.setOnClickListener(instance)
@@ -108,7 +114,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private fun checkConnection() {
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
-            fetchAdvertisementData()
+            fetchContent()
         } else {
             networkListener()
         }
@@ -121,7 +127,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
-            fetchAdvertisementData()
+            fetchContent()
             connectivityReceiverRegistering(false)
         }
     }
@@ -131,22 +137,65 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
                 intentFilter.addAction(CONNECTIVITY_ACTION)
-                contentFragmentContext.registerReceiver(connectivityReceiver, intentFilter)
+                mContext.registerReceiver(connectivityReceiver, intentFilter)
             } else {
-                contentFragmentContext.unregisterReceiver(connectivityReceiver)
+                mContext.unregisterReceiver(connectivityReceiver)
             }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
     }
 
+    private fun fetchContent(){
+        dialog?.show()
+        val contentViewModel: ContentViewModel by viewModels()
+        contentViewModel.getContent(1,50,mContext).observe(activity as HomeActivity, Observer<ContentResponse> {
+            dialog?.dismiss()
+            if (it != null) {
+                if (it.isSuccess) {
+                    val images = it.imageList.toList()
+                    val videos = it.videoList.toList()
+                    isDataFetched = true
+                    if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
+                        operations.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
+                        return@Observer
+                    }else{
+                        displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
+                        if (!images.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
+                        if (!videos.isNullOrEmpty()) {  startPreLoadingService(videos); displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)}
+                    }
+
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun displayErrors(errors: List<Error>) {
+        for (error in errors) {
+            operations.displayAlertDialog(mContext, getString(R.string.vehicle_information_error_title), "Error message: ${error.detail}")
+        }
+    }
+
+    /*
     private fun fetchAdvertisementData() {
 
         val bannerList = mutableSetOf<Content>()
         val videoList = mutableSetOf<Content>()
 
         val model: RoutesViewModel by viewModels()
-        model.getContent(contentFragmentContext).observe((instance as LifecycleOwner), Observer<ContentResponse> {
+        model.getContent(mContext).observe((instance as LifecycleOwner), Observer<ContentResponse> {
             if (!it.data.isNullOrEmpty()){
                 for (content in it.data){
                     when(content.type){
@@ -164,6 +213,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         test()
         isDataFetched = true
     }
+
     private fun test(){
         val bannerList = mutableSetOf<Content>()
         val videoList = mutableSetOf<Content>()
@@ -179,13 +229,14 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
         if (!videoList.isNullOrEmpty()) {  startPreLoadingService(videoList.toList()); displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)}
     }
+*/
 
-    private fun startPreLoadingService(it: List<Content>) {
+    private fun startPreLoadingService(it: List<Data>) {
         val videoList = ArrayList<String>()
         for (video in it){
             videoList.add(video.url.toString())
         }
-        val preLoadingServiceIntent = Intent(contentFragmentContext, VideoPreLoadingService::class.java)
+        val preLoadingServiceIntent = Intent(mContext, VideoPreLoadingService::class.java)
         preLoadingServiceIntent.putStringArrayListExtra(Constants.VIDEO_LIST, videoList)
         context?.startService(preLoadingServiceIntent)
     }

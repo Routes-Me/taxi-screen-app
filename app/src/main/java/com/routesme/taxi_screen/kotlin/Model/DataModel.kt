@@ -6,7 +6,6 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
-import com.routesme.taxi_screen.kotlin.MVVM.Model.SignInSuccessResponse
 import java.io.Serializable
 
 //Server RequestHeaders
@@ -103,7 +102,7 @@ Status: initiate
 
 interface ISideFragmentCell
 class DiscountCell(val details: String?, val url: String?) : ISideFragmentCell
-class WifiCell(val name: String, val password: String, val qrCode: QrCode?) : ISideFragmentCell
+class WifiCell(val name: String, val password: String, val qrCode: com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode?) : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 
 //New Content Model
@@ -113,11 +112,11 @@ data class QrCode(val details: String? = null, val url: String? = null)
 data class ContentData(val qrCode: QrCode? = null, val content_id: Int = 0, val type: String? = null, val url: String? = null)
 data class ContentResponse(val pagination: Pagination? = null, @SerializedName("data") val data: List<ContentData>, val responseCode: String? = null)
 data class Content(val id: Int = 0, val url: String? = null, val qrCode: QrCode? = null)
-enum class ContentType(val value: String) { Image("image"), Video("video") }
+
 
 interface QRCodeCallback {
-    fun onVideoQRCodeChanged(qrCode: QrCode?)
-    fun onBannerQRCodeChanged(qrCode: QrCode?)
+    fun onVideoQRCodeChanged(qrCode: com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode?)
+    fun onBannerQRCodeChanged(qrCode: com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode?)
 }
 
 

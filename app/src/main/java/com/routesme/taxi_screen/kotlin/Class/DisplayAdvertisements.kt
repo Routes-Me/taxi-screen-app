@@ -13,9 +13,9 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi_screen.kotlin.Model.Content
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Data
 import com.routesme.taxi_screen.kotlin.Model.QRCodeCallback
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
+import com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxiscreen.R
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*
@@ -45,7 +45,7 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
         //videoView.requestFocus()
     }
 
-    fun displayAdvertisementVideoList(videos: List<Content>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
+    fun displayAdvertisementVideoList(videos: List<Data>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
         initPlayer(playerView)
         playVideo(videos[currentVideoIndex].url, ringProgressBar)
         simpleExoPlayer?.addListener(object : Player.EventListener {
@@ -122,7 +122,7 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
     }
 
 
-    fun displayAdvertisementBannerList(banners: List<Content>, ADS_ImageView: ImageView) {
+    fun displayAdvertisementBannerList(banners: List<Data>, ADS_ImageView: ImageView) {
         runnableBanner = Runnable {
             if (currentBannerIndex < banners.size) {
                 val uri = Uri.parse(banners[currentBannerIndex].url)

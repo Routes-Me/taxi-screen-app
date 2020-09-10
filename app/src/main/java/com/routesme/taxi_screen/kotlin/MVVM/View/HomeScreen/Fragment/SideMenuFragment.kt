@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment
+package com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Fragment
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -8,10 +8,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.routesme.taxi_screen.kotlin.Class.DateOperations
+import com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode
 import com.routesme.taxi_screen.kotlin.Model.*
 import com.routesme.taxi_screen.kotlin.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxiscreen.R
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import jp.wasabeef.recyclerview.animators.SlideInUpAnimator
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
@@ -78,7 +78,7 @@ class SideMenuFragment : Fragment() {
         handlerTime.postDelayed(runnableTime, second)
     }
 
-    fun changeVideoQRCode(qrCode: QrCode?) {
+    fun changeVideoQRCode(qrCode: com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode?) {
         sideFragmentCells[0] = if (qrCode != null) DiscountCell(qrCode.details,qrCode.url) else DiscountCell(null,null)
         sideFragmentAdapter.notifyItemChanged(0)
     }

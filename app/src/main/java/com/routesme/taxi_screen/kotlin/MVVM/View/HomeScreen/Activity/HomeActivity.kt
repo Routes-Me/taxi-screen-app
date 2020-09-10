@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.kotlin.View.HomeScreen.Activity
+package com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Activity
 
 import android.app.Activity
 import android.content.ComponentName
@@ -10,9 +10,8 @@ import com.routesme.taxi_screen.kotlin.Class.*
 import com.routesme.taxi_screen.kotlin.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.kotlin.Model.IModeChanging
 import com.routesme.taxi_screen.kotlin.Model.QRCodeCallback
-import com.routesme.taxi_screen.kotlin.Model.QrCode
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.ContentFragment
-import com.routesme.taxi_screen.kotlin.View.HomeScreen.Fragment.SideMenuFragment
+import com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Fragment.ContentFragment
+import com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
@@ -41,7 +40,7 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
-        homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
+       // homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
         openPattern.setOnClickListener {openPatternClick()}
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.requestRuntimePermissions()
@@ -127,11 +126,11 @@ class HomeActivity : PermissionsActivity() ,IModeChanging, QRCodeCallback {
         recreate()
     }
 
-    override fun onVideoQRCodeChanged(qrCode: QrCode?) {
+    override fun onVideoQRCodeChanged(qrCode: com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode?) {
         sideMenuFragment?.changeVideoQRCode(qrCode)
     }
 
-    override fun onBannerQRCodeChanged(qrCode: QrCode?) {
+    override fun onBannerQRCodeChanged(qrCode: com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode?) {
         sideMenuFragment?.changeBannerQRCode(qrCode)
     }
 }
