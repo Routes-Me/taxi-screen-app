@@ -113,5 +113,5 @@ dependencies {
     //Shadow for items
     implementation 'tk.zielony:carbon:0.16.0.1'
 
-    implementation 'jp.wasabeef:recyclerview-animators:3.0.0'
+    implementation 'jp.wasabeef:recyclerview-animators:4.0.1'
 }
