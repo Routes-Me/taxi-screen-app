@@ -5,7 +5,7 @@
     android:id="@+id/tabletLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.routesme.taxi_screen.kotlin.MVVM.View.HomeScreen.Activity.HomeActivity"
+    tools:context="com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity"
     android:background="?homeScreenBackground_color">
 
     <androidx.constraintlayout.widget.Guideline
