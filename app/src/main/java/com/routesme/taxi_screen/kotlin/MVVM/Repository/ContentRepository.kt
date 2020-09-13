@@ -7,6 +7,8 @@ import com.routesme.taxi_screen.kotlin.MVVM.Model.ContentResponse
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi_screen.kotlin.MVVM.Model.Content
+import com.routesme.taxi_screen.kotlin.MVVM.Model.Data
+import com.routesme.taxi_screen.kotlin.MVVM.Model.QrCode
 import com.routesme.taxi_screen.kotlin.Model.ResponseErrors
 import retrofit2.Call
 import retrofit2.Callback
@@ -48,5 +50,4 @@ class ContentRepository(val context: Context) {
         })
         return contentResponse
     }
-
 }

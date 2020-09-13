@@ -184,7 +184,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
-            operations.displayAlertDialog(mContext, getString(R.string.vehicle_information_error_title), "Error message: ${error.detail}")
+            operations.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
         }
     }
 
