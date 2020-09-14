@@ -14,14 +14,19 @@ class ViewHolderDate(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val wifiView :ConstraintLayout = itemView.findViewById(R.id.wifiView)
-    val qrCodeView :ConstraintLayout = itemView.findViewById(R.id.qrCodeView)
     val nameTv: TextView = itemView.findViewById(R.id.nameTv)
     val passwordTv: TextView = itemView.findViewById(R.id.passwordTv)
-    val qrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
 }
 
-class ViewHolderDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
+class ViewHolderEmptyVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val image: ImageView = itemView.findViewById(R.id.image)
+}
+
+class ViewHolderBannerDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val bannerQrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
+}
+
+class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val detailsTv: TextView = itemView.findViewById(R.id.detailsTv)
     val qrCodeImage: ImageView = itemView.findViewById(R.id.videoQrCodeImage)
 }

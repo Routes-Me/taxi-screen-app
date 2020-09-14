@@ -7,17 +7,12 @@ import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.OvershootInterpolator
-import androidx.core.view.get
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.DefaultItemAnimator
 import com.routesme.taxi_screen.Class.DateOperations
 import com.routesme.taxi_screen.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi_screen.ItemAnimator
 import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxiscreen.R
-import jp.wasabeef.recyclerview.animators.FlipInTopXAnimator
-import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
 
@@ -60,19 +55,21 @@ class SideMenuFragment : Fragment() {
 
     private fun setupRecyclerView() {
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
-            add(DiscountCell("", ""))
+            add(EmptyVideoDiscountCell(""))
             add(DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date())))
-            add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),null))
+            add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
         }
 
         sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
         v.recyclerView.adapter = sideFragmentAdapter
 
+
+
         //val animator = DefaultItemAnimator(OvershootInterpolator(1f))
         //animator.changeDuration = 5000
       // animator.setInterpolator(OvershootInterpolator())
 
-       v.recyclerView.itemAnimator = ItemAnimator(mContext)
+      v.recyclerView.itemAnimator = ItemAnimator(mContext)
 
 
         /*
@@ -96,12 +93,12 @@ class SideMenuFragment : Fragment() {
 
     fun changeVideoQRCode(qrCode: QrCode?) {
         val position = 0
-        sideFragmentCells[position] = if (qrCode != null) DiscountCell(qrCode.details,qrCode.url) else DiscountCell(null,null)
+        sideFragmentCells[position] = if (qrCode != null) VideoDiscountCell(qrCode) else EmptyVideoDiscountCell("")
         //sideFragmentAdapter.notifyItemChanged(position)
 
         sideFragmentAdapter.notifyItemChanged(position)
-       // sideFragmentAdapter.notifyItemInserted(position)
-       // sideFragmentAdapter.notifyItemRemoved(position)
+        //sideFragmentAdapter.notifyItemInserted(position)
+        //sideFragmentAdapter.notifyItemRemoved(position)
 
        // sideFragmentAdapter.notifyItemRemoved(0)
        // v.recyclerView[0].animate().rotationX(360F).duration = 10000
@@ -109,7 +106,7 @@ class SideMenuFragment : Fragment() {
 
     fun changeBannerQRCode(qrCode: QrCode?) {
         val position = 2
-        sideFragmentCells[position] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),null)
+        sideFragmentCells[position] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) BannerDiscountCell(qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
        // sideFragmentAdapter.notifyItemChanged(position)
 
         sideFragmentAdapter.notifyItemChanged(position)

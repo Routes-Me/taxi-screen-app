@@ -22,12 +22,12 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="H,320 : 329">
 
-      <include layout="@layout/wifi_view"
+      <include layout="@layout/wifi_cell"
           android:layout_width="match_parent"
           android:layout_height="wrap_content"
           android:visibility="visible"/>
 
-        <include layout="@layout/banner_qrcode_view"
+        <include layout="@layout/banner_discount_cell"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"/>
