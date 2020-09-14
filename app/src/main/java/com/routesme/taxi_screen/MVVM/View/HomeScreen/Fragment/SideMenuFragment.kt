@@ -1,6 +1,7 @@
 package com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.view.LayoutInflater
@@ -12,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import com.routesme.taxi_screen.Class.DateOperations
 import com.routesme.taxi_screen.Class.SideFragmentAdapter.SideFragmentAdapter
+import com.routesme.taxi_screen.ItemAnimator
 import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxiscreen.R
 import jp.wasabeef.recyclerview.animators.FlipInTopXAnimator
@@ -19,9 +21,9 @@ import jp.wasabeef.recyclerview.animators.SlideInLeftAnimator
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
 
-
 class SideMenuFragment : Fragment() {
     private lateinit var v: View
+    private lateinit var mContext: Context
     private lateinit var handlerTime: Handler
     private lateinit var runnableTime: Runnable
     private val dateOperations = DateOperations.instance
@@ -31,6 +33,11 @@ class SideMenuFragment : Fragment() {
 
     companion object {
         val instance = SideMenuFragment()
+    }
+
+    override fun onAttach(context: Context) {
+        mContext = context
+        super.onAttach(context)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.side_menu_fragment, container, false)
@@ -65,11 +72,8 @@ class SideMenuFragment : Fragment() {
         //animator.changeDuration = 5000
       // animator.setInterpolator(OvershootInterpolator())
 
-/*
-        v.recyclerView.itemAnimator = DefaultItemAnimator().apply {
-            changeDuration = 5000
-        }
-        */
+       v.recyclerView.itemAnimator = ItemAnimator(mContext)
+
 
         /*
         sideFragmentAdapter.onItemClick = {
@@ -91,14 +95,28 @@ class SideMenuFragment : Fragment() {
     }
 
     fun changeVideoQRCode(qrCode: QrCode?) {
-        sideFragmentCells[0] = if (qrCode != null) DiscountCell(qrCode.details,qrCode.url) else DiscountCell(null,null)
-        sideFragmentAdapter.notifyItemChanged(0)
+        val position = 0
+        sideFragmentCells[position] = if (qrCode != null) DiscountCell(qrCode.details,qrCode.url) else DiscountCell(null,null)
+        //sideFragmentAdapter.notifyItemChanged(position)
+
+        sideFragmentAdapter.notifyItemChanged(position)
+       // sideFragmentAdapter.notifyItemInserted(position)
+       // sideFragmentAdapter.notifyItemRemoved(position)
+
+       // sideFragmentAdapter.notifyItemRemoved(0)
        // v.recyclerView[0].animate().rotationX(360F).duration = 10000
     }
 
     fun changeBannerQRCode(qrCode: QrCode?) {
-        sideFragmentCells[2] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),null)
-        sideFragmentAdapter.notifyItemChanged(2)
+        val position = 2
+        sideFragmentCells[position] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password),null)
+       // sideFragmentAdapter.notifyItemChanged(position)
+
+        sideFragmentAdapter.notifyItemChanged(position)
+        sideFragmentAdapter.notifyItemInserted(position)
+      //  sideFragmentAdapter.notifyItemRemoved(position)
+
+       // sideFragmentAdapter.notifyItemRemoved(2)
        // v.recyclerView[2].animate().alpha(0F)//.rotationX(360F).duration = 10000
     }
 }
