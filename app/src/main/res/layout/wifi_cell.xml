@@ -20,7 +20,7 @@ android:layout_gravity="center">
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
     app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintDimensionRatio="H,320 : 329">
+    app:layout_constraintDimensionRatio="H,53 : 55">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/wifiView"

@@ -34,7 +34,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.994" />
+        app:layout_constraintGuide_percent="0.993" />
 
 
     <FrameLayout
@@ -44,7 +44,7 @@
         app:layout_constraintBottom_toTopOf="@+id/sideMenuFragment_container"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintHeight_percent="0.767"
+        app:layout_constraintHeight_percent="0.772"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintVertical_chainStyle="spread_inside"
@@ -66,22 +66,47 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.725" />
+        app:layout_constraintGuide_percent="0.746" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineDividerAccessoryBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintGuide_percent="0.815" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineDividerAccessoryStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.018" />
+        app:layout_constraintGuide_percent="0.014" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineDividerAccessoryEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.961" />
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="@drawable/ic_divider_accessory"
-        app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
+        android:src="?video_divider"
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
-        app:layout_constraintDimensionRatio="H,5 : 24"/>
+        app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
+        app:layout_constraintDimensionRatio="H,5 : 31"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="?banner_divider"
+        app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineDividerAccessoryEnd"
+        app:layout_constraintDimensionRatio="H,55 : 81"/>
 
     <ImageView
         android:id="@+id/openPattern"
@@ -95,6 +120,5 @@
         app:layout_constraintWidth_default="percent"
         app:layout_constraintHeight_percent="0.06"
         app:layout_constraintWidth_percent="0.06"/>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>
