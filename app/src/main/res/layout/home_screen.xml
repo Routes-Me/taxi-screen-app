@@ -9,7 +9,7 @@
     android:background="?homeScreenBackground_color">
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineTop"
+        android:id="@+id/guidelineTextTop"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -23,7 +23,7 @@
         app:layout_constraintGuide_percent="0.994" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/guidelineStart"
+        android:id="@+id/guidelineTextStart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -45,8 +45,8 @@
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintHeight_default="percent"
         app:layout_constraintHeight_percent="0.772"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintStart_toStartOf="@id/guidelineTextStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTextTop"
         app:layout_constraintVertical_chainStyle="spread_inside"
         />
 
@@ -56,7 +56,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintStart_toStartOf="@id/guidelineTextStart"
         app:layout_constraintTop_toBottomOf="@+id/contentFragment_container"
         />
 

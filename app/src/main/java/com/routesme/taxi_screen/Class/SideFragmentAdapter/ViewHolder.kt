@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.Class.SideFragmentAdapter
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxiscreen.R
 
@@ -27,6 +26,6 @@ class ViewHolderBannerDiscount(itemView: View) : RecyclerView.ViewHolder(itemVie
 }
 
 class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val detailsTv: TextView = itemView.findViewById(R.id.detailsTv)
+    val detailsTv: TextView = itemView.findViewById(R.id.titleTv)
     val qrCodeImage: ImageView = itemView.findViewById(R.id.videoQrCodeImage)
 }

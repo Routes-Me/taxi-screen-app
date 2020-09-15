@@ -18,15 +18,14 @@ android:layout_gravity="center">
     app:layout_constraintBottom_toBottomOf="parent"/>
 
 <androidx.cardview.widget.CardView
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:id="@+id/cardView"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
     app:cardBackgroundColor="?cardViewBackground_color"
-    card_view:cardCornerRadius="8dp"
+    app:cardCornerRadius="8dp"
     android:layout_gravity="center"
-    card_view:cardPreventCornerOverlap="false"
-    card_view:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -36,78 +35,133 @@ android:layout_gravity="center">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/videoQrCodeView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:card_view="http://schemas.android.com/tools">
+        android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineTop"
+            android:id="@+id/guidelineTextTop"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.14" />
+            app:layout_constraintGuide_percent="0.17"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineBottom"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            app:layout_constraintGuide_percent="0.866" />
+            app:layout_constraintGuide_percent="0.85"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineStart"
+            android:id="@+id/guidelineTextStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.028" />
-
-        <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineEnd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            app:layout_constraintGuide_percent="0.987" />
+            app:layout_constraintGuide_percent="0.023"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTextEnd"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"
-            app:layout_constraintGuide_percent="0.343"
-            app:layout_constraintHorizontal_bias="0.53"
-            app:layout_constraintHorizontal_chainStyle="spread" />
+            app:layout_constraintGuide_percent="0.809"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineQrCodeStart"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.826"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineQrCodeEnd"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintGuide_percent="0.983"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
+
+        <androidx.constraintlayout.widget.Guideline
+            android:id="@+id/guidelineQrCodeTop"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.15"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
 
         <TextView
-            android:id="@+id/detailsTv"
+            android:id="@+id/titleTv"
             android:layout_width="0dp"
-            android:layout_height="114dp"
+            android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
             android:gravity="start"
-            android:maxLines="3"
+            android:maxLines="2"
+            android:text="Macdonalds offers a 30% discount"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMaxTextSize="100dp"
-            app:autoSizeMinTextSize="16sp"
+            android:textSize="32sp"
             app:autoSizeStepGranularity="3sp"
             app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-            app:layout_constraintEnd_toStartOf="@id/guidelineTextEnd"
-            app:layout_constraintStart_toStartOf="@id/guidelineStart"
-            app:layout_constraintTop_toTopOf="@id/guidelineTop"
-            android:visibility="visible"/>
+            app:layout_constraintBottom_toTopOf="@+id/subTitleTv"
+            app:layout_constraintEnd_toEndOf="@id/guidelineTextEnd"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/guidelineTextStart"
+            app:layout_constraintTop_toTopOf="@+id/guidelineTextTop"
+            app:layout_constraintVertical_chainStyle="spread_inside"/>
+
+        <TextView
+            android:id="@+id/subTitleTv"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:gravity="start"
+            android:maxLines="1"
+            android:text="Find it out in Avenus "
+            android:textColor="?text_color"
+            android:textStyle="normal"
+            android:textSize="32sp"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@+id/guidelineBottom"
+            app:layout_constraintEnd_toEndOf="@id/guidelineTextEnd"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="@id/guidelineTextStart"
+            app:layout_constraintTop_toBottomOf="@id/titleTv" />
 
         <ImageView
             android:id="@+id/videoQrCodeImage"
             android:layout_width="150dp"
             android:layout_height="150dp"
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
             app:layout_constraintDimensionRatio="H,1: 1"
-            app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-            app:layout_constraintTop_toTopOf="@id/guidelineTop"
-            android:visibility="visible"/>
+            app:layout_constraintEnd_toEndOf="@id/guidelineQrCodeEnd"
+            app:layout_constraintTop_toTopOf="@id/guidelineQrCodeTop"
+            app:layout_constraintStart_toStartOf="@id/guidelineQrCodeStart" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
