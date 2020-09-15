@@ -2,11 +2,16 @@ package com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity
 
 import android.app.Activity
 import android.content.ComponentName
+import android.content.ContentResolver
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
-import com.routesme.taxi_screen.Hotspot_Configuration.PermissionsActivity
+import android.provider.Settings
+import android.provider.Settings.SettingNotFoundException
+import android.util.Log
+import android.view.Window
 import com.routesme.taxi_screen.Class.*
+import com.routesme.taxi_screen.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.LocationTrackingService.Class.LocationTrackingService
 import com.routesme.taxi_screen.MVVM.Model.IModeChanging
 import com.routesme.taxi_screen.MVVM.Model.QRCodeCallback
@@ -16,6 +21,13 @@ import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
 class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
+
+    //Variable to store brightness value
+    private var brightness = 0
+    //Content resolver used as a handle to the system's settings
+    private  var cResolver: ContentResolver? = null
+    //Window object, that will store a reference to the current window
+    private  var w: Window? = null
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
@@ -39,6 +51,8 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
+        brightnessSetup()
+        updateBrightness()
         sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
        // homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
         openPattern.setOnClickListener {openPatternClick()}
@@ -46,6 +60,26 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         homeScreenFunctions.requestRuntimePermissions()
         turnOnHotspot()
         addFragments()
+    }
+
+    private fun brightnessSetup() {
+        cResolver = contentResolver
+        w = window
+
+        try {
+            Settings.System.putInt(cResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
+            brightness = Settings.System.getInt(cResolver, Settings.System.SCREEN_BRIGHTNESS)
+        } catch (e: SettingNotFoundException) {
+            Log.e("Error", "Cannot access system brightness")
+            e.printStackTrace()
+        }
+    }
+
+    private fun updateBrightness(){
+        Settings.System.putInt(cResolver, Settings.System.SCREEN_BRIGHTNESS, brightness)
+        val layoutParams = w?.getAttributes()
+        layoutParams?.screenBrightness = brightness / 255.toFloat()
+        w?.attributes = layoutParams
     }
 
     override fun onDestroy() {

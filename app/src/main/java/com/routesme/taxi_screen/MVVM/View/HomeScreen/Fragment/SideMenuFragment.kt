@@ -61,22 +61,10 @@ class SideMenuFragment : Fragment() {
         }
 
         sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
-        v.recyclerView.adapter = sideFragmentAdapter
-
-
-
-        //val animator = DefaultItemAnimator(OvershootInterpolator(1f))
-        //animator.changeDuration = 5000
-      // animator.setInterpolator(OvershootInterpolator())
-
-      v.recyclerView.itemAnimator = ItemAnimator(mContext)
-
-
-        /*
-        sideFragmentAdapter.onItemClick = {
-            val phoneNumberCell = it as PhoneNumberCell
+        v.recyclerView.apply {
+            adapter = sideFragmentAdapter
+            itemAnimator = ItemAnimator(mContext)
         }
-*/
         setTime()
     }
 
@@ -94,26 +82,20 @@ class SideMenuFragment : Fragment() {
     fun changeVideoQRCode(qrCode: QrCode?) {
         val position = 0
         sideFragmentCells[position] = if (qrCode != null) VideoDiscountCell(qrCode) else EmptyVideoDiscountCell("")
-        //sideFragmentAdapter.notifyItemChanged(position)
-
-        sideFragmentAdapter.notifyItemChanged(position)
-        //sideFragmentAdapter.notifyItemInserted(position)
-        //sideFragmentAdapter.notifyItemRemoved(position)
-
-       // sideFragmentAdapter.notifyItemRemoved(0)
-       // v.recyclerView[0].animate().rotationX(360F).duration = 10000
+        sideFragmentAdapter.apply {
+            notifyItemChanged(position)
+            notifyItemRemoved(position)
+            notifyItemInserted(position)
+        }
     }
 
     fun changeBannerQRCode(qrCode: QrCode?) {
         val position = 2
         sideFragmentCells[position] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) BannerDiscountCell(qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
-       // sideFragmentAdapter.notifyItemChanged(position)
-
-        sideFragmentAdapter.notifyItemChanged(position)
-        sideFragmentAdapter.notifyItemInserted(position)
-      //  sideFragmentAdapter.notifyItemRemoved(position)
-
-       // sideFragmentAdapter.notifyItemRemoved(2)
-       // v.recyclerView[2].animate().alpha(0F)//.rotationX(360F).duration = 10000
+        sideFragmentAdapter.apply {
+            notifyItemChanged(position)
+            notifyItemRemoved(position)
+            notifyItemInserted(position)
+        }
     }
 }
