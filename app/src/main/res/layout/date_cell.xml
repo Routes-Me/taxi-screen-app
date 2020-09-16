@@ -67,48 +67,33 @@
                 app:autoSizeMaxTextSize="100sp"
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toTopOf="@+id/weekDayTv"
+                app:layout_constraintBottom_toTopOf="@+id/dayTv"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toTopOf="@id/guidelineTextTop"
-                app:layout_constraintVertical_chainStyle="packed"/>
+                app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView
-                android:id="@+id/weekDayTv"
+                android:id="@+id/dayTv"
                 android:layout_width="0dp"
-                android:layout_height="38dp"
+                android:layout_height="76dp"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
+                android:maxLines="2"
                 android:textColor="?text_color"
                 android:textStyle="normal"
                 app:autoSizeMinTextSize="32sp"
                 app:autoSizeMaxTextSize="100sp"
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toTopOf="@+id/monthDayTv"
+                card_view:layout_constraintBottom_toBottomOf="@+id/guidelineBottom"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
                 app:layout_constraintTop_toBottomOf="@+id/clockTv" />
 
-            <TextView
-                android:id="@+id/monthDayTv"
-                android:layout_width="0dp"
-                android:layout_height="38dp"
-                android:fontFamily="sans-serif"
-                android:gravity="center"
-                android:textColor="?text_color"
-                android:textStyle="normal"
-                app:autoSizeMinTextSize="32sp"
-                app:autoSizeMaxTextSize="100sp"
-                app:autoSizeStepGranularity="1sp"
-                app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@+id/weekDayTv" />
+
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

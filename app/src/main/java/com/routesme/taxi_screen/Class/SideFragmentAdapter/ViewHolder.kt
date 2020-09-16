@@ -19,8 +19,7 @@ class ViewHolderLargeEmpty(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class ViewHolderDate(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val clockTv: TextView = itemView.findViewById(R.id.clockTv)
-    val weekDayTv: TextView = itemView.findViewById(R.id.weekDayTv)
-    val monthDayTv: TextView = itemView.findViewById(R.id.monthDayTv)
+    val dayTv: TextView = itemView.findViewById(R.id.dayTv)
 }
 
 class ViewHolderSmallEmpty(itemView: View) : RecyclerView.ViewHolder(itemView) {}

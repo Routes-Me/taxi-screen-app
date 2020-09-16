@@ -135,7 +135,6 @@
                 android:textSize="32sp"
                 android:textStyle="normal"
                 app:autoSizeTextType="uniform"
-                app:layout_constraintBottom_toBottomOf="@+id/guidelineBottom"
                 app:layout_constraintEnd_toEndOf="@id/guidelineCenterVertical1"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"

@@ -1,12 +1,15 @@
 package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
+import android.R
 import android.annotation.SuppressLint
+import android.graphics.drawable.PictureDrawable
 import android.net.Uri
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.caverock.androidsvg.SVG
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.MVVM.Model.*
+
 
 fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderEmptyVideoDiscount
@@ -34,7 +37,7 @@ fun onBindLargeEmpty(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
 fun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderDate
     cell as DateCell
-    holder.apply { clockTv.text = cell.clock; weekDayTv.text = cell.weekDay; monthDayTv.text = cell.monthDay }
+    holder.apply { clockTv.text = cell.clock; dayTv.text = "${cell.weekDay}\n ${cell.monthDay}" }
 }
 
 fun onBindSmallEmpty(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {}
@@ -57,6 +60,12 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
         }
     }
 }
+
+private fun displayImage(){
+
+}
+
+
 
 
 
