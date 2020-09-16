@@ -44,7 +44,7 @@ android:layout_gravity="center">
             app:layout_constraintGuide_percent="0.855" />
 
         <androidx.constraintlayout.widget.Guideline
-            android:id="@+id/guidelineTextStart"
+            android:id="@+id/guidelineStart"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="vertical"
@@ -59,11 +59,11 @@ android:layout_gravity="center">
 
         <ImageView
             android:id="@+id/wifiIcon"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="0dp"
             android:src="?wifi_icon"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-            app:layout_constraintStart_toStartOf="@id/guidelineTextStart"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toTopOf="@id/guidelineTextTop"
             app:layout_constraintDimensionRatio="H,1: 1"
             card_view:layout_constraintBottom_toTopOf="@id/nameTv"
@@ -77,12 +77,12 @@ android:layout_gravity="center">
             android:gravity="center"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMaxTextSize="100dp"
-            app:autoSizeMinTextSize="16sp"
-            app:autoSizeStepGranularity="2sp"
+            app:autoSizeMinTextSize="32sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-            app:layout_constraintStart_toStartOf="@id/guidelineTextStart"
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/wifiIcon"/>
 
         <ImageView
@@ -94,19 +94,19 @@ android:layout_gravity="center">
             app:layout_constraintDimensionRatio="H, 1: 1"
             app:layout_constraintTop_toTopOf="@id/passwordTv"
             app:layout_constraintBottom_toBottomOf="@id/passwordTv"
-            app:layout_constraintStart_toStartOf="@id/guidelineTextStart"/>
+            app:layout_constraintStart_toStartOf="@id/guidelineStart"/>
 
         <TextView
             android:id="@+id/passwordTv"
             android:layout_width="0dp"
-            android:layout_height="38dp"
+            android:layout_height="30dp"
             android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMaxTextSize="100dp"
-            app:autoSizeMinTextSize="16sp"
-            app:autoSizeStepGranularity="2sp"
+            app:autoSizeMinTextSize="26sp"
+            app:autoSizeMaxTextSize="100sp"
+            app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
             app:layout_constraintStart_toEndOf="@+id/keyIcon"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
