@@ -56,7 +56,9 @@ class SideMenuFragment : Fragment() {
     private fun setupRecyclerView() {
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
             add(EmptyVideoDiscountCell(""))
+            add(LargeEmptyCell())
             add(DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date())))
+            add(SmallEmptyCell())
             add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
         }
 
@@ -71,7 +73,7 @@ class SideMenuFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun setTime() {
         runnableTime = Runnable {
-            sideFragmentCells[1] = DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date()))
+            sideFragmentCells[2] = DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date()))
             sideFragmentAdapter.notifyDataSetChanged()
             handlerTime.postDelayed(runnableTime, second * 60)
         }
@@ -90,7 +92,7 @@ class SideMenuFragment : Fragment() {
     }
 
     fun changeBannerQRCode(qrCode: QrCode?) {
-        val position = 2
+        val position = 4
         sideFragmentCells[position] = if (qrCode != null && !qrCode.url.isNullOrEmpty()) BannerDiscountCell(qrCode) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
         sideFragmentAdapter.apply {
             notifyItemChanged(position)

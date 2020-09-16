@@ -5,11 +5,13 @@ interface IModeChanging {
 }
 
 interface ISideFragmentCell
-class WifiCell(val name: String, val password: String) : ISideFragmentCell
-class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 class EmptyVideoDiscountCell(val image: String) : ISideFragmentCell
-class BannerDiscountCell( val qrCode: QrCode?) : ISideFragmentCell
 class VideoDiscountCell(val qrCode: QrCode?) : ISideFragmentCell
+class LargeEmptyCell() : ISideFragmentCell
+class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
+class SmallEmptyCell() : ISideFragmentCell
+class WifiCell(val name: String, val password: String) : ISideFragmentCell
+class BannerDiscountCell( val qrCode: QrCode?) : ISideFragmentCell
 
 
 interface QRCodeCallback {
