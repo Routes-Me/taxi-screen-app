@@ -1,22 +1,22 @@
 package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.model.StreamEncoder
+import com.caverock.androidsvg.SVG
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.MVVM.Model.*
+import java.io.InputStream
 
 
-fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
-    holder as ViewHolderEmptyVideoDiscount
-    cell as EmptyVideoDiscountCell
-    holder.apply {
+fun onBindEmptyVideoDiscount() {}
 
-    }
-}
-
-fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
+fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderVideoDiscount
     cell as VideoDiscountCell
     holder.apply {
@@ -29,7 +29,7 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     }
 }
 
-fun onBindLargeEmpty(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {}
+fun onBindLargeEmpty() {}
 
 @SuppressLint("SetTextI18n")
 fun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
@@ -38,7 +38,7 @@ fun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder.apply { clockTv.text = cell.clock; dayTv.text = "${cell.weekDay}\n ${cell.monthDay}" }
 }
 
-fun onBindSmallEmpty(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {}
+fun onBindSmallEmpty() {}
 
 fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderWifi
@@ -48,19 +48,17 @@ fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     }
 }
 
-fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
+fun onBindBannerDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderBannerDiscount
     cell as BannerDiscountCell
     holder.apply {
         val qrCode = cell.qrCode
         if (qrCode != null){
-            if (!qrCode.url.isNullOrEmpty()) Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(bannerQrCodeImage)
+            if (!qrCode.url.isNullOrEmpty()) {
+                Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
+            }
         }
     }
-}
-
-private fun displayImage(){
-
 }
 
 

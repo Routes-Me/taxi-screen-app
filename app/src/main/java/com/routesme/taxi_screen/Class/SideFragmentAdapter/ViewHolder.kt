@@ -31,7 +31,7 @@ class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView) {
 }
 
 class ViewHolderBannerDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val bannerQrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
+    val qrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
 }
 
 

@@ -12,9 +12,11 @@ import com.routesme.taxi_screen.Class.DateOperations
 import com.routesme.taxi_screen.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi_screen.ItemAnimator
 import com.routesme.taxi_screen.MVVM.Model.*
+import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
+
 
 class SideMenuFragment : Fragment() {
     private lateinit var v: View
@@ -25,6 +27,7 @@ class SideMenuFragment : Fragment() {
     private val second: Long = 1000
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
+    private lateinit var homeActivity: HomeActivity
 
     companion object {
         val instance = SideMenuFragment()
@@ -35,7 +38,11 @@ class SideMenuFragment : Fragment() {
         super.onAttach(context)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.side_menu_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val v = inflater.inflate(R.layout.side_menu_fragment, container, false)
+         homeActivity =  activity as HomeActivity
+        return v
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         v = view
@@ -62,7 +69,7 @@ class SideMenuFragment : Fragment() {
             add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
         }
 
-        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
+        sideFragmentAdapter = SideFragmentAdapter(homeActivity,sideFragmentCells)
         v.recyclerView.apply {
             adapter = sideFragmentAdapter
             itemAnimator = ItemAnimator(mContext)
