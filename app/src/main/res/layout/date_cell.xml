@@ -28,7 +28,7 @@
             android:layout_gravity="center">
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineTextTop"
+                android:id="@+id/guidelineTop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -71,7 +71,7 @@
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toTopOf="@id/guidelineTextTop"
+                app:layout_constraintTop_toTopOf="@id/guidelineTop"
                 app:layout_constraintVertical_chainStyle="packed" />
 
             <TextView

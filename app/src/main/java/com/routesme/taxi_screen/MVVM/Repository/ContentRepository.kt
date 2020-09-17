@@ -52,8 +52,8 @@ class ContentRepository(val context: Context) {
 
     private fun getData (): MutableList<Data> {
         val qrcode1 = QrCode("Big Sale !","Find it out in Avenus Mall","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2FBEST%20QR%20CODE.jpg?alt=media&token=efd3c26e-57b8-4be0-8362-15bfb21beaf9")
-        val qrcode2 = QrCode("Macdonalds offers a 30% discount, valid till 20/11/2020 ","Scan Now!","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2Fqr_code_2.svg?alt=media&token=0f76bad8-8f0c-49a5-9f9c-23ff3dc87fb2")
-        val qrcode3 = QrCode("Burger King offers a 70% discount","Find it out in 360 Mall","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/00000.png?alt=media&token=4a5f5534-4bae-4dac-b9d5-ad7494af29ad")
+        val qrcode2 = QrCode("Macdonalds offers a 30% discount, valid till 20/11/2020","Scan Now!","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2Fqr_code_2.svg?alt=media&token=0f76bad8-8f0c-49a5-9f9c-23ff3dc87fb2")
+        val qrcode3 = QrCode("Burger King offers a 70% discount, valid till 20/11/2020","Find it out in 360 Mall","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/00000.png?alt=media&token=4a5f5534-4bae-4dac-b9d5-ad7494af29ad")
         val qrcode4 = QrCode("KFC offers a 60% discount, valid till 16/12/2020","Scan Now!","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2Fqr_code_2.svg?alt=media&token=0f76bad8-8f0c-49a5-9f9c-23ff3dc87fb2")
         val image1 = Data(0,"image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957",qrcode1)
         val video1 = Data(1,"video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2Fbig%20sale%20sep%20video.mp4?alt=media&token=9dae3b12-028b-41e7-86b2-961e9d30cc0f",qrcode1)

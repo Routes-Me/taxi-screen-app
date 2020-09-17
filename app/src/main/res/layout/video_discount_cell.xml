@@ -26,7 +26,7 @@
             android:layout_height="match_parent">
 
             <androidx.constraintlayout.widget.Guideline
-                android:id="@+id/guidelineTextTop"
+                android:id="@+id/guidelineTop"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -119,7 +119,7 @@
                 app:layout_constraintEnd_toEndOf="@id/guidelineCenterVertical1"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toTopOf="@+id/guidelineTextTop"
+                app:layout_constraintTop_toTopOf="@+id/guidelineTop"
                 app:layout_constraintVertical_chainStyle="spread_inside"/>
 
             <TextView
@@ -142,7 +142,6 @@
                 android:id="@+id/videoQrCodeImage"
                 android:layout_width="135dp"
                 android:layout_height="0dp"
-                android:visibility="visible"
                 app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
                 app:layout_constraintDimensionRatio="H,1: 1"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
