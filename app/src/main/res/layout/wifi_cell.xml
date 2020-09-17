@@ -10,12 +10,11 @@ android:layout_gravity="center">
     android:id="@+id/cardView"
     android:layout_width="0dp"
     android:layout_height="wrap_content"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     app:cardBackgroundColor="?cardViewBackground_color"
-    card_view:cardCornerRadius="8dp"
+    app:cardCornerRadius="8dp"
     android:layout_gravity="center"
-    card_view:cardPreventCornerOverlap="false"
-    card_view:cardUseCompatPadding="true"
+    app:cardPreventCornerOverlap="false"
+    app:cardUseCompatPadding="true"
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintStart_toStartOf="parent"
@@ -26,8 +25,7 @@ android:layout_gravity="center">
         android:id="@+id/wifiView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="center"
-        xmlns:card_view="http://schemas.android.com/tools">
+        android:layout_gravity="center">
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guidelineTextTop"
@@ -59,15 +57,15 @@ android:layout_gravity="center">
 
         <ImageView
             android:id="@+id/wifiIcon"
-            android:layout_width="60dp"
+            android:layout_width="wrap_content"
             android:layout_height="0dp"
             android:src="?wifi_icon"
+            app:layout_constraintDimensionRatio="H,1: 1"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toTopOf="@id/guidelineTextTop"
-            app:layout_constraintDimensionRatio="H,1: 1"
-            card_view:layout_constraintBottom_toTopOf="@id/nameTv"
-            card_view:layout_constraintVertical_chainStyle="spread_inside"/>
+            tools:layout_constraintBottom_toTopOf="@id/nameTv"
+            tools:layout_constraintVertical_chainStyle="spread_inside" />
 
         <TextView
             android:id="@+id/nameTv"
@@ -77,7 +75,7 @@ android:layout_gravity="center">
             android:gravity="center"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMinTextSize="32sp"
+            app:autoSizeMinTextSize="23sp"
             app:autoSizeMaxTextSize="100sp"
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
@@ -104,7 +102,7 @@ android:layout_gravity="center">
             android:gravity="center_vertical"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMinTextSize="26sp"
+            app:autoSizeMinTextSize="17sp"
             app:autoSizeMaxTextSize="100sp"
             app:autoSizeStepGranularity="1sp"
             app:autoSizeTextType="uniform"
