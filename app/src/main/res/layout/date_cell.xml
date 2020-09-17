@@ -46,14 +46,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.128" />
+                app:layout_constraintGuide_percent="0.1" />
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/guidelineEnd"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.875" />
+                app:layout_constraintGuide_percent="0.9" />
 
             <TextView
                 android:id="@+id/clockTv"
@@ -63,7 +63,7 @@
                 android:gravity="center"
                 android:textColor="?text_color"
                 android:textStyle="normal"
-                app:autoSizeMinTextSize="32sp"
+                app:autoSizeMinTextSize="23sp"
                 app:autoSizeMaxTextSize="100sp"
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform"
@@ -83,7 +83,7 @@
                 android:maxLines="2"
                 android:textColor="?text_color"
                 android:textStyle="normal"
-                app:autoSizeMinTextSize="32sp"
+                app:autoSizeMinTextSize="23sp"
                 app:autoSizeMaxTextSize="100sp"
                 app:autoSizeStepGranularity="1sp"
                 app:autoSizeTextType="uniform"
