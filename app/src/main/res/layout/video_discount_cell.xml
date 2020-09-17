@@ -18,7 +18,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,159 : 886">
+        app:layout_constraintDimensionRatio="H,159 : 887">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/videoQrCodeView"
