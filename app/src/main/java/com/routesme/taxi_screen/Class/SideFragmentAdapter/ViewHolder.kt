@@ -11,7 +11,8 @@ class ViewHolderEmptyVideoDiscount(itemView: View) : RecyclerView.ViewHolder(ite
 }
 
 class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val detailsTv: TextView = itemView.findViewById(R.id.titleTv)
+    val title: TextView = itemView.findViewById(R.id.titleTv)
+    val subTitle: TextView = itemView.findViewById(R.id.subTitleTv)
     val qrCodeImage: ImageView = itemView.findViewById(R.id.videoQrCodeImage)
 }
 

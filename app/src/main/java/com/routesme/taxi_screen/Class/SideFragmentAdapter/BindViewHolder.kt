@@ -1,12 +1,9 @@
 package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
-import android.R
 import android.annotation.SuppressLint
-import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.caverock.androidsvg.SVG
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.MVVM.Model.*
 
@@ -25,7 +22,8 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     holder.apply {
         val qrCode = cell.qrCode
         if (qrCode != null){
-            if (!qrCode.details.isNullOrEmpty()) detailsTv.text = qrCode.details;
+            if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
+            if (!qrCode.subTitle.isNullOrEmpty()) subTitle.text = qrCode.subTitle
             if (!qrCode.url.isNullOrEmpty()) Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
         }
     }
