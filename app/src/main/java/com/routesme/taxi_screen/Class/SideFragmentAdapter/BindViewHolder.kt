@@ -2,16 +2,10 @@ package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.graphics.drawable.PictureDrawable
 import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.bumptech.glide.load.model.StreamEncoder
-import com.caverock.androidsvg.SVG
-import com.routesme.taxi_screen.Class.App
+import com.routesme.taxi_screen.Class.Utils
 import com.routesme.taxi_screen.MVVM.Model.*
-import java.io.InputStream
 
 
 fun onBindEmptyVideoDiscount() {}
@@ -24,7 +18,11 @@ fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cel
         if (qrCode != null){
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
             if (!qrCode.subTitle.isNullOrEmpty()) subTitle.text = qrCode.subTitle
-            if (!qrCode.url.isNullOrEmpty()) Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
+            if (!qrCode.url.isNullOrEmpty()) {
+                //Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
+                Utils.fetchSvg(activity, qrCode.url, qrCodeImage)
+               // GlideToVectorYou.justLoadImage(activity, Uri.parse(qrCode.url), qrCodeImage)
+            }
         }
     }
 }
@@ -55,14 +53,10 @@ fun onBindBannerDiscount(activity: Activity, holder: RecyclerView.ViewHolder, ce
         val qrCode = cell.qrCode
         if (qrCode != null){
             if (!qrCode.url.isNullOrEmpty()) {
-                Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
+               // Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
+               Utils.fetchSvg(activity, qrCode.url, qrCodeImage)
+               // GlideToVectorYou.justLoadImage(activity, Uri.parse(qrCode.url), qrCodeImage)
             }
         }
     }
 }
-
-
-
-
-
-

@@ -57,6 +57,8 @@ dependencies {
     //View Images
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.8.0'
+    implementation 'com.pixplicity.sharp:library:1.1.0'
+
     //Scrolling textView
     implementation 'com.sunfusheng:marqueeview:1.2.0'
     //Pattern Lock View Library.. For PassCode Authentication..
