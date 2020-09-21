@@ -51,10 +51,10 @@ class ContentRepository(val context: Context) {
     }
 
     private fun getData (): MutableList<Data> {
-        val qrcode1 = Promotion("Big Sale !","Find it out in Avenus Mall","vci3wwiahX","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Fbest_qrcode.svg?alt=media&token=e039f140-e0c2-4406-9948-d7e2317cbd90")
-        val qrcode2 = Promotion("Centrepoint offers a 30% discount, valid till 20/11/2020","Scan Now!","cskJhlOmpq","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Fcentrepoints_qrcode.svg?alt=media&token=7ecaecfa-7101-40ce-b79d-360b668e00c5")
-        val qrcode3 = Promotion("Routes offers a 70% discount, valid till 20/11/2020","Find it out in 360 Mall","bDoimLknqD","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Froutes_qrcode.svg?alt=media&token=aec56133-ce6c-41f5-b65b-dde9d5887b63")
-        val qrcode4 = Promotion("SUBWAY offers a 60% discount, valid till 16/12/2020","Scan Now!","hfDdLkjmIk","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Fsubway_qrcode.svg?alt=media&token=794d02e1-ce88-4c75-9b5c-6216840cd575")
+        val qrcode1 = Promotion("Big Sale !","Find it out in Avenus Mall","vci3wwiahX","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fburger-king-4.svg?alt=media&token=49662264-d043-48fa-8c7b-1253beadf899")
+        val qrcode2 = Promotion("Centrepoint offers a 30% discount, valid till 20/11/2020","Scan Now!","cskJhlOmpq","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fhuawei.svg?alt=media&token=ca5bd550-e6c1-4e18-a331-a568ae62360b")
+        val qrcode3 = Promotion("Routes offers a 70% discount, valid till 20/11/2020","Find it out in 360 Mall","bDoimLknqD","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fkfc-2.svg?alt=media&token=31469303-83c8-46db-862f-9593a6549a1b")
+        val qrcode4 = Promotion("SUBWAY offers a 60% discount, valid till 16/12/2020","Scan Now!","hfDdLkjmIk","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fsubway-2.svg?alt=media&token=1ff4c410-c115-4df6-a4ce-b24a7ce4a834")
         val image1 = Data(0,"image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957",qrcode1)
         val video1 = Data(1,"video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2Fbig%20sale%20sep%20video.mp4?alt=media&token=9dae3b12-028b-41e7-86b2-961e9d30cc0f",qrcode4)
         val video2 = Data(2,"video","https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3",qrcode3)
