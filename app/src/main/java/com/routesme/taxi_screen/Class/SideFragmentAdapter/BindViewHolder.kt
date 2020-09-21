@@ -2,7 +2,6 @@ package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.Class.Utils
 import com.routesme.taxi_screen.MVVM.Model.*
@@ -14,13 +13,13 @@ fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cel
     holder as ViewHolderVideoDiscount
     cell as VideoDiscountCell
     holder.apply {
-        val qrCode = cell.qrCode
+        val qrCode = cell.promotion
         if (qrCode != null){
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
-            if (!qrCode.subTitle.isNullOrEmpty()) subTitle.text = qrCode.subTitle
-            if (!qrCode.url.isNullOrEmpty()) {
+            if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = qrCode.subtitle
+            if (!qrCode.logoUrl.isNullOrEmpty()) {
                 //Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
-                Utils.fetchSvg(activity, qrCode.url, qrCodeImage)
+                Utils.fetchSvg(activity, qrCode.logoUrl, qrCodeImage)
                // GlideToVectorYou.justLoadImage(activity, Uri.parse(qrCode.url), qrCodeImage)
             }
         }
@@ -50,11 +49,11 @@ fun onBindBannerDiscount(activity: Activity, holder: RecyclerView.ViewHolder, ce
     holder as ViewHolderBannerDiscount
     cell as BannerDiscountCell
     holder.apply {
-        val qrCode = cell.qrCode
+        val qrCode = cell.promotion
         if (qrCode != null){
-            if (!qrCode.url.isNullOrEmpty()) {
+            if (!qrCode.logoUrl.isNullOrEmpty()) {
                // Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
-               Utils.fetchSvg(activity, qrCode.url, qrCodeImage)
+               Utils.fetchSvg(activity, qrCode.logoUrl, qrCodeImage)
                // GlideToVectorYou.justLoadImage(activity, Uri.parse(qrCode.url), qrCodeImage)
             }
         }

@@ -26,7 +26,7 @@ interface RestApiService {
     @GET("vehicles/{institutionId}")
     fun getVehicles(@Path("institutionId") institutionId: Int, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
-    @GET("campaigns/advertisementsqr")
+    @GET("campaigns/contents")
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
 /*

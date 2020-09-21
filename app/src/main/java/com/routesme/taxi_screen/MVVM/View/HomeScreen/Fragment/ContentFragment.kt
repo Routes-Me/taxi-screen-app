@@ -146,7 +146,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private fun fetchContent(){
         dialog?.show()
         val contentViewModel: ContentViewModel by viewModels()
-        contentViewModel.getContent(1,50,mContext).observe(activity as HomeActivity, Observer<ContentResponse> {
+        contentViewModel.getContent(1,100,mContext).observe(activity as HomeActivity, Observer<ContentResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {

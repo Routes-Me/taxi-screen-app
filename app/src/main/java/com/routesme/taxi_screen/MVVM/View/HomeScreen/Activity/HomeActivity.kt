@@ -160,11 +160,11 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         recreate()
     }
 
-    override fun onVideoQRCodeChanged(qrCode: com.routesme.taxi_screen.MVVM.Model.QrCode?) {
-        sideMenuFragment?.changeVideoQRCode(qrCode)
+    override fun onVideoQRCodeChanged(promotion: com.routesme.taxi_screen.MVVM.Model.Promotion?) {
+        sideMenuFragment?.changeVideoQRCode(promotion)
     }
 
-    override fun onBannerQRCodeChanged(qrCode: com.routesme.taxi_screen.MVVM.Model.QrCode?) {
-        sideMenuFragment?.changeBannerQRCode(qrCode)
+    override fun onBannerQRCodeChanged(promotion: com.routesme.taxi_screen.MVVM.Model.Promotion?) {
+        sideMenuFragment?.changeBannerQRCode(promotion)
     }
 }

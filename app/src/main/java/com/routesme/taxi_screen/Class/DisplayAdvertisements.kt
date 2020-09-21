@@ -57,7 +57,7 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
                     }
                     Player.STATE_READY -> {
                         progressBarHandlerCounter(ringProgressBar)
-                        qRCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].qrCode)
+                        qRCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].promotion)
                     }
                     Player.STATE_ENDED -> {
                         handlerProgressBar.removeCallbacks(runnableProgressBar)
@@ -128,7 +128,7 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
                 val uri = Uri.parse(banners[currentBannerIndex].url)
                 //showBannerIntoImageView(uri)
                 Glide.with(App.instance).load(uri).apply(App.imageOptions).into(ADS_ImageView)
-                qRCodeCallback?.onBannerQRCodeChanged(banners[currentBannerIndex].qrCode)
+                qRCodeCallback?.onBannerQRCodeChanged(banners[currentBannerIndex].promotion)
                 currentBannerIndex++
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0
