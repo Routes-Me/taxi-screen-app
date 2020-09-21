@@ -59,31 +59,17 @@ public class QRCodeHelper {
      * This method is called generate function who generate the qrcode and return it.
      *
      * @return qrcode image with encrypted user in it.
-     * @param logoUrl
      */
-    public Bitmap getQRCOde(String logoUrl) {
+    public Bitmap getQRCOde() {
 
-        Bitmap yourLogo = getBitmapFromURL(logoUrl); //BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.login_routes_icon);
+        Bitmap yourLogo = BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.best);
         Bitmap generatedQrCode = generate();
         Bitmap merge = mergeBitmaps(yourLogo, generatedQrCode);
 
         return merge;
     }
 
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-            URL url = new URL(src);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            // Log exception
-            return null;
-        }
-    }
+
 
     public static Bitmap imageFromString(String imageData) {
         String data = imageData.substring(imageData.indexOf(",") + 1);

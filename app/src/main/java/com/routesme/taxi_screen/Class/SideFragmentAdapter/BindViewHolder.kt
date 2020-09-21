@@ -3,12 +3,17 @@ package com.routesme.taxi_screen.Class.SideFragmentAdapter
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.graphics.Bitmap
+import android.graphics.drawable.Drawable
+import androidx.core.graphics.drawable.toBitmap
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.QRCodeHelper
 import com.routesme.taxi_screen.Class.Utils
 import com.routesme.taxi_screen.MVVM.Model.*
+import java.io.InputStream
+import java.net.URL
+
 
 fun onBindEmptyVideoDiscount() {}
 
@@ -21,6 +26,7 @@ fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cel
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
             if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = qrCode.subtitle
             if (!qrCode.logoUrl.isNullOrEmpty() && !qrCode.promotionId.isNullOrEmpty()) {
+                val logo = loadImageFromURL(qrCode.logoUrl,"logo")
                 val image = generateQrCode(qrCode.promotionId,135,135,qrCode.logoUrl)
                 qrCodeImage.setImageBitmap(image)
             }
@@ -30,14 +36,23 @@ fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cel
 
 
 
-private fun generateQrCode(promotionId: String?, width: Int, height: Int, logoUrl: String): Bitmap? {
+private fun generateQrCode(promotionId: String?, width: Int, height: Int, logoUrl: String?): Bitmap? {
     return QRCodeHelper
             .newInstance(App.instance)
             .setWidthAndHeight(width,height)
             .setContent("$promotionId")
             .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
             .setMargin(2)
-            .getQRCOde(logoUrl)
+            .qrcOde
+}
+
+fun loadImageFromURL(url: String?, name: String?): Bitmap? {
+    return try {
+        val `is`: InputStream = URL(url).content as InputStream
+        Drawable.createFromStream(`is`, name).toBitmap()
+    } catch (e: Exception) {
+        null
+    }
 }
 
 fun onBindLargeEmpty() {}
