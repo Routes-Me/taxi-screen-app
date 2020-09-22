@@ -1,12 +1,16 @@
 package com.routesme.taxi_screen.Class;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.os.AsyncTask;
 import android.util.Base64;
+import android.util.Log;
 import android.util.TypedValue;
+import android.widget.ImageView;
 
 import androidx.annotation.IntRange;
 import androidx.core.content.ContextCompat;
@@ -60,16 +64,55 @@ public class QRCodeHelper {
      *
      * @return qrcode image with encrypted user in it.
      */
-    public Bitmap getQRCOde() {
+    public void getQRCOde(String url, ImageView qrCodeImage) {
+       // Bitmap logo = getBitmapFromURL(url);
+       // InputStream inputStream = Utils.INSTANCE.fetchSvg(App.Companion.getInstance(),url);
+       // Bitmap logo = BitmapFactory.decodeStream(inputStream);
 
-        Bitmap yourLogo = BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.best);
-        Bitmap generatedQrCode = generate();
-        Bitmap merge = mergeBitmaps(yourLogo, generatedQrCode);
+        Bitmap logo;
 
-        return merge;
+        @SuppressLint("StaticFieldLeak") MyAsync obj = new MyAsync(url){
+
+            @Override
+            protected void onPostExecute(Bitmap bmp) {
+                super.onPostExecute(bmp);
+
+               // return bmp;
+               // Bitmap generatedQrCode = generate();
+              //  Bitmap merge = mergeBitmaps(bmp, generatedQrCode);
+
+               // Bitmap yourLogo = BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.best);
+                Bitmap generatedQrCode = generate();
+                Bitmap merge = mergeBitmaps(bmp, generatedQrCode);
+                qrCodeImage.setImageBitmap(merge);
+            }
+        };
+        obj.execute();
+
+
+       // return merge;
     }
 
+    public static Bitmap getBitmapFromURL(String src) {
+        try {
 
+            //uncomment below line in image name have spaces.
+            //src = src.replaceAll(" ", "%20");
+
+            URL url = new URL(src);
+
+            HttpURLConnection connection = (HttpURLConnection) url
+                    .openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (Exception e) {
+            Log.d("vk21", e.toString());
+            return null;
+        }
+    }
 
     public static Bitmap imageFromString(String imageData) {
         String data = imageData.substring(imageData.indexOf(",") + 1);
@@ -176,8 +219,6 @@ public class QRCodeHelper {
         return null;
     }
 
-
-
     public Bitmap mergeBitmaps(Bitmap logo, Bitmap qrcode) {
 
         Bitmap combined = Bitmap.createBitmap(qrcode.getWidth(), qrcode.getHeight(), qrcode.getConfig());
@@ -193,4 +234,35 @@ public class QRCodeHelper {
         return combined;
     }
 
+
+
 }
+
+class MyAsync extends AsyncTask<Void, Void, Bitmap> {
+
+    String logoUrl;
+    public MyAsync(String url) {
+        logoUrl = url;
+    }
+
+    @Override
+    protected Bitmap doInBackground(Void... params) {
+
+        try {
+            URL url = new URL(logoUrl);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setDoInput(true);
+            connection.connect();
+            InputStream input = connection.getInputStream();
+           // InputStream stream = input;
+            //SVG svg = SVGParser.getSVGFromInputStream(inputStream);
+            Bitmap myBitmap = BitmapFactory.decodeStream(input);
+            return myBitmap;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
+}
+

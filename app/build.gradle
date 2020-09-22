@@ -74,6 +74,7 @@ dependencies {
     //Spots progress dialog
     implementation 'com.github.d-max:spots-dialog:1.1@aar'
     //retrofit
+    implementation 'com.squareup.okhttp3:okhttp:3.14.4'
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
