@@ -6,14 +6,11 @@
     <string name="intent_data_scheme">wifihotspot</string>
     <string name="intent_data_host_turnon">turnon</string>
     <string name="intent_data_host_turnoff">turnoff</string>
-    <string name="on_uri"><a href="wifihotspot://turnon">wifihotspot://turnon</a></string>
-    <string name="off_uri"><a href="wifihotspot://turnoff">wifihotspot://turnoff</a></string>
     <string name="notification_chnnl">Hot Spot</string>
     <string name="notification_chnnl_location_descr">Keeps wifi hot spot persistent</string>
     <string name="learn_more">Learn more</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="kwd">KWD</string>
     <string name="open_camera_scan_qr_code_to_pay_taxi_fare_and_learn_more"> Open camera, scan QR Code to pay "<b>"taxi fare"</b>" and "<b>"learn more"</b>"</string>
     <string name="copyright_2020_routes_co">Copyright © 2020 Routes Co.</string>

@@ -7,9 +7,7 @@
     <color name="black">#000000</color>
     <color name="grey">#484848</color>
     <color name="red">#CF3737</color>
-    <color name="headings">#3797CF</color>
     <color name="border_background">#d8d8d8</color>
-    <color name="ringProgressColor">#cd6f6f</color>
     <color name="list_item_color">#4c18428f</color>
     <color name="viewLineColor">#44979797</color>
     <color name="cellValueColor">#99000000</color>
