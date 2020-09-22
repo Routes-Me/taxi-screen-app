@@ -69,13 +69,12 @@ public class QRCodeHelper {
        // InputStream inputStream = Utils.INSTANCE.fetchSvg(App.Companion.getInstance(),url);
        // Bitmap logo = BitmapFactory.decodeStream(inputStream);
 
-        Bitmap logo;
 
-        @SuppressLint("StaticFieldLeak") MyAsync obj = new MyAsync(url){
+        @SuppressLint("StaticFieldLeak") LogoAsync logoAsync = new LogoAsync(url){
 
             @Override
-            protected void onPostExecute(Bitmap bmp) {
-                super.onPostExecute(bmp);
+            protected void onPostExecute(Bitmap logo) {
+                super.onPostExecute(logo);
 
                // return bmp;
                // Bitmap generatedQrCode = generate();
@@ -83,13 +82,17 @@ public class QRCodeHelper {
 
                // Bitmap yourLogo = BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.best);
                 Bitmap generatedQrCode = generate();
-                Bitmap merge = mergeBitmaps(bmp, generatedQrCode);
-                qrCodeImage.setImageBitmap(merge);
+                if (generatedQrCode != null && logo != null){
+                    Bitmap mergedQrCode = mergeBitmaps(logo, generatedQrCode);
+                    if (mergedQrCode != null){
+                        qrCodeImage.setImageBitmap(mergedQrCode);
+                    }
+                }else if (generatedQrCode != null){
+                    qrCodeImage.setImageBitmap(generatedQrCode);
+                }
             }
         };
-        obj.execute();
-
-
+        logoAsync.execute();
        // return merge;
     }
 
@@ -227,21 +230,18 @@ public class QRCodeHelper {
         int canvasHeight = canvas.getHeight();
         canvas.drawBitmap(qrcode, new Matrix(), null);
 
-        Bitmap resizeLogo = Bitmap.createScaledBitmap(logo, canvasWidth / 5, canvasHeight / 5, true);
+        Bitmap resizeLogo = Bitmap.createScaledBitmap(logo, canvasWidth / 4, canvasHeight / 4, true);
         int centreX = (canvasWidth - resizeLogo.getWidth()) /2;
         int centreY = (canvasHeight - resizeLogo.getHeight()) / 2;
         canvas.drawBitmap(resizeLogo, centreX, centreY, null);
         return combined;
     }
-
-
-
 }
 
-class MyAsync extends AsyncTask<Void, Void, Bitmap> {
+class LogoAsync extends AsyncTask<Void, Void, Bitmap> {
 
     String logoUrl;
-    public MyAsync(String url) {
+    public LogoAsync(String url) {
         logoUrl = url;
     }
 
