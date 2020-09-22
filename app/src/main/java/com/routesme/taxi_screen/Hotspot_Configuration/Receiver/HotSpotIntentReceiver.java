@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.routesme.taxi_screen.Hotspot_Configuration.MagicActivity;
 import com.routesme.taxiscreen.R;
 

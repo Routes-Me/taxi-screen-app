@@ -10,9 +10,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.Operations
 import com.routesme.taxi_screen.Class.VehicleInformationAdapter
+import com.routesme.taxi_screen.MVVM.Model.Error
 import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.*
 import com.routesme.taxi_screen.MVVM.ViewModel.VehicleInformationViewModel
-import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_vehicle_information.*

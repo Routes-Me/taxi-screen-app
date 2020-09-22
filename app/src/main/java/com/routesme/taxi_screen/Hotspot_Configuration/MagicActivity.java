@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
+
 import com.routesme.taxiscreen.R;
 
 public class MagicActivity extends PermissionsActivity {

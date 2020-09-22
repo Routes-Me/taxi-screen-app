@@ -8,8 +8,8 @@ import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.AdminConsolePanel.Model.MasterItem
-import com.routesme.taxi_screen.AdminConsolePanel.View.ItemDetailFragment
 import com.routesme.taxi_screen.AdminConsolePanel.View.AdminConsolePanel
+import com.routesme.taxi_screen.AdminConsolePanel.View.ItemDetailFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_list_content.view.*
 

@@ -16,12 +16,11 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.Class.*
-import com.routesme.taxi_screen.MVVM.Model.*
-import com.routesme.taxi_screen.MVVM.Model.ContentResponse
-import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
-import com.routesme.taxi_screen.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi_screen.Class.VideoPreLoading.Constants
 import com.routesme.taxi_screen.Class.VideoPreLoading.VideoPreLoadingService
+import com.routesme.taxi_screen.MVVM.Model.*
+import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
+import com.routesme.taxi_screen.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*

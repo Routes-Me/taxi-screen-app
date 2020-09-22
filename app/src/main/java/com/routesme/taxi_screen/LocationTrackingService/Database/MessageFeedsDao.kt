@@ -1,6 +1,9 @@
 package com.routesme.taxi_screen.LocationTrackingService.Database
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Insert
+import androidx.room.Query
 import com.routesme.taxi_screen.LocationTrackingService.Model.MessageFeed
 
 //Message Feeds Table

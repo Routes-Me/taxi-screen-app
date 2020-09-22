@@ -7,10 +7,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi_screen.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.MVVM.API.RestApiService
-import com.routesme.taxi_screen.MVVM.Model.SignInCredentials
-import com.routesme.taxi_screen.MVVM.Model.LoginResponse
 import com.routesme.taxi_screen.MVVM.Model.*
-import com.routesme.taxi_screen.MVVM.Model.SignInSuccessResponse
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

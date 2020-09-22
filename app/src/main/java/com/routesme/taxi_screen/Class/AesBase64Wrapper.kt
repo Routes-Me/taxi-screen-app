@@ -5,7 +5,6 @@ import android.util.Base64
 import android.util.Log
 import com.routesme.taxi_screen.MVVM.Model.EncryptModel
 import java.io.UnsupportedEncodingException
-import java.lang.StringBuilder
 import java.security.Key
 import java.security.spec.KeySpec
 import javax.crypto.Cipher

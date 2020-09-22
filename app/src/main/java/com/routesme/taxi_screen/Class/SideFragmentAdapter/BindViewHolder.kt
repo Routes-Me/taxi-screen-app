@@ -1,11 +1,8 @@
 package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.net.Uri
-import android.widget.ImageView
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.routesme.taxi_screen.Class.App
@@ -13,9 +10,6 @@ import com.routesme.taxi_screen.Class.Helper
 import com.routesme.taxi_screen.Class.QRCodeHelper
 import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxiscreen.R
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
 
 private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.config)
 

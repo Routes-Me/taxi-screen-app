@@ -12,13 +12,17 @@ import android.content.pm.PackageManager;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.util.Log;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 import androidx.core.app.NotificationCompat;
 import androidx.core.content.ContextCompat;
+
 import com.routesme.taxi_screen.Hotspot_Configuration.Receiver.HotSpotIntentReceiver;
 import com.routesme.taxiscreen.R;
+
 import java.lang.reflect.Method;
+
 import static android.content.ContentValues.TAG;
 
 public class HotSpotIntentService extends IntentService {

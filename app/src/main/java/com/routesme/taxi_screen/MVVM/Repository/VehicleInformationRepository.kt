@@ -5,7 +5,8 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi_screen.MVVM.API.RestApiService
-import com.routesme.taxi_screen.MVVM.Model.*
+import com.routesme.taxi_screen.MVVM.Model.Error
+import com.routesme.taxi_screen.MVVM.Model.ResponseErrors
 import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.*
 import retrofit2.Call
 import retrofit2.Callback

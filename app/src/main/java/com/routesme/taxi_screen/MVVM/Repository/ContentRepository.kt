@@ -2,11 +2,9 @@ package com.routesme.taxi_screen.MVVM.Repository
 
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
-import com.routesme.taxi_screen.MVVM.API.RestApiService
-import com.routesme.taxi_screen.MVVM.Model.ContentResponse
 import com.google.gson.Gson
 import com.google.gson.JsonElement
-import com.routesme.taxi_screen.MVVM.Model.Content
+import com.routesme.taxi_screen.MVVM.API.RestApiService
 import com.routesme.taxi_screen.MVVM.Model.*
 import retrofit2.Call
 import retrofit2.Callback

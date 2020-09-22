@@ -5,8 +5,8 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.AdminConsolePanel.Class.MasterItemsAdapter
 import com.routesme.taxi_screen.AdminConsolePanel.Class.AdminConsoleLists
+import com.routesme.taxi_screen.AdminConsolePanel.Class.MasterItemsAdapter
 import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.admin_console_panel.*

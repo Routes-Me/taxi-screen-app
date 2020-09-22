@@ -8,7 +8,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.*
+import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.Item
 import com.routesme.taxiscreen.R
 
 class VehicleInformationAdapter(val context: Context, private var listItemArrayList: List<Item>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

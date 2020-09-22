@@ -23,16 +23,16 @@ import com.routesme.taxi_screen.Class.DateOperations
 import com.routesme.taxi_screen.Class.Operations
 import com.routesme.taxi_screen.Class.SharedPreference
 import com.routesme.taxi_screen.MVVM.Model.Authorization
+import com.routesme.taxi_screen.MVVM.Model.Error
 import com.routesme.taxi_screen.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi_screen.MVVM.Model.RegistrationResponse
-import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.*
+import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.taxi_screen.MVVM.ViewModel.RegistrationViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
 import java.util.*
-import com.routesme.taxi_screen.MVVM.Model.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 

@@ -24,8 +24,9 @@ import com.routesme.taxi_screen.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.Operations
 import com.routesme.taxi_screen.Class.SharedPreference
-import com.routesme.taxi_screen.MVVM.Model.SignInCredentials
+import com.routesme.taxi_screen.MVVM.Model.Error
 import com.routesme.taxi_screen.MVVM.Model.LoginResponse
+import com.routesme.taxi_screen.MVVM.Model.SignInCredentials
 import com.routesme.taxi_screen.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
@@ -35,7 +36,6 @@ import kotlinx.android.synthetic.main.technical_login_layout.*
 import kotlinx.android.synthetic.main.technical_login_layout.view.*
 import java.io.IOException
 import kotlin.system.exitProcess
-import com.routesme.taxi_screen.MVVM.Model.*
 
 class LoginActivity : AppCompatActivity() {
 
