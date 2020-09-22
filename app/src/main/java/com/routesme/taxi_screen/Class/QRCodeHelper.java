@@ -1,6 +1,5 @@
 package com.routesme.taxi_screen.Class;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -10,7 +9,6 @@ import android.os.AsyncTask;
 import android.util.Base64;
 import android.util.Log;
 import android.util.TypedValue;
-import android.widget.ImageView;
 
 import androidx.annotation.IntRange;
 import androidx.core.content.ContextCompat;
@@ -39,37 +37,21 @@ public class QRCodeHelper {
     private int mMargin;
     private String mContent;
     private int mWidth, mHeight;
-    /**
-     * private constructor of this class only access by stying in this class.
-     */
     private QRCodeHelper(Context context) {
         mHeight = (int) (context.getResources().getDisplayMetrics().heightPixels / 2.4);
         mWidth = (int) (context.getResources().getDisplayMetrics().widthPixels / 1.3);
         //Log.e("Dimension = %s", mHeight + "");
         //Log.e("Dimension = %s", mWidth + "");
     }
-    /**
-     * This method is for singleton instance od this class.
-     *
-     * @return the QrCode instance.
-     */
     public static QRCodeHelper newInstance(Context context) {
         if (qrCodeHelper == null) {
             qrCodeHelper = new QRCodeHelper(context);
         }
         return qrCodeHelper;
     }
-    /**
-     * This method is called generate function who generate the qrcode and return it.
-     *
-     * @return qrcode image with encrypted user in it.
-     */
-    public void getQRCOde(String url, ImageView qrCodeImage) {
-       // Bitmap logo = getBitmapFromURL(url);
-       // InputStream inputStream = Utils.INSTANCE.fetchSvg(App.Companion.getInstance(),url);
-       // Bitmap logo = BitmapFactory.decodeStream(inputStream);
-
-
+    public Bitmap getQRCOde() {
+        Bitmap generatedQrCode = generate();
+/*
         @SuppressLint("StaticFieldLeak") LogoAsync logoAsync = new LogoAsync(url){
 
             @Override
@@ -82,6 +64,7 @@ public class QRCodeHelper {
 
                // Bitmap yourLogo = BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.best);
                 Bitmap generatedQrCode = generate();
+
                 if (generatedQrCode != null && logo != null){
                     Bitmap mergedQrCode = mergeBitmaps(logo, generatedQrCode);
                     if (mergedQrCode != null){
@@ -90,109 +73,31 @@ public class QRCodeHelper {
                 }else if (generatedQrCode != null){
                     qrCodeImage.setImageBitmap(generatedQrCode);
                 }
+
             }
         };
         logoAsync.execute();
-       // return merge;
+*/
+        return generatedQrCode;
     }
 
-    public static Bitmap getBitmapFromURL(String src) {
-        try {
-
-            //uncomment below line in image name have spaces.
-            //src = src.replaceAll(" ", "%20");
-
-            URL url = new URL(src);
-
-            HttpURLConnection connection = (HttpURLConnection) url
-                    .openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (Exception e) {
-            Log.d("vk21", e.toString());
-            return null;
-        }
-    }
-
-    public static Bitmap imageFromString(String imageData) {
-        String data = imageData.substring(imageData.indexOf(",") + 1);
-        byte[] imageAsBytes = Base64.decode(data.getBytes(), Base64.DEFAULT);
-        String  svgAsString = new String(imageAsBytes, StandardCharsets.UTF_8);
-
-        SVG  svg = null;
-        try {
-            svg = SVG.getFromString(svgAsString);
-        } catch (SVGParseException e) {
-            e.printStackTrace();
-        }
-
-        // Create a bitmap and canvas to draw onto
-        float   svgWidth = (svg.getDocumentWidth() != -1) ? svg.getDocumentWidth() : 500f;
-        float   svgHeight = (svg.getDocumentHeight() != -1) ? svg.getDocumentHeight() : 500f;
-
-        Bitmap  newBM = Bitmap.createBitmap(20, 20, Bitmap.Config.ARGB_8888);
-        Canvas  bmcanvas = new Canvas(newBM);
-
-        // Clear background to white if you want
-        bmcanvas.drawRGB(255, 255, 255);
-
-        // Render our document onto our canvas
-        svg.renderToCanvas(bmcanvas);
-
-        return newBM;
-    }
-
-
-    /**
-     * Simply setting the correctionLevel to qrcode.
-     *
-     * @param level ErrorCorrectionLevel for Qrcode.
-     * @return the instance of QrCode helper class for to use remaining function in class.
-     */
     public QRCodeHelper setErrorCorrectionLevel(ErrorCorrectionLevel level) {
         mErrorCorrectionLevel = level;
         return this;
     }
-    /**
-     * Simply setting the encrypted to qrcode.
-     *
-     * @param content encrypted content for to store in qrcode.
-     * @return the instance of QrCode helper class for to use remaining function in class.
-     */
     public QRCodeHelper setContent(String content) {
         mContent = content;
         return this;
     }
-    /**
-     * Simply setting the width and height for qrcode.
-     *
-     * @param width  for qrcode it needs to greater than 1.
-     * @param height for qrcode it needs to greater than 1.
-     * @return the instance of QrCode helper class for to use remaining function in class.
-     */
     public QRCodeHelper setWidthAndHeight(@IntRange(from = 1) int width, @IntRange(from = 1) int height) {
         mWidth = width;
         mHeight = height;
         return this;
     }
-    /**
-     * Simply setting the margin for qrcode.
-     *
-     * @param margin for qrcode spaces.
-     * @return the instance of QrCode helper class for to use remaining function in class.
-     */
     public QRCodeHelper setMargin(@IntRange(from = 0) int margin) {
         mMargin = margin;
         return this;
     }
-    /**
-     * Generate the qrcode with giving the properties.
-     *
-     * @return the qrcode image.
-     */
     private Bitmap generate() {
         Map<EncodeHintType, Object> hintsMap = new HashMap<>();
         hintsMap.put(EncodeHintType.CHARACTER_SET, "utf-8");

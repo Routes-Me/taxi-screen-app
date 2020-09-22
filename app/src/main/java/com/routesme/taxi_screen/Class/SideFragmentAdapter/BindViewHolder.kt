@@ -21,7 +21,7 @@ private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.confi
 
 fun onBindEmptyVideoDiscount() {}
 
-fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
+fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderVideoDiscount
     cell as VideoDiscountCell
     holder.apply {
@@ -30,27 +30,10 @@ fun onBindVideoDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cel
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
             if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = qrCode.subtitle
             if (!qrCode.logoUrl.isNullOrEmpty() && !qrCode.promotionId.isNullOrEmpty()) {
-               // val logo = loadImageFromURL(qrCode.logoUrl,"logo")
-                //val image =
-                        generateQrCode(qrCode.promotionId,135,135,qrCode.logoUrl,qrCodeImage)
-                //qrCodeImage.setImageBitmap(image)
+                val image = generateQrCode(qrCode.promotionId,135,135)
+                qrCodeImage.setImageBitmap(image)
             }
         }
-    }
-}
-
-fun loadImageFromURL(Url: String?, name: String?): Bitmap? {
-    return try {
-      //  val `is`: InputStream = URL(url).content as InputStream
-       //Drawable.createFromStream(`is`, name).toBitmap()
-
-        val url = URL(Url)
-        val urlConnection: HttpURLConnection = url.openConnection() as HttpURLConnection
-        val inputStream: InputStream = urlConnection.inputStream
-       BitmapFactory.decodeStream(inputStream)
-
-    } catch (e: Exception) {
-        null
     }
 }
 
@@ -73,23 +56,21 @@ fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     }
 }
 
-fun onBindBannerDiscount(activity: Activity, holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
+fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderBannerDiscount
     cell as BannerDiscountCell
     holder.apply {
         val qrCode = cell.promotion
         if (qrCode != null) {
             if (!qrCode.logoUrl.isNullOrEmpty()) {
-                // Glide.with(App.instance).load(Uri.parse(qrCode.url)).apply(App.imageOptions).into(qrCodeImage)
-              //  Utils.fetchSvg(activity, qrCode.logoUrl, qrCodeImage)
-                // GlideToVectorYou.justLoadImage(activity, Uri.parse(qrCode.url), qrCodeImage)
-                generateQrCode(qrCode.promotionId,135,135,qrCode.logoUrl,qrCodeImage)
+                val image = generateQrCode(qrCode.promotionId,135,135)
+                qrCodeImage.setImageBitmap(image)
             }
         }
     }
 }
 
-private fun generateQrCode(promotionId: String?, width: Int, height: Int, logoUrl: String?, qrCodeImage: ImageView) {
+private fun generateQrCode(promotionId: String?, width: Int, height: Int): Bitmap {
 
     val builder = Uri.Builder()
     builder.scheme("https")
@@ -104,5 +85,5 @@ private fun generateQrCode(promotionId: String?, width: Int, height: Int, logoUr
             .setContent(promotionUrl)
             .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
             .setMargin(2)
-            .getQRCOde(logoUrl,qrCodeImage)
+            .qrcOde
 }

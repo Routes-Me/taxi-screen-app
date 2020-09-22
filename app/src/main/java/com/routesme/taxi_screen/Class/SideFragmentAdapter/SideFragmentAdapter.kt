@@ -32,12 +32,12 @@ class SideFragmentAdapter(private val activity: Activity, private val list: List
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder.itemViewType) {
         TYPE_EMPTY_VIDEO_DISCOUNT -> onBindEmptyVideoDiscount()
-        TYPE_VIDEO_DISCOUNT ->  onBindVideoDiscount(activity, holder, list[position])
+        TYPE_VIDEO_DISCOUNT ->  onBindVideoDiscount(holder, list[position])
         TYPE_LARGE_EMPTY -> onBindLargeEmpty()
         TYPE_DATE -> onBindDate(holder, list[position])
         TYPE_SMALL_EMPTY -> onBindSmallEmpty()
         TYPE_WIFI -> onBindWifi(holder, list[position])
-        else ->  onBindBannerDiscount(activity, holder, list[position])
+        else ->  onBindBannerDiscount(holder, list[position])
     }
 
     override fun getItemCount(): Int = list.size
