@@ -58,7 +58,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         openPattern.setOnClickListener {openPatternClick()}
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.requestRuntimePermissions()
-        turnOnHotspot()
+       // turnOnHotspot()
         addFragments()
     }
 
@@ -91,7 +91,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     override fun onResume() {
         //homeScreenFunctions.hideNavigationBar()
         //homeScreenFunctions.requestRuntimePermissions()
-        //turnOnHotspot()
+        turnOnHotspot()
         // startLocationTrackingService()
         //showFragments()
         super.onResume()
