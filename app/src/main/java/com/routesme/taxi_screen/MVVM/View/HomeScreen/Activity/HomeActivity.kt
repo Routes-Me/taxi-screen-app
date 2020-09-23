@@ -51,8 +51,8 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
-        brightnessSetup()
-        updateBrightness()
+        //brightnessSetup()
+        //updateBrightness()
         sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
        // homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
         openPattern.setOnClickListener {openPatternClick()}
