@@ -132,7 +132,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         try {
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
-                intentFilter.addAction(CONNECTIVITY_ACTION)
+                intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
                 mContext.registerReceiver(connectivityReceiver, intentFilter)
             } else {
                 mContext.unregisterReceiver(connectivityReceiver)
