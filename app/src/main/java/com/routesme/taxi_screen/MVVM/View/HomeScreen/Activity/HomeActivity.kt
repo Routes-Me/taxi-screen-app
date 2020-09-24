@@ -1,10 +1,8 @@
 package com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity
 
 import android.app.Activity
-import android.content.ComponentName
-import android.content.ContentResolver
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
@@ -19,6 +17,7 @@ import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
+
 
 class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
@@ -51,6 +50,9 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         displayManager.registerActivity(this)
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
+
+        turnOnHotspot()
+
         //brightnessSetup()
         //updateBrightness()
         sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
@@ -91,7 +93,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     override fun onResume() {
         //homeScreenFunctions.hideNavigationBar()
         //homeScreenFunctions.requestRuntimePermissions()
-        turnOnHotspot()
+      //  turnOnHotspot()
         // startLocationTrackingService()
         //showFragments()
         super.onResume()
@@ -135,16 +137,20 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
     private fun turnOnHotspot() {
         if (!isHotspotOn) {
-            sendImplicitBroadcast(Intent(getString(R.string.intent_action_turnon)))
+            val intent = Intent(getString(R.string.intent_action_turnon))
+            sendImplicitBroadcast(intent)
             isHotspotOn = true
         }
     }
 
     private fun sendImplicitBroadcast(i: Intent) {
-        val matches = packageManager.queryBroadcastReceivers(i, 0)
+        val pm: PackageManager = this.packageManager
+        val matches = pm.queryBroadcastReceivers(i, 0)
         for (resolveInfo in matches) {
-            Intent(i).component = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
-            sendBroadcast(Intent(i))
+            val explicit = Intent(i)
+            val cn = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
+            explicit.component = cn
+            this.sendBroadcast(explicit)
         }
     }
     private fun openPatternClick() {

@@ -14,6 +14,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.Class.*
 import com.routesme.taxi_screen.Class.VideoPreLoading.Constants
@@ -74,6 +75,11 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         return view1
     }
 
+    override fun onDestroyView() {
+        connectivityReceiverRegistering(false)
+        super.onDestroyView()
+    }
+
     private fun initAdvertiseViews() {
         dialog = SpotsDialog.Builder().setContext(mContext).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
         view1.apply {
@@ -86,11 +92,6 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     }
 
-    override fun onDestroy() {
-
-        connectivityReceiverRegistering(false)
-        super.onDestroy()
-    }
 
     override fun onClick(view: View?) {
         when (view?.id) {
@@ -133,9 +134,11 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
                 intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-                mContext.registerReceiver(connectivityReceiver, intentFilter)
+               // mContext.registerReceiver(connectivityReceiver, intentFilter)
+                LocalBroadcastManager.getInstance(mContext).registerReceiver(connectivityReceiver, intentFilter)
             } else {
-                mContext.unregisterReceiver(connectivityReceiver)
+                LocalBroadcastManager.getInstance(mContext).unregisterReceiver(connectivityReceiver)
+               // mContext.unregisterReceiver(connectivityReceiver)
             }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
