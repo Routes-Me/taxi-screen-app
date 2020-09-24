@@ -20,9 +20,9 @@ import com.routesme.taxiscreen.R
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*
 
+class DisplayAdvertisements() {
 
-class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
-
+    private var qrCodeCallback: QRCodeCallback? = null
     private var cacheDataSourceFactory: CacheDataSourceFactory? = null
     private var simpleExoPlayer: SimpleExoPlayer? = null
     private var simpleCache: SimpleCache? = null
@@ -37,12 +37,13 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
     private val second: Long = 1000
 
 
-    init {
-        //animation1.interpolator = DecelerateInterpolator()
-        //animation2.interpolator = AccelerateDecelerateInterpolator()
-        // videoRingProgressBar.progress = 0
-        // videoRingProgressBar.max = 100
-        //videoView.requestFocus()
+    companion object{
+        @get:Synchronized
+        val instance = DisplayAdvertisements()
+    }
+
+    fun setQrCodeCallback(qrCodeCallback: QRCodeCallback){
+        this.qrCodeCallback = qrCodeCallback
     }
 
     fun displayAdvertisementVideoList(videos: List<Data>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
@@ -57,7 +58,7 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
                     }
                     Player.STATE_READY -> {
                         progressBarHandlerCounter(ringProgressBar)
-                        qRCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].promotion)
+                        qrCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].promotion)
                     }
                     Player.STATE_ENDED -> {
                         handlerProgressBar.removeCallbacks(runnableProgressBar)
@@ -121,14 +122,13 @@ class DisplayAdvertisements(val qRCodeCallback: QRCodeCallback?) {
         ringProgressBar.progress = progress
     }
 
-
     fun displayAdvertisementBannerList(banners: List<Data>, ADS_ImageView: ImageView) {
         runnableBanner = Runnable {
             if (currentBannerIndex < banners.size) {
                 val uri = Uri.parse(banners[currentBannerIndex].url)
                 //showBannerIntoImageView(uri)
                 Glide.with(App.instance).load(uri).apply(App.imageOptions).into(ADS_ImageView)
-                qRCodeCallback?.onBannerQRCodeChanged(banners[currentBannerIndex].promotion)
+                qrCodeCallback?.onBannerQRCodeChanged(banners[currentBannerIndex].promotion)
                 currentBannerIndex++
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0

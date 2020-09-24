@@ -6,11 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.SharedPreferences
-import android.net.ConnectivityManager.CONNECTIVITY_ACTION
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,14 +20,13 @@ import com.routesme.taxi_screen.Class.*
 import com.routesme.taxi_screen.Class.VideoPreLoading.Constants
 import com.routesme.taxi_screen.Class.VideoPreLoading.VideoPreLoadingService
 import com.routesme.taxi_screen.MVVM.Model.*
-import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxi_screen.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import java.io.IOException
 
-class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.ConnectivityReceiverListener {
+class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverListener {
 
     private val operations = Operations.instance
     private lateinit var tabletSerialNumber:String
@@ -42,6 +41,7 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
     private var isDataFetched = false
     private lateinit var displayAdvertisements: DisplayAdvertisements
     private var dialog: AlertDialog? = null
+    private var isNetworkAvailable = false
 
     companion object {
         val instance = ContentFragment()
@@ -70,9 +70,20 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
         view1 = inflater.inflate(R.layout.content_fragment, container, false)
 
         initAdvertiseViews()
+        displayAdvertisements = DisplayAdvertisements()
+        qRCodeCallback?.let { it1 -> displayAdvertisements.setQrCodeCallback(it1) }
         checkConnection()
-
         return view1
+    }
+
+    override fun onResume() {
+
+        super.onResume()
+    }
+
+    override fun onPause() {
+
+        super.onPause()
     }
 
     override fun onDestroyView() {
@@ -82,22 +93,6 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
 
     private fun initAdvertiseViews() {
         dialog = SpotsDialog.Builder().setContext(mContext).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
-        view1.apply {
-            Advertisement_Banner_CardView.setOnClickListener(instance)
-            Advertisement_Video_CardView.setOnClickListener(instance)
-        }
-        // val videoRingProgressBar = contentFragment.contentFragmentView.videoRingProgressBar
-        // val advertisementsVideoView = contentFragment.contentFragmentView.advertisementsVideoView
-        // val advertisementsImageView = contentFragment.contentFragmentView.advertisementsImageView
-
-    }
-
-
-    override fun onClick(view: View?) {
-        when (view?.id) {
-            // R.id.Advertisement_Banner_CardView -> updateFirebaseAnalystics(ItemAnalytics(2, "click_banner"))
-            // R.id.Advertisement_Video_CardView -> updateFirebaseAnalystics(ItemAnalytics(1, "click_video"))
-        }
     }
 
     private fun updateFirebaseAnalystics(itemAnalytics: ItemAnalytics) {
@@ -134,21 +129,22 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
             if (register) {
                 intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION")
                 intentFilter.addAction("android.net.conn.CONNECTIVITY_CHANGE")
-               // mContext.registerReceiver(connectivityReceiver, intentFilter)
+                // mContext.registerReceiver(connectivityReceiver, intentFilter)
                 LocalBroadcastManager.getInstance(mContext).registerReceiver(connectivityReceiver, intentFilter)
             } else {
                 LocalBroadcastManager.getInstance(mContext).unregisterReceiver(connectivityReceiver)
-               // mContext.unregisterReceiver(connectivityReceiver)
+                // mContext.unregisterReceiver(connectivityReceiver)
             }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
     }
 
+
     private fun fetchContent(){
         dialog?.show()
         val contentViewModel: ContentViewModel by viewModels()
-        contentViewModel.getContent(1,100,mContext).observe(activity as HomeActivity, Observer<ContentResponse> {
+        contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
@@ -159,7 +155,6 @@ class ContentFragment : Fragment(), View.OnClickListener, ConnectivityReceiver.C
                         operations.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
                         if (!images.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
                         if (!videos.isNullOrEmpty()) {  startPreLoadingService(videos); displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)}
                     }

@@ -3,11 +3,16 @@ package com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity
 import android.app.Activity
 import android.content.*
 import android.content.pm.PackageManager
+import android.net.ConnectivityManager
+import android.net.Network
+import android.net.NetworkRequest
 import android.os.Bundle
 import android.provider.Settings
 import android.provider.Settings.SettingNotFoundException
 import android.util.Log
+import android.view.View
 import android.view.Window
+import android.widget.ImageView
 import com.routesme.taxi_screen.Class.*
 import com.routesme.taxi_screen.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.LocationTrackingService.Class.LocationTrackingService
@@ -17,7 +22,6 @@ import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
-
 
 class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
@@ -38,6 +42,11 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     private val operations = Operations.instance
     private var contentFragment: ContentFragment? = null
     private var sideMenuFragment: SideMenuFragment? = null
+    private lateinit var activityCover: ImageView
+
+    //New Network listener
+    private var networkCallback: ConnectivityManager.NetworkCallback? = null
+    private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
 
     companion object{
         @get:Synchronized
@@ -51,7 +60,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
-        turnOnHotspot()
+        this.activityCover = findViewById(R.id.activityCover)
 
         //brightnessSetup()
         //updateBrightness()
@@ -60,8 +69,16 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         openPattern.setOnClickListener {openPatternClick()}
         homeScreenFunctions.hideNavigationBar()
         homeScreenFunctions.requestRuntimePermissions()
-       // turnOnHotspot()
-        addFragments()
+
+        registerConnectivityMonitoring()
+    }
+
+    override fun onDestroy() {
+        if (displayManager.wasRegistered(this) )displayManager.unregisterActivity(this)
+        removeFragments()
+        unregisterConnectivityMonitoring()
+
+        super.onDestroy()
     }
 
     private fun brightnessSetup() {
@@ -84,18 +101,13 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         w?.attributes = layoutParams
     }
 
-    override fun onDestroy() {
-        removeFragments()
-        if (displayManager.wasRegistered(this) )displayManager.unregisterActivity(this)
-        super.onDestroy()
-    }
-
     override fun onResume() {
         //homeScreenFunctions.hideNavigationBar()
         //homeScreenFunctions.requestRuntimePermissions()
       //  turnOnHotspot()
         // startLocationTrackingService()
         //showFragments()
+
         super.onResume()
     }
 
@@ -106,6 +118,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
     override fun onStop() {
        // operations.unPublish(deviceToken(),this)
+
         super.onStop()
     }
 
@@ -127,8 +140,8 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     }
 
     private fun removeFragments() {
-        contentFragment = null
-        sideMenuFragment = null
+        if (contentFragment != null) contentFragment = null
+        if (sideMenuFragment != null) sideMenuFragment = null
     }
 
     private fun deviceToken() = "dF9bQgwjSxmY-Glapm-ZmL:APA91bH2OS7k9nX_fkiH1h6St1JB41Z50aUK0dU0XABvs_C6-5DNQaz78jYgM4bCQuyVC0o1Yju9TmMJl7NFux2cTQOPguGiBS4fevIP1tMoxvsYe3b_qo6K5wTXB56erjiEKyd6Cazc"
@@ -172,5 +185,25 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
     override fun onBannerQRCodeChanged(promotion: com.routesme.taxi_screen.MVVM.Model.Promotion?) {
         sideMenuFragment?.changeBannerQRCode(promotion)
+    }
+
+    private fun registerConnectivityMonitoring() {
+        val networkCallback = object : ConnectivityManager.NetworkCallback() {
+            override fun onAvailable(network: Network?) {
+                this@HomeActivity.activityCover.visibility = View.INVISIBLE
+                addFragments()
+                turnOnHotspot()
+            }
+            override fun onLost(network: Network?) {
+            }
+        }
+        this.networkCallback = networkCallback
+        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
+    }
+
+    private fun unregisterConnectivityMonitoring() {
+        val networkCallback = this.networkCallback ?: return
+        connectivityManager.unregisterNetworkCallback(networkCallback)
+        this.networkCallback = null
     }
 }
