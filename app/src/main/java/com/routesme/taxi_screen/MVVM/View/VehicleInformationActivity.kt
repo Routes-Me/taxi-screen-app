@@ -107,7 +107,7 @@ class VehicleInformationActivity : AppCompatActivity() {
 
     private fun displayInstitutionList(list: List<InstitutionData>) {
         val institutions = mutableListOf<Item>().apply {
-            add(Item(-1, getString(R.string.institutions), true))
+            add(Item(null, getString(R.string.institutions), true))
             for (institution in list){
                 add(Item(institution.institutionId, institution.name, false))
             }
@@ -118,7 +118,7 @@ class VehicleInformationActivity : AppCompatActivity() {
             app.apply {
                 institutionId = it.id
                 institutionName = it.itemName
-                vehicleId = -999
+                vehicleId = null
                 taxiPlateNumber = null
             }
             finish()
@@ -132,7 +132,7 @@ class VehicleInformationActivity : AppCompatActivity() {
     private fun getVehicles(){
         dialog?.show()
         val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
-        vehicleInformationViewModel.getVehicles(app.institutionId,1,150,this).observe(this, Observer<VehiclesResponse> {
+        vehicleInformationViewModel.getVehicles(app.institutionId.toString(),1,150,this).observe(this, Observer<VehiclesResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
@@ -165,7 +165,7 @@ class VehicleInformationActivity : AppCompatActivity() {
 
     private fun displayVehicleList(list: List<VehicleData>) {
         val vehicles = mutableListOf<Item>().apply {
-            add(Item(-1, getString(R.string.vehicles) , true))
+            add(Item(null, getString(R.string.vehicles) , true))
             for (vehicle in list){
                 add(Item(vehicle.vehicleId, vehicle.plateNumber, false))
             }

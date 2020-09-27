@@ -191,8 +191,8 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         val networkCallback = object : ConnectivityManager.NetworkCallback() {
             override fun onAvailable(network: Network?) {
                 this@HomeActivity.activityCover.visibility = View.INVISIBLE
-                addFragments()
                 turnOnHotspot()
+                addFragments()
             }
             override fun onLost(network: Network?) {
             }

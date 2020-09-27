@@ -4,6 +4,7 @@ import android.Manifest
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Binder
 import android.os.Build
 import android.os.Handler
@@ -17,6 +18,7 @@ import com.routesme.taxiscreen.R
 import tech.gusavila92.websocketclient.WebSocketClient
 import java.io.IOException
 import java.net.URI
+import java.net.URISyntaxException
 
 class LocationTrackingService(): Service() {
 
@@ -33,9 +35,9 @@ class LocationTrackingService(): Service() {
 
     private val sharedPreferences = App.instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
     private lateinit var authorityUrl: URI
-    private var vehicleId: Int = -999
-    private var institutionId: Int = -999
-    private var deviceId: Int = -999
+    private var vehicleId: String? = null
+    private var institutionId: String? = null
+    private var deviceId: String? = null
 
     var isWebSocketAlive: Boolean = false
     companion object {
@@ -48,31 +50,29 @@ class LocationTrackingService(): Service() {
         }
     }
 
-    private val webSocket = object : WebSocketClient(getTrackingUrl()) {
-        override fun onOpen() {
-            isWebSocketAlive = true
-            Log.d("Tracking-Logic", "WebSocket-onOpen")
-        }
-        override fun onTextReceived(message: String) {
-            Log.d("Tracking-Logic", "WebSocket-onTextReceived: $message")
-        }
-        override fun onBinaryReceived(data: ByteArray) {}
-        override fun onPingReceived(data: ByteArray) {}
-        override fun onPongReceived(data: ByteArray) {}
-        override fun onException(e: Exception) {
-            if (e is IOException) {
-                isWebSocketAlive = false
+    private fun createWebSocket(): WebSocketClient {
+        val webSocket = object : WebSocketClient(getTrackingUrl()) {
+            override fun onOpen() {
+                isWebSocketAlive = true
+                Log.d("Tracking-Logic", "WebSocket-onOpen")
             }
-            Log.d("Tracking-Logic", "WebSocket-onException")
+            override fun onTextReceived(message: String) {
+                Log.d("Tracking-Logic", "WebSocket-onTextReceived: $message")
+            }
+            override fun onBinaryReceived(data: ByteArray) {}
+            override fun onPingReceived(data: ByteArray) {}
+            override fun onPongReceived(data: ByteArray) {}
+            override fun onException(e: Exception) {
+                if (e is IOException) {
+                    isWebSocketAlive = false
+                }
+                Log.d("Tracking-Logic", "WebSocket-onException: ${e.message}")
+            }
+            override fun onCloseReceived() {
+                isWebSocketAlive = false
+                Log.d("Tracking-Logic", "WebSocket-onCloseReceived")
+            }
         }
-        override fun onCloseReceived() {
-            isWebSocketAlive = false
-            Log.d("Tracking-Logic", "WebSocket-onCloseReceived")
-        }
-    }
-
-    private fun setTrackingWebSocketConfiguration(): WebSocketClient {
-
         webSocket.setConnectTimeout(10000)
         webSocket.setReadTimeout(60000)
         webSocket.enableAutomaticReconnection(10000)
@@ -80,8 +80,8 @@ class LocationTrackingService(): Service() {
     }
 
     private fun getTrackingUrl(): URI {
-        return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
-       /*
+       // return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
+
         try {
            authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl",R.raw.config))
         }
@@ -90,14 +90,14 @@ class LocationTrackingService(): Service() {
        }
 
         val builder: Uri.Builder = Uri.Builder()
-       builder.scheme("http")
-               .authority(authorityUrl.toString())
+       builder.scheme("ws")
+               .encodedAuthority(authorityUrl.toString())
                .appendPath("trackServiceHub")
                .appendQueryParameter("vehicleId", vehicleId.toString())
                .appendQueryParameter("institutionId", institutionId.toString())
                .appendQueryParameter("deviceId", deviceId.toString())
        return URI(builder.build().toString())
-    */
+
     }
 
     fun checkPermissionsGranted(){
@@ -124,8 +124,8 @@ class LocationTrackingService(): Service() {
          institutionId = getInstitutionId()
          deviceId = getDeviceId()
         testingSetup()
-             if (vehicleId >= 0 && institutionId >= 0 && deviceId >= 0) {
-                 trackingWebSocket = setTrackingWebSocketConfiguration()
+             if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
+                 trackingWebSocket = createWebSocket()
                  trackingDataLayer = TrackingDataLayer(this, trackingWebSocket)
                  locationReceiver = LocationReceiver(trackingDataLayer)
                  if (locationReceiver.setUpLocationListener()) {
@@ -137,9 +137,9 @@ class LocationTrackingService(): Service() {
     }
 
     private fun testingSetup() {
-        vehicleId = 16
-        institutionId = 9
-        deviceId = 3
+        vehicleId = "16"
+        institutionId = "9"
+        deviceId = "5"
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
@@ -194,7 +194,7 @@ class LocationTrackingService(): Service() {
         return builder.build()
     }
 
-    private fun getVehicleId() = sharedPreferences.getInt(SharedPreference.vehicle_id, -999)
-    private fun getInstitutionId() = sharedPreferences.getInt(SharedPreference.institution_id, -999)
-    private fun getDeviceId() =  sharedPreferences.getInt(SharedPreference.device_id, -999)
+    private fun getVehicleId() = sharedPreferences.getString(SharedPreference.vehicle_id, null)
+    private fun getInstitutionId() = sharedPreferences.getString(SharedPreference.institution_id, null)
+    private fun getDeviceId() =  sharedPreferences.getString(SharedPreference.device_id, null)
 }

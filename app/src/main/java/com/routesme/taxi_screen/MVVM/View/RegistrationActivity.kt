@@ -45,7 +45,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var telephonyManager: TelephonyManager
     private var dialog: AlertDialog? = null
-    private var institutionId = -999
+    private var institutionId: String? = null
     private var showRationale = true
     private  var getDeviceInfo: Boolean = false
 
@@ -132,9 +132,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             return
         } else {
             registerCredentials.apply {
-                DeviceSerialNumber = telephonyManager.imei
+                SerialNumber = telephonyManager.imei
                 SimSerialNumber = telephonyManager.simSerialNumber
-                deviceSerialNumber_tv.text = DeviceSerialNumber
+                deviceSerialNumber_tv.text = SerialNumber
                 SimCardNumber_tv.text = SimSerialNumber
             }
             showTabletInfoError(false)
@@ -177,7 +177,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun openVehiclesList() {
-        if (institutionId >= 0) {
+        if (institutionId != null) {
             taxiPlateNumber_tv.isEnabled = false
             openDataList(VehicleInformationListType.Vehicle)
         } else {
@@ -243,7 +243,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun institutionIdExist(): Boolean {
         institutionId = app.institutionId
-        return if (institutionId < 0) {
+        return if (institutionId == null) {
             showInputError(true, 1)
             false
         } else {
@@ -253,7 +253,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun vehicleIdExist(): Boolean {
         val vehicleId = app.vehicleId
-        return if (vehicleId < 0) {
+        return if (vehicleId == null) {
             showInputError(true, 2)
             false
         } else {
@@ -262,7 +262,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun tabletInformationExist(): Boolean {
-        val tabletSerialNumber = registerCredentials.DeviceSerialNumber
+        val tabletSerialNumber = registerCredentials.SerialNumber
         val simCardNumber = registerCredentials.SimSerialNumber
         return if (tabletSerialNumber.isNullOrEmpty() || simCardNumber.isNullOrEmpty()) {
             showTabletInfoError(true)
@@ -272,16 +272,16 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun saveTabletInfoIntoSharedPreferences(deviceId: Int) {
+    private fun saveTabletInfoIntoSharedPreferences(deviceId: String) {
         editor.apply {
             putString(SharedPreference.technician_username, app.signInCredentials?.Username)
             putString(SharedPreference.registration_date, DateOperations().registrationDate(Date()))
-            putInt(SharedPreference.institution_id, app.institutionId)
+            putString(SharedPreference.institution_id, app.institutionId)
             putString(SharedPreference.institution_name, app.institutionName)
-            putInt(SharedPreference.vehicle_id, app.vehicleId)
+            putString(SharedPreference.vehicle_id, app.vehicleId)
             putString(SharedPreference.vehicle_plate_number, app.taxiPlateNumber)
-            putInt(SharedPreference.device_id, deviceId)
-            putString(SharedPreference.device_serial_number, registerCredentials.DeviceSerialNumber)
+            putString(SharedPreference.device_id, deviceId)
+            putString(SharedPreference.device_serial_number, registerCredentials.SerialNumber)
             putString(SharedPreference.sim_serial_number, registerCredentials.SimSerialNumber)
         }.apply()
     }

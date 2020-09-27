@@ -10,11 +10,13 @@ import com.routesme.taxiscreen.R
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
+import retrofit2.http.Header
 
 
 interface RestApiService {
 
-    @POST("v1/signin")
+    @Headers("application: screen")
+    @POST("signin")
     fun signIn(@Body signInCredentials: SignInCredentials): Call<JsonElement>
 
     @POST("devices")
@@ -23,10 +25,10 @@ interface RestApiService {
     @GET("institutions")
     fun getInstitutions(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
-    @GET("vehicles/{institutionId}")
-    fun getVehicles(@Path("institutionId") institutionId: Int, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
+    @GET("vehicles")
+    fun getVehicles(@Query("institutionId") institutionId: String, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
-    @GET("campaigns/contents")
+    @GET("contents")
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
 /*

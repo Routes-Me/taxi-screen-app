@@ -32,9 +32,9 @@ class App : Application() {
     private var proxy: HttpProxyCacheServer? = null
     var signInCredentials: SignInCredentials? = null
     var isNewLogin = false
-    var institutionId = -999
+    var institutionId: String? = null
     var taxiPlateNumber: String? = null
-    var vehicleId: Int = -999
+    var vehicleId: String? = null
     var institutionName: String? = null
     private var trackingService: LocationTrackingService? = null
     private lateinit var telephonyManager: TelephonyManager

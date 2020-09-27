@@ -1,6 +1,7 @@
 package com.routesme.taxi_screen.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -48,7 +49,7 @@ class VehicleInformationRepository(val context: Context) {
         return institutionsResponse
     }
 
-    fun getVehicles(institutionId: Int, offset: Int, limit: Int): MutableLiveData<VehiclesResponse> {
+    fun getVehicles(institutionId: String, offset: Int, limit: Int): MutableLiveData<VehiclesResponse> {
         val call = thisApiCorService.getVehicles(institutionId,offset,limit)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
