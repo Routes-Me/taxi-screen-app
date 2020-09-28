@@ -250,7 +250,7 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
             val currentLocation = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
             locationFeedsDao.insertLocation(currentLocation)
             val lastLocationAdded = locationFeedsDao.loadLastLocation()
-           Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
+          // Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
         }
     }
 
@@ -265,5 +265,6 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
             e.printStackTrace()
         }
         trackingWebSocket.send(messageObject.toString())
+        Log.d("Tracking-Logic",messageObject.toString())
     }
 }

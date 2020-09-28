@@ -11,6 +11,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.telephony.TelephonyManager
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.danikula.videocache.HttpProxyCacheServer
@@ -96,7 +97,8 @@ class App : Application() {
         }
 
         val intent = Intent(instance, LocationTrackingService::class.java)
-        this.startService(intent)
+        //this.startService(intent)
+        ContextCompat.startForegroundService(instance,intent)
         //this.getApplication().startForegroundService(intent);
         this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }

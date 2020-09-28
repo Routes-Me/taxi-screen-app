@@ -38,6 +38,7 @@ class LocationTrackingService(): Service() {
     private var vehicleId: String? = null
     private var institutionId: String? = null
     private var deviceId: String? = null
+    private val NOTIFICATION_ID = 12345678
 
     var isWebSocketAlive: Boolean = false
     companion object {
@@ -63,9 +64,10 @@ class LocationTrackingService(): Service() {
             override fun onPingReceived(data: ByteArray) {}
             override fun onPongReceived(data: ByteArray) {}
             override fun onException(e: Exception) {
-                if (e is IOException) {
+                //if (e is IOException) {
                     isWebSocketAlive = false
-                }
+               // }
+
                 Log.d("Tracking-Logic", "WebSocket-onException: ${e.message}")
             }
             override fun onCloseReceived() {
@@ -80,6 +82,7 @@ class LocationTrackingService(): Service() {
     }
 
     private fun getTrackingUrl(): URI {
+       // return URI("ws://vmtprojectstage.uaenorth.cloudapp.azure.com:5002/trackServiceHub?vehicleId=16&institutionId=9&deviceId=5")
        // return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
 
         try {
@@ -97,7 +100,6 @@ class LocationTrackingService(): Service() {
                .appendQueryParameter("institutionId", institutionId.toString())
                .appendQueryParameter("deviceId", deviceId.toString())
        return URI(builder.build().toString())
-
     }
 
     fun checkPermissionsGranted(){
@@ -177,7 +179,7 @@ class LocationTrackingService(): Service() {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(12345678, getNotification())
+        startForeground(NOTIFICATION_ID, getNotification())
         Log.i("trackingWebSocket:","onCreate")
     }
 
