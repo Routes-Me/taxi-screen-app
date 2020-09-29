@@ -48,7 +48,7 @@ class DisplayAdvertisements() {
 
     fun displayAdvertisementVideoList(videos: List<Data>, playerView: PlayerView, ringProgressBar: RingProgressBar) {
         initPlayer(playerView)
-        playVideo(videos[currentVideoIndex].url, ringProgressBar)
+        playVideo(videos[currentVideoIndex].url)
         simpleExoPlayer?.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when (playbackState) {
@@ -64,10 +64,10 @@ class DisplayAdvertisements() {
                         handlerProgressBar.removeCallbacks(runnableProgressBar)
                         currentVideoIndex++
                         if (currentVideoIndex < videos.size) {
-                            playVideo(videos[currentVideoIndex].url, ringProgressBar)
+                            playVideo(videos[currentVideoIndex].url)
                         } else {
                             currentVideoIndex = 0
-                            playVideo(videos[currentVideoIndex].url, ringProgressBar)
+                            playVideo(videos[currentVideoIndex].url)
                         }
                     }
                 }
@@ -85,7 +85,7 @@ class DisplayAdvertisements() {
         simpleExoPlayer?.repeatMode = Player.REPEAT_MODE_OFF
     }
 
-    private fun playVideo(videoUrl: String?, ringProgressBar: RingProgressBar) {
+    private fun playVideo(videoUrl: String?) {
         val videoUri = Uri.parse(videoUrl)
         val mediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory).createMediaSource(videoUri)
         simpleExoPlayer?.prepare(mediaSource, true, false)
@@ -138,5 +138,12 @@ class DisplayAdvertisements() {
         }
         handlerBanner = Handler()
         handlerBanner.postDelayed(runnableBanner, 1)
+    }
+
+    fun release() {
+        qrCodeCallback = null
+        simpleExoPlayer?.release()
+        handlerProgressBar.removeCallbacks(runnableProgressBar)
+        handlerBanner.removeCallbacks { runnableBanner }
     }
 }

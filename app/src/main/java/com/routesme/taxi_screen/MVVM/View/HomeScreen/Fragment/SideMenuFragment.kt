@@ -50,6 +50,11 @@ class SideMenuFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
     }
 
+    override fun onDestroyView() {
+        handlerTime.removeCallbacks(runnableTime)
+        super.onDestroyView()
+    }
+
     override fun onResume() {
         // setTime()
         super.onResume()

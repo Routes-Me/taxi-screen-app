@@ -168,9 +168,6 @@ class LoginActivity : AppCompatActivity() {
             password.isEmpty() -> {
                 showErrorMessage(Error(Field.Password.code, "Password Required"), true); false
             }
-            password.length < 6 -> {
-                showErrorMessage(Error(Field.Password.code, "Minimum Password is 6 digit"), true); false
-            }
             else -> true
         }
     }

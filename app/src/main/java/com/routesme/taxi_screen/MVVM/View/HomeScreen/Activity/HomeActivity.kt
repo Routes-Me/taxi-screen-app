@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import android.view.Window
 import android.widget.ImageView
+import androidx.fragment.app.FragmentTransaction
 import com.routesme.taxi_screen.Class.*
 import com.routesme.taxi_screen.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi_screen.LocationTrackingService.Class.LocationTrackingService
@@ -25,6 +26,7 @@ import kotlinx.android.synthetic.main.home_screen.*
 
 class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
+    private lateinit var fragmentTransaction: FragmentTransaction
     //Variable to store brightness value
     private var brightness = 0
     //Content resolver used as a handle to the system's settings
@@ -60,6 +62,9 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
+        contentFragment = ContentFragment.instance
+        sideMenuFragment = SideMenuFragment.instance
+        fragmentTransaction = supportFragmentManager.beginTransaction()
         this.activityCover = findViewById(R.id.activityCover)
 
         //brightnessSetup()
@@ -74,10 +79,9 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     }
 
     override fun onDestroy() {
+      //  removeFragments()
         if (displayManager.wasRegistered(this) )displayManager.unregisterActivity(this)
-        removeFragments()
         unregisterConnectivityMonitoring()
-
         super.onDestroy()
     }
 
@@ -127,21 +131,21 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     }
 
     override fun onPause() {
-
+       // removeFragments()
         // if (locationTrackingService != null) locationTrackingService!!.stopLocationTrackingService()
         super.onPause()
     }
 
     private fun addFragments() {
-        contentFragment = ContentFragment.instance
-        sideMenuFragment = SideMenuFragment.instance
-        if(contentFragment != null) supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, contentFragment!!).commit()
-        if(sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!).commit()
+        if(contentFragment != null) supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, contentFragment!!,"Content_Fragment").commit()
+        if(sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!,"SideMenu_Fragment").commit()
     }
 
     private fun removeFragments() {
-        if (contentFragment != null) contentFragment = null
-        if (sideMenuFragment != null) sideMenuFragment = null
+        val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
+        val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
+        if (contentFragment != null) supportFragmentManager.beginTransaction().remove(contentFragment).commit()
+        if (sideMenuFragment != null) supportFragmentManager.beginTransaction().remove(sideMenuFragment).commit()
     }
 
     private fun deviceToken() = "dF9bQgwjSxmY-Glapm-ZmL:APA91bH2OS7k9nX_fkiH1h6St1JB41Z50aUK0dU0XABvs_C6-5DNQaz78jYgM4bCQuyVC0o1Yju9TmMJl7NFux2cTQOPguGiBS4fevIP1tMoxvsYe3b_qo6K5wTXB56erjiEKyd6Cazc"
@@ -176,6 +180,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     }
 
     override fun onModeChange() {
+        removeFragments()
         recreate()
     }
 

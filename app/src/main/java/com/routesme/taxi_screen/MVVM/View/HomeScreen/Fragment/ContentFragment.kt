@@ -70,7 +70,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
         view1 = inflater.inflate(R.layout.content_fragment, container, false)
 
         initAdvertiseViews()
-        displayAdvertisements = DisplayAdvertisements()
+        displayAdvertisements = DisplayAdvertisements.instance
         qRCodeCallback?.let { it1 -> displayAdvertisements.setQrCodeCallback(it1) }
         checkConnection()
         return view1
@@ -86,7 +86,13 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
         super.onPause()
     }
 
+    override fun onDestroy() {
+
+        super.onDestroy()
+    }
+
     override fun onDestroyView() {
+        displayAdvertisements.release()
         connectivityReceiverRegistering(false)
         super.onDestroyView()
     }
