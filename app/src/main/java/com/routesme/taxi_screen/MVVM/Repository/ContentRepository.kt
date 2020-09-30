@@ -52,12 +52,8 @@ class ContentRepository(val context: Context) {
         val qrCode3 = Promotion("Max offers a 70% discount, valid till 20/11/2020","Find it out in 360 Mall","bDoimLknqD","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fmax1.png?alt=media&token=beb4b2d6-a61e-4f3e-87c1-a627ae05ec62")
         val qrCode4 = Promotion("SUBWAY offers a 60% discount, valid till 16/12/2020","Scan Now!","hfDdLkjmIk","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fsubway1.png?alt=media&token=c568a0a7-278a-4b37-8891-d319ba2cf2e7")
         val image1 = Data("1588","image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957")
-       // val video1 = Data("2878","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2Fbig%20sale%20sep%20video.mp4?alt=media&token=9dae3b12-028b-41e7-86b2-961e9d30cc0f",qrCode1)
-       // val video2 = Data("5822","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Best%2FShukran%204th%20Ring%20Screen.mp4?alt=media&token=d2f5cf31-6a86-4409-bfff-9830d71d2291",null)
         val image2 = Data("5252","image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5",qrCode2)
         val image3 = Data("8577","image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957",null)
-       // val video3 = Data("2875","video","https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FEid%20Alfiter.mp4?alt=media&token=f8ddfe58-d812-456c-bf4c-37fdcafa731c",null)
-       // val video4 = Data("6898","video","https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3",qrCode2)
         val image4 = Data("9897","image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5",qrCode4)
 
         val video1 = Data("8r37hhs","video","https://firebasestorage.googleapis.com/v0/b/kidsedu-69ac7.appspot.com/o/RoutesVideos%2F1.mp4?alt=media&token=81c64e8f-a16d-4970-b628-abfc05336c19",qrCode2)
@@ -71,13 +67,24 @@ class ContentRepository(val context: Context) {
         val video9 = Data("8r37hhs","video","https://firebasestorage.googleapis.com/v0/b/kidsedu-69ac7.appspot.com/o/RoutesVideos%2F9.mp4?alt=media&token=9a3994f3-614b-4dc3-a5eb-ed5a3c56aab0")
         val video10 = Data("8r37hhs","video","https://firebasestorage.googleapis.com/v0/b/kidsedu-69ac7.appspot.com/o/RoutesVideos%2F10.mp4?alt=media&token=d6d42212-1038-4831-b53e-5c94d68ca5fa",null)
         val video11 = Data("8r37hhs","video","https://firebasestorage.googleapis.com/v0/b/kidsedu-69ac7.appspot.com/o/RoutesVideos%2F11.mp4?alt=media&token=25525f76-c9d8-44a2-8d66-fa599cc29758",qrCode4)
+        val video12 = Data("2878","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F1.mp4?alt=media&token=a4033229-2e76-4d5e-9112-1b3f50f310b8",qrCode1)
+        val video13 = Data("5822","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F2.mp4?alt=media&token=b96f4f61-1f4a-4c22-9bb0-9024784199f9",null)
+        val video14 = Data("2875","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F3.mp4?alt=media&token=07a1263f-7117-4ee4-80f7-58373f697aac",null)
+        val video15 = Data("6898","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F4.mp4?alt=media&token=69009b67-5230-4a76-8f16-f5d076e92b09",qrCode2)
 
         val data = mutableListOf<Data>().apply {
             add(image1)
+           // add(image2)
+            add(image3)
+            add(image4)
+            add(video1)
+           // add(video2)
+            //add(video3)
+            add(video4)
+
+            /*
             add(video1)
             add(video2)
-            add(image2)
-            add(image3)
             add(video3)
             add(video4)
             add(video5)
@@ -87,6 +94,7 @@ class ContentRepository(val context: Context) {
             add(video9)
             add(video10)
             add(video11)
+            */
         }
 
         return data
