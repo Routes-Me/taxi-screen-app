@@ -162,7 +162,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
                         return@Observer
                     }else{
                         if (!images.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(images,view1.advertisementsImageView)
-                        if (!videos.isNullOrEmpty()) {  startPreLoadingService(videos); displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)}
+                        if (!videos.isNullOrEmpty()) {  displayAdvertisements.displayAdvertisementVideoList(videos,view1.playerView,view1.videoRingProgressBar)}
                     }
 
                 } else {
