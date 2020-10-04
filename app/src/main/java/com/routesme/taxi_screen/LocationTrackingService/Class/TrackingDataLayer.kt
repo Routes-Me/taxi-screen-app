@@ -5,6 +5,7 @@ import android.os.Handler
 import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.microsoft.signalr.HubConnection
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi_screen.LocationTrackingService.Model.LocationFeed
@@ -13,9 +14,8 @@ import com.routesme.taxi_screen.LocationTrackingService.Model.MessageFeed
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
-import tech.gusavila92.websocketclient.WebSocketClient
 
-class TrackingDataLayer(private val locationTrackingService: LocationTrackingService, private val trackingWebSocket: WebSocketClient) {
+class TrackingDataLayer(private val locationTrackingService: LocationTrackingService, private val hubConnection: HubConnection) {
     private val locationFeedsDao = TrackingDatabase(App.instance).locationFeedsDao()
     private val messageFeedsDao = TrackingDatabase(App.instance).messageFeedsDao()
     private lateinit var sendFeedsHandler: Handler
@@ -264,7 +264,6 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        trackingWebSocket.send(messageObject.toString())
-        Log.d("Tracking-Logic",messageObject.toString())
+        hubConnection.send("Send", messageObject.toString())
     }
 }

@@ -106,6 +106,8 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:1.1.1"
     //WebSocket
     implementation 'tech.gusavila92:java-android-websocket-client:1.2.2'
+    //Signal R
+    implementation 'com.microsoft.signalr:signalr:1.0.0'
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.11.1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.11.1'

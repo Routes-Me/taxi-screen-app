@@ -1,28 +1,29 @@
 package com.routesme.taxi_screen.LocationTrackingService.Class
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Binder
-import android.os.Build
-import android.os.Handler
-import android.os.IBinder
+import android.os.*
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.microsoft.signalr.HubConnection
+import com.microsoft.signalr.HubConnectionBuilder
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.Helper
 import com.routesme.taxi_screen.Class.SharedPreference
 import com.routesme.taxiscreen.R
 import tech.gusavila92.websocketclient.WebSocketClient
-import java.io.IOException
 import java.net.URI
 import java.net.URISyntaxException
 
-class LocationTrackingService(): Service() {
+
+class LocationTrackingService() : Service() {
 
     private lateinit var trackingWebSocket: WebSocketClient
+    private lateinit var hubConnection: HubConnection
     private lateinit var trackingDataLayer: TrackingDataLayer
     private lateinit var locationReceiver: LocationReceiver
     private var isHandlerTrackingRunning = false
@@ -41,9 +42,10 @@ class LocationTrackingService(): Service() {
     private val NOTIFICATION_ID = 12345678
 
     var isWebSocketAlive: Boolean = false
+
     companion object {
         @get:Synchronized
-        var instance:LocationTrackingService = LocationTrackingService()
+        var instance: LocationTrackingService = LocationTrackingService()
 
         class LocationServiceBinder : Binder() {
             val service: LocationTrackingService
@@ -51,91 +53,76 @@ class LocationTrackingService(): Service() {
         }
     }
 
-    private fun createWebSocket(): WebSocketClient {
-        val webSocket = object : WebSocketClient(getTrackingUrl()) {
-            override fun onOpen() {
-                isWebSocketAlive = true
-                Log.d("Tracking-Logic", "WebSocket-onOpen")
-            }
-            override fun onTextReceived(message: String) {
-                Log.d("Tracking-Logic", "WebSocket-onTextReceived: $message")
-            }
-            override fun onBinaryReceived(data: ByteArray) {}
-            override fun onPingReceived(data: ByteArray) {}
-            override fun onPongReceived(data: ByteArray) {}
-            override fun onException(e: Exception) {
-                //if (e is IOException) {
-                    isWebSocketAlive = false
-               // }
-
-                Log.d("Tracking-Logic", "WebSocket-onException: ${e.message}")
-            }
-            override fun onCloseReceived() {
-                isWebSocketAlive = false
-                Log.d("Tracking-Logic", "WebSocket-onCloseReceived")
-            }
-        }
-        webSocket.setConnectTimeout(10000)
-        webSocket.setReadTimeout(60000)
-        webSocket.enableAutomaticReconnection(10000)
-        return webSocket
+    private fun signalRHubConnection(): HubConnection {
+        val url = getTrackingUrl().toString()
+        val hubConnection = HubConnectionBuilder.create(url).build()
+        hubConnection.on("Send", { message: String? ->
+            Log.d("SignalR", "send message: $message")
+        }, String::class.java)
+        return hubConnection
     }
 
     private fun getTrackingUrl(): URI {
-       // return URI("ws://vmtprojectstage.uaenorth.cloudapp.azure.com:5002/trackServiceHub?vehicleId=16&institutionId=9&deviceId=5")
-       // return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
+        // return URI("ws://vmtprojectstage.uaenorth.cloudapp.azure.com:5002/trackServiceHub?vehicleId=16&institutionId=9&deviceId=5")
+        // return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
 
         try {
-           authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl",R.raw.config))
-        }
-       catch (e: URISyntaxException) {
+            authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config))
+        } catch (e: URISyntaxException) {
             e.printStackTrace()
-       }
+        }
 
         val builder: Uri.Builder = Uri.Builder()
-       builder.scheme("ws")
-               .encodedAuthority(authorityUrl.toString())
-               .appendPath("trackServiceHub")
-               .appendQueryParameter("vehicleId", vehicleId.toString())
-               .appendQueryParameter("institutionId", institutionId.toString())
-               .appendQueryParameter("deviceId", deviceId.toString())
-       return URI(builder.build().toString())
+        builder.scheme("http")
+                .encodedAuthority(authorityUrl.toString())
+                .appendPath("trackServiceHub")
+                .appendQueryParameter("vehicleId", vehicleId.toString())
+                .appendQueryParameter("institutionId", institutionId.toString())
+                .appendQueryParameter("deviceId", deviceId.toString())
+        return URI(builder.build().toString())
     }
 
-    fun checkPermissionsGranted(){
-        if (hasPermissions(*permissions)){
+    fun checkPermissionsGranted() {
+        if (hasPermissions(*permissions)) {
             startTracking()
-        }else{
+        } else {
             setupCheckPermissionsHandler()
             permissionsHandlerRunning = true
-            handlerCheckPermissions?.postDelayed(runnableCheckPermissions,1000)
+            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1000)
 
         }
     }
+
     private fun setupCheckPermissionsHandler() {
-        Log.i("trackingWebSocket:","setupCheckPermissionsHandler")
+        Log.i("trackingWebSocket:", "setupCheckPermissionsHandler")
         runnableCheckPermissions = Runnable {
-            if (hasPermissions(*permissions) && permissionsHandlerRunning ) {permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions); instance.startTracking() }
-            Log.i("trackingWebSocket:","startCheckPermissionsHandler")
+            if (hasPermissions(*permissions) && permissionsHandlerRunning) {
+                permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions); instance.startTracking()
+            }
+            Log.i("trackingWebSocket:", "startCheckPermissionsHandler")
             handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1 * 60 * 1000)
         }
         handlerCheckPermissions = Handler()
     }
-     private fun startTracking() {
-         vehicleId = getVehicleId()
-         institutionId = getInstitutionId()
-         deviceId = getDeviceId()
+
+    private fun startTracking() {
+        vehicleId = getVehicleId()
+        institutionId = getInstitutionId()
+        deviceId = getDeviceId()
         testingSetup()
-             if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
-                 trackingWebSocket = createWebSocket()
-                 trackingDataLayer = TrackingDataLayer(this, trackingWebSocket)
-                 locationReceiver = LocationReceiver(trackingDataLayer)
-                 if (locationReceiver.setUpLocationListener()) {
-                     trackingWebSocket.connect()
-                     setupTrackingHandler()
-                     handlerTracking?.post(runnableTracking)
-                 }
-             }else return
+        if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
+            // trackingWebSocket = createWebSocket()
+            hubConnection = signalRHubConnection()
+            trackingDataLayer = TrackingDataLayer(this, hubConnection)
+            locationReceiver = LocationReceiver(trackingDataLayer)
+            if (locationReceiver.setUpLocationListener()) {
+                HubConnectionTask().execute(hubConnection)
+
+                //trackingWebSocket.connect()
+                setupTrackingHandler()
+                handlerTracking?.post(runnableTracking)
+            }
+        } else return
     }
 
     private fun testingSetup() {
@@ -167,25 +154,25 @@ class LocationTrackingService(): Service() {
     }
 
     override fun onBind(intent: Intent): IBinder {
-        Log.i("trackingWebSocket:","onBind")
+        Log.i("trackingWebSocket:", "onBind")
         return LocationServiceBinder()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.i("trackingWebSocket:","onStartCommand")
+        Log.i("trackingWebSocket:", "onStartCommand")
         return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
         startForeground(NOTIFICATION_ID, getNotification())
-        Log.i("trackingWebSocket:","onCreate")
+        Log.i("trackingWebSocket:", "onCreate")
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.i("trackingWebSocket:","onDestroy")
+        Log.i("trackingWebSocket:", "onDestroy")
     }
 
     private fun getNotification(): Notification {
@@ -198,5 +185,33 @@ class LocationTrackingService(): Service() {
 
     private fun getVehicleId() = sharedPreferences.getString(SharedPreference.vehicle_id, null)
     private fun getInstitutionId() = sharedPreferences.getString(SharedPreference.institution_id, null)
-    private fun getDeviceId() =  sharedPreferences.getString(SharedPreference.device_id, null)
+    private fun getDeviceId() = sharedPreferences.getString(SharedPreference.device_id, null)
+
+    internal class HubConnectionTask : AsyncTask<HubConnection?, Void?, Void?>() {
+        override fun onPreExecute() {
+            super.onPreExecute()
+        }
+
+        @SuppressLint("CheckResult")
+        override fun doInBackground(vararg hubConnections: HubConnection?): Void? {
+            val hubConnection = hubConnections[0]
+            //hubConnection?.start()?.blockingAwait()
+            hubConnection?.start()?.doOnComplete { Log.d("SignalR", "Client connected successfully.") }?.blockingAwait()
+
+            /*
+            hubConnection!!.start()
+                    .subscribeOn(Schedulers.single())
+                    .doOnComplete {
+                        if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED) {
+                            Log.d("SignalR", "start: " + "${hubConnection.getConnectionState()}")
+                            hubConnection.send("Send", "welcome")
+                        }
+                    }
+                    .blockingAwait();
+
+*/
+
+            return null
+        }
+    }
 }
