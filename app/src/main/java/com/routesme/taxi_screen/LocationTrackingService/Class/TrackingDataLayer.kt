@@ -5,12 +5,12 @@ import android.os.Handler
 import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
-import com.microsoft.signalr.HubConnection
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi_screen.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi_screen.LocationTrackingService.Model.LocationJsonObject
 import com.routesme.taxi_screen.LocationTrackingService.Model.MessageFeed
+import com.smartarmenia.dotnetcoresignalrclientjava.HubConnection
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -32,7 +32,7 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
              val listOfStringFeeds = listOfFeeds.map { MessageFeed(message = getJsonArray(it).toString()) }
              messageFeedsDao.insertFeeds(listOfStringFeeds)
              locationFeedsDao.clearLocationFeedsTable(lastFeedId)
-             if (locationTrackingService.isWebSocketAlive) {
+             if (hubConnection.isConnected) {
                  sendFeedsHandlerSetup()
                  sendFeedsHandler.post(sendFeedsRunnable)
              }
@@ -43,7 +43,7 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
         var i = 0
         val messageFeeds = messageFeedsDao.getAllMessages()
         sendFeedsRunnable = Runnable {
-            if (locationTrackingService.isWebSocketAlive) {
+            if (hubConnection.isConnected) {
                 if (i < messageFeeds.size) {
                     sendFeedsViaSocket(messageFeeds[i].message)
                     messageFeedsDao.delete(messageFeeds[i])
@@ -260,10 +260,14 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
         val messageObject = JSONObject()
            val feedsArray = JSONArray(messageFeeds)
         try {
-            messageObject.put("SendLocationFeeds", feedsArray)
+            messageObject.put("SendLocation", feedsArray)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        hubConnection.send("Send", messageObject.toString())
+        val message = messageObject.toString()
+       // Log.d("SignalR-Message",trackingMessage)
+       // hubConnection.send("SendLocation", trackingMessage)
+        hubConnection.invoke("SendLocation", message)
+       // Log.d("SignalR",trackingMessage)
     }
 }

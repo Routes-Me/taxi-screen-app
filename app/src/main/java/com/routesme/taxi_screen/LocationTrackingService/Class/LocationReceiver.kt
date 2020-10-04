@@ -70,7 +70,7 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
         if (location != null) trackingDataLayer.insertLocation(location)
 
         Handler(Looper.getMainLooper()).post {
-            Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
+          Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
         }
 
     }

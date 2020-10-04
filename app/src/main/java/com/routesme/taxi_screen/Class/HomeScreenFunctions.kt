@@ -12,7 +12,6 @@ import androidx.core.app.ActivityCompat
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
-import com.crashlytics.android.Crashlytics
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi_screen.AdminConsolePanel.View.AdminConsolePanel
 import com.routesme.taxiscreen.R
@@ -32,7 +31,7 @@ class HomeScreenFunctions(val activity: Activity) {
     }
 
     fun firebaseAnalytics_Crashlytics(tabletSerialNo: String?) {
-        Crashlytics.setUserIdentifier(tabletSerialNo)
+        //Crashlytics.setUserIdentifier(tabletSerialNo)
         FirebaseAnalytics.getInstance(activity).setUserId(tabletSerialNo)
     }
 

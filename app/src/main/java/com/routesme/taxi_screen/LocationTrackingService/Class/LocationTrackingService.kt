@@ -1,26 +1,27 @@
 package com.routesme.taxi_screen.LocationTrackingService.Class
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.app.*
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.microsoft.signalr.HubConnection
-import com.microsoft.signalr.HubConnectionBuilder
+import com.google.gson.Gson
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.Helper
 import com.routesme.taxi_screen.Class.SharedPreference
+import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxiscreen.R
+import com.smartarmenia.dotnetcoresignalrclientjava.*
 import tech.gusavila92.websocketclient.WebSocketClient
+import java.lang.Exception
 import java.net.URI
 import java.net.URISyntaxException
 
-
-class LocationTrackingService() : Service() {
+class LocationTrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var hubConnection: HubConnection
@@ -33,15 +34,13 @@ class LocationTrackingService() : Service() {
     private var handlerCheckPermissions: Handler? = null
     private var runnableCheckPermissions: Runnable? = null
     private var permissionsHandlerRunning = false
-
     private val sharedPreferences = App.instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
     private lateinit var authorityUrl: URI
     private var vehicleId: String? = null
     private var institutionId: String? = null
     private var deviceId: String? = null
     private val NOTIFICATION_ID = 12345678
-
-    var isWebSocketAlive: Boolean = false
+   // var isWebSocketAlive: Boolean = false
 
     companion object {
         @get:Synchronized
@@ -52,13 +51,23 @@ class LocationTrackingService() : Service() {
                 get() = instance
         }
     }
-
+/*
     private fun signalRHubConnection(): HubConnection {
         val url = getTrackingUrl().toString()
+        Log.d("SignalR-Url",url)
         val hubConnection = HubConnectionBuilder.create(url).build()
-        hubConnection.on("Send", { message: String? ->
+        hubConnection.on("SendLocation", { message: String? ->
             Log.d("SignalR", "send message: $message")
         }, String::class.java)
+        return hubConnection
+    }
+    */
+
+    private fun getSignalRHub(): HubConnection {
+        val url = getTrackingUrl().toString()
+        val authHeader = "Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
+        val hubConnection = WebSocketHubConnectionP2(url, authHeader)
+
         return hubConnection
     }
 
@@ -112,18 +121,25 @@ class LocationTrackingService() : Service() {
         testingSetup()
         if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
             // trackingWebSocket = createWebSocket()
-            hubConnection = signalRHubConnection()
+            hubConnection = getSignalRHub()
+            hubConnection.addListener(this)
+            hubConnection.subscribeToEvent("SendLocation", this)
+
             trackingDataLayer = TrackingDataLayer(this, hubConnection)
             locationReceiver = LocationReceiver(trackingDataLayer)
             if (locationReceiver.setUpLocationListener()) {
-                HubConnectionTask().execute(hubConnection)
-
-                //trackingWebSocket.connect()
+               // HubConnectionTask().execute(hubConnection)
                 setupTrackingHandler()
-                handlerTracking?.post(runnableTracking)
+                connect()
+                //hubConnection.send("SendLocation", message)
+                //trackingWebSocket.connect()
+
+                //handlerTracking?.post(runnableTracking)
             }
         } else return
     }
+
+
 
     private fun testingSetup() {
         vehicleId = "16"
@@ -147,7 +163,7 @@ class LocationTrackingService() : Service() {
             isHandlerTrackingRunning = true
 
             Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
-            if (isWebSocketAlive) trackingDataLayer.executeTrackingLogic()
+            trackingDataLayer.executeTrackingLogic()
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
         handlerTracking = Handler()
@@ -186,7 +202,7 @@ class LocationTrackingService() : Service() {
     private fun getVehicleId() = sharedPreferences.getString(SharedPreference.vehicle_id, null)
     private fun getInstitutionId() = sharedPreferences.getString(SharedPreference.institution_id, null)
     private fun getDeviceId() = sharedPreferences.getString(SharedPreference.device_id, null)
-
+/*
     internal class HubConnectionTask : AsyncTask<HubConnection?, Void?, Void?>() {
         override fun onPreExecute() {
             super.onPreExecute()
@@ -196,7 +212,11 @@ class LocationTrackingService() : Service() {
         override fun doInBackground(vararg hubConnections: HubConnection?): Void? {
             val hubConnection = hubConnections[0]
             //hubConnection?.start()?.blockingAwait()
-            hubConnection?.start()?.doOnComplete { Log.d("SignalR", "Client connected successfully.") }?.blockingAwait()
+            hubConnection?.start()?.doOnComplete {
+                if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
+                    Log.d("SignalR", "Client connected successfully.")
+                }
+            }?.blockingAwait()
 
             /*
             hubConnection!!.start()
@@ -213,5 +233,50 @@ class LocationTrackingService() : Service() {
 
             return null
         }
+    }
+*/
+
+    private fun connect() {
+        try {
+            hubConnection.connect()
+        } catch (ex: Exception) {
+            // runOnUiThread { Toast.makeText(this@MainActivity, ex.message, Toast.LENGTH_SHORT).show() }
+            Log.d("SignalR","${ex.message} ,  ${ex}")
+        }
+    }
+
+    override fun onConnected() {
+        Log.d("SignalR", "onConnected")
+        handlerTracking?.post(runnableTracking)
+       // val message = "{ \"SendLocation\": [{ \"latitude\": \"80.200\", \"longitude\": \"80.200\", \"timestamp\": \"4756890945\"}] }"
+       // connection.invoke("SendLocation", message)
+    }
+
+    override fun onMessage(message: HubMessage) {
+        Log.d("SignalR", "onMessage: ${message.arguments}")
+       // Toast.makeText(App.instance,"onMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
+        Handler(Looper.getMainLooper()).post {
+            Toast.makeText(App.instance,"onMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
+        }
+    }
+
+    override fun onDisconnected() {
+        Log.d("SignalR", "onDisconnected")
+        handlerTracking?.removeCallbacks(runnableTracking)
+    }
+
+    override fun onError(exception: Exception) {
+        Log.d("SignalR", "onError: ${exception.message}")
+    }
+
+    override fun onEventMessage(message: HubMessage) {
+        //  HomeActivity().runOnUiThread { Toast.makeText(this, "Event message: ${message.target}\n${Gson().toJson(message.arguments)}", Toast.LENGTH_SHORT).show() }
+        Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
+        //Toast.makeText(App.instance,"onEventMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
+        /*
+        Handler(Looper.getMainLooper()).post {
+              Toast.makeText(this,"onEventMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
+        }
+        */
     }
 }

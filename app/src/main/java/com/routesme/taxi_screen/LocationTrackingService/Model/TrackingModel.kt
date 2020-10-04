@@ -25,7 +25,7 @@ class LocationJsonObject(private val locationFeed: LocationFeed) {
         val jo = JsonObject()
         jo.addProperty("latitude", locationFeed.latitude)
         jo.addProperty("longitude", locationFeed.longitude)
-        jo.addProperty("timestamp", locationFeed.timestamp)
+        jo.addProperty("timestamp", locationFeed.timestamp.toString())
         return jo
     }
 }
