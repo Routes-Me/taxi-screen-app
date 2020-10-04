@@ -41,6 +41,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private var deviceId: String? = null
     private val NOTIFICATION_ID = 12345678
    // var isWebSocketAlive: Boolean = false
+    val token1 = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
 
     companion object {
         @get:Synchronized
@@ -65,7 +66,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     private fun getSignalRHub(): HubConnection {
         val url = getTrackingUrl().toString()
-        val authHeader = "Bearer eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
+        val authHeader = "Bearer $token1"
         val hubConnection = WebSocketHubConnectionP2(url, authHeader)
 
         return hubConnection
@@ -139,12 +140,10 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         } else return
     }
 
-
-
     private fun testingSetup() {
         vehicleId = "16"
-        institutionId = "9"
-        deviceId = "5"
+        institutionId = "5"
+        deviceId = "1"
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {

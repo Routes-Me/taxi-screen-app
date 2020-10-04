@@ -268,6 +268,6 @@ class TrackingDataLayer(private val locationTrackingService: LocationTrackingSer
        // Log.d("SignalR-Message",trackingMessage)
        // hubConnection.send("SendLocation", trackingMessage)
         hubConnection.invoke("SendLocation", message)
-       // Log.d("SignalR",trackingMessage)
+        Log.d("SignalR",message)
     }
 }
