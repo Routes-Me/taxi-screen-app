@@ -13,17 +13,14 @@ import com.google.gson.Gson
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.Helper
 import com.routesme.taxi_screen.Class.SharedPreference
-import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxiscreen.R
 import com.smartarmenia.dotnetcoresignalrclientjava.*
-import tech.gusavila92.websocketclient.WebSocketClient
 import java.lang.Exception
 import java.net.URI
 import java.net.URISyntaxException
 
 class LocationTrackingService() : Service(), HubConnectionListener, HubEventListener {
 
-    private lateinit var trackingWebSocket: WebSocketClient
     private lateinit var hubConnection: HubConnection
     private lateinit var trackingDataLayer: TrackingDataLayer
     private lateinit var locationReceiver: LocationReceiver
@@ -40,8 +37,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private var institutionId: String? = null
     private var deviceId: String? = null
     private val NOTIFICATION_ID = 12345678
-   // var isWebSocketAlive: Boolean = false
-    val token1 = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
+    //val token1 = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
 
     companion object {
         @get:Synchronized
@@ -52,29 +48,16 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
                 get() = instance
         }
     }
-/*
-    private fun signalRHubConnection(): HubConnection {
-        val url = getTrackingUrl().toString()
-        Log.d("SignalR-Url",url)
-        val hubConnection = HubConnectionBuilder.create(url).build()
-        hubConnection.on("SendLocation", { message: String? ->
-            Log.d("SignalR", "send message: $message")
-        }, String::class.java)
-        return hubConnection
-    }
-    */
 
     private fun getSignalRHub(): HubConnection {
         val url = getTrackingUrl().toString()
-        val authHeader = "Bearer $token1"
+        val authHeader = "Bearer ${getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)}"
         val hubConnection = WebSocketHubConnectionP2(url, authHeader)
 
         return hubConnection
     }
 
     private fun getTrackingUrl(): URI {
-        // return URI("ws://vmtprojectstage.uaenorth.cloudapp.azure.com:5002/trackServiceHub?vehicleId=16&institutionId=9&deviceId=5")
-        // return URI(Helper.getConfigValue("trackingWebSocketUrl", R.raw.config))
 
         try {
             authorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config))
@@ -119,9 +102,8 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         vehicleId = getVehicleId()
         institutionId = getInstitutionId()
         deviceId = getDeviceId()
-        testingSetup()
+       // testingSetup()
         if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
-            // trackingWebSocket = createWebSocket()
             hubConnection = getSignalRHub()
             hubConnection.addListener(this)
             hubConnection.subscribeToEvent("SendLocation", this)
@@ -129,13 +111,8 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
             trackingDataLayer = TrackingDataLayer(this, hubConnection)
             locationReceiver = LocationReceiver(trackingDataLayer)
             if (locationReceiver.setUpLocationListener()) {
-               // HubConnectionTask().execute(hubConnection)
                 setupTrackingHandler()
                 connect()
-                //hubConnection.send("SendLocation", message)
-                //trackingWebSocket.connect()
-
-                //handlerTracking?.post(runnableTracking)
             }
         } else return
     }
@@ -241,6 +218,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         } catch (ex: Exception) {
             // runOnUiThread { Toast.makeText(this@MainActivity, ex.message, Toast.LENGTH_SHORT).show() }
             Log.d("SignalR","${ex.message} ,  ${ex}")
+           // if (!hubConnection.isConnected) mToastRunnable?.run()
         }
     }
 
@@ -259,15 +237,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         }
     }
 
-    override fun onDisconnected() {
-        Log.d("SignalR", "onDisconnected")
-        handlerTracking?.removeCallbacks(runnableTracking)
-    }
-
-    override fun onError(exception: Exception) {
-        Log.d("SignalR", "onError: ${exception.message}")
-    }
-
     override fun onEventMessage(message: HubMessage) {
         //  HomeActivity().runOnUiThread { Toast.makeText(this, "Event message: ${message.target}\n${Gson().toJson(message.arguments)}", Toast.LENGTH_SHORT).show() }
         Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
@@ -277,5 +246,21 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
               Toast.makeText(this,"onEventMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
         }
         */
+    }
+
+    override fun onDisconnected() {
+        Log.d("SignalR", "onDisconnected")
+        handlerTracking?.removeCallbacks(runnableTracking)
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            connect()
+        }, 2*60*1000)
+    }
+
+    override fun onError(exception: Exception) {
+        Log.d("SignalR", "onError: ${exception.message}")
+        Handler(Looper.getMainLooper()).postDelayed({
+                connect()
+        }, 2*60*1000)
     }
 }

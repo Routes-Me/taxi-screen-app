@@ -35,7 +35,7 @@ class ContentRepository(val context: Context) {
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
 
                         val responseErrors = ResponseErrors(errors)
-                        contentResponse.value = ContentResponse(mResponseErrors = null, data = getData())
+                        contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
                     }
                 }
             }

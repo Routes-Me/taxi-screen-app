@@ -50,7 +50,7 @@ class ModelPresenter : AppCompatActivity() {
 
     private fun isRegistered(): Boolean {
         val sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
-        return sharedPreferences.getString(SharedPreference.token, null) != null && sharedPreferences.getInt(SharedPreference.device_id, -999) != -999
+        return sharedPreferences.getString(SharedPreference.token, null) != null && sharedPreferences.getString(SharedPreference.device_id, null) != null
     }
 
     private fun isAuthorized(): Boolean {

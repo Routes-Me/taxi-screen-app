@@ -19,6 +19,7 @@ class RegistrationRepository(val context: Context) {
 
     fun register(registrationCredentials: RegistrationCredentials): MutableLiveData<RegistrationResponse> {
         val call = thisApiCorService.register(registrationCredentials)
+        registrationCredentials
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
