@@ -28,12 +28,12 @@ class DisplayAdvertisements() {
     private var simpleCache: SimpleCache? = null
     private var currentVideoIndex = 0
     private var currentBannerIndex = 0
-    private lateinit var handlerBanner: Handler
-    private lateinit var runnableBanner: Runnable
+    private var handlerBanner: Handler? = null
+    private var runnableBanner: Runnable? = null
     //Video progress bar
-    private lateinit var ringProgressBarTimer: Timer
-    private lateinit var handlerProgressBar: Handler
-    private lateinit var runnableProgressBar: Runnable
+    private var ringProgressBarTimer: Timer? = null
+    private var handlerProgressBar: Handler? = null
+    private var runnableProgressBar: Runnable? = null
     private val second: Long = 1000
 
 
@@ -61,7 +61,7 @@ class DisplayAdvertisements() {
                         qrCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].promotion)
                     }
                     Player.STATE_ENDED -> {
-                        handlerProgressBar.removeCallbacks(runnableProgressBar)
+                        handlerProgressBar?.removeCallbacks(runnableProgressBar)
                         currentVideoIndex++
                         if (currentVideoIndex < videos.size) {
                             playVideo(videos[currentVideoIndex].url)
@@ -99,23 +99,23 @@ class DisplayAdvertisements() {
                 ContentFragment.instance.activity?.runOnUiThread { updateRingProgressBar(ringProgressBar) }
             }
         }
-        ringProgressBarTimer.schedule(task, 0, 1000)
+        ringProgressBarTimer?.schedule(task, 0, 1000)
     }
 
     private fun progressBarHandlerCounter(ringProgressBar: RingProgressBar) {
         runnableProgressBar = Runnable {
             updateRingProgressBar(ringProgressBar)
 
-            handlerProgressBar.postDelayed(runnableProgressBar, second)
+            handlerProgressBar?.postDelayed(runnableProgressBar, second)
         }
         handlerProgressBar = Handler()
-        handlerProgressBar.postDelayed(runnableProgressBar, second)
+        handlerProgressBar?.postDelayed(runnableProgressBar, second)
     }
 
     private fun updateRingProgressBar(ringProgressBar: RingProgressBar) {
         if (ringProgressBar.progress >= 100) {
             // ringProgressBarTimer.cancel()
-            handlerProgressBar.removeCallbacks(runnableProgressBar)
+            handlerProgressBar?.removeCallbacks(runnableProgressBar)
         }
         val current = (simpleExoPlayer?.currentPosition)!!.toInt()
         val progress = current * 100 / (simpleExoPlayer?.duration)!!.toInt()
@@ -133,17 +133,17 @@ class DisplayAdvertisements() {
                 if (currentBannerIndex >= banners.size) {
                     currentBannerIndex = 0
                 }
-                handlerBanner.postDelayed(runnableBanner, 15000)
+                handlerBanner?.postDelayed(runnableBanner, 15000)
             }
         }
         handlerBanner = Handler()
-        handlerBanner.postDelayed(runnableBanner, 1)
+        handlerBanner?.postDelayed(runnableBanner, 1)
     }
 
     fun release() {
         qrCodeCallback = null
         simpleExoPlayer?.release()
-        handlerProgressBar.removeCallbacks(runnableProgressBar)
-        handlerBanner.removeCallbacks { runnableBanner }
+        handlerProgressBar?.removeCallbacks(runnableProgressBar)
+        handlerBanner?.removeCallbacks { runnableBanner }
     }
 }
