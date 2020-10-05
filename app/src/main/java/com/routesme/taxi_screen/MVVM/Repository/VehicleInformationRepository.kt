@@ -1,7 +1,6 @@
 package com.routesme.taxi_screen.MVVM.Repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -34,7 +33,7 @@ class VehicleInformationRepository(val context: Context) {
                         val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
                         institutionsResponse.value = InstitutionsResponse(mResponseErrors = errors)
                     }else{
-                        val error = Error(detail = response.message(),status = response.code())
+                        val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
 
                         val responseErrors = ResponseErrors(errors)
@@ -61,7 +60,7 @@ class VehicleInformationRepository(val context: Context) {
                         val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
                         vehiclesResponse.value = VehiclesResponse(mResponseErrors = errors)
                     }else{
-                        val error = Error(detail = response.message(),status = response.code())
+                        val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
 
                         val responseErrors = ResponseErrors(errors)

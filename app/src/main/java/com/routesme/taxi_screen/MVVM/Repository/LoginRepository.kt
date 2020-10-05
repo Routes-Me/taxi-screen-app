@@ -34,7 +34,7 @@ class LoginRepository(val context: Context) {
                         val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
                         signInResponse.value = LoginResponse(mResponseErrors = errors)
                     }else{
-                        val error = Error(detail = response.message(),status = response.code())
+                        val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
 
                         val responseErrors = ResponseErrors(errors)
