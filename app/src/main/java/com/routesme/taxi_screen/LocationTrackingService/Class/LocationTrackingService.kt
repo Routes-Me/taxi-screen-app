@@ -3,6 +3,7 @@ package com.routesme.taxi_screen.LocationTrackingService.Class
 import android.Manifest
 import android.app.*
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
@@ -15,7 +16,6 @@ import com.routesme.taxi_screen.Class.Helper
 import com.routesme.taxi_screen.Class.SharedPreference
 import com.routesme.taxiscreen.R
 import com.smartarmenia.dotnetcoresignalrclientjava.*
-import java.lang.Exception
 import java.net.URI
 import java.net.URISyntaxException
 
@@ -31,17 +31,19 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private var handlerCheckPermissions: Handler? = null
     private var runnableCheckPermissions: Runnable? = null
     private var permissionsHandlerRunning = false
-    private val sharedPreferences = App.instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var authorityUrl: URI
     private var vehicleId: String? = null
     private var institutionId: String? = null
     private var deviceId: String? = null
     private val NOTIFICATION_ID = 12345678
-    //val token1 = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
-
+    val token1 = "eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNobWFjLXNoYTI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9lbWFpbGFkZHJlc3MiOiJ2dGhhcmFrYUByb3V0ZXNtZS5jb20iLCJodHRwOi8vc2NoZW1hcy5taWNyb3NvZnQuY29tL3dzLzIwMDgvMDYvaWRlbnRpdHkvY2xhaW1zL3JvbGUiOiJzdXBlciIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvdXNlcmRhdGEiOiIzIiwiaHR0cDovL3NjaGVtYXMueG1sc29hcC5vcmcvd3MvMjAwNS8wNS9pZGVudGl0eS9jbGFpbXMvbmFtZWlkZW50aWZpZXIiOiIzIiwiZXhwIjoxNjAxNDc3NzI4LCJpc3MiOiJUcmFja1NlcnZpY2UiLCJhdWQiOiJUcmFja1NlcnZpY2UifQ.ML_5E-ztVECgrTtYbadyfpYsLe8lm0m-Y4MtDGRzfo4"
+   // private var token: String? = null
+    private lateinit var pref: SharedPreference
     companion object {
         @get:Synchronized
         var instance: LocationTrackingService = LocationTrackingService()
+      //  val token = instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)
 
         class LocationServiceBinder : Binder() {
             val service: LocationTrackingService
@@ -51,7 +53,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     private fun getSignalRHub(): HubConnection {
         val url = getTrackingUrl().toString()
-        val authHeader = "Bearer ${getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)}"
+        val authHeader = "Bearer $token1"
         val hubConnection = WebSocketHubConnectionP2(url, authHeader)
 
         return hubConnection
@@ -99,16 +101,17 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     }
 
     private fun startTracking() {
+        sharedPreferences = App.instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
         vehicleId = getVehicleId()
         institutionId = getInstitutionId()
         deviceId = getDeviceId()
        // testingSetup()
-        if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
+      if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty()) {
             hubConnection = getSignalRHub()
             hubConnection.addListener(this)
             hubConnection.subscribeToEvent("SendLocation", this)
 
-            trackingDataLayer = TrackingDataLayer(this, hubConnection)
+            trackingDataLayer = TrackingDataLayer(hubConnection)
             locationReceiver = LocationReceiver(trackingDataLayer)
             if (locationReceiver.setUpLocationListener()) {
                 setupTrackingHandler()
@@ -118,9 +121,9 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     }
 
     private fun testingSetup() {
-        vehicleId = "16"
+        vehicleId = "17"
         institutionId = "5"
-        deviceId = "1"
+        deviceId = "2"
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
@@ -160,6 +163,8 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         super.onCreate()
         startForeground(NOTIFICATION_ID, getNotification())
         Log.i("trackingWebSocket:", "onCreate")
+       // sharedPreferences.getString(SharedPreference.vehicle_id, null)//.getString(SharedPreference.token, null)
+
     }
 
     override fun onDestroy() {

@@ -21,13 +21,15 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
 
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
-         //   Toast.makeText(App.instance,"Can get location",Toast.LENGTH_SHORT).show()
-
             if (isGPSEnabled()) {
-                Toast.makeText(App.instance,"GPS Enabled",Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(App.instance, "GPS Enabled", Toast.LENGTH_SHORT).show()
+                }
                 setLocationManagerProvider(LocationManager.GPS_PROVIDER)
             }else if (isNetworkEnabled()) {
-                Toast.makeText(App.instance,"Network Enabled",Toast.LENGTH_SHORT).show()
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(App.instance, "Network Enabled", Toast.LENGTH_SHORT).show()
+                }
                 setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
             }
             true
@@ -39,8 +41,8 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     private fun setLocationManagerProvider(Provider: String) {
         if (Provider.isNotEmpty()) {
             try {
-               // locationManager.requestLocationUpdates(Provider, 1000L, 2F, this) //Location update with .. (Min Time = 1 second & Min Distance = 2 meters)
-                locationManager.requestLocationUpdates(Provider, 1000L, 2.77F, this) //For testing only
+                locationManager.requestLocationUpdates(Provider, 1000L, 0.0055F, this)
+
             } catch (ex: SecurityException) {
                 Log.d("LocationManagerProvider", "Security Exception, no location available")
             }
@@ -68,7 +70,6 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     //LocationListener Methods...
     override fun onLocationChanged(location: Location) {
         if (location != null) trackingDataLayer.insertLocation(location)
-
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
         }

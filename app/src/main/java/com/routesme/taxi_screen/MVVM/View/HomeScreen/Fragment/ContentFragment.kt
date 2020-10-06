@@ -112,7 +112,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     private fun checkConnection() {
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
-            fetchContent()
+           // fetchContent()
         } else {
             networkListener()
         }
@@ -125,7 +125,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
-            fetchContent()
+          //  fetchContent()
             connectivityReceiverRegistering(false)
         }
     }

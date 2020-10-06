@@ -3,6 +3,7 @@ package com.routesme.taxi_screen.LocationTrackingService.Class
 import android.location.Location
 import android.os.Handler
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi_screen.Class.App
@@ -15,9 +16,10 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class TrackingDataLayer(private val locationTrackingService: LocationTrackingService, private val hubConnection: HubConnection) {
-    private val locationFeedsDao = TrackingDatabase(App.instance).locationFeedsDao()
-    private val messageFeedsDao = TrackingDatabase(App.instance).messageFeedsDao()
+class TrackingDataLayer( private val hubConnection: HubConnection) {
+    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
+    private val locationFeedsDao = trackingDatabase.locationFeedsDao()
+    private val messageFeedsDao = trackingDatabase.messageFeedsDao()
     private lateinit var sendFeedsHandler: Handler
     private lateinit var sendFeedsRunnable: Runnable
 

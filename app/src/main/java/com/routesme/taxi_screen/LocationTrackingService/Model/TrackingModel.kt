@@ -7,7 +7,7 @@ import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
 
 @Entity(tableName = "LocationFeeds")
-data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long) {
+class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long) {
     val location: Location
         get() {
             val location = Location("provider")
@@ -18,7 +18,7 @@ data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Colum
 }
 
 @Entity(tableName = "MessageFeeds")
-data class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
+class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
 
 class LocationJsonObject(private val locationFeed: LocationFeed) {
     fun toJSON(): JsonObject {
