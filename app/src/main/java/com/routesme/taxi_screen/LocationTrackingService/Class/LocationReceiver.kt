@@ -14,10 +14,14 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.routesme.taxi_screen.Class.App
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
 
 class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : LocationListener {
 
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private var startLocation: Location? = null
 
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
@@ -38,14 +42,43 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
         }
     }
 
-    private fun setLocationManagerProvider(Provider: String) {
-        if (Provider.isNotEmpty()) {
+    private fun setLocationManagerProvider(provider: String) {
+        if (provider.isNotEmpty()) {
             try {
-                locationManager.requestLocationUpdates(Provider, 1000L, 0.0055F, this)
-
+                locationManager.requestLocationUpdates(provider, 1000L, 2.77F, this)
+                startLocation = locationManager.getLastKnownLocation(provider)
+                if (startLocation != null) {
+                    Handler(Looper.getMainLooper()).post {
+                        Toast.makeText(App.instance,"Start Location ... lat:${startLocation!!.latitude}, long:${startLocation!!.longitude}",Toast.LENGTH_SHORT).show()
+                    }
+                }
             } catch (ex: SecurityException) {
                 Log.d("LocationManagerProvider", "Security Exception, no location available")
             }
+        }
+    }
+
+     fun getStartLocationMessage(): String? {
+        if (startLocation == null){
+            return null
+        }else{
+            val locationObject = JSONObject()
+            val locationMessage = JSONObject()
+            try {
+                locationObject.put("latitude",startLocation?.latitude)
+                locationObject.put("longitude",startLocation?.longitude)
+                locationObject.put("timestamp",(System.currentTimeMillis()/1000).toString())
+                startLocation = null
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            val locationsArray = JSONArray().put(locationObject)
+            try {
+                locationMessage.put("SendLocation", locationsArray)
+            } catch (e: JSONException) {
+                e.printStackTrace()
+            }
+            return locationMessage.toString()
         }
     }
 
@@ -73,7 +106,6 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
         Handler(Looper.getMainLooper()).post {
           Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
         }
-
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}

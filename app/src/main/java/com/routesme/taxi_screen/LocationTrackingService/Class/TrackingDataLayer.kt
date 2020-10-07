@@ -269,7 +269,8 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
         val message = messageObject.toString()
        // Log.d("SignalR-Message",trackingMessage)
        // hubConnection.send("SendLocation", trackingMessage)
+        Log.d("SignalR-SendLocation", "from dataLayer: $message")
         hubConnection.invoke("SendLocation", message)
-        Log.d("SignalR",message)
+       // Log.d("SignalR",message)
     }
 }
