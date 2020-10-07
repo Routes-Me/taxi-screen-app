@@ -234,7 +234,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         if (!startLocationMessage.isNullOrEmpty()) hubConnection.invoke("SendLocation", startLocationMessage)
         Log.d("SignalR", "onConnected")
         handlerTracking?.post(runnableTracking)
-       // handlerTracking?.removeCallbacks(this)
     }
 
     override fun onMessage(message: HubMessage) {

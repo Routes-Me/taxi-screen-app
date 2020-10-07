@@ -10,7 +10,8 @@ class AdminConsoleLists(val activity: Activity) {
     val masterItems = listOf(
             MasterItem(0, MasterItemType.Info),
             MasterItem(1, MasterItemType.Account),
-            MasterItem(2, MasterItemType.Settings)
+            MasterItem(2, MasterItemType.Settings),
+            MasterItem(3, MasterItemType.Live_Tracking)
     )
     val infoCells = listOf(
             LabelCell("Vehicle"),

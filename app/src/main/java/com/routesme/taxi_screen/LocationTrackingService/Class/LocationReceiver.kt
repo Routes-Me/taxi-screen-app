@@ -47,11 +47,6 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
             try {
                 locationManager.requestLocationUpdates(provider, 1000L, 2.77F, this)
                 startLocation = locationManager.getLastKnownLocation(provider)
-                if (startLocation != null) {
-                    Handler(Looper.getMainLooper()).post {
-                        Toast.makeText(App.instance,"Start Location ... lat:${startLocation!!.latitude}, long:${startLocation!!.longitude}",Toast.LENGTH_SHORT).show()
-                    }
-                }
             } catch (ex: SecurityException) {
                 Log.d("LocationManagerProvider", "Security Exception, no location available")
             }
