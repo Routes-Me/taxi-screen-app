@@ -26,14 +26,8 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
             if (isGPSEnabled()) {
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(App.instance, "GPS Enabled", Toast.LENGTH_SHORT).show()
-                }
                 setLocationManagerProvider(LocationManager.GPS_PROVIDER)
             }else if (isNetworkEnabled()) {
-                Handler(Looper.getMainLooper()).post {
-                    Toast.makeText(App.instance, "Network Enabled", Toast.LENGTH_SHORT).show()
-                }
                 setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
             }
             true
@@ -98,9 +92,6 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     //LocationListener Methods...
     override fun onLocationChanged(location: Location) {
         if (location != null) trackingDataLayer.insertLocation(location)
-        Handler(Looper.getMainLooper()).post {
-          Toast.makeText(App.instance,"location changed ... lat:${location.latitude}, long:${location.longitude}",Toast.LENGTH_SHORT).show()
-        }
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}

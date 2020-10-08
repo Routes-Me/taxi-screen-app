@@ -39,9 +39,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private var token: String? = null
     private val NOTIFICATION_ID = 12345678
 
-    private val reconnectionHandler = Handler(Looper.getMainLooper())
-    private var reconnectionRunnable: Runnable? = null
-
     companion object {
         @get:Synchronized
         var instance: LocationTrackingService = LocationTrackingService()
@@ -187,39 +184,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private fun getInstitutionId() = sharedPreferences.getString(SharedPreference.institution_id, null)
     private fun getDeviceId() = sharedPreferences.getString(SharedPreference.device_id, null)
     private fun getToken() = sharedPreferences.getString(SharedPreference.token, null)
-/*
-    internal class HubConnectionTask : AsyncTask<HubConnection?, Void?, Void?>() {
-        override fun onPreExecute() {
-            super.onPreExecute()
-        }
-
-        @SuppressLint("CheckResult")
-        override fun doInBackground(vararg hubConnections: HubConnection?): Void? {
-            val hubConnection = hubConnections[0]
-            //hubConnection?.start()?.blockingAwait()
-            hubConnection?.start()?.doOnComplete {
-                if (hubConnection.connectionState == HubConnectionState.CONNECTED) {
-                    Log.d("SignalR", "Client connected successfully.")
-                }
-            }?.blockingAwait()
-
-            /*
-            hubConnection!!.start()
-                    .subscribeOn(Schedulers.single())
-                    .doOnComplete {
-                        if (hubConnection.getConnectionState() == HubConnectionState.CONNECTED) {
-                            Log.d("SignalR", "start: " + "${hubConnection.getConnectionState()}")
-                            hubConnection.send("Send", "welcome")
-                        }
-                    }
-                    .blockingAwait();
-
-*/
-
-            return null
-        }
-    }
-*/
 
     private fun connect() {
         try {
@@ -258,16 +222,13 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     override fun onDisconnected() {
         Log.d("SignalR", "onDisconnected")
         handlerTracking?.removeCallbacks(runnableTracking)
-
-        Handler(Looper.getMainLooper()).postDelayed({
             connect()
-        }, 2 * 60 * 1000)
     }
 
     override fun onError(exception: Exception) {
         Log.d("SignalR", "onError: ${exception.message}")
         handlerTracking?.removeCallbacks(runnableTracking)
-        reconnectionHandler.postDelayed({
+        Handler().postDelayed({
             connect()
         }, 1 * 60 * 1000)
     }
