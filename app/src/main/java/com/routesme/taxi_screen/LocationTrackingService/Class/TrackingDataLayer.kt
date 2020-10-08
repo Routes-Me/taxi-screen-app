@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.LocationTrackingService.Class
 import android.location.Location
 import android.os.Handler
 import android.util.Log
-import androidx.core.content.ContextCompat
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi_screen.Class.App
@@ -70,28 +69,40 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
         return locationJsonArray
     }
 
-    private fun getMajorFeeds(databaseFeeds: List<MutableList<LocationFeed>>): Set<LocationFeed> {
+    private fun getMajorFeeds(feedGroups: List<MutableList<LocationFeed>>): Set<LocationFeed> {
         val majorFeeds = mutableSetOf<LocationFeed>()
-        for (feeds in databaseFeeds){
-            for (currentIndex in feeds.indices){
-               val nextIndex = currentIndex + 1
-                if (nextIndex <= feeds.lastIndex){
-                    val currentLocation = feeds[currentIndex].location
-                    val nextLocation = feeds[nextIndex].location
-                    val distance = distance(currentLocation, nextLocation)
-                    if (distance >= 10){
-                        majorFeeds.apply {
-                            add(feeds[currentIndex])
-                            add(feeds[nextIndex])
-                        }
-                    }else{
-                        feeds.removeAt(nextIndex)
-                        currentIndex.dec()
+        for (feeds in feedGroups){
+            majorFeeds.addAll(filterFeeds(feeds))
+        }
+        return majorFeeds
+    }
+
+    private fun filterFeeds(feeds: MutableList<LocationFeed>, meters: Int = 10): MutableSet<LocationFeed> {
+        val filteredFeeds = mutableSetOf<LocationFeed>()
+
+        for (currentIndex in feeds.indices){
+            val nextIndex = currentIndex + 1
+            if (nextIndex <= feeds.lastIndex){
+                val currentLocation = feeds[currentIndex].location
+                val nextLocation = feeds[nextIndex].location
+                val distance = distance(currentLocation, nextLocation)
+                if (distance >= meters){
+                    filteredFeeds.apply {
+                        add(feeds[currentIndex])
+                        add(feeds[nextIndex])
                     }
+                }else{
+                    feeds.removeAt(nextIndex)
+                    currentIndex.dec()
+                }
+            }else {
+                if (filteredFeeds.isEmpty()) {
+                    filteredFeeds.add(feeds[currentIndex])
                 }
             }
         }
-        return majorFeeds
+
+        return filteredFeeds
     }
 
     private fun getDatabaseFeeds(): List<MutableList<LocationFeed>> {
@@ -251,7 +262,7 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
         if (lastLocation == null || (location.latitude != lastLocation.latitude && location.longitude != lastLocation.longitude)){
             val currentLocation = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
             locationFeedsDao.insertLocation(currentLocation)
-            val lastLocationAdded = locationFeedsDao.loadLastLocation()
+            //val lastLocationAdded = locationFeedsDao.loadLastLocation()
           // Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
         }
     }

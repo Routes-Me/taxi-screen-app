@@ -8,7 +8,6 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.*
 import android.util.Log
-import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.google.gson.Gson
 import com.routesme.taxi_screen.Class.App
@@ -202,10 +201,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     override fun onMessage(message: HubMessage) {
         Log.d("SignalR", "onMessage: ${message.arguments}")
-        // Toast.makeText(App.instance,"onMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
-        Handler(Looper.getMainLooper()).post {
-            Toast.makeText(App.instance, "onMessage: ${message.target}\\n${Gson().toJson(message.arguments)}", Toast.LENGTH_LONG).show()
-        }
     }
 
     override fun onEventMessage(message: HubMessage) {
@@ -228,8 +223,8 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     override fun onError(exception: Exception) {
         Log.d("SignalR", "onError: ${exception.message}")
         handlerTracking?.removeCallbacks(runnableTracking)
-        Handler().postDelayed({
-            connect()
-        }, 1 * 60 * 1000)
+       // Handler(Looper.myLooper()).postDelayed({
+           // connect()
+       // }, 1 * 60 * 1000)
     }
 }
