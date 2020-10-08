@@ -8,6 +8,7 @@ import com.routesme.taxi_screen.MVVM.API.RestApiService
 import com.routesme.taxi_screen.MVVM.Model.Error
 import com.routesme.taxi_screen.MVVM.Model.ResponseErrors
 import com.routesme.taxi_screen.MVVM.Model.VehicleInformationModel.*
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -29,13 +30,13 @@ class VehicleInformationRepository(val context: Context) {
                     val institutions = Gson().fromJson<Institutions>(response.body(), Institutions::class.java)
                     institutionsResponse.value = InstitutionsResponse(data = institutions.data)
                 } else{
-                    if (response.body() != null){
-                        val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
+                    if (response.errorBody() != null){
+                        val objError = JSONObject(response.errorBody()!!.string())
+                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         institutionsResponse.value = InstitutionsResponse(mResponseErrors = errors)
                     }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-
                         val responseErrors = ResponseErrors(errors)
                         institutionsResponse.value = InstitutionsResponse(mResponseErrors = responseErrors)
                     }
@@ -56,13 +57,13 @@ class VehicleInformationRepository(val context: Context) {
                     val vehicles = Gson().fromJson<Vehicles>(response.body(), Vehicles::class.java)
                     vehiclesResponse.value = VehiclesResponse(data = vehicles.data)
                 } else{
-                    if (response.body() != null){
-                        val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
+                    if (response.errorBody() != null){
+                        val objError = JSONObject(response.errorBody()!!.string())
+                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         vehiclesResponse.value = VehiclesResponse(mResponseErrors = errors)
                     }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-
                         val responseErrors = ResponseErrors(errors)
                         vehiclesResponse.value = VehiclesResponse(mResponseErrors = responseErrors)
                     }

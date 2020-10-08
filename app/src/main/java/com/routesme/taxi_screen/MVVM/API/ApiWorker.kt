@@ -2,7 +2,9 @@ package com.routesme.taxi_screen.MVVM.API
 
 import android.app.Activity
 import android.content.Context
+import android.widget.Toast
 import com.google.gson.GsonBuilder
+import com.routesme.taxi_screen.MVVM.View.LoginActivity
 import okhttp3.OkHttpClient
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyManagementException
@@ -19,13 +21,13 @@ class ApiWorker(val context: Context) {
         @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
         get() {
             if (mClient == null) {
-                 mClient = OkHttpClient.Builder()
-                        .connectTimeout(1, TimeUnit.MINUTES)
-                        .readTimeout(30, TimeUnit.SECONDS)
-                        .writeTimeout(15, TimeUnit.SECONDS)
-                        .addInterceptor(BasicAuthInterceptor(context as Activity))
-                        .addInterceptor(UnauthorizedInterceptor(context))
-                        .build()
+                 mClient = OkHttpClient.Builder().apply {
+                     connectTimeout(1, TimeUnit.MINUTES)
+                     readTimeout(30, TimeUnit.SECONDS)
+                     writeTimeout(15, TimeUnit.SECONDS)
+                     addInterceptor(BasicAuthInterceptor(context as Activity))
+                     if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
+                 }.build()
             }
             return mClient!!
         }

@@ -6,6 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi_screen.MVVM.API.RestApiService
 import com.routesme.taxi_screen.MVVM.Model.*
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -26,13 +27,13 @@ class RegistrationRepository(val context: Context) {
                     val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
                     registrationResponse.value = RegistrationResponse(deviceId = registrationSuccessResponse.deviceId)
                 } else{
-                    if (response.body() != null){
-                        val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
+                    if (response.errorBody() != null){
+                        val objError = JSONObject(response.errorBody()!!.string())
+                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         registrationResponse.value = RegistrationResponse(mResponseErrors = errors)
                     }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-
                         val responseErrors = ResponseErrors(errors)
                         registrationResponse.value = RegistrationResponse(mResponseErrors = responseErrors)
                     }

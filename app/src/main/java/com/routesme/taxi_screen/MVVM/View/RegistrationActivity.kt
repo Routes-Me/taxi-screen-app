@@ -193,7 +193,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register(){
-        if (token() != null) {
+        if (token() != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
@@ -360,7 +360,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            app.isNewLogin = true
+            app.apply {
+                isNewLogin = true
+                institutionId = null
+                vehicleId = null
+            }
+
             startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }

@@ -8,9 +8,11 @@ import com.google.gson.JsonElement
 import com.routesme.taxi_screen.Class.AesBase64Wrapper
 import com.routesme.taxi_screen.MVVM.API.RestApiService
 import com.routesme.taxi_screen.MVVM.Model.*
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+
 
 class LoginRepository(val context: Context) {
     private val signInResponse = MutableLiveData<LoginResponse>()
@@ -30,13 +32,13 @@ class LoginRepository(val context: Context) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
                     signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else{
-                    if (response.body() != null){
-                        val errors = Gson().fromJson<ResponseErrors>(response.body(), ResponseErrors::class.java)
+                    if (response.errorBody() != null){
+                        val objError = JSONObject(response.errorBody()!!.string())
+                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         signInResponse.value = LoginResponse(mResponseErrors = errors)
                     }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-
                         val responseErrors = ResponseErrors(errors)
                         signInResponse.value = LoginResponse(mResponseErrors = responseErrors)
                     }
