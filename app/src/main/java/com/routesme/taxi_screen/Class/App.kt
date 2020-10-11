@@ -51,29 +51,11 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
-        //video player...
         var simpleCache: SimpleCache? = null
         var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor? = null
         var exoDatabaseProvider: ExoDatabaseProvider? = null
         var exoPlayerCacheSize: Long = 90 * 1024 * 1024
-        //val firebaseAnalytics = FirebaseAnalytics.getInstance(App.instance)
         lateinit var currentActivity:Context
-
-        val nearbySubscribeOptions: SubscribeOptions = SubscribeOptions.Builder()
-                .setStrategy(nearbyStrategy())
-                .build()
-
-
-        val nearbyPublishOptions: PublishOptions = PublishOptions.Builder()
-                .setStrategy(nearbyStrategy())
-                .build()
-
-        private fun nearbyStrategy(): Strategy {
-            return Strategy.Builder()
-                    .setTtlSeconds(Strategy.TTL_SECONDS_MAX)
-                   // .setDistanceType(Strategy.DISTANCE_TYPE_EARSHOT)
-                    .build()
-        }
     }
 
     override fun onCreate() {
@@ -97,14 +79,8 @@ class App : Application() {
         }
 
         val intent = Intent(instance, LocationTrackingService::class.java)
-        //this.startService(intent)
         ContextCompat.startForegroundService(instance,intent)
-        //this.getApplication().startForegroundService(intent);
         this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-    }
-
-    fun setConnectivityListener(listener: ConnectivityReceiver.ConnectivityReceiverListener?) {
-        ConnectivityReceiver.connectivityReceiverListener = listener
     }
 
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
@@ -117,7 +93,6 @@ class App : Application() {
 
             }
         }
-
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "LocationTrackingService") {
                 trackingService = null
@@ -126,16 +101,16 @@ class App : Application() {
         }
     }
 
-
     private fun logApplicationStartingPeriod(timePeriod: TimePeriod) {
         val params = Bundle()
         params.putString("TimePeriod", timePeriod.toString())
         FirebaseAnalytics.getInstance(this).logEvent("application_starting_period", params)
     }
     private fun currentPeriod(): TimePeriod {
-        return if (currentDate().after(parseDate("04:00")) && currentDate().before(parseDate("12:00"))) TimePeriod.Morning
-        else if (currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("17:00"))) TimePeriod.Noon
-        else if (currentDate().after(parseDate("17:00")) && currentDate().before(parseDate("24:00"))) TimePeriod.Evening
+        val currentDate = currentDate()
+        return if (currentDate.after(parseDate("04:00")) && currentDate.before(parseDate("12:00"))) TimePeriod.Morning
+        else if (currentDate.after(parseDate("12:00")) && currentDate.before(parseDate("17:00"))) TimePeriod.Noon
+        else if (currentDate.after(parseDate("17:00")) && currentDate.before(parseDate("24:00"))) TimePeriod.Evening
         else TimePeriod.Night
     }
     private fun currentDate(): Date {
@@ -147,67 +122,4 @@ class App : Application() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
-
-
-    //Payment Service...
-    private val messageListener = object : MessageListener() {
-        override fun onFound(paymentMessage: Message) {
-            // Toast.makeText(this@HomeScreen,"message: ${String(paymentMessage.content)}",Toast.LENGTH_SHORT).show()
-
-            val dataArray = String(paymentMessage.content).split(",").toTypedArray()
-
-            paymentData.driverToken = dataArray[0]
-            paymentData.paymentAmount = dataArray[1].toDouble()
-
-            sendReceivedSuccessfullyMessage()
-            passPaymentData()
-
-        }
-        override fun onLost(message: Message?) {}
-    }
-
-    private fun sendReceivedSuccessfullyMessage() {
-        receivedSuccessfullyMessage = "${getString(R.string.received)},${paymentData.paymentAmount}"
-       // operations.publish(receivedSuccessfullyMessage)
-    }
-
-    /*
-    override fun onStop() {
-        if (receivedSuccessfullyMessage.isNotEmpty()) operations.unPublish(receivedSuccessfullyMessage)
-        Nearby.getMessagesClient(this).unsubscribe(messageListener)
-        super.onStop()
-    }
-*/
-    private fun passPaymentData(){
-       // hideFragment(PaymentFragment.instance)
-        //paymentData.apply { driverToken = "9347349"; paymentAmount = 1.500 }  //for test only
-      //  val bundle = Bundle().apply {putSerializable("paymentData", paymentData)}
-      //  val paymentFragment = PaymentFragment.instance.apply { arguments =bundle }
-        startActivity(Intent(this, PaymentActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK).putExtra("paymentData",paymentData))
-
-        val runnableBanner = Runnable {
-            PaymentActivity().finish()
-        }
-        val handlerBanner = Handler()
-        handlerBanner.postDelayed(runnableBanner, (30 * 1000).toLong())
-
-        //supportFragmentManager.beginTransaction().replace(R.id.paymentFragment_container, paymentFragment).commit()
-
-    }
-
-    /*
-    private fun showFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().apply {
-            if (fragment.isAdded) show(fragment)
-            else add(R.id.payment_container, fragment)
-            supportFragmentManager.fragments.forEach { if (it != fragment && it.isAdded) hide(it) }
-        }.commit()
-    }
-
-    private fun hideFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().apply {
-            if (fragment.isAdded && fragment.isVisible) hide(fragment)
-        }.commit()
-    }
-*/
 }

@@ -72,7 +72,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
         initAdvertiseViews()
         displayAdvertisements = DisplayAdvertisements.instance
         qRCodeCallback?.let { it1 -> displayAdvertisements.setQrCodeCallback(it1) }
-        checkConnection()
+       // checkConnection()
         return view1
     }
 
@@ -112,7 +112,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     private fun checkConnection() {
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
-            fetchContent()
+           // fetchContent()
         } else {
             networkListener()
         }
@@ -120,12 +120,12 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
 
     private fun networkListener() {
         connectivityReceiverRegistering(true)
-        App.instance.setConnectivityListener(this)
+        ConnectivityReceiver.connectivityReceiverListener = this
     }
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
-            fetchContent()
+           // fetchContent()
             connectivityReceiverRegistering(false)
         }
     }
@@ -187,49 +187,6 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
             operations.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
         }
     }
-
-    /*
-    private fun fetchAdvertisementData() {
-
-        val bannerList = mutableSetOf<Content>()
-        val videoList = mutableSetOf<Content>()
-
-        val model: RoutesViewModel by viewModels()
-        model.getContent(mContext).observe((instance as LifecycleOwner), Observer<ContentResponse> {
-            if (!it.data.isNullOrEmpty()){
-                for (content in it.data){
-                    when(content.type){
-                        ContentType.Image.value -> bannerList.add(Content(content.content_id, content.url, content.qrCode))
-                        else -> videoList.add(Content(content.content_id, content.url, content.qrCode))
-                    }
-                }
-
-                displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
-                if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
-                if (!videoList.isNullOrEmpty()) {  startPreLoadingService(videoList.toList()); displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)}
-            }
-        })
-
-        test()
-        isDataFetched = true
-    }
-
-    private fun test(){
-        val bannerList = mutableSetOf<Content>()
-        val videoList = mutableSetOf<Content>()
-        videoList.apply {
-            add(Content(0,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FEid%20Alfiter.mp4?alt=media&token=f8ddfe58-d812-456c-bf4c-37fdcafa731c",QrCode("Macdonalds offers a 30% discount \n Scan Now!","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F1.png?alt=media&token=24e4ed47-e77f-489a-bb87-36955ba85b84")))
-            add(Content(1,"https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3", QrCode("MAC Offer! Scan Now!","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F2.png?alt=media&token=071c6c0d-0959-4a5e-99fe-49b01eb21977")))
-        }
-        bannerList.apply {
-            add(Content(0,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F160x600.jpg?alt=media&token=b6b8006d-c1cd-4bf3-b377-55e725c66957"))
-            add(Content(1,"https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5",QrCode("Macdonalds offers a 30% discount \n Scan Now!","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2F1.png?alt=media&token=24e4ed47-e77f-489a-bb87-36955ba85b84")))
-        }
-        displayAdvertisements = DisplayAdvertisements(qRCodeCallback)
-        if (!bannerList.isNullOrEmpty()) displayAdvertisements.displayAdvertisementBannerList(bannerList.toList(),view1.advertisementsImageView)
-        if (!videoList.isNullOrEmpty()) {  startPreLoadingService(videoList.toList()); displayAdvertisements.displayAdvertisementVideoList(videoList.toList(),view1.playerView,view1.videoRingProgressBar)}
-    }
-*/
 
     private fun startPreLoadingService(it: List<Data>) {
         val videoList = ArrayList<String>()

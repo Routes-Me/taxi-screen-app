@@ -43,14 +43,4 @@ class Operations {
 
         alertDialog.show()
     }
-
-    fun publish(message: String, activity: Activity) {
-        Nearby.getMessagesClient(activity).publish(nearbyMessage(message), App.nearbyPublishOptions)
-    }
-
-    fun unPublish(message: String, activity: Activity) {
-        Nearby.getMessagesClient(activity).unpublish(nearbyMessage(message))
-    }
-
-    private fun nearbyMessage(s: String) = Message(s.toByteArray())
 }

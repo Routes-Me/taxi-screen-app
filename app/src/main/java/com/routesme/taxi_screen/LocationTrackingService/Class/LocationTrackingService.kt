@@ -139,8 +139,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private fun setupTrackingHandler() {
         runnableTracking = Runnable {
             isHandlerTrackingRunning = true
-
-            Log.i("trackingWebSocket:  ", "Tracking Timer running ...")
             trackingDataLayer.executeTrackingLogic()
             handlerTracking?.postDelayed(runnableTracking, 5000)
         }
@@ -204,14 +202,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     }
 
     override fun onEventMessage(message: HubMessage) {
-        //  HomeActivity().runOnUiThread { Toast.makeText(this, "Event message: ${message.target}\n${Gson().toJson(message.arguments)}", Toast.LENGTH_SHORT).show() }
         Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
-        //Toast.makeText(App.instance,"onEventMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
-        /*
-        Handler(Looper.getMainLooper()).post {
-              Toast.makeText(this,"onEventMessage: ${message.target}\\n${Gson().toJson(message.arguments)}",Toast.LENGTH_LONG).show()
-        }
-        */
     }
 
     override fun onDisconnected() {
