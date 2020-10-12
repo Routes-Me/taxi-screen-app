@@ -8,8 +8,8 @@ import com.routesme.taxi_screen.LocationTrackingService.Model.LocationFeed
 interface LocationFeedsDao {
 
     @Transaction
-    @Query("SELECT * FROM LocationFeeds ORDER BY ID")
-    fun loadAllLocations(): List<LocationFeed>
+    @Query("SELECT * FROM LocationFeeds ORDER BY id DESC LIMIT 100")
+    fun getLocationPackage(): List<LocationFeed>
 
     @Transaction
     @Insert

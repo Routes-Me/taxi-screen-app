@@ -23,9 +23,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private lateinit var hubConnection: HubConnection
     private lateinit var trackingDataLayer: TrackingDataLayer
     private lateinit var locationReceiver: LocationReceiver
-    private var isHandlerTrackingRunning = false
-    private var handlerTracking: Handler? = null
-    private var runnableTracking: Runnable? = null
     private val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE)
     private var handlerCheckPermissions: Handler? = null
     private var runnableCheckPermissions: Runnable? = null
@@ -78,24 +75,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     fun checkPermissionsGranted() {
         if (hasPermissions(*permissions)) {
             startTracking()
-        } else {
-            setupCheckPermissionsHandler()
-            permissionsHandlerRunning = true
-            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1000)
-
         }
-    }
-
-    private fun setupCheckPermissionsHandler() {
-        Log.i("trackingWebSocket:", "setupCheckPermissionsHandler")
-        runnableCheckPermissions = Runnable {
-            if (hasPermissions(*permissions) && permissionsHandlerRunning) {
-                permissionsHandlerRunning = false; handlerCheckPermissions?.removeCallbacks(runnableCheckPermissions); instance.startTracking()
-            }
-            Log.i("trackingWebSocket:", "startCheckPermissionsHandler")
-            handlerCheckPermissions?.postDelayed(runnableCheckPermissions, 1 * 60 * 1000)
-        }
-        handlerCheckPermissions = Handler()
     }
 
     private fun startTracking() {
@@ -104,7 +84,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         institutionId = getInstitutionId()
         deviceId = getDeviceId()
         token = getToken()
-        // testingSetup()
         if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty() && !token.isNullOrEmpty()) {
             hubConnection = getSignalRHub()
             hubConnection.addListener(this)
@@ -113,16 +92,9 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
             trackingDataLayer = TrackingDataLayer(hubConnection)
             locationReceiver = LocationReceiver(trackingDataLayer)
             if (locationReceiver.setUpLocationListener()) {
-                setupTrackingHandler()
                 connect()
             }
         } else return
-    }
-
-    private fun testingSetup() {
-        vehicleId = "17"
-        institutionId = "5"
-        deviceId = "2"
     }
 
     private fun hasPermissions(vararg permissions: String): Boolean {
@@ -136,15 +108,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         return true
     }
 
-    private fun setupTrackingHandler() {
-        runnableTracking = Runnable {
-            isHandlerTrackingRunning = true
-            trackingDataLayer.executeTrackingLogic()
-            handlerTracking?.postDelayed(runnableTracking, 5000)
-        }
-        handlerTracking = Handler()
-    }
-
     override fun onBind(intent: Intent): IBinder {
         Log.i("trackingWebSocket:", "onBind")
         return LocationServiceBinder()
@@ -152,21 +115,18 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.i("trackingWebSocket:", "onStartCommand")
         return START_STICKY
     }
 
     override fun onCreate() {
         super.onCreate()
         startForeground(NOTIFICATION_ID, getNotification())
-        Log.i("trackingWebSocket:", "onCreate")
-        // sharedPreferences.getString(SharedPreference.vehicle_id, null)//.getString(SharedPreference.token, null)
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         Log.i("trackingWebSocket:", "onDestroy")
+        if (locationReceiver != null) locationReceiver.unregisterLocationUpdates()
     }
 
     private fun getNotification(): Notification {
@@ -191,10 +151,8 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     }
 
     override fun onConnected() {
-        val startLocationMessage = locationReceiver.getStartLocationMessage()
-        if (!startLocationMessage.isNullOrEmpty()) hubConnection.invoke("SendLocation", startLocationMessage)
-        Log.d("SignalR", "onConnected")
-        handlerTracking?.post(runnableTracking)
+        val lastKnownLocation = locationReceiver.getLastKnownMessage()
+        if (!lastKnownLocation.isNullOrEmpty()) hubConnection.invoke("SendLocation", lastKnownLocation)
     }
 
     override fun onMessage(message: HubMessage) {
@@ -207,15 +165,11 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     override fun onDisconnected() {
         Log.d("SignalR", "onDisconnected")
-        handlerTracking?.removeCallbacks(runnableTracking)
             connect()
     }
 
     override fun onError(exception: Exception) {
         Log.d("SignalR", "onError: ${exception.message}")
-        handlerTracking?.removeCallbacks(runnableTracking)
-       // Handler(Looper.myLooper()).postDelayed({
-           // connect()
-       // }, 1 * 60 * 1000)
+
     }
 }

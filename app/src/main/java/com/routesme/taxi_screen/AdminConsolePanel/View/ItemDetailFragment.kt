@@ -3,7 +3,6 @@ package com.routesme.taxi_screen.AdminConsolePanel.View
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -50,7 +49,7 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     }
 
     private fun getSavedLocations(): MutableList<DetailCell> {
-        val savedLocationFeeds = locationFeedsDao.loadAllLocations()
+        val savedLocationFeeds = locationFeedsDao.getLocationPackage()
         val liveTrackingCells = mutableListOf<DetailCell>().apply {
             add(DetailCell("Latitude, Longitude", "Time", true))
             for (location in savedLocationFeeds){

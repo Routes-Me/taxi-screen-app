@@ -23,7 +23,7 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
     private lateinit var sendFeedsRunnable: Runnable
 
      fun executeTrackingLogic() {
-         val savedLocationFeeds = locationFeedsDao.loadAllLocations()
+         val savedLocationFeeds = locationFeedsDao.getLocationPackage()
 
          if (!savedLocationFeeds.isNullOrEmpty()){
              val lastFeedId = savedLocationFeeds.last().id
@@ -262,8 +262,13 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
         if (lastLocation == null || (location.latitude != lastLocation.latitude && location.longitude != lastLocation.longitude)){
             val currentLocation = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
             locationFeedsDao.insertLocation(currentLocation)
-            //val lastLocationAdded = locationFeedsDao.loadLastLocation()
-          // Log.d("Tracking-Logic", "last location added:  $lastLocationAdded")
+        }
+    }
+    fun sendLocations(){
+        val savedLocationFeeds = locationFeedsDao.getLocationPackage()
+        if (!savedLocationFeeds.isNullOrEmpty()){
+          val message = getJsonArray(savedLocationFeeds).toString()
+            sendFeedsViaSocket(message)
         }
     }
 

@@ -15,46 +15,54 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+
 class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : LocationListener {
 
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    private var startLocation: Location? = null
+    private var lastKnownLocation: Location? = null
+    private val minTime = 5000L
+    private val minDistance = 27F
 
     fun setUpLocationListener(): Boolean {
         return if (canGetLocation()) {
             if (isGPSEnabled()) {
                 setLocationManagerProvider(LocationManager.GPS_PROVIDER)
-            }else if (isNetworkEnabled()) {
+            } else if (isNetworkEnabled()) {
                 setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
             }
             true
-      } else {
-           false
+        } else {
+            false
         }
     }
 
     private fun setLocationManagerProvider(provider: String) {
         if (provider.isNotEmpty()) {
             try {
-                locationManager.requestLocationUpdates(provider, 1000L, 2.77F, this)
-                startLocation = locationManager.getLastKnownLocation(provider)
+                locationManager.requestLocationUpdates(provider, minTime, minDistance, this)
+                Log.d("Location-Manager-Provider", provider)
+                lastKnownLocation = locationManager.getLastKnownLocation(provider)
             } catch (ex: SecurityException) {
                 Log.d("LocationManagerProvider", "Security Exception, no location available")
             }
         }
     }
 
-     fun getStartLocationMessage(): String? {
-        if (startLocation == null){
+    fun unregisterLocationUpdates() {
+        locationManager.removeUpdates(this)
+    }
+
+    fun getLastKnownMessage(): String? {
+        if (lastKnownLocation == null) {
             return null
-        }else{
+        } else {
             val locationObject = JSONObject()
             val locationMessage = JSONObject()
             try {
-                locationObject.put("latitude",startLocation?.latitude)
-                locationObject.put("longitude",startLocation?.longitude)
-                locationObject.put("timestamp",(System.currentTimeMillis()/1000).toString())
-                startLocation = null
+                locationObject.put("latitude", lastKnownLocation?.latitude)
+                locationObject.put("longitude", lastKnownLocation?.longitude)
+                locationObject.put("timestamp", (System.currentTimeMillis() / 1000).toString())
+                lastKnownLocation = null
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
@@ -80,7 +88,7 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
     private val positiveButtonClick = { _: DialogInterface, which: Int -> App.instance.startActivity(Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)) }
     private val negativeButtonClick = { dialog: DialogInterface, which: Int -> dialog.cancel() }
 
-    private fun canGetLocation() =  isGPSEnabled() || isNetworkEnabled()
+    private fun canGetLocation() = isGPSEnabled() || isNetworkEnabled()
 
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
 
@@ -88,7 +96,8 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer) : Locat
 
     //LocationListener Methods...
     override fun onLocationChanged(location: Location) {
-        if (location != null) trackingDataLayer.insertLocation(location)
+        trackingDataLayer.insertLocation(location)
+        trackingDataLayer.sendLocations()
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
