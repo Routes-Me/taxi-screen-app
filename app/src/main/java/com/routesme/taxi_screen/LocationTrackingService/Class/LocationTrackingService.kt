@@ -34,6 +34,9 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private var deviceId: String? = null
     private var token: String? = null
     private val NOTIFICATION_ID = 12345678
+    private val reconnectionDelay: Long = 1*60*1000
+    private var handlerThread: HandlerThread? = null
+    private var mHandler: Handler? = null
 
     companion object {
         @get:Synchronized
@@ -126,6 +129,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     override fun onDestroy() {
         super.onDestroy()
         Log.i("trackingWebSocket:", "onDestroy")
+        mHandler?.removeCallbacks(reconnection)
         if (locationReceiver != null) locationReceiver.unregisterLocationUpdates()
     }
 
@@ -144,6 +148,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     private fun connect() {
         try {
+            mHandler?.removeCallbacks(reconnection)
             hubConnection.connect()
         } catch (ex: Exception) {
             Log.d("SignalR", "${ex.message} ,  ${ex}")
@@ -170,6 +175,11 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     override fun onError(exception: Exception) {
         Log.d("SignalR", "onError: ${exception.message}")
-
+        handlerThread = HandlerThread("reconnection")
+        handlerThread?.start()
+        mHandler = Handler(handlerThread?.looper);
+        mHandler?.postDelayed(reconnection, reconnectionDelay)
     }
+
+    val reconnection: Runnable = Runnable { connect() }
 }
