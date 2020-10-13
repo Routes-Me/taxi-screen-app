@@ -9,7 +9,7 @@ interface LocationFeedsDao {
 
     @Transaction
     @Query("SELECT * FROM LocationFeeds ORDER BY id DESC LIMIT 100")
-    fun getLocationPackage(): List<LocationFeed>
+    fun getResults(): List<LocationFeed>
 
     @Transaction
     @Insert

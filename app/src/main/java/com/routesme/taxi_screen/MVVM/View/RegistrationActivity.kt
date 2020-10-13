@@ -35,7 +35,7 @@ import java.io.IOException
 import java.util.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
-
+    private val AUTHORIZATION_KAY = "authorization"
     private val app = App.instance
     private var registerCredentials = RegistrationCredentials()
     private val operations = Operations.instance
@@ -289,7 +289,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private fun openModelPresenterScreen() {
         val authorization = Authorization(true, 200)
         val modelPresenter = Intent(this, ModelPresenter::class.java)
-        modelPresenter.putExtra("authorization", authorization)
+        modelPresenter.putExtra(AUTHORIZATION_KAY, authorization)
         startActivity(modelPresenter)
         finish()
     }

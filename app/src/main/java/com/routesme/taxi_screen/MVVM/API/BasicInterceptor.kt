@@ -13,8 +13,8 @@ import com.routesme.taxiscreen.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
-
 internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
+
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
@@ -34,6 +34,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
 }
 
 internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
+    private val AUTHORIZATION_KAY = "authorization"
     @Throws(IOException::class)
     override fun intercept(@NonNull chain: Interceptor.Chain): Response {
         val response: Response = chain.proceed(chain.request())
@@ -43,7 +44,7 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     }
 
     private fun openModelPresenterScreen(activity: Activity, responseCode: Int) {
-        activity.startActivity(Intent(activity, ModelPresenter::class.java).putExtra("authorization", Authorization(false, responseCode)))
+        activity.startActivity(Intent(activity, ModelPresenter::class.java).putExtra(AUTHORIZATION_KAY, Authorization(false, responseCode)))
         activity.finish()
     }
 }

@@ -1,15 +1,12 @@
 package com.routesme.taxi_screen.LocationTrackingService.Class
 
 import android.location.Location
-import android.os.Handler
-import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi_screen.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi_screen.LocationTrackingService.Model.LocationJsonObject
-import com.routesme.taxi_screen.LocationTrackingService.Model.MessageFeed
 import com.smartarmenia.dotnetcoresignalrclientjava.HubConnection
 import org.json.JSONArray
 import org.json.JSONException
@@ -18,12 +15,10 @@ import org.json.JSONObject
 class TrackingDataLayer( private val hubConnection: HubConnection) {
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     private val locationFeedsDao = trackingDatabase.locationFeedsDao()
-    private val messageFeedsDao = trackingDatabase.messageFeedsDao()
-    private lateinit var sendFeedsHandler: Handler
-    private lateinit var sendFeedsRunnable: Runnable
 
+/*
      fun executeTrackingLogic() {
-         val savedLocationFeeds = locationFeedsDao.getLocationPackage()
+         val savedLocationFeeds = locationFeedsDao.getResults()
 
          if (!savedLocationFeeds.isNullOrEmpty()){
              val lastFeedId = savedLocationFeeds.last().id
@@ -58,15 +53,6 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
             }
         }
         sendFeedsHandler = Handler()
-    }
-
-    private fun getJsonArray(locationFeeds: List<LocationFeed>):JsonArray {
-        val locationJsonArray = JsonArray()
-        for (l in locationFeeds){
-            val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
-            locationJsonArray.add(locationJsonObject)
-        }
-        return locationJsonArray
     }
 
     private fun getMajorFeeds(feedGroups: List<MutableList<LocationFeed>>): Set<LocationFeed> {
@@ -256,38 +242,56 @@ class TrackingDataLayer( private val hubConnection: HubConnection) {
             add(feedsList18)
         }
     }
+*/
 
-    fun insertLocation(location: Location) {
-        val lastLocation = locationFeedsDao.loadLastLocation()
-        if (lastLocation == null || (location.latitude != lastLocation.latitude && location.longitude != lastLocation.longitude)){
-            val currentLocation = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
-            locationFeedsDao.insertLocation(currentLocation)
-        }
-    }
-    fun sendLocations(){
-        val savedLocationFeeds = locationFeedsDao.getLocationPackage()
-        if (!savedLocationFeeds.isNullOrEmpty()){
-          val message = getJsonArray(savedLocationFeeds).toString()
-            sendFeedsViaSocket(message)
+    fun getLocationsResult(): String? {
+        val result = locationFeedsDao.getResults()
+        return if (!result.isNullOrEmpty()){
+             getJsonArray(result).toString()
+        }else{
+            null
         }
     }
 
-    private fun distance(firstLocation: Location, lastLocation: Location) = firstLocation.distanceTo(lastLocation)
+    private fun getJsonArray(locationFeeds: List<LocationFeed>):JsonArray {
+        val locationJsonArray = JsonArray()
+        for (l in locationFeeds){
+            val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
+            locationJsonArray.add(locationJsonObject)
+        }
+        return locationJsonArray
+    }
 
-    private fun sendFeedsViaSocket(messageFeeds: String){
+   // private fun distance(firstLocation: Location, lastLocation: Location) = firstLocation.distanceTo(lastLocation)
+
+    fun sendMessage(result: String){
+        hubConnection.invoke("SendLocation", getMessage(result))
+    }
+
+    private fun getMessage(result: String): String {
         val messageObject = JSONObject()
-           val feedsArray = JSONArray(messageFeeds)
+        val feedsArray = JSONArray(result)
         try {
             messageObject.put("SendLocation", feedsArray)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
-        //        val message = "{\"SendLocation\":[{\"latitude\":29.378621666666664,\"longitude\":47.98415166666667,\"timestamp\":\"1602423598\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378621666666664,\"longitude\":47.98415166666667,\"timestamp\":\"1602423598\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"},{\"latitude\":29.378443333333333,\"longitude\":47.98430166666667,\"timestamp\":\"1602423600\"},{\"latitude\":29.37824333333333,\"longitude\":47.98437666666667,\"timestamp\":\"1602423601\"}]}"//messageObject.toString()
-        val message = messageObject.toString()
-       // Log.d("SignalR-Message",trackingMessage)
-       // hubConnection.send("SendLocation", trackingMessage)
-        Log.d("SignalR-SendLocation", "from dataLayer: $message")
-        hubConnection.invoke("SendLocation", message)
-       // Log.d("SignalR",message)
+        return messageObject.toString()
     }
+
+
+    fun insertLocation(currentLocation: Location?) {
+        if (currentLocation != null){
+            val previousLocation = locationFeedsDao.loadLastLocation()
+            if (previousLocation != null){
+                if (currentLocation.latitude != previousLocation.latitude && currentLocation.longitude != previousLocation.longitude){
+                    locationFeedsDao.insertLocation(getLocationFeed(currentLocation))
+                }
+            }else{
+                locationFeedsDao.insertLocation(getLocationFeed(currentLocation))
+            }
+        }
+    }
+    private fun getLocationFeed(location: Location) = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
+
 }
