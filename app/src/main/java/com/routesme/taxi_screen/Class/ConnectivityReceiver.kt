@@ -18,8 +18,6 @@ class ConnectivityReceiver: BroadcastReceiver()  {
             return activeNetwork != null && activeNetwork.isConnected
         }
 
-
-
     lateinit var context: Context
     override fun onReceive(context: Context, intent: Intent) {
         this.context = context

@@ -4,6 +4,8 @@ import android.net.Uri
 import android.os.Handler
 import android.widget.ImageView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -28,19 +30,17 @@ class DisplayAdvertisements() {
     private var simpleExoPlayer: SimpleExoPlayer? = null
     private var simpleCache: SimpleCache? = null
     private var currentVideoIndex = 0
-    private var currentBannerIndex = 0
     private var handlerBanner: Handler? = null
     private var runnableBanner: Runnable? = null
-    //Video progress bar
-    private var ringProgressBarTimer: Timer? = null
     private var handlerProgressBar: Handler? = null
     private var runnableProgressBar: Runnable? = null
     private val second: Long = 1000
 
-
     companion object{
         @get:Synchronized
         val instance = DisplayAdvertisements()
+        val glide = Glide.with(App.instance)
+        val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
     }
 
     fun setQrCodeCallback(qrCodeCallback: QRCodeCallback){
@@ -93,16 +93,6 @@ class DisplayAdvertisements() {
 
     }
 
-    private fun progressBarTimerCounter(ringProgressBar: RingProgressBar) {
-        ringProgressBarTimer = Timer()
-        val task: TimerTask = object : TimerTask() {
-            override fun run() {
-                ContentFragment.instance.activity?.runOnUiThread { updateRingProgressBar(ringProgressBar) }
-            }
-        }
-        ringProgressBarTimer?.schedule(task, 0, 1000)
-    }
-
     private fun progressBarHandlerCounter(ringProgressBar: RingProgressBar) {
         runnableProgressBar = Runnable {
             updateRingProgressBar(ringProgressBar)
@@ -124,11 +114,12 @@ class DisplayAdvertisements() {
     }
 
     fun displayAdvertisementBannerList(banners: List<Data>, ADS_ImageView: ImageView) {
+        handlerBanner = Handler()
+        var currentBannerIndex = 0
         runnableBanner = Runnable {
             if (currentBannerIndex < banners.size) {
                 val uri = Uri.parse(banners[currentBannerIndex].url)
-                //showBannerIntoImageView(uri)
-                Glide.with(App.instance).load(uri).apply(App.imageOptions).into(ADS_ImageView)
+                glide.load(uri).apply(imageOptions).into(ADS_ImageView)
                 qrCodeCallback?.onBannerQRCodeChanged(banners[currentBannerIndex].promotion)
                 currentBannerIndex++
                 if (currentBannerIndex >= banners.size) {
@@ -137,8 +128,7 @@ class DisplayAdvertisements() {
                 handlerBanner?.postDelayed(runnableBanner, 15000)
             }
         }
-        handlerBanner = Handler()
-        handlerBanner?.postDelayed(runnableBanner, 1)
+        handlerBanner?.post(runnableBanner)
     }
 
     fun release() {

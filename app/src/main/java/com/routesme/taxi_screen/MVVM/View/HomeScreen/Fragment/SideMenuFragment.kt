@@ -17,33 +17,29 @@ import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
 
 class SideMenuFragment : Fragment() {
-    private lateinit var v: View
+    private lateinit var mView: View
     private lateinit var mContext: Context
-    private lateinit var handlerTime: Handler
+    private var handlerTime: Handler? = null
     private val dateOperations = DateOperations.instance
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
-
-    companion object {
-        val instance = SideMenuFragment()
-    }
 
     override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = inflater.inflate(R.layout.side_menu_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.side_menu_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        v = view
+        mView = view
         setupRecyclerView()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    override fun onDestroyView() {
-        handlerTime.removeCallbacks(timeRunnable)
-        super.onDestroyView()
+    override fun onDestroy() {
+        handlerTime?.removeCallbacks(timeRunnable)
+        super.onDestroy()
     }
 
     private fun setupRecyclerView() {
@@ -57,7 +53,7 @@ class SideMenuFragment : Fragment() {
         }
 
         sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
-        v.recyclerView.apply {
+        mView.recyclerView.apply {
             adapter = sideFragmentAdapter
             itemAnimator = ItemAnimator(mContext)
         }
@@ -67,7 +63,7 @@ class SideMenuFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     private fun setTime() {
         handlerTime = Handler()
-        handlerTime.post(timeRunnable)
+        handlerTime?.post(timeRunnable)
     }
 
     private val timeRunnable: Runnable = object : Runnable {
@@ -75,7 +71,7 @@ class SideMenuFragment : Fragment() {
             val date = Date()
             sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
             sideFragmentAdapter.notifyDataSetChanged()
-            handlerTime.postDelayed(this, 60 * 1000)
+            handlerTime?.postDelayed(this, 60 * 1000)
         }
     }
 

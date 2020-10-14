@@ -37,7 +37,6 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
-        val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
         var simpleCache: SimpleCache? = null
         var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor? = null
         var exoDatabaseProvider: ExoDatabaseProvider? = null

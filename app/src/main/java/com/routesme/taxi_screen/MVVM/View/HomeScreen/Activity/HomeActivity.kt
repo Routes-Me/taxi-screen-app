@@ -64,8 +64,8 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         if (displayManager.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
         setContentView(R.layout.home_screen)
 
-        contentFragment = ContentFragment.instance
-        sideMenuFragment = SideMenuFragment.instance
+        contentFragment = ContentFragment()
+        sideMenuFragment = SideMenuFragment()
         fragmentTransaction = supportFragmentManager.beginTransaction()
         this.activityCover = findViewById(R.id.activityCover)
 
