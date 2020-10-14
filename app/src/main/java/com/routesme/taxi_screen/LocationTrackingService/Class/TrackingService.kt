@@ -18,8 +18,10 @@ import java.net.URISyntaxException
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private lateinit var hubConnection: HubConnection
-    private var trackingDataLayer: TrackingDataLayer? = null
-    private var locationReceiver: LocationReceiver? = null
+    private var locationReceiver = LocationReceiver()
+
+
+    private var dataLayer: TrackingDataLayer? = null
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var authorityUrl: URI
     private var vehicleId: String? = null
@@ -52,7 +54,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onDestroy() {
         super.onDestroy()
         mHandler?.removeCallbacks(reconnection)
-        locationReceiver?.removeLocationUpdates()
+        locationReceiver.removeLocationUpdates()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -65,16 +67,28 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         return START_STICKY
     }
 
-    private fun startTrackingService() {
+    private fun connectHub() {
+        hubConnection = createHubConnection().apply {
+            addListener(this@TrackingService)
+            subscribeToEvent("SendLocation", this@TrackingService)
+        }
 
-            locationReceiver = LocationReceiver()
-            hubConnection = getSignalRHub().apply {
-                addListener(this@TrackingService)
-                subscribeToEvent("SendLocation", this@TrackingService)
-            }
-            trackingDataLayer = TrackingDataLayer(hubConnection)
-            locationReceiver?.apply {
-                if (trackingDataLayer != null){locationReceiver?.setDataLayer(trackingDataLayer!!)}
+
+    }
+
+    private fun startTrackingService() {
+        hubConnection = createHubConnection().apply {
+            addListener(this@TrackingService)
+            subscribeToEvent("SendLocation", this@TrackingService)
+        }
+
+        dataLayer = TrackingDataLayer(hubConnection)
+
+        locationReceiver.apply {
+            dataLayer?.let { this.setDataLayer(it) }
+
+
+
                 if (isProviderEnabled()) {
                     initializeLocationManager()
                     hubConnect()
@@ -90,12 +104,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         return builder.build()
     }
 
-    private fun getSignalRHub(): HubConnection {
+    private fun createHubConnection(): HubConnection {
         val url = getTrackingUrl().toString()
         val authHeader = App.instance.account.accessToken ?: ""
-        val hubConnection = WebSocketHubConnectionP2(url, authHeader)
-
-        return hubConnection
+        return WebSocketHubConnectionP2(url, authHeader)
     }
 
     private fun getTrackingUrl(): URI {

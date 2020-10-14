@@ -1,5 +1,6 @@
 package com.routesme.taxi_screen.LocationTrackingService.Class
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.location.Location
 import android.location.LocationListener
@@ -12,27 +13,28 @@ import org.json.JSONException
 import org.json.JSONObject
 
 class LocationReceiver() : LocationListener {
-    private var trackingDataLayer: TrackingDataLayer? = null
+    private var dataLayer: TrackingDataLayer? = null
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    private var lastKnownLocation: Location? = null
-    private val minTime = 0L//5000L
-    private val minDistance = 0F//27F
+
+    private val minTime = 5000L
+    private val minDistance = 27F
+
+    private fun locationProvider(): String {
+        return if (isGPSEnabled()) {
+            LocationManager.GPS_PROVIDER
+        }else {
+            LocationManager.NETWORK_PROVIDER
+        }
+    }
 
     fun initializeLocationManager(){
-            if (isGPSEnabled()) {
-                setLocationManagerProvider(LocationManager.GPS_PROVIDER)
-            } else {
-                setLocationManagerProvider(LocationManager.NETWORK_PROVIDER)
-            }
-    }
-    private fun setLocationManagerProvider(provider: String) {
         try {
-            lastKnownLocation = locationManager.getLastKnownLocation(provider)
-            locationManager.requestLocationUpdates(provider, minTime, minDistance, this)
+            locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
+
     fun isProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
@@ -41,33 +43,31 @@ class LocationReceiver() : LocationListener {
         locationManager.removeUpdates(this)
     }
 
+    @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): String? {
-        if (lastKnownLocation == null) {
-            return null
-        } else {
-            val locationObject = JSONObject()
-            val locationMessage = JSONObject()
+
+        locationManager.getLastKnownLocation(locationProvider())?.let {
+
             try {
-                locationObject.put("latitude", lastKnownLocation?.latitude)
-                locationObject.put("longitude", lastKnownLocation?.longitude)
-                locationObject.put("timestamp", (System.currentTimeMillis() / 1000).toString())
-                lastKnownLocation = null
+                val feed = JSONObject()
+                val message = JSONObject()
+
+                feed.put("latitude", it.latitude)
+                feed.put("longitude", it.longitude)
+                feed.put("timestamp", (System.currentTimeMillis() / 1000).toString())
+
+                message.put("SendLocation", JSONArray().put(feed))
+                return message.toString()
             } catch (e: JSONException) {
                 e.printStackTrace()
             }
-            val locationsArray = JSONArray().put(locationObject)
-            try {
-                locationMessage.put("SendLocation", locationsArray)
-            } catch (e: JSONException) {
-                e.printStackTrace()
-            }
-            return locationMessage.toString()
         }
+
+        return null
     }
 
-    //LocationListener Methods...
     override fun onLocationChanged(location: Location?) {
-        trackingDataLayer?.insertLocation(location)
+        dataLayer?.insertLocation(location)
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
@@ -75,6 +75,6 @@ class LocationReceiver() : LocationListener {
     override fun onProviderDisabled(p0: String?) {}
 
     fun setDataLayer(trackingDataLayer: TrackingDataLayer) {
-        this.trackingDataLayer = trackingDataLayer
+        this.dataLayer = trackingDataLayer
     }
 }
