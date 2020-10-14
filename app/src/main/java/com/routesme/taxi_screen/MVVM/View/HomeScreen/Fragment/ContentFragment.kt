@@ -72,7 +72,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
         initAdvertiseViews()
         displayAdvertisements = DisplayAdvertisements.instance
         qRCodeCallback?.let { it1 -> displayAdvertisements.setQrCodeCallback(it1) }
-       // checkConnection()
+        checkConnection()
         return view1
     }
 
@@ -112,7 +112,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     private fun checkConnection() {
         isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
-           // fetchContent()
+            fetchContent()
         } else {
             networkListener()
         }
@@ -125,7 +125,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
-           // fetchContent()
+            fetchContent()
             connectivityReceiverRegistering(false)
         }
     }
@@ -145,7 +145,6 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
             e.printStackTrace()
         }
     }
-
 
     private fun fetchContent(){
         dialog?.show()

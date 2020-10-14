@@ -23,9 +23,10 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         if (qrCode != null) {
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
             if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = qrCode.subtitle
-            if (!qrCode.logoUrl.isNullOrEmpty() && !qrCode.promotionId.isNullOrEmpty()) {
-                val image = generateQrCode(qrCode.promotionId,135,135)
-                qrCodeImage.setImageBitmap(image)
+            if (!qrCode.promotionId.isNullOrEmpty()) {
+                generateQrCode(qrCode.promotionId).let {
+                    qrCodeImage.setImageBitmap(it)
+                }
             }
         }
     }
@@ -56,28 +57,34 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     holder.apply {
         val qrCode = cell.promotion
         if (qrCode != null) {
-            if (!qrCode.logoUrl.isNullOrEmpty()) {
-                val image = generateQrCode(qrCode.promotionId,135,135)
-                qrCodeImage.setImageBitmap(image)
+            if (!qrCode.promotionId.isNullOrEmpty()) {
+                generateQrCode(qrCode.promotionId).let {
+                    qrCodeImage.setImageBitmap(it)
+                }
+
             }
         }
     }
 }
 
-private fun generateQrCode(promotionId: String?, width: Int, height: Int): Bitmap {
+private fun generateQrCode(promotionId: String?): Bitmap {
+    return qrCodeGenerator
+            .setContent(getPromotionUrl(promotionId))
+            .qrcOde
+}
 
+fun getPromotionUrl(promotionId: String?): String? {
     val builder = Uri.Builder()
     builder.scheme("https")
             .authority(UserAppBaseUrl)
             .appendPath("promotions")
             .appendPath(promotionId)
-    val promotionUrl: String = builder.build().toString()
-
-    return QRCodeHelper
-            .newInstance(App.instance)
-            .setWidthAndHeight(width,height)
-            .setContent(promotionUrl)
-            .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
-            .setMargin(2)
-            .qrcOde
+    return builder.build().toString()
 }
+
+private val qrCodeGenerator = QRCodeHelper
+        .newInstance(App.instance)
+        .setWidthAndHeight(135,135)
+        .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
+        .setMargin(2)
+

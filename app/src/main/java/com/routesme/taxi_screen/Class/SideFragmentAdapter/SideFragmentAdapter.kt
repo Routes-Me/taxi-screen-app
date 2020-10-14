@@ -7,8 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxiscreen.R
 
-class SideFragmentAdapter(private val activity: Activity, private val list: List<ISideFragmentCell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
-    var onItemClick: ((ISideFragmentCell) -> Unit)? = null
+class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
     companion object {
         private const val TYPE_EMPTY_VIDEO_DISCOUNT =0
         private const val TYPE_VIDEO_DISCOUNT = 1

@@ -2,10 +2,6 @@ package com.routesme.taxi_screen.Class;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Matrix;
-import android.os.AsyncTask;
 import android.util.TypedValue;
 import androidx.annotation.IntRange;
 import androidx.core.content.ContextCompat;
@@ -17,10 +13,6 @@ import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import com.routesme.taxi_screen.uplevels.App;
 import com.routesme.taxiscreen.R;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -33,8 +25,6 @@ public class QRCodeHelper {
     private QRCodeHelper(Context context) {
         mHeight = (int) (context.getResources().getDisplayMetrics().heightPixels / 2.4);
         mWidth = (int) (context.getResources().getDisplayMetrics().widthPixels / 1.3);
-        //Log.e("Dimension = %s", mHeight + "");
-        //Log.e("Dimension = %s", mWidth + "");
     }
     public static QRCodeHelper newInstance(Context context) {
         if (qrCodeHelper == null) {
@@ -43,35 +33,7 @@ public class QRCodeHelper {
         return qrCodeHelper;
     }
     public Bitmap getQRCOde() {
-        Bitmap generatedQrCode = generate();
-/*
-        @SuppressLint("StaticFieldLeak") LogoAsync logoAsync = new LogoAsync(url){
-
-            @Override
-            protected void onPostExecute(Bitmap logo) {
-                super.onPostExecute(logo);
-
-               // return bmp;
-               // Bitmap generatedQrCode = generate();
-              //  Bitmap merge = mergeBitmaps(bmp, generatedQrCode);
-
-               // Bitmap yourLogo = BitmapFactory.decodeResource(App.Companion.getInstance().getResources(), R.drawable.best);
-                Bitmap generatedQrCode = generate();
-
-                if (generatedQrCode != null && logo != null){
-                    Bitmap mergedQrCode = mergeBitmaps(logo, generatedQrCode);
-                    if (mergedQrCode != null){
-                        qrCodeImage.setImageBitmap(mergedQrCode);
-                    }
-                }else if (generatedQrCode != null){
-                    qrCodeImage.setImageBitmap(generatedQrCode);
-                }
-
-            }
-        };
-        logoAsync.execute();
-*/
-        return generatedQrCode;
+        return generate();
     }
 
     public QRCodeHelper setErrorCorrectionLevel(ErrorCorrectionLevel level) {
@@ -105,8 +67,6 @@ public class QRCodeHelper {
 
                         TypedValue outValue = new TypedValue();
                         App.currentActivity.getTheme().resolveAttribute(R.attr.text_color, outValue, true);
-                       // cardView.setBackgroundResource(outValue.resourceId);
-
                         pixels[i * mWidth + j] = ContextCompat.getColor(App.Companion.getInstance(),outValue.resourceId);
                     } else {
                         pixels[i * mWidth + j] = 0x282946;
@@ -118,49 +78,6 @@ public class QRCodeHelper {
             e.printStackTrace();
         }
         return null;
-    }
-
-    public Bitmap mergeBitmaps(Bitmap logo, Bitmap qrcode) {
-
-        Bitmap combined = Bitmap.createBitmap(qrcode.getWidth(), qrcode.getHeight(), qrcode.getConfig());
-        Canvas canvas = new Canvas(combined);
-        int canvasWidth = canvas.getWidth();
-        int canvasHeight = canvas.getHeight();
-        canvas.drawBitmap(qrcode, new Matrix(), null);
-
-        Bitmap resizeLogo = Bitmap.createScaledBitmap(logo, canvasWidth / 4, canvasHeight / 4, true);
-        int centreX = (canvasWidth - resizeLogo.getWidth()) /2;
-        int centreY = (canvasHeight - resizeLogo.getHeight()) / 2;
-        canvas.drawBitmap(resizeLogo, centreX, centreY, null);
-        return combined;
-    }
-}
-
-class LogoAsync extends AsyncTask<Void, Void, Bitmap> {
-
-    String logoUrl;
-    public LogoAsync(String url) {
-        logoUrl = url;
-    }
-
-    @Override
-    protected Bitmap doInBackground(Void... params) {
-
-        try {
-            URL url = new URL(logoUrl);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setDoInput(true);
-            connection.connect();
-            InputStream input = connection.getInputStream();
-           // InputStream stream = input;
-            //SVG svg = SVGParser.getSVGFromInputStream(inputStream);
-            Bitmap myBitmap = BitmapFactory.decodeStream(input);
-            return myBitmap;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
     }
 }
 

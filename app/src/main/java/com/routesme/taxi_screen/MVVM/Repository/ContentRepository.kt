@@ -26,7 +26,7 @@ class ContentRepository(val context: Context) {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
-                    contentResponse.value = ContentResponse(data = content.data)
+                    contentResponse.value = ContentResponse(data = getData())
                 } else{
                     if (response.errorBody() != null){
                         val objError = JSONObject(response.errorBody()!!.string())

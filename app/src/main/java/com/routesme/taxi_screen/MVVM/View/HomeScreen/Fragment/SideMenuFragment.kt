@@ -12,22 +12,17 @@ import com.routesme.taxi_screen.Class.DateOperations
 import com.routesme.taxi_screen.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi_screen.ItemAnimator
 import com.routesme.taxi_screen.MVVM.Model.*
-import com.routesme.taxi_screen.MVVM.View.HomeScreen.Activity.HomeActivity
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
-
 
 class SideMenuFragment : Fragment() {
     private lateinit var v: View
     private lateinit var mContext: Context
     private lateinit var handlerTime: Handler
-    private lateinit var runnableTime: Runnable
     private val dateOperations = DateOperations.instance
-    private val second: Long = 1000
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
-    private lateinit var homeActivity: HomeActivity
 
     companion object {
         val instance = SideMenuFragment()
@@ -38,11 +33,7 @@ class SideMenuFragment : Fragment() {
         super.onAttach(context)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
-        val v = inflater.inflate(R.layout.side_menu_fragment, container, false)
-         homeActivity =  activity as HomeActivity
-        return v
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) = inflater.inflate(R.layout.side_menu_fragment, container, false)
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         v = view
@@ -51,30 +42,21 @@ class SideMenuFragment : Fragment() {
     }
 
     override fun onDestroyView() {
-        handlerTime.removeCallbacks(runnableTime)
+        handlerTime.removeCallbacks(timeRunnable)
         super.onDestroyView()
     }
 
-    override fun onResume() {
-        // setTime()
-        super.onResume()
-    }
-
-    override fun onPause() {
-        //handlerTime.removeCallbacks(runnableTime)
-        super.onPause()
-    }
-
     private fun setupRecyclerView() {
+        val date = Date()
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
             add(EmptyVideoDiscountCell(""))
             add(LargeEmptyCell())
-            add(DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date())))
+            add(DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date)))
             add(SmallEmptyCell())
             add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
         }
 
-        sideFragmentAdapter = SideFragmentAdapter(homeActivity,sideFragmentCells)
+        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
         v.recyclerView.apply {
             adapter = sideFragmentAdapter
             itemAnimator = ItemAnimator(mContext)
@@ -84,13 +66,17 @@ class SideMenuFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-        runnableTime = Runnable {
-            sideFragmentCells[2] = DateCell(dateOperations.timeClock(Date()), dateOperations.dayOfWeek(Date()), dateOperations.date(Date()))
-            sideFragmentAdapter.notifyDataSetChanged()
-            handlerTime.postDelayed(runnableTime, second * 60)
-        }
         handlerTime = Handler()
-        handlerTime.postDelayed(runnableTime, second)
+        handlerTime.post(timeRunnable)
+    }
+
+    private val timeRunnable: Runnable = object : Runnable {
+        override fun run() {
+            val date = Date()
+            sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
+            sideFragmentAdapter.notifyDataSetChanged()
+            handlerTime.postDelayed(this, 60 * 1000)
+        }
     }
 
     fun changeVideoQRCode(promotion: Promotion?) {
