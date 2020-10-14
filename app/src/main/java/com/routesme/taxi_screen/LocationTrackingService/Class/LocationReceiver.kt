@@ -6,15 +6,13 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import com.routesme.taxi_screen.Class.App
-import com.smartarmenia.dotnetcoresignalrclientjava.HubConnection
+import com.routesme.taxi_screen.uplevels.App
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class LocationReceiver(private val trackingDataLayer: TrackingDataLayer, private val hubConnection: HubConnection) : LocationListener {
-
-    private val locationTrackingService = LocationTrackingService.instance
+class LocationReceiver() : LocationListener {
+    private var trackingDataLayer: TrackingDataLayer? = null
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var lastKnownLocation: Location? = null
     private val minTime = 0L//5000L
@@ -69,17 +67,14 @@ class LocationReceiver(private val trackingDataLayer: TrackingDataLayer, private
 
     //LocationListener Methods...
     override fun onLocationChanged(location: Location?) {
-        trackingDataLayer.apply {
-            insertLocation(location)
-            if (hubConnection.isConnected){
-                getLocationsResult()?.let {
-                    sendMessage(it)
-                }
-            }
-        }
+        trackingDataLayer?.insertLocation(location)
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
     override fun onProviderEnabled(p0: String?) {}
     override fun onProviderDisabled(p0: String?) {}
+
+    fun setDataLayer(trackingDataLayer: TrackingDataLayer) {
+        this.trackingDataLayer = trackingDataLayer
+    }
 }

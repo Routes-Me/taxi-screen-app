@@ -2,6 +2,7 @@ package com.routesme.taxi_screen.Class
 
 import android.content.res.Resources.NotFoundException
 import android.util.Log
+import com.routesme.taxi_screen.uplevels.App
 import java.io.IOException
 import java.util.*
 

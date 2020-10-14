@@ -8,13 +8,14 @@ import android.os.*
 import android.util.Log
 import com.google.gson.Gson
 import com.routesme.taxi_screen.Class.Helper
-import com.routesme.taxi_screen.Class.SharedPreference
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxiscreen.R
 import com.smartarmenia.dotnetcoresignalrclientjava.*
 import java.net.URI
 import java.net.URISyntaxException
 
-class LocationTrackingService() : Service(), HubConnectionListener, HubEventListener {
+class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private lateinit var hubConnection: HubConnection
     private var trackingDataLayer: TrackingDataLayer? = null
@@ -24,7 +25,6 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     private var vehicleId: String? = null
     private var institutionId: String? = null
     private var deviceId: String? = null
-    private var token: String? = null
     private val notificationId = 1
     private val reconnectionDelay: Long = 1 * 60 * 1000
     private var handlerThread: HandlerThread? = null
@@ -32,21 +32,20 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     companion object {
         @get:Synchronized
-        var instance: LocationTrackingService = LocationTrackingService()
+        var instance: TrackingService = TrackingService()
 
         class LocationServiceBinder : Binder() {
-            val service: LocationTrackingService?
+            val service: TrackingService?
                 get() = instance
         }
     }
 
     override fun onCreate() {
         super.onCreate()
-        sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         vehicleId = getVehicleId()
         institutionId = getInstitutionId()
         deviceId = getDeviceId()
-        token = getToken()
         startForeground(notificationId, getNotification())
     }
 
@@ -67,21 +66,20 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     }
 
     private fun startTrackingService() {
-        if (!vehicleId.isNullOrEmpty() && !institutionId.isNullOrEmpty() && !deviceId.isNullOrEmpty() && !token.isNullOrEmpty()) {
+
+            locationReceiver = LocationReceiver()
             hubConnection = getSignalRHub().apply {
-                addListener(this@LocationTrackingService)
-                subscribeToEvent("SendLocation", this@LocationTrackingService)
+                addListener(this@TrackingService)
+                subscribeToEvent("SendLocation", this@TrackingService)
             }
-            trackingDataLayer = TrackingDataLayer(hubConnection).apply {
-                locationReceiver = LocationReceiver(this, hubConnection).apply {
-                    if (isProviderEnabled()) {
-                        initializeLocationManager()
-                        connect()
-                    }
+            trackingDataLayer = TrackingDataLayer(hubConnection)
+            locationReceiver?.apply {
+                if (trackingDataLayer != null){locationReceiver?.setDataLayer(trackingDataLayer!!)}
+                if (isProviderEnabled()) {
+                    initializeLocationManager()
+                    hubConnect()
                 }
             }
-
-        } else return
     }
 
     private fun getNotification(): Notification {
@@ -94,7 +92,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     private fun getSignalRHub(): HubConnection {
         val url = getTrackingUrl().toString()
-        val authHeader = "Bearer $token"
+        val authHeader = App.instance.account.accessToken ?: ""
         val hubConnection = WebSocketHubConnectionP2(url, authHeader)
 
         return hubConnection
@@ -117,12 +115,11 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         return URI(builder.build().toString())
     }
 
-    private fun getVehicleId() = sharedPreferences.getString(SharedPreference.vehicle_id, null)
-    private fun getInstitutionId() = sharedPreferences.getString(SharedPreference.institution_id, null)
-    private fun getDeviceId() = sharedPreferences.getString(SharedPreference.device_id, null)
-    private fun getToken() = sharedPreferences.getString(SharedPreference.token, null)
+    private fun getVehicleId() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_id, null)
+    private fun getInstitutionId() = sharedPreferences.getString(SharedPreferencesHelper.institution_id, null)
+    private fun getDeviceId() = sharedPreferences.getString(SharedPreferencesHelper.device_id, null)
 
-    private fun connect() {
+    private fun hubConnect() {
         try {
             if (mHandler != null){
                 mHandler?.removeCallbacks(reconnection)
@@ -140,7 +137,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
 
     override fun onConnected() {
         val lastKnownLocationMessage = locationReceiver?.getLastKnownLocationMessage()
-        if (!lastKnownLocationMessage.isNullOrEmpty()) hubConnection.invoke("SendLocation", lastKnownLocationMessage)
+        if (!lastKnownLocationMessage.isNullOrEmpty()) hubConnection?.invoke("SendLocation", lastKnownLocationMessage)
     }
 
     override fun onMessage(message: HubMessage) {
@@ -152,7 +149,7 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
     }
 
     override fun onDisconnected() {
-        connect()
+        hubConnect()
     }
 
     override fun onError(exception: Exception) {
@@ -168,5 +165,5 @@ class LocationTrackingService() : Service(), HubConnectionListener, HubEventList
         }
     }
 
-    private val reconnection: Runnable = Runnable { connect() }
+    private val reconnection: Runnable = Runnable { hubConnect() }
 }

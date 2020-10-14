@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi_screen.MVVM.Model.Data
 import com.routesme.taxi_screen.MVVM.Model.QRCodeCallback
 import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.ContentFragment
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxiscreen.R
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import java.util.*

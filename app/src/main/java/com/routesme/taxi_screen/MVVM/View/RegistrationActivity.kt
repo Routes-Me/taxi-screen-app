@@ -18,10 +18,10 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import com.routesme.taxi_screen.Class.App
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxi_screen.Class.DateOperations
 import com.routesme.taxi_screen.Class.Operations
-import com.routesme.taxi_screen.Class.SharedPreference
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
 import com.routesme.taxi_screen.MVVM.Model.Authorization
 import com.routesme.taxi_screen.MVVM.Model.Error
 import com.routesme.taxi_screen.MVVM.Model.RegistrationCredentials
@@ -58,7 +58,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     @SuppressLint("CommitPrefEdits")
     private fun initialize() {
-        sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         // requestRuntimePermissions();
@@ -95,7 +95,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
     @SuppressLint("DefaultLocale")
     private fun welcomeString(): String? {
-        val username = app.signInCredentials?.Username
+        val username = app.signInCredentials?.userName
         return "Welcome,  " + if (!username.isNullOrEmpty())username.split(" ").joinToString(" ") { it.capitalize() }.trimEnd() else ""
     }
     private fun initializeViews() {
@@ -235,7 +235,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun token(): String? {
-        val savedToken = sharedPreferences.getString(SharedPreference.token, null)
+        val savedToken = sharedPreferences.getString(SharedPreferencesHelper.token, null)
         return if (!savedToken.isNullOrEmpty()) "Bearer $savedToken" else null
     }
 
@@ -274,15 +274,15 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun saveTabletInfoIntoSharedPreferences(deviceId: String) {
         editor.apply {
-            putString(SharedPreference.technician_username, app.signInCredentials?.Username)
-            putString(SharedPreference.registration_date, DateOperations().registrationDate(Date()))
-            putString(SharedPreference.institution_id, app.institutionId)
-            putString(SharedPreference.institution_name, app.institutionName)
-            putString(SharedPreference.vehicle_id, app.vehicleId)
-            putString(SharedPreference.vehicle_plate_number, app.taxiPlateNumber)
-            putString(SharedPreference.device_id, deviceId)
-            putString(SharedPreference.device_serial_number, registerCredentials.SerialNumber)
-            putString(SharedPreference.sim_serial_number, registerCredentials.SimSerialNumber)
+            putString(SharedPreferencesHelper.username, app.signInCredentials?.userName)
+            putString(SharedPreferencesHelper.registration_date, DateOperations().registrationDate(Date()))
+            putString(SharedPreferencesHelper.institution_id, app.institutionId)
+            putString(SharedPreferencesHelper.institution_name, app.institutionName)
+            putString(SharedPreferencesHelper.vehicle_id, app.vehicleId)
+            putString(SharedPreferencesHelper.vehicle_plate_number, app.taxiPlateNumber)
+            putString(SharedPreferencesHelper.device_id, deviceId)
+            putString(SharedPreferencesHelper.device_serial_number, registerCredentials.SerialNumber)
+            putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
         }.apply()
     }
 

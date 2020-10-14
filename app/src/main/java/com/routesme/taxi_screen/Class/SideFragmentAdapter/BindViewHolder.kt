@@ -5,7 +5,7 @@ import android.graphics.Bitmap
 import android.net.Uri
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.routesme.taxi_screen.Class.App
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxi_screen.Class.Helper
 import com.routesme.taxi_screen.Class.QRCodeHelper
 import com.routesme.taxi_screen.MVVM.Model.*

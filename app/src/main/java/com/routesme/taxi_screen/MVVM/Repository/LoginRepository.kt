@@ -22,9 +22,9 @@ class LoginRepository(val context: Context) {
     }
 
     fun signIn(signInCredentials: SignInCredentials): MutableLiveData<LoginResponse> {
-        val encryptedPassword = encrypt(signInCredentials.Password)
+        val encryptedPassword = encrypt(signInCredentials.password)
         Log.d("Encryption", encryptedPassword)
-        val encryptedCredentials = SignInCredentials(signInCredentials.Username, encryptedPassword)
+        val encryptedCredentials = SignInCredentials(signInCredentials.userName, encryptedPassword)
         val call = thisApiCorService.signIn(encryptedCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {

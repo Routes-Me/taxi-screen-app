@@ -11,7 +11,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheKeyFactory
 import com.google.android.exoplayer2.upstream.cache.CacheUtil
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi_screen.Class.App
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxiscreen.R
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope

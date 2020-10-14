@@ -7,7 +7,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.routesme.taxi_screen.Class.App
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxi_screen.Class.Operations
 import com.routesme.taxi_screen.Class.VehicleInformationAdapter
 import com.routesme.taxi_screen.MVVM.Model.Error

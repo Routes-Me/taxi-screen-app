@@ -10,7 +10,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -21,6 +20,7 @@ import com.routesme.taxi_screen.Class.VideoPreLoading.Constants
 import com.routesme.taxi_screen.Class.VideoPreLoading.VideoPreLoadingService
 import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxi_screen.MVVM.ViewModel.ContentViewModel
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*
@@ -49,7 +49,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
 
     override fun onAttach(context: Context) {
         mContext = context
-        sharedPreferences = context.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+        sharedPreferences = context.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         // tabletSerialNumber = this.sharedPreferences.getString("tabletSerialNo", null)
         // firebaseAnalytics = FirebaseAnalytics.getInstance(context)
         // firebaseAnalytics.setUserId(tabletSerialNumber)

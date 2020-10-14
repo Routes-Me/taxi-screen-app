@@ -15,6 +15,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
+import com.routesme.taxi_screen.uplevels.App;
 import com.routesme.taxiscreen.R;
 import java.io.IOException;
 import java.io.InputStream;

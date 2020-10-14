@@ -1,4 +1,4 @@
-package com.routesme.taxi_screen.Class
+package com.routesme.taxi_screen.uplevels
 
 import android.Manifest
 import android.annotation.SuppressLint
@@ -17,12 +17,15 @@ import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi_screen.LocationTrackingService.Class.LocationTrackingService
+import com.routesme.taxi_screen.Class.DisplayManager
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
+import com.routesme.taxi_screen.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi_screen.MVVM.Model.SignInCredentials
 import java.text.SimpleDateFormat
 import java.util.*
 
 class App : Application() {
+    val account = Account()
     private val displayManager = DisplayManager.instance
     var signInCredentials: SignInCredentials? = null
     var isNewLogin = false
@@ -30,11 +33,6 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
-    private var deviceId: String? = null
-    private var token: String? = null
-    private var trackingService: LocationTrackingService? = null
-    private val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE)
-    private lateinit var sharedPreferences: SharedPreferences
 
     companion object {
         @get:Synchronized
@@ -49,14 +47,14 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-        initializeVideoCaching()
-        sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
-        deviceId = getDeviceId()
-        token = getToken()
-        if (hasPermissions(*permissions) && !deviceId.isNullOrEmpty() && !token.isNullOrEmpty()){
+        initializeVideoCaching() // should be in main screen
+
+        val isRegistered: Boolean = !(getDeviceId()?.isNullOrEmpty() ?: true)
+        if (isLocationPermissionsGranted() && isRegistered){
             bindTrackingService()
         }
     }
@@ -79,6 +77,7 @@ class App : Application() {
         val minute = calendar.get(Calendar.MINUTE)
         return parseDate("$hour:$minute")
     }
+
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
@@ -98,42 +97,35 @@ class App : Application() {
     }
 
     private fun bindTrackingService() {
-        val intent = Intent(instance, LocationTrackingService::class.java)
+        Log.d("LC", "bindTrackingService - App")
+
+        val intent = Intent(instance, TrackingService::class.java)
         ContextCompat.startForegroundService(instance, intent)
         this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
     }
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            /*
-            val name = className.className
-            if (name.endsWith("LocationTrackingService")) {
-                trackingService = (service as LocationTrackingService.Companion.LocationServiceBinder).service
-                trackingService?.startTrackingService()
-                Log.i("Tracking-Service", "onServiceConnected")
-            }
-            */
+            Log.d("LC", "onServiceConnected - App ${className.className}")
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            /*
-            if (className.className == "LocationTrackingService") {
-                trackingService = null
-                Log.i("Tracking-Service", "onServiceDisconnected")
-            }
-            */
+            Log.d("LC", "onServiceDisconnected - App ${className.className}")
         }
     }
 
-    private fun hasPermissions(vararg permissions: String): Boolean {
+    private fun isLocationPermissionsGranted(): Boolean {
+        val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (p in permissions) {
-                if (ContextCompat.checkSelfPermission(App.instance, p) != PackageManager.PERMISSION_GRANTED) {
+                if (ContextCompat.checkSelfPermission(instance, p) != PackageManager.PERMISSION_GRANTED) {
                     return false
                 }
             }
         }
         return true
     }
-    private fun getDeviceId() = sharedPreferences.getString(SharedPreference.device_id, null)
-    private fun getToken() = sharedPreferences.getString(SharedPreference.token, null)
+    private fun getDeviceId(): String? {
+        val sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        return sharedPreferences.getString(SharedPreferencesHelper.device_id, null)
+    }
 }

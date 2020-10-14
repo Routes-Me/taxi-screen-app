@@ -12,12 +12,12 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.routesme.taxi_screen.AdminConsolePanel.Model.DetailActionStatus
-import com.routesme.taxi_screen.Class.SharedPreference
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
 import com.routesme.taxi_screen.MVVM.View.LoginActivity
 import com.routesme.taxiscreen.BuildConfig
 
 class AdminConsoleHelper(val activity: Activity) {
-    private val sharedPreferences = activity.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+    private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
     private val appPackageName = activity.packageName
     private val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     private var locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -26,13 +26,13 @@ class AdminConsoleHelper(val activity: Activity) {
         private const val defaultValue = "- -"
     }
 
-    fun plateNumber() = sharedPreferences.getString(SharedPreference.vehicle_plate_number, defaultValue)
-    fun institutionName() = sharedPreferences.getString(SharedPreference.institution_name, defaultValue)
+    fun plateNumber() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_plate_number, defaultValue)
+    fun institutionName() = sharedPreferences.getString(SharedPreferencesHelper.institution_name, defaultValue)
     fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
-    fun simSerialNumber() = sharedPreferences.getString(SharedPreference.sim_serial_number, defaultValue)
-    fun deviceSerialNumber() = sharedPreferences.getString(SharedPreference.device_serial_number, defaultValue)
-    fun technicalUserName() = sharedPreferences.getString(SharedPreference.technician_username, defaultValue)
-    fun registrationDate() = sharedPreferences.getString(SharedPreference.registration_date, defaultValue)
+    fun simSerialNumber() = sharedPreferences.getString(SharedPreferencesHelper.sim_serial_number, defaultValue)
+    fun deviceSerialNumber() = sharedPreferences.getString(SharedPreferencesHelper.device_serial_number, defaultValue)
+    fun technicalUserName() = sharedPreferences.getString(SharedPreferencesHelper.username, defaultValue)
+    fun registrationDate() = sharedPreferences.getString(SharedPreferencesHelper.registration_date, defaultValue)
     fun isMyAppDefaultLauncher(): DetailActionStatus {
         val filters: MutableList<IntentFilter> = ArrayList()
         val activities: List<ComponentName> = ArrayList()

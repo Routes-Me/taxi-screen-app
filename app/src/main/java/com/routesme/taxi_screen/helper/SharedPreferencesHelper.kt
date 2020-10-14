@@ -1,10 +1,10 @@
-package com.routesme.taxi_screen.Class
+package com.routesme.taxi_screen.helper
 
-class SharedPreference {
+class SharedPreferencesHelper {
     companion object{
         const val device_data = "device_data"
         const val token = "token"
-        const val technician_username = "technician_username"
+        const val username = "username"
         const val registration_date = "registration_date"
         const val institution_id = "institution_id"
         const val institution_name = "institution_name"

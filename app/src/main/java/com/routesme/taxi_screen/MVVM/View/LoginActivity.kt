@@ -21,13 +21,13 @@ import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
 import com.routesme.taxi_screen.Class.AesBase64Wrapper
-import com.routesme.taxi_screen.Class.App
 import com.routesme.taxi_screen.Class.Operations
-import com.routesme.taxi_screen.Class.SharedPreference
 import com.routesme.taxi_screen.MVVM.Model.Error
 import com.routesme.taxi_screen.MVVM.Model.LoginResponse
 import com.routesme.taxi_screen.MVVM.Model.SignInCredentials
 import com.routesme.taxi_screen.MVVM.ViewModel.LoginViewModel
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxiscreen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
@@ -146,8 +146,8 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun saveDataIntoSharedPreference(token: String) {
-        val editor = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).edit()
-        editor.putString(SharedPreference.token, token).apply()
+        val editor = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).edit()
+        editor.putString(SharedPreferencesHelper.token, token).apply()
     }
 
     private fun openRegistrationActivity() {
@@ -262,8 +262,8 @@ class LoginActivity : AppCompatActivity() {
     private fun showSavedCredentials() {
         if (app.signInCredentials != null) {
             signInCredentials = app.signInCredentials!!
-            userName = signInCredentials.Username
-            password = signInCredentials.Password
+            userName = signInCredentials.userName
+            password = signInCredentials.password
             if (userName.isNotEmpty()) {
                 userName_et.setText(userName)
             }

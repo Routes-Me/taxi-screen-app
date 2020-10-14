@@ -16,11 +16,13 @@ import android.widget.ImageView
 import androidx.fragment.app.FragmentTransaction
 import com.routesme.taxi_screen.Class.*
 import com.routesme.taxi_screen.Hotspot_Configuration.PermissionsActivity
-import com.routesme.taxi_screen.LocationTrackingService.Class.LocationTrackingService
+import com.routesme.taxi_screen.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi_screen.MVVM.Model.IModeChanging
 import com.routesme.taxi_screen.MVVM.Model.QRCodeCallback
 import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.ContentFragment
 import com.routesme.taxi_screen.MVVM.View.HomeScreen.Fragment.SideMenuFragment
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
@@ -36,7 +38,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
     private val homeScreenFunctions = HomeScreenFunctions(this)
     private var isHotspotOn = false
-    private var locationTrackingService: LocationTrackingService? = null
+    private var trackingService: TrackingService? = null
     private lateinit var sharedPreferences: SharedPreferences
     private var pressedTime: Long = 0
     private var clickTimes = 0
@@ -69,7 +71,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
 
         //brightnessSetup()
         //updateBrightness()
-        sharedPreferences = getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
        // homeScreenFunctions.firebaseAnalytics_Crashlytics(sharedPreferences.getString(SharedPreference.device_id, null))
         openPattern.setOnClickListener {openPatternClick()}
         homeScreenFunctions.hideNavigationBar()
@@ -127,7 +129,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     }
 
     private fun startLocationTrackingService() {
-        locationTrackingService = LocationTrackingService()
+        trackingService = TrackingService()
     }
 
     override fun onPause() {

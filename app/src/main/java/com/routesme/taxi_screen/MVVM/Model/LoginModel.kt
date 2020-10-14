@@ -3,7 +3,7 @@ package com.routesme.taxi_screen.MVVM.Model
 import java.io.Serializable
 
 data class Authorization(var isAuthorized: Boolean, var responseCode: Int) : Serializable
-data class SignInCredentials(var Username: String = "", var Password: String = "")
+data class SignInCredentials(var userName: String = "", var password: String = "")
 
 data class SignInSuccessResponse(val token: String? = null, val message: String? = null, val status: Boolean = false, val statusCode: Int = -999)
 

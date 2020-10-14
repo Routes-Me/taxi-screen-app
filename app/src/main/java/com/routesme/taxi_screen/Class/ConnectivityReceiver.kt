@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import com.routesme.taxi_screen.Class.App.Companion.instance
+import com.routesme.taxi_screen.uplevels.App.Companion.instance
 import java.util.*
 
 

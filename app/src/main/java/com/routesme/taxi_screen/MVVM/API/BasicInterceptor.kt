@@ -6,9 +6,9 @@ import android.content.Intent
 import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
-import com.routesme.taxi_screen.Class.SharedPreference
 import com.routesme.taxi_screen.MVVM.Model.Authorization
 import com.routesme.taxi_screen.MVVM.View.ModelPresenter
+import com.routesme.taxi_screen.helper.SharedPreferencesHelper
 import com.routesme.taxiscreen.BuildConfig
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -25,7 +25,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
         return chain.proceed(request)
     }
 
-    private fun token() = "Bearer ${activity.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)}"
+    private fun token() = "Bearer ${activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.token, null)}"
 
     @RequiresApi(Build.VERSION_CODES.N)
     private fun countryCode() = activity.resources.configuration.locales.get(0).country

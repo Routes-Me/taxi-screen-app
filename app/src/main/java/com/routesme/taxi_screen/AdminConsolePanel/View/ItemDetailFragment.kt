@@ -10,7 +10,7 @@ import androidx.fragment.app.Fragment
 import com.routesme.taxi_screen.AdminConsolePanel.Class.AdminConsoleDetailsListAdapter
 import com.routesme.taxi_screen.AdminConsolePanel.Class.AdminConsoleLists
 import com.routesme.taxi_screen.AdminConsolePanel.Model.*
-import com.routesme.taxi_screen.Class.App
+import com.routesme.taxi_screen.uplevels.App
 import com.routesme.taxi_screen.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.item_detail_fragment.*

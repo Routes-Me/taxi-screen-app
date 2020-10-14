@@ -19,7 +19,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name="com.routesme.taxi_screen.Class.App"
+        android:name="com.routesme.taxi_screen.uplevels.App"
         android:allowBackup="true"
         android:icon="@mipmap/taxi_screen_icon"
         android:keepScreenOn="true"
@@ -122,7 +122,7 @@
             android:exported="true" />
 
         <service android:name="com.routesme.taxi_screen.Class.VideoPreLoading.VideoPreLoadingService" />
-        <service android:name="com.routesme.taxi_screen.LocationTrackingService.Class.LocationTrackingService" />
+        <service android:name="com.routesme.taxi_screen.LocationTrackingService.Class.TrackingService" />
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
