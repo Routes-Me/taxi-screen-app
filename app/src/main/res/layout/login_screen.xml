@@ -29,7 +29,7 @@
             android:layout_height="match_parent" />
 
         <ImageView
-            android:id="@+id/openPattern"
+            android:id="@+id/openPatternBtn"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentTop="true"

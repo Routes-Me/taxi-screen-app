@@ -45,13 +45,13 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
-        qRCodeCallback?.let { it -> DisplayAdvertisements.instance.setQrCodeCallback(it) }
+        qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
         checkConnection()
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onDestroy() {
-        DisplayAdvertisements.instance.release()
+        AdvertisementsHelper.instance.release()
         connectivityReceiverRegistering(false)
         if (ConnectivityReceiver.connectivityReceiverListener != null)ConnectivityReceiver.connectivityReceiverListener = null
         super.onDestroy()
@@ -109,8 +109,8 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
                         Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        if (!images.isNullOrEmpty()) DisplayAdvertisements.instance.displayAdvertisementBannerList(images, mView.advertisementsImageView)
-                        if (!videos.isNullOrEmpty()) {  DisplayAdvertisements.instance.displayAdvertisementVideoList(videos, mView.playerView, mView.videoRingProgressBar)}
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
+                        if (!videos.isNullOrEmpty()) {  AdvertisementsHelper.instance.displayVideos(videos, mView.playerView, mView.videoRingProgressBar)}
                     }
 
                 } else {

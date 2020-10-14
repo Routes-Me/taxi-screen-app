@@ -17,23 +17,7 @@ import com.routesme.taxi_screen.AdminConsolePanel.View.AdminConsolePanel
 import com.routesme.taxiscreen.R
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 
-class HomeScreenFunctions(val activity: Activity) {
-
-    @TargetApi(Build.VERSION_CODES.KITKAT)
-    fun hideNavigationBar() {
-        val flags = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        activity.window.decorView.systemUiVisibility = flags
-    }
-
-    fun firebaseAnalytics_Crashlytics(tabletSerialNo: String?) {
-        //Crashlytics.setUserIdentifier(tabletSerialNo)
-        FirebaseAnalytics.getInstance(activity).setUserId(tabletSerialNo)
-    }
+class HomeScreenHelper(val activity: Activity) {
 
     fun requestRuntimePermissions() {
         val permissionsList = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_NETWORK_STATE, Manifest.permission.ACCESS_WIFI_STATE)

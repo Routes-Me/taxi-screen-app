@@ -52,7 +52,7 @@ class SideMenuFragment : Fragment() {
             add(WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password)))
         }
 
-        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
+        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells,activity)
         mView.recyclerView.apply {
             adapter = sideFragmentAdapter
             itemAnimator = ItemAnimator(mContext)

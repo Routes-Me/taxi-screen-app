@@ -1,13 +1,13 @@
 package com.routesme.taxi_screen.Class.SideFragmentAdapter
 
-import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi_screen.MVVM.Model.*
 import com.routesme.taxiscreen.R
 
-class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
+class SideFragmentAdapter(private val list: List<ISideFragmentCell>, private val activity: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
     companion object {
         private const val TYPE_EMPTY_VIDEO_DISCOUNT =0
         private const val TYPE_VIDEO_DISCOUNT = 1
@@ -30,12 +30,12 @@ class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerV
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder.itemViewType) {
         TYPE_EMPTY_VIDEO_DISCOUNT -> onBindEmptyVideoDiscount()
-        TYPE_VIDEO_DISCOUNT ->  onBindVideoDiscount(holder, list[position])
+        TYPE_VIDEO_DISCOUNT ->  onBindVideoDiscount(holder, list[position], activity)
         TYPE_LARGE_EMPTY -> onBindLargeEmpty()
         TYPE_DATE -> onBindDate(holder, list[position])
         TYPE_SMALL_EMPTY -> onBindSmallEmpty()
         TYPE_WIFI -> onBindWifi(holder, list[position])
-        else ->  onBindBannerDiscount(holder, list[position])
+        else ->  onBindBannerDiscount(holder, list[position], activity)
     }
 
     override fun getItemCount(): Int = list.size

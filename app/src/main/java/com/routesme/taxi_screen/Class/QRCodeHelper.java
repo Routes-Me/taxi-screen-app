@@ -1,5 +1,6 @@
 package com.routesme.taxi_screen.Class;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.TypedValue;
@@ -19,6 +20,7 @@ import java.util.Map;
 public class QRCodeHelper {
     private static QRCodeHelper qrCodeHelper = null;
     private ErrorCorrectionLevel mErrorCorrectionLevel;
+    private Activity activity;
     private int mMargin;
     private String mContent;
     private int mWidth, mHeight;
@@ -33,7 +35,8 @@ public class QRCodeHelper {
         return qrCodeHelper;
     }
     public Bitmap getQRCOde() {
-        return generate();
+        Bitmap generatedQrCode = generate();
+        return generatedQrCode;
     }
 
     public QRCodeHelper setErrorCorrectionLevel(ErrorCorrectionLevel level) {
@@ -53,6 +56,12 @@ public class QRCodeHelper {
         mMargin = margin;
         return this;
     }
+
+    public QRCodeHelper setActivity(Activity activity) {
+        this.activity = activity;
+        return this;
+    }
+
     private Bitmap generate() {
         Map<EncodeHintType, Object> hintsMap = new HashMap<>();
         hintsMap.put(EncodeHintType.CHARACTER_SET, "utf-8");
@@ -66,7 +75,7 @@ public class QRCodeHelper {
                     if (bitMatrix.get(j, i)) {
 
                         TypedValue outValue = new TypedValue();
-                        App.currentActivity.getTheme().resolveAttribute(R.attr.text_color, outValue, true);
+                        activity.getTheme().resolveAttribute(R.attr.text_color, outValue, true);
                         pixels[i * mWidth + j] = ContextCompat.getColor(App.Companion.getInstance(),outValue.resourceId);
                     } else {
                         pixels[i * mWidth + j] = 0x282946;

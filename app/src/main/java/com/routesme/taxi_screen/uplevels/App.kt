@@ -37,11 +37,6 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
-        var simpleCache: SimpleCache? = null
-        var leastRecentlyUsedCacheEvictor: LeastRecentlyUsedCacheEvictor? = null
-        var exoDatabaseProvider: ExoDatabaseProvider? = null
-        var exoPlayerCacheSize: Long = 90 * 1024 * 1024
-        lateinit var currentActivity: Context
     }
 
     override fun onCreate() {
@@ -50,7 +45,6 @@ class App : Application() {
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-        initializeVideoCaching() // should be in main screen
 
         val isRegistered: Boolean = !(getDeviceId()?.isNullOrEmpty() ?: true)
         if (isLocationPermissionsGranted() && isRegistered){
@@ -80,20 +74,6 @@ class App : Application() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
-
-    private fun initializeVideoCaching() {
-        if (leastRecentlyUsedCacheEvictor == null) {
-            leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
-        }
-
-        if (exoDatabaseProvider != null) {
-            exoDatabaseProvider = ExoDatabaseProvider(this)
-        }
-
-        if (simpleCache == null) {
-            simpleCache = SimpleCache(cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
-        }
-    }
 
     private fun bindTrackingService() {
         Log.d("LC", "bindTrackingService - App")

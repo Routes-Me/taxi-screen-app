@@ -108,9 +108,9 @@
         app:layout_constraintDimensionRatio="H,55 : 81"/>
 
     <ImageView
-        android:id="@+id/openPattern"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:id="@+id/openPatternBtn"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:background="#00FFFFFF"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
