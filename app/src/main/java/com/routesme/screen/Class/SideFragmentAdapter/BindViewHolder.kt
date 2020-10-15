@@ -86,7 +86,7 @@ fun getPromotionUrl(promotionId: String?): String? {
 
 private val qrCodeGenerator = QRCodeHelper
         .newInstance(App.instance)
-        .setWidthAndHeight(170,170)
+        .setWidthAndHeight(180,180)
         .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
         .setMargin(2)
 
