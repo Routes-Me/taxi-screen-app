@@ -15,7 +15,6 @@
     <string name="open_camera_scan_qr_code_to_pay_taxi_fare_and_learn_more"> Open camera, scan QR Code to pay "<b>"taxi fare"</b>" and "<b>"learn more"</b>"</string>
     <string name="copyright_2020_routes_co">Copyright © 2020 Routes Co.</string>
     <string name="waiting_payment">WAITING PAYMENT</string>
-    <string name="received">received</string>
     <string name="payment_successful">PAYMENT SUCCESSFUL</string>
     <string name="thank_you_for_paying_through_routes_pay">Thank you for paying through Routes Pay</string>
     <string name="wifi_name">Routes</string>
