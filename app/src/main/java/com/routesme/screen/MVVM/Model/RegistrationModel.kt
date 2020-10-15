@@ -7,9 +7,9 @@ class RegistrationResponse(deviceId: String? = null, val mResponseErrors: Respon
 
      var deviceId: String? = null
     init {
-        this.deviceId = "23"//deviceId
+        this.deviceId = deviceId
     }
 
     val isSuccess: Boolean
-        get() = true//(mResponseErrors == null && mThrowable == null)
+        get() = (mResponseErrors == null && mThrowable == null)
 }
