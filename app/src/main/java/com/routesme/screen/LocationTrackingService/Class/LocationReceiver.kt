@@ -12,9 +12,17 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class LocationReceiver() : LocationListener {
-    private var dataLayer: TrackingDataLayer? = null
+class LocationReceiver(val dataLayer: TrackingDataLayer) : LocationListener {
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+
+    init {
+        try {
+            locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
+        } catch (ex: SecurityException) {
+            Log.d("LocationManagerProvider", "Security Exception, no location available")
+        }
+    }
+
 
     private val minTime = 5000L
     private val minDistance = 27F
@@ -24,14 +32,6 @@ class LocationReceiver() : LocationListener {
             LocationManager.GPS_PROVIDER
         }else {
             LocationManager.NETWORK_PROVIDER
-        }
-    }
-
-    fun initializeLocationManager(){
-        try {
-            locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
-        } catch (ex: SecurityException) {
-            Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
 
@@ -67,7 +67,18 @@ class LocationReceiver() : LocationListener {
     }
 
     override fun onLocationChanged(location: Location?) {
-        dataLayer?.insertLocation(location)
+        location?.let {
+            dataLayer?.insertLocation(location)
+//            hubConnection?.let  {
+//
+//                if (it.isConnected){
+//                    getLocationsResult()?.let {
+//                        sendMessage(it)
+//                    }
+//                }
+//            }
+        }
+        // TODO: send to hub
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
@@ -76,5 +87,23 @@ class LocationReceiver() : LocationListener {
 
     fun setDataLayer(trackingDataLayer: TrackingDataLayer) {
         this.dataLayer = trackingDataLayer
+    }
+
+
+
+    private fun sendMessage(result: String){
+        val message = getMessage(result)
+        Log.d("SendLocation-Message",message)
+        hubConnection?.invoke("SendLocation", message)
+    }
+    private fun getMessage(result: String): String {
+        val messageObject = JSONObject()
+        val feedsArray = JSONArray(result)
+        try {
+            messageObject.put("SendLocation", feedsArray)
+        } catch (e: JSONException) {
+            e.printStackTrace()
+        }
+        return messageObject.toString()
     }
 }

@@ -18,10 +18,11 @@ import java.net.URISyntaxException
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private lateinit var hubConnection: HubConnection
-    private var locationReceiver = LocationReceiver()
+    private var dataLayer: TrackingDataLayer = TrackingDataLayer()
+    private var locationReceiver = LocationReceiver(dataLayer)
 
 
-    private var dataLayer: TrackingDataLayer? = null
+
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var authorityUrl: URI
     private var vehicleId: String? = null
@@ -81,28 +82,11 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         hubConnection = createHubConnection()
         hubConnection.addListener(this@TrackingService)
         hubConnection.subscribeToEvent("SendLocation", this@TrackingService)
-      /*
-                .apply {
-            addListener(this@TrackingService)
-            subscribeToEvent("SendLocation", this@TrackingService)
-        }
-*/
-        dataLayer = TrackingDataLayer(hubConnection)
-
-        locationReceiver.apply {
-            dataLayer?.let { this.setDataLayer(it) }
-
-
-
-                if (isProviderEnabled()) {
-                    initializeLocationManager()
-                    hubConnect()
-                }
-            }
+        hubConnection.connect()
     }
 
     private fun getNotification(): Notification {
-        val channel = NotificationChannel("channel_01", "My Channel", NotificationManager.IMPORTANCE_DEFAULT)
+        val channel = NotificationChannel("channel_01", "Tracking Service", NotificationManager.IMPORTANCE_DEFAULT)
         val notificationManager = getSystemService(NotificationManager::class.java)
         notificationManager.createNotificationChannel(channel)
         val builder = Notification.Builder(applicationContext, "channel_01").setAutoCancel(true)
@@ -136,25 +120,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun getInstitutionId() = sharedPreferences.getString(SharedPreferencesHelper.institution_id, null)
     private fun getDeviceId() = sharedPreferences.getString(SharedPreferencesHelper.device_id, null)
 
-    private fun hubConnect() {
-        try {
-            if (mHandler != null){
-                mHandler?.removeCallbacks(reconnection)
-                mHandler = null
-            }
-            if (handlerThread != null) {
-                handlerThread?.quit()
-                handlerThread = null
-            }
-            hubConnection.connect()
-        } catch (ex: Exception) {
-            Log.d("SignalR", "${ex.message} ,  ${ex}")
-        }
-    }
-
     override fun onConnected() {
-        val lastKnownLocationMessage = locationReceiver?.getLastKnownLocationMessage()
-        if (!lastKnownLocationMessage.isNullOrEmpty()) hubConnection?.invoke("SendLocation", lastKnownLocationMessage)
+        locationReceiver?.getLastKnownLocationMessage().let {
+            hubConnection?.invoke("SendLocation", it)
+        }
     }
 
     override fun onMessage(message: HubMessage) {
@@ -166,21 +135,19 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onDisconnected() {
-        hubConnect()
+        hubConnection.connect()
     }
 
     override fun onError(exception: Exception) {
-        if (handlerThread == null){
-            handlerThread = HandlerThread("reconnection").apply {
-                start()
-                if (mHandler == null) {
-                    mHandler = Handler(this.looper).apply {
-                        postDelayed(reconnection, reconnectionDelay)
-                    }
+        handlerThread = HandlerThread("reconnection").apply {
+            start()
+
+            mHandler = Handler(this.looper).apply {
+                postDelayed({
+                    hubConnection.connect()
+                    }, reconnectionDelay)
+
                 }
             }
-        }
     }
-
-    private val reconnection: Runnable = Runnable { hubConnect() }
 }

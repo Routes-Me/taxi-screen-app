@@ -70,7 +70,7 @@ class App : Application() {
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
 
-    private fun bindTrackingService() {
+    private fun bindTrackingService() {// TODO: check if provider avaliable
         Log.d("LC", "bindTrackingService - App")
 
         val intent = Intent(instance, TrackingService::class.java)
