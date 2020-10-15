@@ -77,11 +77,16 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     private fun startTrackingService() {
-        hubConnection = createHubConnection().apply {
+
+        hubConnection = createHubConnection()
+        hubConnection.addListener(this@TrackingService)
+        hubConnection.subscribeToEvent("SendLocation", this@TrackingService)
+      /*
+                .apply {
             addListener(this@TrackingService)
             subscribeToEvent("SendLocation", this@TrackingService)
         }
-
+*/
         dataLayer = TrackingDataLayer(hubConnection)
 
         locationReceiver.apply {

@@ -43,7 +43,6 @@ class TrackingDataLayer(private var hubConnection: HubConnection?) {
 
     private fun ainsertLocation(location: Location){
         locationFeedsDao.insertLocation(getLocationFeed(location))
-
     }
 
     private fun addNewLocation(currentLocation: Location) {
