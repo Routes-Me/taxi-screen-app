@@ -33,12 +33,12 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener {openPattern()}
         helper.requestRuntimePermissions()
-        connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
+        registerNetworkCallback(true)
     }
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-        connectivityManager.unregisterNetworkCallback(networkCallback)
+            registerNetworkCallback(false)
         super.onDestroy()
     }
 
@@ -101,9 +101,25 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
             activityCover.visibility = View.INVISIBLE
             turnOnHotspot()
             addFragments()
-            connectivityManager.unregisterNetworkCallback(this)
+            try {
+                    connectivityManager.unregisterNetworkCallback(this)
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
         }
         override fun onLost(network: Network?) {
+        }
+    }
+
+    private fun registerNetworkCallback(register: Boolean){
+        try {
+            if (register) {
+                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
+            } else {
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+            }
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
         }
     }
 }
