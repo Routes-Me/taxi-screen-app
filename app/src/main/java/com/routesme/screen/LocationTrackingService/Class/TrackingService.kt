@@ -7,15 +7,18 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import com.google.gson.Gson
+import com.google.gson.JsonObject
 import com.routesme.screen.Class.Helper
 import com.routesme.screen.helper.SharedPreferencesHelper
 import com.routesme.screen.R
+import com.routesme.screen.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
+import org.json.JSONObject
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
-    private lateinit var hubConnection: HubConnection
+    private  var hubConnection: HubConnection? = null
     private lateinit var locationReceiver: LocationReceiver
     private var handlerThread: HandlerThread? = null
     private var mHandler: Handler? = null
@@ -23,8 +26,6 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     companion object {
         @get:Synchronized
         var instance: TrackingService = TrackingService()
-        //  val token = instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)
-
         class LocationServiceBinder : Binder() {
             val service: TrackingService
                 get() = instance
@@ -34,7 +35,6 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onCreate() {
         super.onCreate()
         startForeground(1, getNotification())
-
     }
 
     private fun getNotification(): Notification {
@@ -46,7 +46,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onDestroy() {
         super.onDestroy()
         locationReceiver.removeLocationUpdates()
-        hubConnection.disconnect()
+        instance.hubConnection?.disconnect()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -55,17 +55,17 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-
-       // startTrackingService()
+         Log.d("TS-L","onStartCommand")
         return START_STICKY
     }
 
      fun startTrackingService() {
-         hubConnection = getHubConnection()
-        locationReceiver = LocationReceiver(this).apply {
+         Log.d("TS-L","startTrackingService")
+         instance.hubConnection = getHubConnection()
+        locationReceiver = LocationReceiver(this,instance.hubConnection).apply {
             if (isProviderEnabled()) {
-                hubConnection?.connect()
                 initializeLocationManager()
+                instance.hubConnection?.connect()
             }
         }
     }
@@ -109,27 +109,23 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         return null
     }
 
-    private fun sharedPref() = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+    private fun sharedPref() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
-       // locationReceiver.getLastKnownLocationMessage()
         locationReceiver.getLastKnownLocationMessage()?.let {
-        //val message = "{ \"SendLocation\": [{ \"latitude\": \"80.200\", \"longitude\": \"80.200\", \"timestamp\": \"4756890945\"}] }"
-            hubConnection.invoke("SendLocation", it)
+            hubConnection?.invoke("SendLocation", it)
        }
-
     }
 
     override fun onMessage(message: HubMessage) {
-        Log.d("SignalR", "onMessage: ${message.arguments}")
     }
 
     override fun onEventMessage(message: HubMessage) {
-        Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
+       // Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
     }
 
     override fun onDisconnected() {
-        hubConnection.connect()
+        instance.hubConnection?.connect()
     }
 
     override fun onError(exception: Exception) {
@@ -150,11 +146,14 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun reconnect() {
         mHandler?.removeCallbacks(reconnection)
         handlerThread?.quit()
-        hubConnection.connect()
+        instance.hubConnection?.connect()
     }
 
     fun sendMessage(message: String) {
-       // Log.d("message-tracking",message)
-       //hubConnection?.invoke("SendLocation", message)
+            instance.hubConnection?.let {
+                if (it.isConnected){
+                    it.invoke("SendLocation", message)
+                }
+            }
     }
 }

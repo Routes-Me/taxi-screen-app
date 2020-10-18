@@ -15,13 +15,6 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
             location.longitude = longitude
             return location
         }
-    fun toJSON(): JsonObject {
-        val `object` = JsonObject()
-        `object`.addProperty("latitude", latitude)
-        `object`.addProperty("longitude", longitude)
-        `object`.addProperty("timestamp", timestamp.toString())
-        return `object`
-    }
 }
 
 @Entity(tableName = "MessageFeeds")

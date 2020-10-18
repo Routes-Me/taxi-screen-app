@@ -77,17 +77,17 @@ class App : Application() {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
            // Log.d("LC", "onServiceConnected - App ${className.className}")
             val name = className.className
-            if (name.endsWith("LocationTrackingService")) {
+            if (name.endsWith("TrackingService")) {
                 Log.i("trackingWebSocket:", "onServiceConnected")
                 trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
-                TrackingService.instance.startTrackingService()
+                trackingService?.startTrackingService()
 
             }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
          //   Log.d("LC", "onServiceDisconnected - App ${className.className}")
-            if (className.className == "LocationTrackingService") {
+            if (className.className == "TrackingService") {
                 trackingService = null
                 Log.i("trackingWebSocket:", "onServiceDisconnected")
             }
