@@ -17,7 +17,7 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class LocationReceiver(private val trackingService: TrackingService, val hubConnection: HubConnection?) : LocationListener {
+class LocationReceiver(private val trackingService: TrackingService) : LocationListener {
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
@@ -76,7 +76,7 @@ class LocationReceiver(private val trackingService: TrackingService, val hubConn
 
     override fun onLocationChanged(location: Location?) {
 
-
+/*
         location?.let { dataLayer.insertLocation(it) }
        // trackingService.sendMessage()
                 dataLayer.getFeeds()?.let {
@@ -86,6 +86,7 @@ class LocationReceiver(private val trackingService: TrackingService, val hubConn
                    // trackingService.sendMessage(it.toString())
 
             }
+        */
 
     }
 

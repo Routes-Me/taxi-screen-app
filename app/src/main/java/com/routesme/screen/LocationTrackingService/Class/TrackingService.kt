@@ -23,9 +23,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     companion object {
         @get:Synchronized
         var instance: TrackingService = TrackingService()
+        //  val token = instance.getSharedPreferences(SharedPreference.device_data, Activity.MODE_PRIVATE).getString(SharedPreference.token, null)
 
         class LocationServiceBinder : Binder() {
-            val service: TrackingService?
+            val service: TrackingService
                 get() = instance
         }
     }
@@ -45,7 +46,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onDestroy() {
         super.onDestroy()
         locationReceiver.removeLocationUpdates()
-        hubConnection?.disconnect()
+        hubConnection.disconnect()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -61,11 +62,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
      fun startTrackingService() {
          hubConnection = getHubConnection()
-        locationReceiver = LocationReceiver(this,hubConnection).apply {
+        locationReceiver = LocationReceiver(this).apply {
             if (isProviderEnabled()) {
                 hubConnection?.connect()
                 initializeLocationManager()
-
             }
         }
     }
@@ -115,7 +115,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
        // locationReceiver.getLastKnownLocationMessage()
         locationReceiver.getLastKnownLocationMessage()?.let {
         //val message = "{ \"SendLocation\": [{ \"latitude\": \"80.200\", \"longitude\": \"80.200\", \"timestamp\": \"4756890945\"}] }"
-            hubConnection?.invoke("SendLocation", it)
+            hubConnection.invoke("SendLocation", it)
        }
 
     }
@@ -129,7 +129,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onDisconnected() {
-        hubConnection?.connect()
+        hubConnection.connect()
     }
 
     override fun onError(exception: Exception) {
@@ -150,7 +150,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun reconnect() {
         mHandler?.removeCallbacks(reconnection)
         handlerThread?.quit()
-        hubConnection?.connect()
+        hubConnection.connect()
     }
 
     fun sendMessage(message: String) {

@@ -43,7 +43,9 @@ class App : Application() {
         displayManager.setAlarm(this)
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
-            startTrackingService()
+            val intent = Intent(instance, TrackingService::class.java)
+            ContextCompat.startForegroundService(instance,intent)
+            this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -70,13 +72,7 @@ class App : Application() {
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
 
-    private fun startTrackingService() {
-        Log.d("LC", "bindTrackingService - App")
 
-        val intent = Intent(instance, TrackingService::class.java)
-        ContextCompat.startForegroundService(instance, intent)
-        this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-    }
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
            // Log.d("LC", "onServiceConnected - App ${className.className}")
