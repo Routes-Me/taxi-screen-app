@@ -13,7 +13,7 @@ import com.routesme.screen.R
 import com.smartarmenia.dotnetcoresignalrclientjava.*
 import java.net.URI
 
-class TrackingService : Service(), HubConnectionListener, HubEventListener {
+class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
@@ -33,6 +33,7 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
     override fun onCreate() {
         super.onCreate()
         startForeground(1, getNotification())
+
     }
 
     private fun getNotification(): Notification {
@@ -44,7 +45,7 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
     override fun onDestroy() {
         super.onDestroy()
         locationReceiver.removeLocationUpdates()
-        hubConnection.disconnect()
+        hubConnection?.disconnect()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -53,15 +54,16 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        hubConnection = getHubConnection()
-        startTrackingService()
+
+       // startTrackingService()
         return START_STICKY
     }
 
-    private fun startTrackingService() {
-        locationReceiver = LocationReceiver(hubConnection,this).apply {
+     fun startTrackingService() {
+         hubConnection = getHubConnection()
+        locationReceiver = LocationReceiver(this,hubConnection).apply {
             if (isProviderEnabled()) {
-                hubConnection.connect()
+                hubConnection?.connect()
                 initializeLocationManager()
 
             }
@@ -110,10 +112,11 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
     private fun sharedPref() = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
-
+       // locationReceiver.getLastKnownLocationMessage()
         locationReceiver.getLastKnownLocationMessage()?.let {
-            hubConnection.invoke("SendLocation", it)
-        }
+        //val message = "{ \"SendLocation\": [{ \"latitude\": \"80.200\", \"longitude\": \"80.200\", \"timestamp\": \"4756890945\"}] }"
+            hubConnection?.invoke("SendLocation", it)
+       }
 
     }
 
@@ -126,7 +129,7 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onDisconnected() {
-        hubConnection.connect()
+        hubConnection?.connect()
     }
 
     override fun onError(exception: Exception) {
@@ -147,11 +150,11 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
     private fun reconnect() {
         mHandler?.removeCallbacks(reconnection)
         handlerThread?.quit()
-        hubConnection.connect()
+        hubConnection?.connect()
     }
 
     fun sendMessage(message: String) {
        // Log.d("message-tracking",message)
-       // if (hubConnection.isConnected) hubConnection.invoke("SendLocation", message)
+       //hubConnection?.invoke("SendLocation", message)
     }
 }
