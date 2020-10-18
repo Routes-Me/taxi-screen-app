@@ -41,7 +41,8 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
 
-        val isRegistered: Boolean = !(getDeviceId()?.isNullOrEmpty() ?: true)
+       // val isRegistered: Boolean = !(getDeviceId()?.isNullOrEmpty() ?: true)
+        val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             bindTrackingService()
         }
@@ -98,8 +99,5 @@ class App : Application() {
         }
         return true
     }
-    private fun getDeviceId(): String? {
-        val sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        return sharedPreferences.getString(SharedPreferencesHelper.device_id, null)
-    }
+    private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
 }

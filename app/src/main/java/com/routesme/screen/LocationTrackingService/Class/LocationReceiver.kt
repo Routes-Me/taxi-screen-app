@@ -19,19 +19,19 @@ class LocationReceiver() : LocationListener {
     private val minTime = 5000L
     private val minDistance = 27F
 
-    private fun locationProvider(): String {
-        return if (isGPSEnabled()) {
-            LocationManager.GPS_PROVIDER
-        }else {
-            LocationManager.NETWORK_PROVIDER
-        }
-    }
-
     fun initializeLocationManager(){
         try {
             locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
+        }
+    }
+
+    private fun locationProvider(): String {
+        return if (isGPSEnabled()) {
+            LocationManager.GPS_PROVIDER
+        }else {
+            LocationManager.NETWORK_PROVIDER
         }
     }
 
