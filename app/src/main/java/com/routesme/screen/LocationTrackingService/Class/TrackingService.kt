@@ -116,6 +116,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
             hubConnection?.invoke("SendLocation", it)
        }
     }
+    
 
     override fun onMessage(message: HubMessage) {
     }
