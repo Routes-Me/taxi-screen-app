@@ -40,10 +40,9 @@ class App : Application() {
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-
-        val isRegistered: Boolean = !(getDeviceId()?.isNullOrEmpty() ?: true)
+        val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
-            bindTrackingService()
+            startTrackingService()
         }
     }
 
@@ -70,7 +69,7 @@ class App : Application() {
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
 
-    private fun bindTrackingService() {// TODO: check if provider avaliable
+    private fun startTrackingService() {
         Log.d("LC", "bindTrackingService - App")
 
         val intent = Intent(instance, TrackingService::class.java)
@@ -98,8 +97,5 @@ class App : Application() {
         }
         return true
     }
-    private fun getDeviceId(): String? {
-        val sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        return sharedPreferences.getString(SharedPreferencesHelper.device_id, null)
-    }
+    private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
 }
