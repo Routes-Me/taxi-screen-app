@@ -49,7 +49,7 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     }
 
     private fun getSavedLocations(): MutableList<DetailCell> {
-        val savedLocationFeeds = locationFeedsDao.getResults()
+        val savedLocationFeeds = locationFeedsDao.getFeeds()
         val liveTrackingCells = mutableListOf<DetailCell>().apply {
             add(DetailCell("Latitude, Longitude", "Time", true))
             for (location in savedLocationFeeds){
