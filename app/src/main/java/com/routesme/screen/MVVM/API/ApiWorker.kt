@@ -3,7 +3,7 @@ package com.routesme.screen.MVVM.API
 import android.app.Activity
 import android.content.Context
 import com.google.gson.GsonBuilder
-import com.routesme.screen.MVVM.View.LoginActivity
+import com.routesme.screen.MVVM.View.activity.LoginActivity
 import okhttp3.OkHttpClient
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyManagementException

@@ -2,6 +2,7 @@ package com.routesme.screen.Class
 
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
 import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -44,7 +45,10 @@ class AdvertisementsHelper {
         private val cacheDataSourceFactory = CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name))), CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         val progressiveMediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
         private fun initializeVideoCaching(): SimpleCache {
-            val exoPlayerCacheSize: Long = 90 * 1024 * 1024
+            val maxMemory = Runtime.getRuntime().maxMemory()
+            //val exoPlayerCacheSize: Long = 90 * 1024 * 1024
+            Log.d("Memory",(maxMemory/10).toString())
+            val exoPlayerCacheSize: Long = maxMemory/10
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
@@ -87,13 +91,7 @@ class AdvertisementsHelper {
         simpleExoPlayer = simpleExoPlayer().apply {
             playerView.player = this
         }
-        /*for(i in videos.size until 0){
 
-            mediaItem = ImmutableList.of(MediaItem.fromUri(videos[i].url!!))
-
-        }
-        simpleExoPlayer?.prepare()
-        simpleExoPlayer?.play()*/
         buildMediaSource(videos[currentVideoIndex].url)?.let { simpleExoPlayer?.prepare(it, true, false) }
         simpleExoPlayer?.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {

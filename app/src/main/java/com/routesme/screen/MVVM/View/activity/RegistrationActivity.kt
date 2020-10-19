@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View
+package com.routesme.screen.MVVM.View.activity
 
 import android.Manifest
 import android.annotation.SuppressLint

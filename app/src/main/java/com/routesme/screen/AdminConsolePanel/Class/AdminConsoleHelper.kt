@@ -13,7 +13,7 @@ import android.provider.Settings
 import androidx.core.app.ActivityCompat
 import com.routesme.screen.AdminConsolePanel.Model.DetailActionStatus
 import com.routesme.screen.helper.SharedPreferencesHelper
-import com.routesme.screen.MVVM.View.LoginActivity
+import com.routesme.screen.MVVM.View.activity.LoginActivity
 import com.routesme.screen.BuildConfig
 
 class AdminConsoleHelper(val activity: Activity) {

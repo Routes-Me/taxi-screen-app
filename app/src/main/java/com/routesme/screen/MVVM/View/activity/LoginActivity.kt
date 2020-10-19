@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View
+package com.routesme.screen.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
@@ -96,11 +96,11 @@ class LoginActivity : AppCompatActivity() {
         if (userNameValid() && passwordValid()) signIn() //testEncryption()
     }
 
-    private fun testEncryption() {
+    /*private fun testEncryption() {
         val str = password
         val encrypted = AesBase64Wrapper().getEncryptedString(str)
         Log.d("Encryption", "Origin: $str \n Encrypted: $encrypted")
-    }
+    }*/
 
     private fun signIn() {
         dialog?.show()

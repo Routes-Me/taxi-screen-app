@@ -31,43 +31,43 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.screen.MVVM.View.VehicleInformationActivity"
+        <activity android:name="com.routesme.screen.MVVM.View.activity.VehicleInformationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
         <activity
-            android:name="com.routesme.screen.MVVM.View.RegistrationActivity"
+            android:name="com.routesme.screen.MVVM.View.activity.RegistrationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
-        <activity
+        <!--<activity
             android:name="com.routesme.screen.MVVM.View.PaymentScreen.Activity.PaymentActivity"
             android:screenOrientation="landscape"
-            android:theme="@style/FullScreen_Light_Mode" />
+            android:theme="@style/FullScreen_Light_Mode" />-->
         <activity
             android:name="com.routesme.screen.AdminConsolePanel.View.AdminConsolePanel"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="com.routesme.screen.MVVM.View.LoginActivity"
+            android:name="com.routesme.screen.MVVM.View.activity.LoginActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode" />
         <activity
-            android:name="com.routesme.screen.MVVM.View.LearnMoreActivity"
+            android:name="com.routesme.screen.MVVM.View.activity.LearnMoreActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.routesme.screen.MVVM.View.HomeScreen.Activity.HomeActivity"
+            android:name="com.routesme.screen.MVVM.View.activity.HomeActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
 
         </activity>
         <activity
-            android:name="com.routesme.screen.MVVM.View.ModelPresenter"
+            android:name="com.routesme.screen.MVVM.View.activity.ModelPresenter"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>

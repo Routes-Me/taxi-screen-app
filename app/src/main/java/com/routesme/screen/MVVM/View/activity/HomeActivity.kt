@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View.HomeScreen.Activity
+package com.routesme.screen.MVVM.View.activity
 
 import android.content.*
 import android.content.pm.PackageManager
@@ -11,8 +11,8 @@ import com.routesme.screen.Class.*
 import com.routesme.screen.Hotspot_Configuration.PermissionsActivity
 import com.routesme.screen.MVVM.Model.IModeChanging
 import com.routesme.screen.MVVM.Model.QRCodeCallback
-import com.routesme.screen.MVVM.View.HomeScreen.Fragment.ContentFragment
-import com.routesme.screen.MVVM.View.HomeScreen.Fragment.SideMenuFragment
+import com.routesme.screen.MVVM.View.fragment.ContentFragment
+import com.routesme.screen.MVVM.View.fragment.SideMenuFragment
 import com.routesme.screen.R
 import kotlinx.android.synthetic.main.home_screen.*
 

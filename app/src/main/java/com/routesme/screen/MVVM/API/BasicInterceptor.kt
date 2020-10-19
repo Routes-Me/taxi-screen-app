@@ -7,7 +7,7 @@ import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.routesme.screen.MVVM.Model.Authorization
-import com.routesme.screen.MVVM.View.ModelPresenter
+import com.routesme.screen.MVVM.View.activity.ModelPresenter
 import com.routesme.screen.helper.SharedPreferencesHelper
 import com.routesme.screen.BuildConfig
 import okhttp3.Interceptor

@@ -7,7 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.screen.AdminConsolePanel.Class.AdminConsoleLists
 import com.routesme.screen.AdminConsolePanel.Class.MasterItemsAdapter
-import com.routesme.screen.MVVM.View.HomeScreen.Activity.HomeActivity
+import com.routesme.screen.MVVM.View.activity.HomeActivity
 import com.routesme.screen.R
 import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
@@ -43,7 +43,7 @@ class AdminConsolePanel : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            this.apply { startActivity(Intent(this,HomeActivity::class.java)); finish() }
+            this.apply { startActivity(Intent(this, HomeActivity::class.java)); finish() }
         }
         return super.onOptionsItemSelected(item)
     }

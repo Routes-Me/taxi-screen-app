@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View.HomeScreen.Fragment
+package com.routesme.screen.MVVM.View.fragment
 
 import android.content.Context
 import android.content.IntentFilter
@@ -10,8 +10,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player.MediaItemTransitionReason
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.screen.Class.AdvertisementsHelper
 import com.routesme.screen.Class.ConnectivityReceiver
