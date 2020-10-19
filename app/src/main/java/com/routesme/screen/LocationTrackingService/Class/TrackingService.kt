@@ -1,32 +1,30 @@
 package com.routesme.screen.LocationTrackingService.Class
 
+
 import android.app.*
 import android.content.Intent
 import android.net.Uri
 import android.os.*
 import android.util.Log
-import com.google.gson.Gson
 import com.routesme.screen.Class.Helper
 import com.routesme.screen.helper.SharedPreferencesHelper
 import com.routesme.screen.R
+import com.routesme.screen.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
-    private lateinit var hubConnection: HubConnection
-    private var locationReceiver = LocationReceiver()
-    //private var dataLayer: TrackingDataLayer? = null
-    private val reconnectionDelay: Long = 1 * 60 * 1000
+    private var hubConnection: HubConnection? = null
+    private lateinit var locationReceiver: LocationReceiver
     private var handlerThread: HandlerThread? = null
     private var mHandler: Handler? = null
 
     companion object {
         @get:Synchronized
         var instance: TrackingService = TrackingService()
-
         class LocationServiceBinder : Binder() {
-            val service: TrackingService?
+            val service: TrackingService
                 get() = instance
         }
     }
@@ -46,6 +44,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         super.onDestroy()
         mHandler?.removeCallbacks(reconnection)
         locationReceiver.removeLocationUpdates()
+        instance.hubConnection?.disconnect()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -54,27 +53,19 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        hubConnection = getHubConnection()
-        startTrackingService()
+         Log.d("TS-L","onStartCommand")
         return START_STICKY
     }
 
-    private fun connectHub() {
-        hubConnection = createHubConnection().apply {
-            addListener(this@TrackingService)
-            subscribeToEvent("SendLocation", this@TrackingService)
-        }
-
-
-    }
-
-    private fun startTrackingService() {
-        locationReceiver.apply {
+     fun startTrackingService() {
+         this.hubConnection = getHubConnection()
+        locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
-                hubConnection.connect()
+                instance.hubConnection?.connect()
             }
         }
+
     }
 
     private fun getHubConnection() = createHubConnection().apply {
@@ -104,6 +95,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         val preferences = sharedPref()
         return DeviceData(preferences.getString(SharedPreferencesHelper.vehicle_id, null), preferences.getString(SharedPreferencesHelper.institution_id, null), preferences.getString(SharedPreferencesHelper.device_id, null))
     }
+
     data class DeviceData(val vehicle_id: String?, val institution_id: String?, val device_id: String?)
 
     private fun getAuthorityUrl() = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
@@ -115,53 +107,52 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         return null
     }
 
-    private fun sharedPref() = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-
-    private fun connect() {
-        try {
-            if (mHandler != null) {
-                mHandler?.removeCallbacks(reconnection)
-                mHandler = null
-            }
-            if (handlerThread != null) {
-                handlerThread?.quit()
-                handlerThread = null
-            }
-
-        } catch (ex: Exception) {
-            Log.d("SignalR", "${ex.message} ,  ${ex}")
-        }
-    }
+    private fun sharedPref() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
-        val lastKnownLocationMessage = locationReceiver.getLastKnownLocationMessage()
-        if (!lastKnownLocationMessage.isNullOrEmpty()) hubConnection.invoke("SendLocation", lastKnownLocationMessage)
+        locationReceiver.getLastKnownLocationMessage()?.let {
+            instance.hubConnection?.invoke("SendLocation", it)
+       }
+        locationReceiver.isHubConnected(true)
     }
 
     override fun onMessage(message: HubMessage) {
-        Log.d("SignalR", "onMessage: ${message.arguments}")
     }
 
     override fun onEventMessage(message: HubMessage) {
-        Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
+       // Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
     }
 
     override fun onDisconnected() {
-        connect()
+        locationReceiver.isHubConnected(false)
+        instance.hubConnection?.connect()
     }
 
     override fun onError(exception: Exception) {
-        if (handlerThread == null) {
+        locationReceiver.isHubConnected(false)
+        if (handlerThread == null){
             handlerThread = HandlerThread("reconnection").apply {
                 start()
                 if (mHandler == null) {
                     mHandler = Handler(this.looper).apply {
-                        postDelayed(reconnection, reconnectionDelay)
+                        postDelayed(reconnection, 1 * 60 * 1000)
                     }
                 }
             }
         }
     }
 
-    private val reconnection: Runnable = Runnable { connect() }
+    private val reconnection: Runnable = Runnable { reconnect() }
+
+    private fun reconnect() {
+        if (mHandler != null){
+            mHandler?.removeCallbacks(reconnection)
+            mHandler = null
+        }
+        if (handlerThread != null) {
+            handlerThread?.quit()
+            handlerThread = null
+        }
+        instance.hubConnection?.connect()
+    }
 }

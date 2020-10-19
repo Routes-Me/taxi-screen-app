@@ -28,6 +28,7 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
+    private var trackingService: TrackingService? = null
 
     companion object {
         @get:Synchronized
@@ -40,11 +41,11 @@ class App : Application() {
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-
-       // val isRegistered: Boolean = !(getDeviceId()?.isNullOrEmpty() ?: true)
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
-            bindTrackingService()
+            val intent = Intent(instance, TrackingService::class.java)
+            ContextCompat.startForegroundService(instance,intent)
+            this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -71,20 +72,21 @@ class App : Application() {
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
 
-    private fun bindTrackingService() {
-        Log.d("LC", "bindTrackingService - App")
-
-        val intent = Intent(instance, TrackingService::class.java)
-        ContextCompat.startForegroundService(instance, intent)
-        this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
-    }
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            Log.d("LC", "onServiceConnected - App ${className.className}")
+            val name = className.className
+            if (name.endsWith("TrackingService")) {
+                Log.i("trackingWebSocket:", "onServiceConnected")
+                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
+                trackingService?.startTrackingService()
+            }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-            Log.d("LC", "onServiceDisconnected - App ${className.className}")
+            if (className.className == "TrackingService") {
+                trackingService = null
+                Log.i("trackingWebSocket:", "onServiceDisconnected")
+            }
         }
     }
 
