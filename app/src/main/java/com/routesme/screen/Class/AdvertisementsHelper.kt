@@ -6,7 +6,9 @@ import android.widget.ImageView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.Player.MediaItemTransitionReason
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
@@ -19,9 +21,10 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.routesme.screen.MVVM.Model.Data
 import com.routesme.screen.MVVM.Model.QRCodeCallback
-import com.routesme.screen.uplevels.App
 import com.routesme.screen.R
+import com.routesme.screen.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+
 
 class AdvertisementsHelper {
 
@@ -37,16 +40,13 @@ class AdvertisementsHelper {
         val instance = AdvertisementsHelper()
         val glide = Glide.with(App.instance)
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
-
         private val simpleCache = initializeVideoCaching()
         private val cacheDataSourceFactory = CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name))), CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         val progressiveMediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
-
         private fun initializeVideoCaching(): SimpleCache {
             val exoPlayerCacheSize: Long = 90 * 1024 * 1024
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
-
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
@@ -58,6 +58,7 @@ class AdvertisementsHelper {
 
     fun displayImages(images: List<Data>, imageView: ImageView) {
         displayImageHandler = Handler()
+
         var currentImageIndex = 0
 
         displayImageRunnable = object : Runnable {
@@ -82,16 +83,26 @@ class AdvertisementsHelper {
         progressbarHandler = Handler()
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         var currentVideoIndex = 0
+
         simpleExoPlayer = simpleExoPlayer().apply {
             playerView.player = this
         }
+        /*for(i in videos.size until 0){
+
+            mediaItem = ImmutableList.of(MediaItem.fromUri(videos[i].url!!))
+
+        }
+        simpleExoPlayer?.prepare()
+        simpleExoPlayer?.play()*/
         buildMediaSource(videos[currentVideoIndex].url)?.let { simpleExoPlayer?.prepare(it, true, false) }
         simpleExoPlayer?.addListener(object : Player.EventListener {
             override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                 when (playbackState) {
                     Player.STATE_IDLE -> {
+
                     }
                     Player.STATE_BUFFERING -> {
+
                     }
                     Player.STATE_READY -> {
                         progressbarHandler?.post(progressbarRunnable)
@@ -129,7 +140,6 @@ class AdvertisementsHelper {
                 val current = (simpleExoPlayer?.currentPosition)!!.toInt()
                 val progress = current * 100 / (simpleExoPlayer?.duration)!!.toInt()
                 progressBar.progress = progress
-
                 progressbarHandler?.postDelayed(this, 1000)
             }
         }
@@ -142,4 +152,5 @@ class AdvertisementsHelper {
         progressbarHandler?.removeCallbacks(progressbarRunnable)
         simpleExoPlayer?.release()
     }
+
 }

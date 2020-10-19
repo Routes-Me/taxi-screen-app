@@ -4,6 +4,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
 
     <style name="FullScreen_Light_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -11,7 +12,7 @@
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-
+        <item name="android:windowDisablePreview">true</item>
         <item name="homeScreenBackground_color">@color/homeScreen_lightBackground</item>
         <item name="cardViewBackground_color">@color/white</item>
         <item name="text_color">@color/black</item>

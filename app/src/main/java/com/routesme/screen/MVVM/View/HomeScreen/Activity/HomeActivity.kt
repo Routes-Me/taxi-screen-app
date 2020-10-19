@@ -108,6 +108,7 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
             }
         }
         override fun onLost(network: Network?) {
+
         }
     }
 
