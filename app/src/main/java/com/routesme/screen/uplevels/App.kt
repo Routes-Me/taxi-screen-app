@@ -72,21 +72,17 @@ class App : Application() {
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
 
-
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
-           // Log.d("LC", "onServiceConnected - App ${className.className}")
             val name = className.className
             if (name.endsWith("TrackingService")) {
                 Log.i("trackingWebSocket:", "onServiceConnected")
                 trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
                 trackingService?.startTrackingService()
-
             }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
-         //   Log.d("LC", "onServiceDisconnected - App ${className.className}")
             if (className.className == "TrackingService") {
                 trackingService = null
                 Log.i("trackingWebSocket:", "onServiceDisconnected")

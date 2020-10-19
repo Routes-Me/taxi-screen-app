@@ -16,25 +16,4 @@ class TrackingDataLayer() {
 
     fun getFeeds() = locationFeedsDao.getFeeds()
     fun deleteFeeds(lastId: Int) = locationFeedsDao.deleteFeeds(lastId)
-
-/*
-    fun getFeeds(): JsonArray? {
-        val feeds = locationFeedsDao.getResults()
-        return if (!feeds.isNullOrEmpty()){
-            getJsonArray(feeds)
-        }else{
-            null
-        }
-    }
-
-    private fun getJsonArray(locationFeeds: List<LocationFeed>): JsonArray {
-        val locationJsonArray = JsonArray()
-
-        for (l in locationFeeds){
-            val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
-            locationJsonArray.add(locationJsonObject)
-        }
-       return locationJsonArray
-    }
-    */
 }

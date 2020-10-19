@@ -17,12 +17,13 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class LocationReceiver(private val trackingService: TrackingService, private val hubConnection: HubConnection?) : LocationListener {
+class LocationReceiver(private val hubConnection: HubConnection?) : LocationListener {
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private var isConnected = false
 
-    private val minTime =      0L //5000L
-    private val minDistance =  0F //27F
+    private val minTime = 5000L
+    private val minDistance = 27F
 
     fun initializeLocationManager() {
         try {
@@ -65,10 +66,17 @@ class LocationReceiver(private val trackingService: TrackingService, private val
     }
 
     override fun onLocationChanged(location: Location?) {
-        location?.let { dataLayer.insertLocation(it) }
-        dataLayer.getFeeds().let {
-            getMessage(getFeedsJsonArray(it).toString())?.let { it1 -> trackingService.sendMessage(it1) }
-            dataLayer.deleteFeeds(it.last().id)
+        location?.let { location ->
+            dataLayer.insertLocation(location)
+            if (isConnected) {
+                dataLayer.getFeeds().let {
+                    getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
+                        Log.d("location-sending",it1)
+                        hubConnection?.invoke("SendLocation", it1)
+                        dataLayer.deleteFeeds(it.last().id)
+                    }
+                }
+            }
         }
     }
 
@@ -78,9 +86,9 @@ class LocationReceiver(private val trackingService: TrackingService, private val
 
     private fun getFeedsJsonArray(feeds: List<LocationFeed>): JsonArray? {
         //val feeds = locationFeedsDao.getResults()
-        return if (!feeds.isNullOrEmpty()){
+        return if (!feeds.isNullOrEmpty()) {
             getJsonArray(feeds)
-        }else{
+        } else {
             null
         }
     }
@@ -88,7 +96,7 @@ class LocationReceiver(private val trackingService: TrackingService, private val
     private fun getJsonArray(locationFeeds: List<LocationFeed>): JsonArray {
         val locationJsonArray = JsonArray()
 
-        for (l in locationFeeds){
+        for (l in locationFeeds) {
             val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
             locationJsonArray.add(locationJsonObject)
         }
@@ -104,6 +112,10 @@ class LocationReceiver(private val trackingService: TrackingService, private val
             e.printStackTrace()
         }
         return messageObject.toString()
+    }
+
+    fun isHubConnected(isConnected: Boolean) {
+        this.isConnected = isConnected
     }
 
 }
