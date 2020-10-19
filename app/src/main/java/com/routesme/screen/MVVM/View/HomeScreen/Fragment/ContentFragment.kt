@@ -110,7 +110,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
                         return@Observer
                     }else{
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
-                        if (!videos.isNullOrEmpty()) {  AdvertisementsHelper.instance.displayVideos(videos, mView.playerView, mView.videoRingProgressBar)}
+                        if (!videos.isNullOrEmpty()) {  AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)}
                     }
 
                 } else {
