@@ -15,5 +15,5 @@ class TrackingDataLayer() {
     private fun getLocationFeed(location: Location) = LocationFeed(latitude =  location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis()/1000)
 
     fun getFeeds() = locationFeedsDao.getFeeds()
-    fun deleteFeeds(lastId: Int) = locationFeedsDao.deleteFeeds(lastId)
+    fun deleteFeeds(firstId: Int, lastId: Int) = locationFeedsDao.deleteFeeds(firstId,lastId)
 }

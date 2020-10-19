@@ -7,13 +7,12 @@ import com.routesme.screen.LocationTrackingService.Model.LocationFeed
 interface LocationFeedsDao {
 
     @Transaction
-    @Query("SELECT * FROM LocationFeeds ORDER BY id DESC LIMIT 10")
+    @Query("SELECT * FROM LocationFeeds ORDER BY id DESC LIMIT 100")
     fun getFeeds(): List<LocationFeed>
 
     @Transaction
-    @Query("DELETE FROM LocationFeeds WHERE id >= :id-9 AND id <= :id")
-   // @Query("DELETE FROM LocationFeeds WHERE id IN (SELECT id FROM LocationFeeds WHERE id <= :id ORDER BY id DESC LIMIT 10)")
-    fun deleteFeeds(id:Int)
+    @Query("DELETE FROM LocationFeeds WHERE id BETWEEN :id2 AND :id1")
+    fun deleteFeeds(id1:Int,id2:Int)
 
     @Transaction
     @Insert

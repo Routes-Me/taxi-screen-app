@@ -73,7 +73,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
                         Log.d("location-sending",it1)
                         hubConnection?.invoke("SendLocation", it1)
-                        dataLayer.deleteFeeds(it.last().id)
+                        dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }
             }
@@ -117,5 +117,4 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     fun isHubConnected(isConnected: Boolean) {
         this.isConnected = isConnected
     }
-
 }
