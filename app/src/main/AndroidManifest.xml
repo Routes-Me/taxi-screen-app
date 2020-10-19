@@ -42,10 +42,7 @@
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
-        <!--<activity
-            android:name="com.routesme.screen.MVVM.View.PaymentScreen.Activity.PaymentActivity"
-            android:screenOrientation="landscape"
-            android:theme="@style/FullScreen_Light_Mode" />-->
+
         <activity
             android:name="com.routesme.screen.AdminConsolePanel.View.AdminConsolePanel"
             android:screenOrientation="landscape"

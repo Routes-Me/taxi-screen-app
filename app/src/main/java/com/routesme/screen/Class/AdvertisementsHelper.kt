@@ -47,8 +47,7 @@ class AdvertisementsHelper {
         private fun initializeVideoCaching(): SimpleCache {
             val maxMemory = Runtime.getRuntime().maxMemory()
             //val exoPlayerCacheSize: Long = 90 * 1024 * 1024
-            Log.d("Memory",(maxMemory/10).toString())
-            val exoPlayerCacheSize: Long = maxMemory/10
+            val exoPlayerCacheSize: Long = maxMemory/8
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
@@ -87,10 +86,10 @@ class AdvertisementsHelper {
         progressbarHandler = Handler()
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         var currentVideoIndex = 0
-
         simpleExoPlayer = simpleExoPlayer().apply {
             playerView.player = this
         }
+        simpleExoPlayer?.playWhenReady= true
 
         buildMediaSource(videos[currentVideoIndex].url)?.let { simpleExoPlayer?.prepare(it, true, false) }
         simpleExoPlayer?.addListener(object : Player.EventListener {
@@ -129,7 +128,7 @@ class AdvertisementsHelper {
 
     private fun buildMediaSource(videoUrl: String?): ProgressiveMediaSource? {
         val videoUri = Uri.parse(videoUrl)
-        return progressiveMediaSource.createMediaSource(videoUri)
+        return progressiveMediaSource.createMediaSource(MediaItem.fromUri(videoUri))
     }
 
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
