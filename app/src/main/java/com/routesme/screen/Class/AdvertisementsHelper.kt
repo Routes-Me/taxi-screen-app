@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
@@ -43,7 +44,7 @@ class AdvertisementsHelper {
 
         private val simpleCache = initializeVideoCaching()
         private val cacheDataSourceFactory = CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name))), CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-        val progressiveMediaSource = ProgressiveMediaSource.Factory(cacheDataSourceFactory)
+        private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSourceFactory)
 
         private fun initializeVideoCaching(): SimpleCache {
             val exoPlayerCacheSize: Long = 90 * 1024 * 1024
@@ -53,7 +54,6 @@ class AdvertisementsHelper {
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
-
 
     fun setQrCodeCallback(qrCodeCallback: QRCodeCallback) {
         this.qrCodeCallback = qrCodeCallback
@@ -81,40 +81,6 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-/*
-    fun displayVideos(videos: List<Data>, playerView: PlayerView, progressBar: RingProgressBar) {
-        progressbarHandler = Handler()
-        val progressbarRunnable = videoProgressbarRunnable(progressBar)
-        var currentVideoIndex = 0
-        simpleExoPlayer = simpleExoPlayer().apply {
-            playerView.player = this
-        }
-        buildMediaSource(videos[currentVideoIndex].url)?.let { simpleExoPlayer?.prepare(it, true, false) }
-        simpleExoPlayer?.addListener(object : Player.EventListener {
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                when (playbackState) {
-                    Player.STATE_IDLE -> {
-                    }
-                    Player.STATE_BUFFERING -> {
-                    }
-                    Player.STATE_READY -> {
-                        progressbarHandler?.post(progressbarRunnable)
-                        qrCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].promotion)
-                    }
-                    Player.STATE_ENDED -> {
-                        progressbarHandler?.removeCallbacks(progressbarRunnable)
-                        currentVideoIndex++
-                        if (currentVideoIndex >= videos.size) {
-                            currentVideoIndex = 0
-                        }
-                        buildMediaSource(videos[currentVideoIndex].url)?.let { simpleExoPlayer?.prepare(it) }
-                    }
-                }
-            }
-        })
-    }
-    */
-
     fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
         progressbarHandler = Handler()
 
@@ -123,44 +89,12 @@ class AdvertisementsHelper {
             prepare()
             play()
         }
-
-        // var currentVideoIndex = 0
-        /*
-        simpleExoPlayer = simpleExoPlayer().apply {
-            playerView.player = this
-        }
-        */
-        /*
-        buildMediaSource(videos[currentVideoIndex].url)?.let { this.player?.prepare(it, true, false) }
-        this.player?.addListener(object : Player.EventListener {
-            override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                when (playbackState) {
-                    Player.STATE_IDLE -> {
-                    }
-                    Player.STATE_BUFFERING -> {
-                    }
-                    Player.STATE_READY -> {
-                        progressbarHandler?.post(progressbarRunnable)
-                        qrCodeCallback?.onVideoQRCodeChanged(videos[currentVideoIndex].promotion)
-                    }
-                    Player.STATE_ENDED -> {
-                        progressbarHandler?.removeCallbacks(progressbarRunnable)
-                        currentVideoIndex++
-                        if (currentVideoIndex >= videos.size) {
-                            currentVideoIndex = 0
-                        }
-                        buildMediaSource(videos[currentVideoIndex].url)?.let { this@AdvertisementsHelper.player?.prepare(it) }
-                    }
-                }
-            }
-        })
-        */
     }
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar): SimpleExoPlayer {
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url).setMediaId("${videos.indexOf(it)}").build() }
-        val player = SimpleExoPlayer.Builder(context).build().apply {
+        val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build().apply {
             playerView.player = this
             setMediaItems(mediaItems)
             repeatMode = Player.REPEAT_MODE_ALL
@@ -179,7 +113,6 @@ class AdvertisementsHelper {
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             progressbarHandler?.post(progressbarRunnable)
                             qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
-                            // Toast.makeText(this@MainActivity,"READY STATE - currentMediaItem Id: ${currentMediaItem?.mediaId}", Toast.LENGTH_SHORT).show()
                         }
                         Player.STATE_ENDED -> {
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
@@ -189,19 +122,6 @@ class AdvertisementsHelper {
             })
         }
         return player
-    }
-
-    private fun simpleExoPlayer(): SimpleExoPlayer? {
-        return SimpleExoPlayer.Builder(App.instance).build().apply {
-            playWhenReady = true
-            seekTo(0, 0)
-            repeatMode = Player.REPEAT_MODE_OFF
-        }
-    }
-
-    private fun buildMediaSource(videoUrl: String?): ProgressiveMediaSource? {
-        val videoUri = Uri.parse(videoUrl)
-        return progressiveMediaSource.createMediaSource(videoUri)
     }
 
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
