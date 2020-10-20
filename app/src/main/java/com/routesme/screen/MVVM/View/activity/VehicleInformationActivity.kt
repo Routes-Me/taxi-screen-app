@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View
+package com.routesme.screen.MVVM.View.activity
 
 import android.app.AlertDialog
 import android.os.Bundle

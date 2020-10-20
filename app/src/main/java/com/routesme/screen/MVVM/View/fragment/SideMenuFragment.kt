@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View.HomeScreen.Fragment
+package com.routesme.screen.MVVM.View.fragment
 
 import android.annotation.SuppressLint
 import android.content.Context

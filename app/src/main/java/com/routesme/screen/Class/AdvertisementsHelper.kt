@@ -13,11 +13,9 @@ import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
@@ -26,6 +24,7 @@ import com.routesme.screen.MVVM.Model.QRCodeCallback
 import com.routesme.screen.uplevels.App
 import com.routesme.screen.R
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+
 
 class AdvertisementsHelper {
 
@@ -48,7 +47,9 @@ class AdvertisementsHelper {
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
 
         private fun initializeVideoCaching(): SimpleCache {
-            val exoPlayerCacheSize: Long = 90 * 1024 * 1024
+            val maxMemory = Runtime.getRuntime().maxMemory()
+            //val exoPlayerCacheSize: Long = 90 * 1024 * 1024
+            val exoPlayerCacheSize: Long = maxMemory/7
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
 
@@ -56,12 +57,14 @@ class AdvertisementsHelper {
         }
     }
 
+
     fun setQrCodeCallback(qrCodeCallback: QRCodeCallback) {
         this.qrCodeCallback = qrCodeCallback
     }
 
     fun displayImages(images: List<Data>, imageView: ImageView) {
         displayImageHandler = Handler()
+
         var currentImageIndex = 0
 
         displayImageRunnable = object : Runnable {

@@ -1,4 +1,4 @@
-package com.routesme.screen.MVVM.View.HomeScreen.Fragment
+package com.routesme.screen.MVVM.View.fragment
 
 import android.content.Context
 import android.content.IntentFilter
@@ -10,15 +10,21 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import com.routesme.screen.Class.*
-import com.routesme.screen.MVVM.Model.*
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.routesme.screen.Class.AdvertisementsHelper
+import com.routesme.screen.Class.ConnectivityReceiver
+import com.routesme.screen.Class.Operations
+import com.routesme.screen.MVVM.Model.ContentResponse
+import com.routesme.screen.MVVM.Model.Error
+import com.routesme.screen.MVVM.Model.QRCodeCallback
 import com.routesme.screen.MVVM.ViewModel.ContentViewModel
 import com.routesme.screen.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import java.io.IOException
 
-class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverListener {
+
+class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverListener,SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
     private var qRCodeCallback: QRCodeCallback? = null
@@ -135,4 +141,6 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
             Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
         }
     }
+
+
 }
