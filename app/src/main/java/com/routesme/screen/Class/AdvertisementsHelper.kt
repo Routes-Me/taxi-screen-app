@@ -43,8 +43,9 @@ class AdvertisementsHelper {
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
 
         private val simpleCache = initializeVideoCaching()
-        private val cacheDataSourceFactory = CacheDataSourceFactory(simpleCache, DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name))), CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-        private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSourceFactory)
+        private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
+        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
 
         private fun initializeVideoCaching(): SimpleCache {
             val exoPlayerCacheSize: Long = 90 * 1024 * 1024
