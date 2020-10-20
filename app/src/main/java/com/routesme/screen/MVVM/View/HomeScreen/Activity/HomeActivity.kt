@@ -16,7 +16,7 @@ import com.routesme.screen.MVVM.View.HomeScreen.Fragment.SideMenuFragment
 import com.routesme.screen.R
 import kotlinx.android.synthetic.main.home_screen.*
 
-class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
+class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
 
     private val helper = HomeScreenHelper(this)
     private var isHotspotOn = false
@@ -28,23 +28,27 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
-        if (DisplayManager.instance.isAnteMeridiem()){setTheme(R.style.FullScreen_Light_Mode)}else{setTheme(R.style.FullScreen_Dark_Mode)}
+        if (DisplayManager.instance.isAnteMeridiem()) {
+            setTheme(R.style.FullScreen_Light_Mode)
+        } else {
+            setTheme(R.style.FullScreen_Dark_Mode)
+        }
         setContentView(R.layout.home_screen)
         sideMenuFragment = SideMenuFragment()
-        openPatternBtn.setOnClickListener {openPattern()}
+        openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         registerNetworkCallback(true)
     }
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-            registerNetworkCallback(false)
+        registerNetworkCallback(false)
         super.onDestroy()
     }
 
     private fun addFragments() {
-        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(),"Content_Fragment").commit()
-        if(sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!,"SideMenu_Fragment").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
+        if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
 
     private fun removeFragments() {
@@ -74,9 +78,10 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
             this.sendBroadcast(explicit)
         }
     }
+
     private fun openPattern() {
         clickTimes++
-        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10){
+        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
             helper.showAdminVerificationDialog()
             clickTimes = 0
         }
@@ -102,24 +107,29 @@ class HomeActivity : PermissionsActivity() , IModeChanging, QRCodeCallback {
             turnOnHotspot()
             addFragments()
             try {
-                    connectivityManager.unregisterNetworkCallback(this)
+                connectivityManager.unregisterNetworkCallback(this)
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
         }
+
         override fun onLost(network: Network?) {
         }
     }
 
-    private fun registerNetworkCallback(register: Boolean){
-        try {
-            if (register) {
+    private fun registerNetworkCallback(register: Boolean) {
+        if (register) {
+            try {
                 connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
-            } else {
-                connectivityManager.unregisterNetworkCallback(networkCallback)
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
             }
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
+        } else {
+            try {
+                connectivityManager.unregisterNetworkCallback(networkCallback)
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
         }
     }
 }

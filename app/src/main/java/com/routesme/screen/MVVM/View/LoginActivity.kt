@@ -21,6 +21,7 @@ import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
 import com.routesme.screen.Class.AesBase64Wrapper
+import com.routesme.screen.Class.Helper
 import com.routesme.screen.Class.Operations
 import com.routesme.screen.MVVM.Model.Error
 import com.routesme.screen.MVVM.Model.LoginResponse
@@ -206,7 +207,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun readPatternFromTechnicalSupport() {
-        val patternPassword = "2103678"
+        val patternPassword = Helper.getConfigValue("exitPassword", R.raw.config)
         val exitPatternDialog = Dialog(this)
         exitPatternDialog.setContentView(R.layout.exit_pattern_dialog)
         exitPatternDialog.show()
