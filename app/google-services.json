@@ -37,6 +37,35 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:64c8b46e284d5bfc5ff375",
+        "android_client_info": {
+          "package_name": "com.routesme.taxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:599108135088:android:4840eab010b43a465ff375",
         "android_client_info": {
           "package_name": "com.routesme.taxi_screen"
