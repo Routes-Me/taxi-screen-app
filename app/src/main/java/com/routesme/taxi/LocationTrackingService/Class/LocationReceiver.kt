@@ -2,10 +2,12 @@ package com.routesme.taxi.LocationTrackingService.Class
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.location.Criteria
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -24,12 +26,29 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     private val minTime = 5000L
     private val minDistance = 27F
+    private lateinit var criteria :Criteria
 
     fun initializeLocationManager() {
         try {
-            locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
+            criteria = getCriteria()
+           // locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
+
+            locationManager.requestLocationUpdates(minTime, minDistance,Criteria(),this, Looper.getMainLooper())
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
+        }
+    }
+
+    private fun getCriteria(): Criteria{
+        return Criteria().apply {
+            accuracy = Criteria.ACCURACY_COARSE
+            powerRequirement = Criteria.POWER_HIGH
+            isAltitudeRequired = false
+            isSpeedRequired = true
+            isCostAllowed = true
+            isBearingRequired = false
+            horizontalAccuracy = Criteria.ACCURACY_HIGH
+            verticalAccuracy = Criteria.ACCURACY_HIGH
         }
     }
 
@@ -53,6 +72,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     fun getLastKnownLocationMessage(): String? {
         locationManager.getLastKnownLocation(locationProvider())?.let {
             try {
+                Log.d("send-location-testing","LastKnownLocation: lat: ${it.latitude}, long: ${it.longitude} ")
                 val feed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
                 val locationJsonArray = JsonArray()
                 val locationJsonObject: JsonObject = LocationJsonObject(feed).toJSON()
@@ -66,13 +86,15 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     }
 
     override fun onLocationChanged(location: Location?) {
+        Log.d("send-location-testing","onLocationChanged: $location")
         location?.let { location ->
             dataLayer.insertLocation(location)
+            Log.d("send-location-testing","Insert location into DB: $location")
             if (isConnected) {
                 dataLayer.getFeeds().let {
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
-                        Log.d("location-sending",it1)
                         hubConnection?.invoke("SendLocation", it1)
+                        Log.d("send-location-testing","Send locations from DB: $location")
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }
