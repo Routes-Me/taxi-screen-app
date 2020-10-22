@@ -34,6 +34,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
            // locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
 
             locationManager.requestLocationUpdates(minTime, minDistance,Criteria(),this, Looper.getMainLooper())
+            
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
