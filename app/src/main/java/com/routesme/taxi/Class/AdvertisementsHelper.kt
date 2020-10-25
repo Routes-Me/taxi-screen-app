@@ -3,6 +3,7 @@ package com.routesme.taxi.Class
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
+import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.Nullable
 import com.bumptech.glide.Glide
@@ -104,7 +105,10 @@ class AdvertisementsHelper {
             repeatMode = Player.REPEAT_MODE_ALL
 
             addListener(object : Player.EventListener {
-                override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {}
+                override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
+                    val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                    qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
+                }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
@@ -115,8 +119,10 @@ class AdvertisementsHelper {
                         Player.STATE_READY -> {
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                            progressbarHandler?.post(progressbarRunnable)
-                            qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
+                            if (currentMediaItemId == videos.indexOf(videos.first())){
+                                qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
+                                progressbarHandler?.post(progressbarRunnable)
+                            }
                         }
                         Player.STATE_ENDED -> {
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
@@ -134,7 +140,6 @@ class AdvertisementsHelper {
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
                 progressBar.progress = progress
-
                 progressbarHandler?.postDelayed(this, 1000)
             }
         }

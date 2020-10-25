@@ -7,9 +7,11 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.routesme.taxi.Class.*
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.IModeChanging
+import com.routesme.taxi.MVVM.Model.Promotion
 import com.routesme.taxi.MVVM.Model.QRCodeCallback
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
@@ -93,11 +95,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
         recreate()
     }
 
-    override fun onVideoQRCodeChanged(promotion: com.routesme.taxi.MVVM.Model.Promotion?) {
+    override fun onVideoQRCodeChanged(promotion: Promotion?) {
         sideMenuFragment?.changeVideoQRCode(promotion)
     }
 
-    override fun onBannerQRCodeChanged(promotion: com.routesme.taxi.MVVM.Model.Promotion?) {
+    override fun onBannerQRCodeChanged(promotion: Promotion?) {
         sideMenuFragment?.changeBannerQRCode(promotion)
     }
 
