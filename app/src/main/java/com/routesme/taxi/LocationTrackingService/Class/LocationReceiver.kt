@@ -23,18 +23,23 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isConnected = false
-
+    private val criteria = Criteria()
     private val minTime = 5000L
     private val minDistance = 27F
-    private lateinit var criteria :Criteria
 
     fun initializeLocationManager() {
         try {
-            criteria = getCriteria()
-           // locationManager.requestLocationUpdates(locationProvider(), minTime, minDistance, this)
 
-            locationManager.requestLocationUpdates(minTime, minDistance,Criteria(),this, Looper.getMainLooper())
-            
+            locationManager.requestLocationUpdates(locationProvider(),minTime,minDistance,this)
+            criteria.accuracy = Criteria.ACCURACY_COARSE
+            criteria.powerRequirement = Criteria.POWER_HIGH
+            criteria.isAltitudeRequired = false
+            criteria.isSpeedRequired = true
+            criteria.isCostAllowed = true
+            criteria.isBearingRequired = false
+            criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
+            criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
+
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
