@@ -2,12 +2,8 @@ package com.routesme.taxi.LocationTrackingService.Class
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.Criteria
-import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
+import android.location.*
 import android.os.Bundle
-import android.os.Looper
 import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -19,45 +15,59 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
+
 class LocationReceiver(private val hubConnection: HubConnection?) : LocationListener {
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isConnected = false
-    private val criteria = Criteria()
     private val minTime = 5000L
     private val minDistance = 27F
 
+
     fun initializeLocationManager() {
         try {
-
-            locationManager.requestLocationUpdates(locationProvider(),minTime,minDistance,this)
-            criteria.accuracy = Criteria.ACCURACY_COARSE
-            criteria.powerRequirement = Criteria.POWER_HIGH
-            criteria.isAltitudeRequired = false
-            criteria.isSpeedRequired = true
-            criteria.isCostAllowed = true
-            criteria.isBearingRequired = false
-            criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
-            criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
+            Log.d("send-location-testing ","Best Provider: $bestProvider")
+            locationManager.requestLocationUpdates(bestProvider,minTime,minDistance,this)
 
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
+/*
+    private val locationProvider: LocationProvider = locationManager.getProvider(locationManager.getBestProvider(getHighCriteria(),true))
 
-    private fun getCriteria(): Criteria{
-        return Criteria().apply {
-            accuracy = Criteria.ACCURACY_COARSE
-            powerRequirement = Criteria.POWER_HIGH
-            isAltitudeRequired = false
-            isSpeedRequired = true
-            isCostAllowed = true
-            isBearingRequired = false
-            horizontalAccuracy = Criteria.ACCURACY_HIGH
-            verticalAccuracy = Criteria.ACCURACY_HIGH
-        }
+    private fun getHighCriteria():Criteria{
+        val criteria = Criteria()
+        criteria.accuracy = Criteria.ACCURACY_COARSE
+        criteria.powerRequirement = Criteria.POWER_HIGH
+        criteria.isAltitudeRequired = false
+        criteria.isSpeedRequired = true
+        criteria.isCostAllowed = true
+        criteria.isBearingRequired = false
+        criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
+        criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
+        return criteria
     }
 
+    /*
+    fun initializeLocationManager() {
+        try {
+            locationManager.requestLocationUpdates(locationProvider(),minTime,minDistance,this)
+            criteria.apply {
+                accuracy = Criteria.ACCURACY_COARSE
+                powerRequirement = Criteria.POWER_HIGH
+                isAltitudeRequired = false
+                isSpeedRequired = true
+                isCostAllowed = true
+                isBearingRequired = false
+                horizontalAccuracy = Criteria.ACCURACY_HIGH
+                verticalAccuracy = Criteria.ACCURACY_HIGH
+            }
+        } catch (ex: SecurityException) {
+            Log.d("LocationManagerProvider", "Security Exception, no location available")
+        }
+    }
+*/
     private fun locationProvider(): String {
         return if (isGPSEnabled()) {
             LocationManager.GPS_PROVIDER
@@ -65,6 +75,8 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
             LocationManager.NETWORK_PROVIDER
         }
     }
+*/
+
 
     fun isProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -76,7 +88,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): String? {
-        locationManager.getLastKnownLocation(locationProvider())?.let {
+        locationManager.getLastKnownLocation(bestProvider)?.let {
             try {
                 Log.d("send-location-testing","LastKnownLocation: lat: ${it.latitude}, long: ${it.longitude} ")
                 val feed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
@@ -100,7 +112,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
                 dataLayer.getFeeds().let {
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
                         hubConnection?.invoke("SendLocation", it1)
-                        Log.d("send-location-testing","Send locations from DB: $location")
+                        Log.d("send-location-testing","Send locations from DB: $it1")
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }
@@ -144,5 +156,23 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     fun isHubConnected(isConnected: Boolean) {
         this.isConnected = isConnected
+    }
+
+
+    // get high accuracy provider
+    private val bestProvider = locationManager.getBestProvider(createFineCriteria(),true)
+
+    /** this criteria needs high accuracy, high power, and cost  */
+    private fun createFineCriteria(): Criteria {
+        return Criteria().apply {
+            accuracy = Criteria.ACCURACY_FINE
+            isAltitudeRequired = false
+            isBearingRequired = false
+            isSpeedRequired = true
+            isCostAllowed = true
+            powerRequirement = Criteria.POWER_HIGH
+            horizontalAccuracy = Criteria.ACCURACY_HIGH
+            verticalAccuracy = Criteria.ACCURACY_HIGH
+        }
     }
 }
