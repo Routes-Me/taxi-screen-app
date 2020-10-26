@@ -20,16 +20,16 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isConnected = false
-    private val locationProvide:LocationProvider?=null
-    var mLastLocation: Location? = null
     private val minTime = 5000L
-    private val minDistance = 100F
+    private val minDistance = 27F
 
 
     fun initializeLocationManager() {
         try {
-            Log.d("send-location-testing ","Best Provider: ${bestProvider.name}")
-            locationManager.requestLocationUpdates(bestProvider.name,minTime,minDistance,this)
+           // Log.d("send-location-testing ","Best Provider: $bestProvider")
+           // locationManager.requestLocationUpdates(bestProvider,minTime,minDistance,this)
+            locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)
+
 
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
@@ -69,7 +69,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
-*/*/
+*/
     private fun locationProvider(): String {
         return if (isGPSEnabled()) {
             LocationManager.GPS_PROVIDER
@@ -77,6 +77,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
             LocationManager.NETWORK_PROVIDER
         }
     }
+*/
 
 
     fun isProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
@@ -89,7 +90,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): String? {
-        locationManager.getLastKnownLocation(bestProvider.name)?.let {
+        locationManager.getLastKnownLocation(bestProvider)?.let {
             try {
                 Log.d("send-location-testing","LastKnownLocation: lat: ${it.latitude}, long: ${it.longitude} ")
                 val feed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
@@ -105,7 +106,8 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     }
 
     override fun onLocationChanged(location: Location?) {
-        Log.d("send-location-testing","onLocationChanged: $location")
+        val provider = if (isGPSEnabled()) "GPS_PROVIDER" else if (isNetworkEnabled()) "NETWORK_PROVIDER" else "No Provider"
+        Log.d("send-location-testing","onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider")
         location?.let { location ->
             dataLayer.insertLocation(location)
             Log.d("send-location-testing","Insert location into DB: $location")
@@ -121,9 +123,15 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         }
     }
 
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
-    override fun onProviderEnabled(p0: String?) {}
-    override fun onProviderDisabled(p0: String?) {}
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+        Log.d("send-location-testing ","onStatusChanged ... provider: $p0, status: $p1, extras: $p2")
+    }
+    override fun onProviderEnabled(p0: String?) {
+        Log.d("send-location-testing ","onProviderEnabled ... Provider: $p0")
+    }
+    override fun onProviderDisabled(p0: String?) {
+        Log.d("send-location-testing ","onProviderDisabled ... Provider: $p0")
+    }
 
     private fun getFeedsJsonArray(feeds: List<LocationFeed>): JsonArray? {
         //val feeds = locationFeedsDao.getResults()
@@ -159,8 +167,9 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         this.isConnected = isConnected
     }
 
+
     // get high accuracy provider
-    private val bestProvider = locationManager.getProvider(locationManager.getBestProvider(createFineCriteria(),true))
+    private val bestProvider = locationManager.getBestProvider(createFineCriteria(),true)
 
     /** this criteria needs high accuracy, high power, and cost  */
     private fun createFineCriteria(): Criteria {
