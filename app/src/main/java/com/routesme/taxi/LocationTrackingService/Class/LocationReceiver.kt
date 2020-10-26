@@ -15,7 +15,6 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-
 class LocationReceiver(private val hubConnection: HubConnection?) : LocationListener {
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
@@ -23,62 +22,13 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     private val minTime = 5000L
     private val minDistance = 27F
 
-
     fun initializeLocationManager() {
         try {
-           // Log.d("send-location-testing ","Best Provider: $bestProvider")
-           // locationManager.requestLocationUpdates(bestProvider,minTime,minDistance,this)
             locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)
-
-
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
-/*
-    private val locationProvider: LocationProvider = locationManager.getProvider(locationManager.getBestProvider(getHighCriteria(),true))
-
-    private fun getHighCriteria():Criteria{
-        val criteria = Criteria()
-        criteria.accuracy = Criteria.ACCURACY_COARSE
-        criteria.powerRequirement = Criteria.POWER_HIGH
-        criteria.isAltitudeRequired = false
-        criteria.isSpeedRequired = true
-        criteria.isCostAllowed = true
-        criteria.isBearingRequired = false
-        criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
-        criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
-        return criteria
-    }
-
-    /*
-    fun initializeLocationManager() {
-        try {
-            locationManager.requestLocationUpdates(locationProvider(),minTime,minDistance,this)
-            criteria.apply {
-                accuracy = Criteria.ACCURACY_COARSE
-                powerRequirement = Criteria.POWER_HIGH
-                isAltitudeRequired = false
-                isSpeedRequired = true
-                isCostAllowed = true
-                isBearingRequired = false
-                horizontalAccuracy = Criteria.ACCURACY_HIGH
-                verticalAccuracy = Criteria.ACCURACY_HIGH
-            }
-        } catch (ex: SecurityException) {
-            Log.d("LocationManagerProvider", "Security Exception, no location available")
-        }
-    }
-*/
-    private fun locationProvider(): String {
-        return if (isGPSEnabled()) {
-            LocationManager.GPS_PROVIDER
-        } else {
-            LocationManager.NETWORK_PROVIDER
-        }
-    }
-*/
-
 
     fun isProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -167,11 +117,8 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         this.isConnected = isConnected
     }
 
-
-    // get high accuracy provider
     private val bestProvider = locationManager.getBestProvider(createFineCriteria(),true)
 
-    /** this criteria needs high accuracy, high power, and cost  */
     private fun createFineCriteria(): Criteria {
         return Criteria().apply {
             accuracy = Criteria.ACCURACY_FINE
