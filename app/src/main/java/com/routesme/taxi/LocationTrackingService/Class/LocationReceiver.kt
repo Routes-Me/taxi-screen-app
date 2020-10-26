@@ -26,8 +26,10 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     fun initializeLocationManager() {
         try {
-            Log.d("send-location-testing ","Best Provider: $bestProvider")
-            locationManager.requestLocationUpdates(bestProvider,minTime,minDistance,this)
+           // Log.d("send-location-testing ","Best Provider: $bestProvider")
+           // locationManager.requestLocationUpdates(bestProvider,minTime,minDistance,this)
+            locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)
+
 
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
@@ -104,7 +106,8 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     }
 
     override fun onLocationChanged(location: Location?) {
-        Log.d("send-location-testing","onLocationChanged: $location")
+        val provider = if (isGPSEnabled()) "GPS_PROVIDER" else if (isNetworkEnabled()) "NETWORK_PROVIDER" else "No Provider"
+        Log.d("send-location-testing","onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider")
         location?.let { location ->
             dataLayer.insertLocation(location)
             Log.d("send-location-testing","Insert location into DB: $location")
@@ -120,9 +123,15 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         }
     }
 
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
-    override fun onProviderEnabled(p0: String?) {}
-    override fun onProviderDisabled(p0: String?) {}
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+        Log.d("send-location-testing ","onStatusChanged ... provider: $p0, status: $p1, extras: $p2")
+    }
+    override fun onProviderEnabled(p0: String?) {
+        Log.d("send-location-testing ","onProviderEnabled ... Provider: $p0")
+    }
+    override fun onProviderDisabled(p0: String?) {
+        Log.d("send-location-testing ","onProviderDisabled ... Provider: $p0")
+    }
 
     private fun getFeedsJsonArray(feeds: List<LocationFeed>): JsonArray? {
         //val feeds = locationFeedsDao.getResults()
