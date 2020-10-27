@@ -66,12 +66,12 @@ class ContentRepository(val context: Context) {
         val video8 = Data("12","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F4.mp4?alt=media&token=69009b67-5230-4a76-8f16-f5d076e92b09")
         val data = mutableListOf<Data>().apply {
             add(image1)
-            add(video6)
+            add(video1)
             add(video7)
             add(image2)
             add(image3)
-            add(video5)
-            add(video8)
+            add(video2)
+            add(video3)
             add(image4)
         }
         return data
