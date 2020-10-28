@@ -103,13 +103,16 @@
 
             <TextView
                 android:id="@+id/titleTv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif-medium"
                 android:gravity="start"
                 android:maxLines="2"
                 android:textColor="?text_color"
                 android:textStyle="normal"
+                android:textSize="32sp"
+                app:autoSizeStepGranularity="3sp"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintBottom_toTopOf="@+id/subTitleTv"
                 app:layout_constraintEnd_toEndOf="@id/guidelineCenterVertical1"
                 app:layout_constraintHorizontal_bias="0.5"
@@ -119,18 +122,19 @@
 
             <TextView
                 android:id="@+id/subTitleTv"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:fontFamily="sans-serif"
                 android:gravity="start"
                 android:maxLines="1"
                 android:textColor="?text_color"
+                android:textSize="32sp"
                 android:textStyle="normal"
+                app:autoSizeTextType="uniform"
                 app:layout_constraintEnd_toEndOf="@id/guidelineCenterVertical1"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@id/titleTv"
-                app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"/>
+                app:layout_constraintTop_toBottomOf="@id/titleTv"/>
 
 
             <ImageView

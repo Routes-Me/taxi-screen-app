@@ -115,7 +115,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
             activityCover.visibility = View.INVISIBLE
-            //turnOnHotspot()
+            turnOnHotspot()
             addFragments()
             try {
                 connectivityManager.unregisterNetworkCallback(this)
