@@ -30,10 +30,9 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     fun initializeLocationManager() {
         try {
-           // locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)
-            getProviderName()?.let {
-                locationManager.requestLocationUpdates(it, minTime, minDistance, this)
-            }
+            locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)
+
+            // getProviderName()?.let { locationManager.requestLocationUpdates(it, minTime, minDistance, this) }
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
@@ -49,8 +48,8 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): String? {
-        val provider = LocationManager.NETWORK_PROVIDER
-        locationManager.getLastKnownLocation(provider)?.let {
+       // val provider = LocationManager.NETWORK_PROVIDER
+        locationManager.getLastKnownLocation(bestProvider)?.let {
             try {
                 Log.d("send-location-testing","LastKnownLocation: lat: ${it.latitude}, long: ${it.longitude} ")
                 val feed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
