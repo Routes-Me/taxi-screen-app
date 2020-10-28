@@ -2,9 +2,14 @@ package com.routesme.taxi.LocationTrackingService.Class
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.location.*
+import android.location.Criteria
+import android.location.Location
+import android.location.LocationListener
+import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
+import androidx.core.content.ContextCompat.getSystemService
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
@@ -23,62 +28,15 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     private val minTime = 5000L
     private val minDistance = 27F
 
-
     fun initializeLocationManager() {
         try {
-           // Log.d("send-location-testing ","Best Provider: $bestProvider")
-           // locationManager.requestLocationUpdates(bestProvider,minTime,minDistance,this)
             locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)
 
-
+            // getProviderName()?.let { locationManager.requestLocationUpdates(it, minTime, minDistance, this) }
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
-/*
-    private val locationProvider: LocationProvider = locationManager.getProvider(locationManager.getBestProvider(getHighCriteria(),true))
-
-    private fun getHighCriteria():Criteria{
-        val criteria = Criteria()
-        criteria.accuracy = Criteria.ACCURACY_COARSE
-        criteria.powerRequirement = Criteria.POWER_HIGH
-        criteria.isAltitudeRequired = false
-        criteria.isSpeedRequired = true
-        criteria.isCostAllowed = true
-        criteria.isBearingRequired = false
-        criteria.horizontalAccuracy = Criteria.ACCURACY_HIGH
-        criteria.verticalAccuracy = Criteria.ACCURACY_HIGH
-        return criteria
-    }
-
-    /*
-    fun initializeLocationManager() {
-        try {
-            locationManager.requestLocationUpdates(locationProvider(),minTime,minDistance,this)
-            criteria.apply {
-                accuracy = Criteria.ACCURACY_COARSE
-                powerRequirement = Criteria.POWER_HIGH
-                isAltitudeRequired = false
-                isSpeedRequired = true
-                isCostAllowed = true
-                isBearingRequired = false
-                horizontalAccuracy = Criteria.ACCURACY_HIGH
-                verticalAccuracy = Criteria.ACCURACY_HIGH
-            }
-        } catch (ex: SecurityException) {
-            Log.d("LocationManagerProvider", "Security Exception, no location available")
-        }
-    }
-*/
-    private fun locationProvider(): String {
-        return if (isGPSEnabled()) {
-            LocationManager.GPS_PROVIDER
-        } else {
-            LocationManager.NETWORK_PROVIDER
-        }
-    }
-*/
-
 
     fun isProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
@@ -90,6 +48,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): String? {
+       // val provider = LocationManager.NETWORK_PROVIDER
         locationManager.getLastKnownLocation(bestProvider)?.let {
             try {
                 Log.d("send-location-testing","LastKnownLocation: lat: ${it.latitude}, long: ${it.longitude} ")
@@ -107,15 +66,21 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
 
     override fun onLocationChanged(location: Location?) {
         val provider = if (isGPSEnabled()) "GPS_PROVIDER" else if (isNetworkEnabled()) "NETWORK_PROVIDER" else "No Provider"
-        Log.d("send-location-testing","onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider")
+        val messageOnLocationChanged = "onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider"
+        Log.d("send-location-testing",messageOnLocationChanged)
+        Toast.makeText(App.instance, messageOnLocationChanged,Toast.LENGTH_LONG).show()
         location?.let { location ->
             dataLayer.insertLocation(location)
-            Log.d("send-location-testing","Insert location into DB: $location")
+            val messageInsert = "Insert location into DB: $location"
+            Log.d("send-location-testing",messageInsert)
+            Toast.makeText(App.instance, messageInsert, Toast.LENGTH_LONG).show()
             if (isConnected) {
                 dataLayer.getFeeds().let {
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
                         hubConnection?.invoke("SendLocation", it1)
-                        Log.d("send-location-testing","Send locations from DB: $it1")
+                        val messageSend = "Send locations from DB: $it1"
+                        Log.d("send-location-testing",messageSend)
+                        Toast.makeText(App.instance, messageSend,Toast.LENGTH_LONG).show()
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }
@@ -124,13 +89,19 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     }
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
-        Log.d("send-location-testing ","onStatusChanged ... provider: $p0, status: $p1, extras: $p2")
+        val onStatusChangedMessage = "onStatusChanged ... provider: $p0, status: $p1, extras: $p2"
+        Log.d("send-location-testing ",onStatusChangedMessage)
+        Toast.makeText(App.instance, onStatusChangedMessage,Toast.LENGTH_LONG).show()
     }
     override fun onProviderEnabled(p0: String?) {
-        Log.d("send-location-testing ","onProviderEnabled ... Provider: $p0")
+        val onProviderEnabledMessage = "onProviderEnabled ... Provider: $p0"
+        Log.d("send-location-testing ",onProviderEnabledMessage)
+        Toast.makeText(App.instance, onProviderEnabledMessage,Toast.LENGTH_LONG).show()
     }
     override fun onProviderDisabled(p0: String?) {
-        Log.d("send-location-testing ","onProviderDisabled ... Provider: $p0")
+        val onProviderDisabledMessage = "onProviderDisabled ... Provider: $p0"
+        Log.d("send-location-testing ",onProviderDisabledMessage)
+        Toast.makeText(App.instance, onProviderDisabledMessage,Toast.LENGTH_LONG).show()
     }
 
     private fun getFeedsJsonArray(feeds: List<LocationFeed>): JsonArray? {
@@ -167,11 +138,8 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         this.isConnected = isConnected
     }
 
-
-    // get high accuracy provider
     private val bestProvider = locationManager.getBestProvider(createFineCriteria(),true)
 
-    /** this criteria needs high accuracy, high power, and cost  */
     private fun createFineCriteria(): Criteria {
         return Criteria().apply {
             accuracy = Criteria.ACCURACY_FINE
@@ -184,4 +152,21 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
             verticalAccuracy = Criteria.ACCURACY_HIGH
         }
     }
+
+    private fun getProviderName(): String? {
+        val criteria = Criteria().apply {
+            accuracy = Criteria.ACCURACY_FINE
+            isAltitudeRequired = false
+            isBearingRequired = false
+            isSpeedRequired = true
+            isCostAllowed = true
+            powerRequirement = Criteria.POWER_HIGH
+            horizontalAccuracy = Criteria.ACCURACY_HIGH
+            verticalAccuracy = Criteria.ACCURACY_HIGH
+        }
+        // Provide your criteria and flag enabledOnly that tells
+// LocationManager only to return active providers.
+        return locationManager.getBestProvider(criteria, true)
+    }
+
 }

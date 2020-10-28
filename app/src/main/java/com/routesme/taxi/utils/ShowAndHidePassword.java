@@ -18,14 +18,13 @@ import android.view.View;
 import android.widget.EditText;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
+import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import com.routesme.taxi.R;
 import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 
-public class ShowAndHidePassword extends androidx.appcompat.widget.AppCompatEditText {
-
-    private static final String TAG = ShowHidePasswordEditText.class.getSimpleName();
+public class ShowAndHidePassword extends AppCompatEditText {
     private boolean isShowingPassword = false;
     private Drawable drawableEnd;
     private boolean leftToRight = true;
@@ -73,7 +72,7 @@ public class ShowAndHidePassword extends androidx.appcompat.widget.AppCompatEdit
 
         }
 
-        leftToRight = isLeftToRight();
+        leftToRight = true; //isLeftToRight();
 
         //ensures by default this view is only line only
         setMaxLines(1);
@@ -124,7 +123,7 @@ public class ShowAndHidePassword extends androidx.appcompat.widget.AppCompatEdit
         // return !ViewUtils.isLayoutRtl(this);
 
         Configuration config = getResources().getConfiguration();
-        return !(config.getLayoutDirection() == View.LAYOUT_DIRECTION_LTR);
+        return !(config.getLayoutDirection() == View.LAYOUT_DIRECTION_RTL);
     }
 
     @Override

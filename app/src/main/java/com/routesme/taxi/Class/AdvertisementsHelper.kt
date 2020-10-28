@@ -126,6 +126,7 @@ class AdvertisementsHelper {
                         }
                         Player.STATE_ENDED -> {
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
+
                         }
                     }
                 }
