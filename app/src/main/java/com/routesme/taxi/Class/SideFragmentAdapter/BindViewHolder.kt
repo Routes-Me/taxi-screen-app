@@ -1,20 +1,29 @@
 package com.routesme.taxi.Class.SideFragmentAdapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.util.DisplayMetrics
+import android.util.Log
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.Class.QRCodeHelper
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.App
 
 private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.config)
 
-fun onBindEmptyVideoDiscount() {}
+fun onBindEmptyVideoDiscount() {
+
+
+}
 
 fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell, activity: FragmentActivity?) {
     holder as ViewHolderVideoDiscount
@@ -30,6 +39,13 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
                 }
             }
         }
+        val metrics = DisplayMetrics()
+        val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager?.defaultDisplay?.getMetrics(metrics)
+        var screenWidth = (metrics.widthPixels*65)/100
+        Log.d("Width",screenWidth.toString())
+        Log.d("Width",metrics.widthPixels.toString())
+        card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }
 }
 

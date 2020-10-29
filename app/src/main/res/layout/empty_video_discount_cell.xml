@@ -12,11 +12,12 @@
         app:cardBackgroundColor="?cardViewBackground_color"
         card_view:cardCornerRadius="8dp"
         android:layout_gravity="center"
+        app:layout_constraintDimensionRatio="6: 1.4"
         card_view:cardPreventCornerOverlap="false"
         card_view:cardUseCompatPadding="true"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintDimensionRatio="H,159 : 887">
+        >
 
         <ImageView
             android:id="@+id/image"

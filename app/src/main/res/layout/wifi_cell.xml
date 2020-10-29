@@ -8,7 +8,7 @@ android:layout_gravity="center">
 
 <androidx.cardview.widget.CardView
     android:layout_width="0dp"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:cardBackgroundColor="?cardViewBackground_color"
     app:cardCornerRadius="8dp"
     android:layout_gravity="center"
@@ -65,50 +65,43 @@ android:layout_gravity="center">
             tools:layout_constraintBottom_toTopOf="@id/nameTv"
             tools:layout_constraintVertical_chainStyle="spread_inside" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/nameTv"
             android:layout_width="0dp"
-            android:layout_height="38dp"
+            android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:gravity="center"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMinTextSize="23sp"
-            app:autoSizeMaxTextSize="100sp"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
+            android:textSize="@dimen/_10sdp"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"
             app:layout_constraintTop_toBottomOf="@+id/wifiIcon" />
 
-        <ImageView
+        <androidx.appcompat.widget.AppCompatImageView
             android:id="@+id/keyIcon"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:src="?key_icon"
-            android:gravity="center_vertical"
-            app:layout_constraintDimensionRatio="H, 1: 1"
             app:layout_constraintTop_toTopOf="@id/passwordTv"
             app:layout_constraintBottom_toBottomOf="@id/passwordTv"
             app:layout_constraintStart_toStartOf="@id/guidelineStart"/>
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/passwordTv"
             android:layout_width="0dp"
-            android:layout_height="30dp"
+            android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
             android:gravity="center_vertical"
             android:textColor="?text_color"
             android:textStyle="normal"
-            app:autoSizeMinTextSize="17sp"
-            app:autoSizeMaxTextSize="100sp"
-            app:autoSizeStepGranularity="1sp"
-            app:autoSizeTextType="uniform"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:includeFontPadding="false"
+            android:textSize="@dimen/_8sdp"
             app:layout_constraintStart_toEndOf="@+id/keyIcon"
             app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
             app:layout_constraintTop_toBottomOf="@+id/nameTv"
-            app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-            android:layout_marginTop="5dp"/>
+            />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
