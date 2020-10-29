@@ -1,6 +1,5 @@
 package com.routesme.taxi.LocationTrackingService.Class
 
-
 import android.app.*
 import android.content.Intent
 import android.net.Uri
@@ -121,8 +120,6 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onEventMessage(message: HubMessage) {
-       // Log.d("SignalR", "onEventMessage: ${message.target}\n" + "${Gson().toJson(message.arguments)}")
-
     }
 
     override fun onDisconnected() {
