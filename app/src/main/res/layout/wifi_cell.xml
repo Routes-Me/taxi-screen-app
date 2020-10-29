@@ -12,6 +12,7 @@ android:layout_gravity="center">
     app:cardBackgroundColor="?cardViewBackground_color"
     app:cardCornerRadius="8dp"
     android:layout_gravity="center"
+
     app:cardPreventCornerOverlap="false"
     app:cardUseCompatPadding="true"
     app:layout_constraintTop_toTopOf="parent"

@@ -7,6 +7,7 @@
 
     <androidx.cardview.widget.CardView
         xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/emptyCardView"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         app:cardBackgroundColor="?cardViewBackground_color"

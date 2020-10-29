@@ -52,6 +52,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
         qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
+
         checkConnection()
         super.onViewCreated(view, savedInstanceState)
     }

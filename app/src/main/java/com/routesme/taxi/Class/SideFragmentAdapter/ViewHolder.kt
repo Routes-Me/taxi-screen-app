@@ -15,6 +15,7 @@ import com.routesme.taxi.R
 
 class ViewHolderEmptyVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val image: ImageView = itemView.findViewById(R.id.image)
+    var empty_cardview = itemView.findViewById(R.id.emptyCardView) as CardView
 }
 
 class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {

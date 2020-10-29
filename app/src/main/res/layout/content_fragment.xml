@@ -14,7 +14,8 @@
         card_view:cardUseCompatPadding="true"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.85"
+        app:layout_constraintWidth_percent="0.865"
+       android:layout_marginRight="@dimen/_2sdp"
         card_view:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
         app:layout_constraintHorizontal_chainStyle="spread_inside">
