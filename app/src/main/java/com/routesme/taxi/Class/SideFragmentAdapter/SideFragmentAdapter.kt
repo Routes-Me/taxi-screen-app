@@ -29,7 +29,7 @@ class SideFragmentAdapter(private val list: List<ISideFragmentCell>, private val
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder.itemViewType) {
-        TYPE_EMPTY_VIDEO_DISCOUNT -> onBindEmptyVideoDiscount()
+        TYPE_EMPTY_VIDEO_DISCOUNT -> onBindEmptyVideoDiscount(holder,activity)
         TYPE_VIDEO_DISCOUNT ->  onBindVideoDiscount(holder, list[position], activity)
         TYPE_LARGE_EMPTY -> onBindLargeEmpty()
         TYPE_DATE -> onBindDate(holder, list[position])

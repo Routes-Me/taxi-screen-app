@@ -20,8 +20,15 @@ import com.routesme.taxi.uplevels.App
 
 private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.config)
 
-fun onBindEmptyVideoDiscount() {
-
+fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder,activity: FragmentActivity?) {
+    holder as ViewHolderEmptyVideoDiscount
+    holder.apply {
+        val metrics = DisplayMetrics()
+        val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager?.defaultDisplay?.getMetrics(metrics)
+        var screenWidth = (metrics.widthPixels*69)/100
+        empty_cardview.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
+    }
 
 }
 
@@ -42,8 +49,9 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager?.defaultDisplay?.getMetrics(metrics)
-        var screenWidth = (metrics.widthPixels*65)/100
+        var screenWidth = (metrics.widthPixels*69)/100
         Log.d("Width",screenWidth.toString())
+        Log.d("Height",metrics.heightPixels.toString())
         Log.d("Width",metrics.widthPixels.toString())
         card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }

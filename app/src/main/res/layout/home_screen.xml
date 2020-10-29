@@ -87,7 +87,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.961" />
+        app:layout_constraintGuide_percent="0.954" />
 
     <ImageView
         android:layout_width="0dp"
@@ -96,7 +96,7 @@
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
         app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
-        app:layout_constraintDimensionRatio="H,5 : 31"/>
+        app:layout_constraintDimensionRatio="H,7 : 28"/>
 
     <ImageView
         android:layout_width="0dp"
@@ -105,12 +105,12 @@
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineDividerAccessoryEnd"
-        app:layout_constraintDimensionRatio="H,55 : 81"/>
+        app:layout_constraintDimensionRatio="H,47 : 45"/>
 
     <ImageView
         android:id="@+id/openPatternBtn"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
         android:background="#00FFFFFF"
         android:visibility="visible"
         app:layout_constraintTop_toTopOf="parent"
