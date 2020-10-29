@@ -16,6 +16,7 @@ import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import java.util.*
 
+
 class SideMenuFragment : Fragment() {
     private lateinit var mView: View
     private lateinit var mContext: Context
@@ -33,6 +34,7 @@ class SideMenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
+
         setupRecyclerView()
         super.onViewCreated(view, savedInstanceState)
     }
