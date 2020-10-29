@@ -91,7 +91,7 @@
                 android:textStyle="normal"
                 android:visibility="invisible" />
 
-            <com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText
+            <com.routesme.taxi.utils.ShowAndHidePassword
                 android:id="@+id/password_et"
                 style="@style/AppTheme.CustomEditText"
                 android:layout_width="match_parent"
