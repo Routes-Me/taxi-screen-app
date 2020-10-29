@@ -26,7 +26,7 @@ class ContentRepository(val context: Context) {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
-                    contentResponse.value = ContentResponse(data = getData())
+                    contentResponse.value = ContentResponse(data = content.data)
                 } else{
                     if (response.errorBody() != null){
                         val objError = JSONObject(response.errorBody()!!.string())
@@ -45,31 +45,5 @@ class ContentRepository(val context: Context) {
             }
         })
         return contentResponse
-    }
-
-    private fun getData (): MutableList<Data> {
-        val qrCode1 = Promotion("30% off at place 2","Grab it now!","322792971","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fhuawei.svg?alt=media&token=ca5bd550-e6c1-4e18-a331-a568ae62360b")
-        val qrCode2 = Promotion("McDonald's offers a 30% discount, valid till 20/11/2020","Scan Now!","cskJhlOmpq","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fmac2.png?alt=media&token=b93837ce-a860-4092-bd2f-c1774b0a1eb5")
-        val qrCode3 = Promotion("Max offers a 70% discount, valid till 20/11/2020","Find it out in 360 Mall","bDoimLknqD","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fmax1.png?alt=media&token=beb4b2d6-a61e-4f3e-87c1-a627ae05ec62")
-        val qrCode4 = Promotion("SUBWAY offers a 60% discount, valid till 16/12/2020","Scan Now!","hfDdLkjmIk","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/Qrcodes%2Flogo%2Fsubway1.png?alt=media&token=c568a0a7-278a-4b37-8891-d319ba2cf2e7")
-        val image1 = Data("1","image","https://routesme.blob.core.windows.net/advertisements/compressedImageFile_637395578037226001.jpg",null)
-        val image2 = Data("2","image","https://routesme.blob.core.windows.net/advertisements/compressedImageFile_637395578768394718.jpg",qrCode1)
-      //  val image3 = Data("3","image","https://firebasestorage.googleapis.com/v0/b/kidsedu-69ac7.appspot.com/o/Routes%2Fbanner6.jpg?alt=media&token=f7a8403f-eb52-456a-a5c6-95dc5a04634a",null)
-      //  val image4 = Data("4","image","https://firebasestorage.googleapis.com/v0/b/usingfirebasefirestore.appspot.com/o/000000000%2Funnamed.jpg?alt=media&token=ff4adc90-1e6a-487b-8774-1eb3152c60d5",qrCode1)
-        val video1 = Data("5","video","https://routesme.blob.core.windows.net/advertisements/video3_637395574891417906.mp4",qrCode1)
-        val video2 = Data("6","video","https://routesme.blob.core.windows.net/advertisements/big%20sale%20sep%20video_637395570589580190.mp4",qrCode1)
-       // val video3 = Data("7","video","https://routesme.blob.core.windows.net/advertisements/video5_637395573866037496.mp4",null)
-       // val video4 = Data("8","video","https://firebasestorage.googleapis.com/v0/b/wdeniapp.appspot.com/o/000000%2FKuwait%20National%20Day.mp4?alt=media&token=fd4c77c5-1d5c-4aed-bb77-a6de9acb00b3",qrCode1)
-       // val video5 = Data("9","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F1.mp4?alt=media&token=a4033229-2e76-4d5e-9112-1b3f50f310b8",qrCode1)
-       // val video6 = Data("10","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F2.mp4?alt=media&token=b96f4f61-1f4a-4c22-9bb0-9024784199f9",qrCode1)
-       // val video7 = Data("11","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F3.mp4?alt=media&token=07a1263f-7117-4ee4-80f7-58373f697aac",qrCode1)
-       // val video8 = Data("12","video","https://firebasestorage.googleapis.com/v0/b/buy-me-a3db2.appspot.com/o/RoutesVideos%2F4.mp4?alt=media&token=69009b67-5230-4a76-8f16-f5d076e92b09",qrCode1)
-        val data = mutableListOf<Data>().apply {
-            add(image1)
-            add(image2)
-            add(video1)
-            add(video2)
-        }
-        return data
     }
 }
