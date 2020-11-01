@@ -3,6 +3,7 @@ package com.routesme.taxi.Class;
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.util.TypedValue;
 import androidx.annotation.IntRange;
 import androidx.core.content.ContextCompat;
@@ -24,6 +25,7 @@ public class QRCodeHelper {
     private int mMargin;
     private String mContent;
     private int mWidth, mHeight;
+    private static final int[] pixels = new int[0];
     private QRCodeHelper(Context context) {
         mHeight = (int) (context.getResources().getDisplayMetrics().heightPixels / 2.4);
         mWidth = (int) (context.getResources().getDisplayMetrics().widthPixels / 1.3);
@@ -70,10 +72,11 @@ public class QRCodeHelper {
         try {
             BitMatrix bitMatrix = new QRCodeWriter().encode(mContent, BarcodeFormat.QR_CODE, mWidth, mHeight, hintsMap);
             int[] pixels = new int[mWidth * mHeight];
+            Log.d("Pixel 1",String.valueOf(mWidth));
+            Log.d("Pixel 2",String.valueOf(mHeight));
             for (int i = 0; i < mHeight; i++) {
                 for (int j = 0; j < mWidth; j++) {
                     if (bitMatrix.get(j, i)) {
-
                         TypedValue outValue = new TypedValue();
                         activity.getTheme().resolveAttribute(R.attr.text_color, outValue, true);
                         pixels[i * mWidth + j] = ContextCompat.getColor(App.Companion.getInstance(),outValue.resourceId);

@@ -7,6 +7,7 @@ import android.net.Network
 import android.net.NetworkRequest
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import com.routesme.taxi.Class.*
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.IModeChanging
@@ -43,13 +44,18 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        registerNetworkCallback(true)
+        //registerNetworkCallback(true)
     }
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         registerNetworkCallback(false)
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        super.onStart()
+        registerNetworkCallback(true)
     }
 
     private fun addFragments() {
@@ -109,11 +115,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
 
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
-            activityCover.visibility = View.INVISIBLE
+            //
             turnOnHotspot()
             addFragments()
             try {
-                connectivityManager.unregisterNetworkCallback(this)
+                this@HomeActivity.runOnUiThread(java.lang.Runnable {
+                    activityCover.visibility = View.GONE
+                })
+                //connectivityManager.unregisterNetworkCallback(this)
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
@@ -121,8 +130,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
 
         override fun onLost(network: Network?) {
 
+            try {
+                this@HomeActivity.runOnUiThread(java.lang.Runnable {
+                    activityCover.visibility = View.VISIBLE
+                })
+                //connectivityManager.unregisterNetworkCallback(this)
+            } catch (e: IllegalArgumentException) {
+                e.printStackTrace()
+            }
+
         }
+
     }
+
+
 
     private fun registerNetworkCallback(register: Boolean) {
         if (register) {
@@ -139,4 +160,5 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
             }
         }
     }
+
 }
