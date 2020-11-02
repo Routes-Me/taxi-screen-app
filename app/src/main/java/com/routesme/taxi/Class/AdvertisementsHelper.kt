@@ -88,7 +88,7 @@ class AdvertisementsHelper {
 
     fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
         progressbarHandler = Handler()
-
+        //Log.d("")
         player = initPlayer(context, videos, playerView, progressBar)
         player?.apply {
             prepare()

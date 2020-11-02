@@ -106,6 +106,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
+
             if (it != null) {
                 if (it.isSuccess) {
                     isDataFetched = true
