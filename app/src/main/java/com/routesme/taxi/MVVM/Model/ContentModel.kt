@@ -13,10 +13,24 @@ class ContentResponse(data: List<Data>? = null, val mResponseErrors: ResponseErr
     init {
         if (!data.isNullOrEmpty()){
             for (d in data){
+
                 when(d.type){
                     ContentType.Image.value -> imageList.add(d)
                     else -> videoList.add(d)
                 }
+
+/*
+                if (d.url != null){
+                    if (d.url.contains(".")) {
+                        val extension: String = d.url.substring(d.url.lastIndexOf("."))
+                        if (extension == ".mp4"){
+                            videoList.add(d)
+                        }else if (extension == ".jpg"){
+                            imageList.add(d)
+                        }
+                    }
+                }
+*/
             }
         }
     }

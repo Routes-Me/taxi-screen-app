@@ -3,9 +3,11 @@ package com.routesme.taxi.MVVM.View.fragment
 import android.content.Context
 import android.content.IntentFilter
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -23,7 +25,6 @@ import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import java.io.IOException
 
-
 class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverListener,SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
@@ -31,6 +32,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     private lateinit var mView: View
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var isDataFetched = false
+    private var dialog: SpotsDialog? = null
 
     override fun onAttach(context: Context) {
         mContext = context
@@ -80,6 +82,8 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
 
     override fun onNetworkConnectionChanged(isConnected: Boolean) {
         if (isConnected && !isDataFetched) {
+            dialog = SpotsDialog.Builder().setContext(mContext).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build() as SpotsDialog?
+            dialog?.show()
             fetchContent()
             connectivityReceiverRegistering(false)
         }
@@ -101,12 +105,10 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     }
 
     private fun fetchContent(){
-        val dialog = SpotsDialog.Builder().setContext(mContext).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
-        dialog?.show()
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
-
+            Log.d("fetchContent-dialog","dialog")
             if (it != null) {
                 if (it.isSuccess) {
                     isDataFetched = true
@@ -117,7 +119,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
                         return@Observer
                     }else{
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
-                        if (!videos.isNullOrEmpty()) {  AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)}
+                          AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)
                     }
 
                 } else {
