@@ -20,13 +20,13 @@ import com.routesme.taxi.uplevels.App
 
 private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.config)
 
-fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder,activity: FragmentActivity?) {
+fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: FragmentActivity?) {
     holder as ViewHolderEmptyVideoDiscount
     holder.apply {
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager?.defaultDisplay?.getMetrics(metrics)
-        var screenWidth = (metrics.widthPixels*69)/100
+        var screenWidth = (metrics.widthPixels * 69) / 100
         empty_cardview.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }
 
@@ -41,7 +41,8 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
             if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = qrCode.subtitle
             if (!qrCode.promotionId.isNullOrEmpty()) {
-                generateQrCode(qrCode.promotionId,activity).let {
+                val promotionType = if (qrCode.redirectLink != null) PromotionType.Links else PromotionType.Promotions
+                generateQrCode(promotionType, qrCode.promotionId, activity).let {
                     qrCodeImage.setImageBitmap(it)
                 }
             }
@@ -49,10 +50,10 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager?.defaultDisplay?.getMetrics(metrics)
-        var screenWidth = (metrics.widthPixels*69)/100
-        Log.d("Width",screenWidth.toString())
-        Log.d("Height",metrics.heightPixels.toString())
-        Log.d("Width",metrics.widthPixels.toString())
+        var screenWidth = (metrics.widthPixels * 69) / 100
+        Log.d("Width", screenWidth.toString())
+        Log.d("Height", metrics.heightPixels.toString())
+        Log.d("Width", metrics.widthPixels.toString())
         card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }
 }
@@ -83,7 +84,8 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
         val qrCode = cell.promotion
         if (qrCode != null) {
             if (!qrCode.promotionId.isNullOrEmpty()) {
-                generateQrCode(qrCode.promotionId, activity).let {
+                val promotionType = if (qrCode.redirectLink != null) PromotionType.Links else PromotionType.Promotions
+                generateQrCode(promotionType, qrCode.promotionId, activity).let {
                     qrCodeImage.setImageBitmap(it)
                 }
 
@@ -92,25 +94,29 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     }
 }
 
-private fun generateQrCode(promotionId: String?, activity: FragmentActivity?): Bitmap {
+private fun generateQrCode(promotionType: PromotionType, promotionId: String?, activity: FragmentActivity?): Bitmap {
+    val promotionUrl = getPromotionUrl(promotionType, promotionId)
+    Log.d("Promotion",promotionUrl)
     return qrCodeGenerator
             .setActivity(activity)
-            .setContent(getPromotionUrl(promotionId))
+            .setContent(promotionUrl)
             .qrcOde
 }
 
-fun getPromotionUrl(promotionId: String?): String? {
+fun getPromotionUrl(promotionType: PromotionType, promotionId: String?): String {
     val builder = Uri.Builder()
-    builder.scheme("https")
+    builder.scheme("http")
             .authority(UserAppBaseUrl)
-            .appendPath("promotions")
+            .appendPath(promotionType.value)
             .appendPath(promotionId)
-  return builder.build().toString()
+    return builder.build().toString()
 }
 
 private val qrCodeGenerator = QRCodeHelper
         .newInstance(App.instance)
-        .setWidthAndHeight(180,180)
+        .setWidthAndHeight(180, 180)
         .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
         .setMargin(2)
+
+enum class PromotionType(val value: String) { Links("links"), Promotions("promotions") }
 
