@@ -49,8 +49,17 @@ class AdvertisementsHelper {
 
         private fun initializeVideoCaching(): SimpleCache {
             val maxMemory = Runtime.getRuntime().maxMemory()
+            val freeMemory = Runtime.getRuntime().freeMemory()
+            val totalMemory = Runtime.getRuntime().totalMemory()
+            val used = totalMemory -freeMemory
+            val free = maxMemory - used
+
+            Log.d("memory-size","maxMemory: $maxMemory")
+            Log.d("memory-size","freeMemory: $freeMemory")
+            Log.d("memory-size","totalMemory: $totalMemory")
             //val exoPlayerCacheSize: Long = 90 * 1024 * 1024
-            val exoPlayerCacheSize: Long = maxMemory/5
+            val exoPlayerCacheSize: Long = free/5
+            Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
 

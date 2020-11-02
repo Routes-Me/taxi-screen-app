@@ -105,7 +105,7 @@ fun getPromotionUrl(promotionId: String?): String? {
             .authority(UserAppBaseUrl)
             .appendPath("promotions")
             .appendPath(promotionId)
-    return builder.build().toString()
+  return builder.build().toString()
 }
 
 private val qrCodeGenerator = QRCodeHelper
