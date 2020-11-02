@@ -4,11 +4,16 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.net.Uri
+import android.text.*
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
@@ -32,24 +37,22 @@ fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: Fragment
 
 }
 
+@SuppressLint("SetTextI18n")
 fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell, activity: FragmentActivity?) {
     holder as ViewHolderVideoDiscount
     cell as VideoDiscountCell
     holder.apply {
-        val qrCode = cell.promotion
-        if (qrCode != null) {
-            if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
-            if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = "${qrCode.subtitle}, Use Code ${qrCode.promotionId}"
-            if (!qrCode.promotionId.isNullOrEmpty() && !qrCode.type.isNullOrEmpty()) {
-               // val promotionType = if (qrCode.type != null) PromotionType.Links else PromotionType.Promotions
-
-                val promotionType = when(qrCode.type){
+        val promotion = cell.promotion
+        if (promotion != null) {
+            if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
+            subTitle.text =  getSubtitle(promotion.subtitle, promotion.promotionId)
+            if (!promotion.promotionId.isNullOrEmpty() && !promotion.type.isNullOrEmpty()) {
+                val promotionType = when(promotion.type){
                     PromotionType.Links.value -> PromotionType.Links
                     PromotionType.Places.value -> PromotionType.Places
                     else -> PromotionType.Promotions
                 }
-
-                generateQrCode(promotionType, qrCode.promotionId, activity).let {
+                generateQrCode(promotionType, promotion.promotionId, activity).let {
                     qrCodeImage.setImageBitmap(it)
                 }
             }
@@ -62,6 +65,17 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         Log.d("Height", metrics.heightPixels.toString())
         Log.d("Width", metrics.widthPixels.toString())
         card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
+    }
+}
+
+fun getSubtitle(subtitle: String?, promotionId: String?): SpannedString {
+    return buildSpannedString {
+        subtitle?.let { append(it) }
+        promotionId?.let {
+            if (!subtitle.isNullOrEmpty())  append(", ")
+            bold{ color(ContextCompat.getColor(App.instance, R.color.routes_color)) { append("Use code ") } }
+            append(it)
+        }
     }
 }
 
@@ -88,18 +102,15 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     holder as ViewHolderBannerDiscount
     cell as BannerDiscountCell
     holder.apply {
-        val qrCode = cell.promotion
-        if (qrCode != null) {
-            if (!qrCode.promotionId.isNullOrEmpty() && !qrCode.type.isNullOrEmpty()) {
-               // val promotionType = if (qrCode.redirectLink != null) PromotionType.Links else PromotionType.Promotions
-
-                val promotionType = when(qrCode.type){
+        val promotion = cell.promotion
+        if (promotion != null) {
+            if (!promotion.promotionId.isNullOrEmpty() && !promotion.type.isNullOrEmpty()) {
+                val promotionType = when(promotion.type){
                     PromotionType.Links.value -> PromotionType.Links
                     PromotionType.Places.value -> PromotionType.Places
                     else -> PromotionType.Promotions
                 }
-
-                generateQrCode(promotionType, qrCode.promotionId, activity).let {
+                generateQrCode(promotionType, promotion.promotionId, activity).let {
                     qrCodeImage.setImageBitmap(it)
                 }
 
