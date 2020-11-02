@@ -25,8 +25,8 @@ fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: Fragment
     holder.apply {
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager?.defaultDisplay?.getMetrics(metrics)
-        var screenWidth = (metrics.widthPixels * 69) / 100
+        windowManager.defaultDisplay?.getMetrics(metrics)
+        val screenWidth = (metrics.widthPixels * 69) / 100
         empty_cardview.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }
 
@@ -39,9 +39,16 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         val qrCode = cell.promotion
         if (qrCode != null) {
             if (!qrCode.title.isNullOrEmpty()) title.text = qrCode.title
-            if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = qrCode.subtitle
-            if (!qrCode.promotionId.isNullOrEmpty()) {
-                val promotionType = if (qrCode.redirectLink != null) PromotionType.Links else PromotionType.Promotions
+            if (!qrCode.subtitle.isNullOrEmpty()) subTitle.text = "${qrCode.subtitle}, Use Code ${qrCode.promotionId}"
+            if (!qrCode.promotionId.isNullOrEmpty() && !qrCode.type.isNullOrEmpty()) {
+               // val promotionType = if (qrCode.type != null) PromotionType.Links else PromotionType.Promotions
+
+                val promotionType = when(qrCode.type){
+                    PromotionType.Links.value -> PromotionType.Links
+                    PromotionType.Places.value -> PromotionType.Places
+                    else -> PromotionType.Promotions
+                }
+
                 generateQrCode(promotionType, qrCode.promotionId, activity).let {
                     qrCodeImage.setImageBitmap(it)
                 }
@@ -49,8 +56,8 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         }
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager?.defaultDisplay?.getMetrics(metrics)
-        var screenWidth = (metrics.widthPixels * 69) / 100
+        windowManager.defaultDisplay?.getMetrics(metrics)
+        val screenWidth = (metrics.widthPixels * 69) / 100
         Log.d("Width", screenWidth.toString())
         Log.d("Height", metrics.heightPixels.toString())
         Log.d("Width", metrics.widthPixels.toString())
@@ -83,8 +90,15 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     holder.apply {
         val qrCode = cell.promotion
         if (qrCode != null) {
-            if (!qrCode.promotionId.isNullOrEmpty()) {
-                val promotionType = if (qrCode.redirectLink != null) PromotionType.Links else PromotionType.Promotions
+            if (!qrCode.promotionId.isNullOrEmpty() && !qrCode.type.isNullOrEmpty()) {
+               // val promotionType = if (qrCode.redirectLink != null) PromotionType.Links else PromotionType.Promotions
+
+                val promotionType = when(qrCode.type){
+                    PromotionType.Links.value -> PromotionType.Links
+                    PromotionType.Places.value -> PromotionType.Places
+                    else -> PromotionType.Promotions
+                }
+
                 generateQrCode(promotionType, qrCode.promotionId, activity).let {
                     qrCodeImage.setImageBitmap(it)
                 }
@@ -118,5 +132,5 @@ private val qrCodeGenerator = QRCodeHelper
         .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
         .setMargin(2)
 
-enum class PromotionType(val value: String) { Links("links"), Promotions("promotions") }
+enum class PromotionType(val value: String) { Links("links"), Places("places") , Promotions("promotions") }
 
