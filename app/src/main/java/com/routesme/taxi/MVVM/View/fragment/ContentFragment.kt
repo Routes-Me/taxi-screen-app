@@ -121,7 +121,6 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
                           AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)
                     }
-
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }

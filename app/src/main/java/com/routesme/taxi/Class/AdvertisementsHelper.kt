@@ -5,6 +5,7 @@ import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.annotation.Nullable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -122,8 +123,14 @@ class AdvertisementsHelper {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
+
+                            Log.d("Video State","IDLE")
+                            player?.pause()
+
                         }
                         Player.STATE_BUFFERING -> {
+
+                            Log.d("Video State","Buffering")
                         }
                         Player.STATE_READY -> {
                             val currentMediaItem = playerView.player?.currentMediaItem
@@ -132,8 +139,11 @@ class AdvertisementsHelper {
                                 qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
                                 progressbarHandler?.post(progressbarRunnable)
                             }
+                            Log.d("Video State","READY")
                         }
                         Player.STATE_ENDED -> {
+
+                            Log.d("Video State","ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
 
                         }
