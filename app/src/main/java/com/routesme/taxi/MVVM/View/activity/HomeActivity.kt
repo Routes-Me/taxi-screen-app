@@ -116,13 +116,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
                     activityCover.visibility = View.GONE
                 })
-                //connectivityManager.unregisterNetworkCallback(this)
+                connectivityManager.unregisterNetworkCallback(this)
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
         }
 
         override fun onLost(network: Network?) {
+            /*
               removeFragments()
             try {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
@@ -132,6 +133,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
+            */
         }
     }
 
