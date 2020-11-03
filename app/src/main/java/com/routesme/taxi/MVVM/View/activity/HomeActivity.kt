@@ -104,7 +104,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
                     activityCover.visibility = View.GONE
                 })
-                //connectivityManager.unregisterNetworkCallback(this)
+                connectivityManager.unregisterNetworkCallback(this)
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }

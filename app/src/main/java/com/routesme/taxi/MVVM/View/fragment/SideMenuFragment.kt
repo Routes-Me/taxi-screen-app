@@ -89,7 +89,7 @@ class SideMenuFragment : Fragment() {
 
     fun changeBannerQRCode(promotion: Promotion?) {
         val position = 4
-        sideFragmentCells[position] = if (promotion != null && !promotion.logoUrl.isNullOrEmpty()) BannerDiscountCell(promotion) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
+        sideFragmentCells[position] = if (promotion != null) BannerDiscountCell(promotion) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
         sideFragmentAdapter.apply {
             notifyItemChanged(position)
             notifyItemRemoved(position)

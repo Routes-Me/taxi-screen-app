@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <color name="routes_color">#3577c2</color>
     <color name="colorPrimary">#0778B7</color>
     <color name="colorPrimaryDark">#16549D</color>
     <color name="colorAccent">#00A7DD</color>
