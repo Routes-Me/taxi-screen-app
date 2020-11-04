@@ -1,26 +1,47 @@
 package com.routesme.taxi.MVVM.View.activity
 
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
+import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
-import android.widget.Toast
-import com.routesme.taxi.Class.*
+import com.google.android.exoplayer2.DefaultLoadControl
+import com.google.android.exoplayer2.DefaultRenderersFactory
+import com.google.android.exoplayer2.ExoPlayerFactory
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DataSpec
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
+import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.routesme.taxi.Class.AdvertisementsHelper
+import com.routesme.taxi.Class.DisplayManager
+import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.QRCodeCallback
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
+import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.home_screen.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 
 class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     private val helper = HomeScreenHelper(this)
     private var isHotspotOn = false
     private var pressedTime: Long = 0
+    private lateinit var mView: View
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
@@ -48,28 +69,30 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     }
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-        removeFragments()
         super.onDestroy()
     }
 
     override fun onStart() {
         registerNetworkCallback(true)
+        EventBus.getDefault().register(this)
         super.onStart()
     }
 
     override fun onStop() {
         registerNetworkCallback(false)
+        EventBus.getDefault().unregister(this)
         super.onStop()
     }
     private fun addFragments() {
+
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
         val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
-        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
-        sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
+        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
+        sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
     }
     override fun onPermissionsOkay() {}
     private fun turnOnHotspot() {
@@ -112,6 +135,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
             turnOnHotspot()
             try {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
+
                     activityCover.visibility = View.GONE
                 })
 
@@ -137,5 +161,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
                 e.printStackTrace()
             }
         }
+    }
+
+    @Subscribe()
+    fun onEvent(demoVideo: DemoVideo){
+        Log.d("Tag","HELLO")
+
+        try {
+            this@HomeActivity.runOnUiThread(java.lang.Runnable {
+                activityCover.visibility = View.VISIBLE
+                //AdvertisementsHelper.instance.release()
+            })
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
+
     }
 }

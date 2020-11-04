@@ -8,6 +8,9 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
+import com.google.android.gms.common.ConnectionResult
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationSettingsResult
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
@@ -18,13 +21,15 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 
-class LocationReceiver(private val hubConnection: HubConnection?) : LocationListener {
+class LocationReceiver(private val hubConnection: HubConnection?) : LocationListener{
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isConnected = false
     private val minTime = 5000L
     private val minDistance = 27F
-
+    private val mLocationRequest: LocationRequest? = null
+    private val mLastLocation: Location? = null
+    private val isFreshLocation = true
     fun initializeLocationManager() {
         try {
             locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this,null)

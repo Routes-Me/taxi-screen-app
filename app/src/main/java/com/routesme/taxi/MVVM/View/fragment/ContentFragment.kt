@@ -71,7 +71,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private val myReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val status = getConnectivityStatusString(context)
-            Log.d("Status",status)
             if (status != "No" && !isDataFetched) {
                 fetchContent()
             }

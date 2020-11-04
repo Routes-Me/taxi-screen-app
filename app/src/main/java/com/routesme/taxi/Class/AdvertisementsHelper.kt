@@ -9,23 +9,28 @@ import androidx.annotation.Nullable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.source.ExtractorMediaSource
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.StyledPlayerView
+import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.Model.QRCodeCallback
+import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+import org.greenrobot.eventbus.EventBus
 
 
 class AdvertisementsHelper {
@@ -36,6 +41,7 @@ class AdvertisementsHelper {
     private var displayImageRunnable: Runnable? = null
     private var progressbarHandler: Handler? = null
     private var progressbarRunnable: Runnable? = null
+    private var count = 0;
     private var TAG="ExoPlayer Error"
 
     companion object {
@@ -43,7 +49,6 @@ class AdvertisementsHelper {
         val instance = AdvertisementsHelper()
         val glide = Glide.with(App.instance)
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
-
         private val simpleCache = initializeVideoCaching()
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
         private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
@@ -125,26 +130,28 @@ class AdvertisementsHelper {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
 
-                            Log.d("Video State","IDLE")
                             player?.prepare()
 
                         }
                         Player.STATE_BUFFERING -> {
+                            count++
+                            if(count >= 5 ){
+                                count = 0
+                                EventBus.getDefault().post(DemoVideo(true))
+                            }
 
-                            Log.d("Video State","Buffering")
                         }
                         Player.STATE_READY -> {
+                            count = 0
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
                                 qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
                                 progressbarHandler?.post(progressbarRunnable)
                             }
-                            Log.d("Video State","READY")
                         }
                         Player.STATE_ENDED -> {
 
-                            Log.d("Video State","ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
 
                         }
@@ -167,6 +174,8 @@ class AdvertisementsHelper {
         return player
     }
 
+
+
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
         progressbarRunnable = object : Runnable {
             override fun run() {
@@ -184,4 +193,7 @@ class AdvertisementsHelper {
         progressbarHandler?.removeCallbacks(progressbarRunnable)
         player?.release()
     }
+
+
+
 }
