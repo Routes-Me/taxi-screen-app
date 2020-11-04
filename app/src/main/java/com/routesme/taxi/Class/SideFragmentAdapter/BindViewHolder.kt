@@ -24,6 +24,7 @@ import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 
 private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.config)
+private val UserAppBaseUrl_LinkType = Helper.getConfigValue("UserAppBaseUrl_LinkType", R.raw.config)
 
 fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: FragmentActivity?) {
     holder as ViewHolderEmptyVideoDiscount
@@ -45,9 +46,9 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         val promotion = cell.promotion
         if (promotion != null) {
             if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
-            subTitle.text =  getSubtitle(promotion.subtitle, promotion.promotionId)
+            subTitle.text = getSubtitle(promotion.subtitle, promotion.promotionId)
             if (!promotion.promotionId.isNullOrEmpty() && !promotion.type.isNullOrEmpty()) {
-                val promotionType = when(promotion.type){
+                val promotionType = when (promotion.type) {
                     PromotionType.Links.value -> PromotionType.Links
                     PromotionType.Places.value -> PromotionType.Places
                     else -> PromotionType.Promotions
@@ -72,8 +73,8 @@ fun getSubtitle(subtitle: String?, promotionId: String?): SpannedString {
     return buildSpannedString {
         subtitle?.let { append(it) }
         promotionId?.let {
-            if (!subtitle.isNullOrEmpty())  append(", ")
-            bold{ color(ContextCompat.getColor(App.instance, R.color.routes_color)) { append("Use code ") } }
+            if (!subtitle.isNullOrEmpty()) append(", ")
+            bold { color(ContextCompat.getColor(App.instance, R.color.routes_color)) { append("Use code ") } }
             append(it)
         }
     }
@@ -105,7 +106,7 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
         val promotion = cell.promotion
         if (promotion != null) {
             if (!promotion.promotionId.isNullOrEmpty() && !promotion.type.isNullOrEmpty()) {
-                val promotionType = when(promotion.type){
+                val promotionType = when (promotion.type) {
                     PromotionType.Links.value -> PromotionType.Links
                     PromotionType.Places.value -> PromotionType.Places
                     else -> PromotionType.Promotions
@@ -120,12 +121,16 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
 }
 
 private fun generateQrCode(promotionType: PromotionType, promotionId: String?, activity: FragmentActivity?): Bitmap {
-    val promotionUrl = getPromotionUrl(promotionType, promotionId)
-    Log.d("Promotion",promotionUrl)
+    val promotionUrl = when (promotionType) {
+        PromotionType.Links -> getPromotionUrl_LinkType(promotionId)
+        else -> getPromotionUrl(promotionType, promotionId)
+    }
+    Log.d("Promotion", promotionUrl)
     return qrCodeGenerator
             .setActivity(activity)
             .setContent(promotionUrl)
             .qrcOde
+
 }
 
 fun getPromotionUrl(promotionType: PromotionType, promotionId: String?): String {
@@ -137,11 +142,19 @@ fun getPromotionUrl(promotionType: PromotionType, promotionId: String?): String 
     return builder.build().toString()
 }
 
+fun getPromotionUrl_LinkType(promotionId: String?): String {
+    val builder = Uri.Builder()
+    builder.scheme("http")
+            .authority(UserAppBaseUrl_LinkType)
+            .appendPath(promotionId)
+    return builder.build().toString()
+}
+
 private val qrCodeGenerator = QRCodeHelper
         .newInstance(App.instance)
         .setWidthAndHeight(180, 180)
         .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
         .setMargin(2)
 
-enum class PromotionType(val value: String) { Links("links"), Places("places") , Promotions("promotions") }
+enum class PromotionType(val value: String) { Links("links"), Places("places"), Promotions("promotions") }
 
