@@ -6,7 +6,7 @@ class RegistrationResponse(deviceId: String? = null, val mResponseErrors: Respon
 
      var deviceId: String? = null
     init {
-        this.deviceId = "13"//deviceId
+        this.deviceId = "18"//deviceId
     }
 
     val isSuccess: Boolean
