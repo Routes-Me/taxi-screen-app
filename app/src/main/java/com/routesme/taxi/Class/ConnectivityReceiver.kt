@@ -3,14 +3,41 @@ package com.routesme.taxi.Class
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
-import android.net.ConnectivityManager
-import com.routesme.taxi.uplevels.App.Companion.instance
+import android.util.Log
 import java.util.*
 
 
 class ConnectivityReceiver: BroadcastReceiver()  {
 
-    private val connectivityStatus: Boolean
+    class NetworkObservable private constructor() : Observable() {
+        fun connectionChanged() {
+            setChanged()
+            notifyObservers()
+        }
+
+        companion object {
+            var instance: NetworkObservable? = null
+                get() {
+                    if (field == null) {
+                        field = NetworkObservable()
+                    }
+                    return field
+                }
+                private set
+        }
+    }
+
+    fun getObservable(): NetworkObservable? {
+        return NetworkObservable.instance
+    }
+
+    override fun onReceive(context: Context?, intent: Intent?) {
+
+        Log.d("NetworkChangeReceiver","Connection status changed");
+        //connectivityReceiverListener?.onNetworkConnectionChanged(getObservable()!!.connectionChanged();)
+        getObservable()!!.connectionChanged();
+    }
+    /*private val connectivityStatus: Boolean
         get () {
             val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val activeNetwork = cm.activeNetworkInfo
@@ -22,6 +49,7 @@ class ConnectivityReceiver: BroadcastReceiver()  {
     override fun onReceive(context: Context, intent: Intent) {
         this.context = context
         connectivityReceiverListener?.onNetworkConnectionChanged(connectivityStatus)
+        Log.d("Checking Network", connectivityStatus.toString())
 
     }
 
@@ -36,5 +64,5 @@ class ConnectivityReceiver: BroadcastReceiver()  {
                 val cm = Objects.requireNonNull(instance)!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
                 val activeNetwork = cm.activeNetworkInfo
                 return activeNetwork != null && activeNetwork.isConnected       }
-    }
+    }*/
 }

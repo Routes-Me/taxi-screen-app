@@ -5,11 +5,11 @@ import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.Nullable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.exoplayer2.ExoPlaybackException
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -23,8 +23,8 @@ import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.Model.QRCodeCallback
-import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 
 
@@ -36,6 +36,7 @@ class AdvertisementsHelper {
     private var displayImageRunnable: Runnable? = null
     private var progressbarHandler: Handler? = null
     private var progressbarRunnable: Runnable? = null
+    private var TAG="ExoPlayer Error"
 
     companion object {
         @get:Synchronized
@@ -54,7 +55,6 @@ class AdvertisementsHelper {
             val totalMemory = Runtime.getRuntime().totalMemory()
             val used = totalMemory -freeMemory
             val free = maxMemory - used
-
             Log.d("memory-size","maxMemory: $maxMemory")
             Log.d("memory-size","freeMemory: $freeMemory")
             Log.d("memory-size","totalMemory: $totalMemory")
@@ -98,11 +98,12 @@ class AdvertisementsHelper {
 
     fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
         progressbarHandler = Handler()
-        //Log.d("")
         player = initPlayer(context, videos, playerView, progressBar)
+        player?.playWhenReady
         player?.apply {
             prepare()
             play()
+
         }
     }
 
@@ -125,7 +126,7 @@ class AdvertisementsHelper {
                         Player.STATE_IDLE -> {
 
                             Log.d("Video State","IDLE")
-                            player?.pause()
+                            player?.prepare()
 
                         }
                         Player.STATE_BUFFERING -> {
@@ -149,6 +150,18 @@ class AdvertisementsHelper {
                         }
                     }
                 }
+
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    when (error.type) {
+                        ExoPlaybackException.TYPE_SOURCE -> Log.e(TAG, "TYPE_SOURCE: " + error.sourceException.message)
+
+                        ExoPlaybackException.TYPE_RENDERER -> Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
+
+                        ExoPlaybackException.TYPE_UNEXPECTED -> Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
+                    }
+                }
+
+
             })
         }
         return player
@@ -165,7 +178,6 @@ class AdvertisementsHelper {
         }
         return progressbarRunnable
     }
-
     fun release() {
         qrCodeCallback = null
         displayImageHandler?.removeCallbacks(displayImageRunnable)

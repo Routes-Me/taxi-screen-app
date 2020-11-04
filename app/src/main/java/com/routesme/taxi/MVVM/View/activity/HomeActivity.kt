@@ -39,15 +39,27 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         setContentView(R.layout.home_screen)
+
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        registerNetworkCallback(true)
+        addFragments()
+
     }
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-        registerNetworkCallback(false)
+        removeFragments()
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        registerNetworkCallback(true)
+        super.onStart()
+    }
+
+    override fun onStop() {
+        registerNetworkCallback(false)
+        super.onStop()
     }
     private fun addFragments() {
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
@@ -98,29 +110,17 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
             turnOnHotspot()
-            addFragments()
-            Toast.makeText(this@HomeActivity,"Network Available",Toast.LENGTH_LONG).show()
             try {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
                     activityCover.visibility = View.GONE
                 })
-                connectivityManager.unregisterNetworkCallback(this)
+
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
         }
         override fun onLost(network: Network?) {
-            /*
-              removeFragments()
-            try {
-                this@HomeActivity.runOnUiThread(java.lang.Runnable {
-                    activityCover.visibility = View.VISIBLE
-                })
-                //connectivityManager.unregisterNetworkCallback(this)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-            */
+
         }
     }
     private fun registerNetworkCallback(register: Boolean) {

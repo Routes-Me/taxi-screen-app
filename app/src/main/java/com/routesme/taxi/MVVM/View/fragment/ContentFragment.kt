@@ -1,17 +1,18 @@
 package com.routesme.taxi.MVVM.View.fragment
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
 import android.content.IntentFilter
+import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.ConnectivityReceiver
@@ -25,7 +26,8 @@ import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import java.io.IOException
 
-class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverListener,SimpleExoPlayer.VideoListener {
+
+class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
     private var qRCodeCallback: QRCodeCallback? = null
@@ -33,6 +35,10 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
+    var TYPE_WIFI = 1
+    var TYPE_MOBILE = 2
+    var TYPE_NOT_CONNECTED = 0
+    val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
 
     override fun onAttach(context: Context) {
         mContext = context
@@ -49,61 +55,88 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
         super.onDetach()
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.content_fragment, container, false)
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
+        val view : View = inflater.inflate(R.layout.content_fragment, container, false)
+        requireActivity().registerReceiver(myReceiver, intentFilter);
+        return view
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
         qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
-        checkConnection()
         super.onViewCreated(view, savedInstanceState)
+    }
+
+    private val myReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent) {
+            val status = getConnectivityStatusString(context)
+            Log.d("Status",status)
+            if (status != "No" && !isDataFetched) {
+                fetchContent()
+            }
+        }
+    }
+
+    fun getConnectivityStatusString(context: Context): String? {
+        val conn = getConnectivityStatus(context)
+        var status: String? = null
+        if (conn == TYPE_WIFI) {
+            status = "Wifi" //"Wifi enabled";
+        } else if (conn == TYPE_MOBILE) {
+            status = "Mobile" //"Mobile data enabled";
+        } else if (conn == TYPE_NOT_CONNECTED) {
+            status = "No" //"Not connected to Internet";
+        }
+        return status
+    }
+
+    fun getConnectivityStatus(context: Context): Int {
+        val cm = context
+                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val activeNetwork = cm.activeNetworkInfo
+        if (null != activeNetwork) {
+            if (activeNetwork.type == TYPE_WIFI) return TYPE_WIFI
+            if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) return TYPE_MOBILE
+        }
+        return TYPE_NOT_CONNECTED
     }
 
     override fun onDestroy() {
         AdvertisementsHelper.instance.release()
-        connectivityReceiverRegistering(false)
-        if (ConnectivityReceiver.connectivityReceiverListener != null)ConnectivityReceiver.connectivityReceiverListener = null
         super.onDestroy()
     }
 
-    private fun checkConnection() {
+    /*private fun checkConnection() {
         val isConnected = ConnectivityReceiver.isConnected
         if (isConnected) {
             fetchContent()
-        } else {
+        }/* else {
             networkListener()
-        }
-    }
+        }*/
+    }*/
 
-    private fun networkListener() {
+    /*private fun networkListener() {
         connectivityReceiver = ConnectivityReceiver()
-        connectivityReceiverRegistering(true)
+        //connectivityReceiverRegistering(true)
         ConnectivityReceiver.connectivityReceiverListener = this
-    }
-
-    override fun onNetworkConnectionChanged(isConnected: Boolean) {
-        if (isConnected && !isDataFetched) {
-            dialog = SpotsDialog.Builder().setContext(mContext).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build() as SpotsDialog?
-            dialog?.show()
-            fetchContent()
-            connectivityReceiverRegistering(false)
-        }
-    }
+    }*/
 
     private fun connectivityReceiverRegistering(register: Boolean) {
         try {
             if (register) {
-                val intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION").apply {
+                /*val intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION").apply {
                     addAction("android.net.conn.CONNECTIVITY_CHANGE")
-                }
-                connectivityReceiver?.let { LocalBroadcastManager.getInstance(mContext).registerReceiver(it, intentFilter) }
+                }*/
+                //connectivityReceiver?.let { activity.getInstance(mContext).registerReceiver(it, intentFilter) }
+                connectivityReceiver?.let { requireActivity().registerReceiver(it, intentFilter) }
             } else {
-                connectivityReceiver?.let { LocalBroadcastManager.getInstance(mContext).unregisterReceiver(it) }
+                connectivityReceiver?.let { requireActivity().unregisterReceiver(it) }
             }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
     }
-
     private fun fetchContent(){
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
@@ -121,6 +154,7 @@ class ContentFragment : Fragment(),  ConnectivityReceiver.ConnectivityReceiverLi
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
                           AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)
                     }
+
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
