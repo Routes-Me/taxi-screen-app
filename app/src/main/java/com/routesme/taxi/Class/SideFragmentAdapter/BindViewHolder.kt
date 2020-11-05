@@ -23,9 +23,6 @@ import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 
-private val UserAppBaseUrl = Helper.getConfigValue("UserAppBaseUrl", R.raw.config)
-private val UserAppBaseUrl_LinkType = Helper.getConfigValue("UserAppBaseUrl_LinkType", R.raw.config)
-
 fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: FragmentActivity?) {
     holder as ViewHolderEmptyVideoDiscount
     holder.apply {
@@ -44,20 +41,17 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     cell as VideoDiscountCell
     holder.apply {
         val promotion = cell.promotion
-        if (promotion != null) {
-            if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
-            subTitle.text = getSubtitle(promotion.subtitle, promotion.promotionId)
-            if (!promotion.promotionId.isNullOrEmpty() && !promotion.type.isNullOrEmpty()) {
-                val promotionType = when (promotion.type) {
-                    PromotionType.Links.value -> PromotionType.Links
-                    PromotionType.Places.value -> PromotionType.Places
-                    else -> PromotionType.Promotions
-                }
-                generateQrCode(promotionType, promotion.promotionId, activity).let {
-                    qrCodeImage.setImageBitmap(it)
+
+        promotion?.let {
+            it.link?.let {link ->
+                if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
+                subTitle.text = getSubtitle(promotion.subtitle, promotion.code)
+                generateQrCode(link, activity).let {bitmap ->
+                    qrCodeImage.setImageBitmap(bitmap)
                 }
             }
         }
+
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay?.getMetrics(metrics)
@@ -69,10 +63,10 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     }
 }
 
-fun getSubtitle(subtitle: String?, promotionId: String?): SpannedString {
+fun getSubtitle(subtitle: String?, code: String?): SpannedString {
     return buildSpannedString {
         subtitle?.let { append(it) }
-        promotionId?.let {
+        code?.let {
             if (!subtitle.isNullOrEmpty()) append(", ")
             bold { color(ContextCompat.getColor(App.instance, R.color.routes_color)) { append("Use code ") } }
             append(it)
@@ -104,50 +98,24 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     cell as BannerDiscountCell
     holder.apply {
         val promotion = cell.promotion
-        if (promotion != null) {
-            if (!promotion.promotionId.isNullOrEmpty() && !promotion.type.isNullOrEmpty()) {
-                val promotionType = when (promotion.type) {
-                    PromotionType.Links.value -> PromotionType.Links
-                    PromotionType.Places.value -> PromotionType.Places
-                    else -> PromotionType.Promotions
-                }
-                generateQrCode(promotionType, promotion.promotionId, activity).let {
-                    qrCodeImage.setImageBitmap(it)
-                }
 
+        promotion?.let {
+            it.link?.let {link ->
+                generateQrCode(link, activity).let {bitmap ->
+                    qrCodeImage.setImageBitmap(bitmap)
+                }
             }
         }
     }
 }
 
-private fun generateQrCode(promotionType: PromotionType, promotionId: String?, activity: FragmentActivity?): Bitmap {
-    val promotionUrl = when (promotionType) {
-        PromotionType.Links -> getPromotionUrl_LinkType(promotionId)
-        else -> getPromotionUrl(promotionType, promotionId)
-    }
-    Log.d("Promotion", promotionUrl)
+private fun generateQrCode(promotionLink: String, activity: FragmentActivity?): Bitmap {
+    Log.d("promotionLink", promotionLink)
     return qrCodeGenerator
             .setActivity(activity)
-            .setContent(promotionUrl)
+            .setContent(promotionLink)
             .qrcOde
 
-}
-
-fun getPromotionUrl(promotionType: PromotionType, promotionId: String?): String {
-    val builder = Uri.Builder()
-    builder.scheme("http")
-            .authority(UserAppBaseUrl)
-            .appendPath(promotionType.value)
-            .appendPath(promotionId)
-    return builder.build().toString()
-}
-
-fun getPromotionUrl_LinkType(promotionId: String?): String {
-    val builder = Uri.Builder()
-    builder.scheme("http")
-            .authority(UserAppBaseUrl_LinkType)
-            .appendPath(promotionId)
-    return builder.build().toString()
 }
 
 private val qrCodeGenerator = QRCodeHelper
