@@ -47,7 +47,7 @@ class SideMenuFragment : Fragment() {
     private fun setupRecyclerView() {
         val date = Date()
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
-            add(EmptyVideoDiscountCell(""))
+            add(EmptyVideoDiscountCell())
             add(LargeEmptyCell())
             add(DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date)))
             add(SmallEmptyCell())
@@ -79,7 +79,7 @@ class SideMenuFragment : Fragment() {
 
     fun changeVideoQRCode(promotion: Promotion?) {
         val position = 0
-        sideFragmentCells[position] = if (promotion != null) VideoDiscountCell(promotion) else EmptyVideoDiscountCell("")
+        sideFragmentCells[position] = if (promotion != null && promotion.isExist) VideoDiscountCell(promotion) else EmptyVideoDiscountCell()
         sideFragmentAdapter.apply {
             notifyItemChanged(position)
             notifyItemRemoved(position)
@@ -89,7 +89,7 @@ class SideMenuFragment : Fragment() {
 
     fun changeBannerQRCode(promotion: Promotion?) {
         val position = 4
-        sideFragmentCells[position] = if (promotion != null) BannerDiscountCell(promotion) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
+        sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(promotion) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
         sideFragmentAdapter.apply {
             notifyItemChanged(position)
             notifyItemRemoved(position)

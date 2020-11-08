@@ -174,8 +174,6 @@ class AdvertisementsHelper {
         return player
     }
 
-
-
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
         progressbarRunnable = object : Runnable {
             override fun run() {
@@ -193,7 +191,4 @@ class AdvertisementsHelper {
         progressbarHandler?.removeCallbacks(progressbarRunnable)
         player?.release()
     }
-
-
-
 }
