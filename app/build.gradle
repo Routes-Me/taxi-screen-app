@@ -11,8 +11,8 @@ android {
         applicationId "com.routesme.taxi"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 6
-        versionName "1.4"
+        versionCode 7
+        versionName "1.5"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
