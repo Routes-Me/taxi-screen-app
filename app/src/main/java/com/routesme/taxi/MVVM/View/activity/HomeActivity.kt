@@ -4,26 +4,14 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.MediaPlayer.OnPreparedListener
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DataSpec
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.RawResourceDataSource
-import com.routesme.taxi.Class.AdvertisementsHelper
+import android.widget.Toast
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
@@ -37,6 +25,7 @@ import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+
 
 class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     private val helper = HomeScreenHelper(this)
@@ -61,10 +50,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         setContentView(R.layout.home_screen)
-
+        initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
+        //generateCache()
         addFragments()
 
     }
@@ -80,6 +70,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     }
 
     override fun onStop() {
+
         registerNetworkCallback(false)
         EventBus.getDefault().unregister(this)
         super.onStop()
@@ -137,7 +128,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
             try {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
 
-                    activityCover.visibility = View.GONE
+                    if(activityVideoCover.visibility == View.VISIBLE){
+                        activityVideoCover.visibility = View.GONE
+                    }
+                    else  activityCover.visibility = View.GONE
+
                 })
 
             } catch (e: IllegalArgumentException) {
@@ -145,6 +140,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
             }
         }
         override fun onLost(network: Network?) {
+
 
         }
     }
@@ -166,16 +162,28 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
 
     @Subscribe()
     fun onEvent(demoVideo: DemoVideo){
-        Log.d("Tag","HELLO")
 
         try {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
-                activityCover.visibility = View.VISIBLE
-                //AdvertisementsHelper.instance.release()
+
+                    activityVideoCover.visibility = View.VISIBLE
+
+
             })
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
 
+    }
+
+
+    private fun initializePlayer() {
+
+        val video_url = "android.resource://" + this.packageName.toString() + "/" + R.raw.offline_video
+        val videoUri: Uri = Uri.parse(video_url)
+        demoVideoPlayer.setVideoURI(videoUri);
+        demoVideoPlayer.requestFocus()
+        demoVideoPlayer.start();
+        demoVideoPlayer.setOnPreparedListener(OnPreparedListener { mp -> mp.isLooping = true })
     }
 }
