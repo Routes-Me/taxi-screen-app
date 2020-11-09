@@ -7,23 +7,9 @@ import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import com.google.android.exoplayer2.DefaultLoadControl
-import com.google.android.exoplayer2.DefaultRenderersFactory
-import com.google.android.exoplayer2.ExoPlayerFactory
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DataSpec
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
-import com.google.android.exoplayer2.upstream.RawResourceDataSource
-import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
@@ -40,7 +26,7 @@ import org.greenrobot.eventbus.Subscribe
 
 class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     private val helper = HomeScreenHelper(this)
-    private var isHotspotOn = false
+    private var isHotspotAlive = false
     private var pressedTime: Long = 0
     private lateinit var mView: View
     private var clickTimes = 0
@@ -85,7 +71,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
         super.onStop()
     }
     private fun addFragments() {
-
+        Log.d("Network-Status","addFragments")
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
@@ -96,23 +82,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
         sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
     }
     override fun onPermissionsOkay() {}
-    private fun turnOnHotspot() {
-        if (!isHotspotOn) {
-            val intent = Intent(getString(R.string.intent_action_turnon))
-            sendImplicitBroadcast(intent)
-            isHotspotOn = true
-        }
-    }
-    private fun sendImplicitBroadcast(i: Intent) {
-        val pm: PackageManager = this.packageManager
-        val matches = pm.queryBroadcastReceivers(i, 0)
-        for (resolveInfo in matches) {
-            val explicit = Intent(i)
-            val cn = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
-            explicit.component = cn
-            this.sendBroadcast(explicit)
-        }
-    }
+
     private fun openPattern() {
         clickTimes++
         if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
@@ -133,7 +103,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
     }
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
-            turnOnHotspot()
+            Log.d("Network-Status","onAvailable")
+            if (!isHotspotAlive) turnOnHotspot()
             try {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
 
@@ -145,9 +116,35 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
             }
         }
         override fun onLost(network: Network?) {
-
+            Log.d("Network-Status","onLost")
+            if (isHotspotAlive) turnOffHotspot()
         }
     }
+
+    private fun turnOnHotspot() {
+        Log.d("Network-Status","turnOnHotspot")
+        val intent = Intent(getString(R.string.intent_action_turnon))
+        sendImplicitBroadcast(intent)
+        isHotspotAlive = true
+    }
+
+    private fun turnOffHotspot() {
+        Log.d("Network-Status","turnOffHotspot")
+        val intent = Intent(getString(R.string.intent_action_turnoff))
+        sendImplicitBroadcast(intent)
+        isHotspotAlive = false
+    }
+    private fun sendImplicitBroadcast(i: Intent) {
+        val pm: PackageManager = this.packageManager
+        val matches = pm.queryBroadcastReceivers(i, 0)
+        for (resolveInfo in matches) {
+            val explicit = Intent(i)
+            val cn = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
+            explicit.component = cn
+            this.sendBroadcast(explicit)
+        }
+    }
+
     private fun registerNetworkCallback(register: Boolean) {
         if (register) {
             try {
