@@ -7,6 +7,7 @@ import android.net.Uri
 import android.text.*
 import android.util.DisplayMetrics
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -16,12 +17,19 @@ import androidx.core.text.buildSpannedString
 import androidx.core.text.color
 import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.request.RequestOptions
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
+import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.Class.QRCodeHelper
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
+
+val glide = Glide.with(App.instance)
+val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
 
 fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: FragmentActivity?) {
     holder as ViewHolderEmptyVideoDiscount
@@ -44,6 +52,10 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
 
         promotion?.let {
             it.link?.let {link ->
+                promotion.logoUrl?.let { logoUrl ->
+                    glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
+                    videoLogoImage.visibility = View.VISIBLE
+                }
                 if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
                 subTitle.text = getSubtitle(promotion.subtitle, promotion.code)
                 generateQrCode(link, activity).let {bitmap ->

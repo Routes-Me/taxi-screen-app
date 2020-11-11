@@ -19,13 +19,11 @@ class ViewHolderEmptyVideoDiscount(itemView: View) : RecyclerView.ViewHolder(ite
 }
 
 class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    val videoLogoImage: ImageView = itemView.findViewById(R.id.videoLogoImage)
     val title: TextView = itemView.findViewById(R.id.titleTv)
     val subTitle: TextView = itemView.findViewById(R.id.subTitleTv)
     val qrCodeImage: ImageView = itemView.findViewById(R.id.videoQrCodeImage)
     var card = itemView.findViewById(R.id.videoBannerView) as CardView
-
-
-
 }
 
 class ViewHolderLargeEmpty(itemView: View) : RecyclerView.ViewHolder(itemView) {}
