@@ -51,7 +51,8 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         val promotion = cell.promotion
 
         promotion?.let {
-            it.link?.let {link ->
+            val link = it.link
+            if (!link.isNullOrEmpty()){
                 promotion.logoUrl?.let { logoUrl ->
                     glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
                     videoLogoImage.visibility = View.VISIBLE
@@ -77,11 +78,13 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
 
 fun getSubtitle(subtitle: String?, code: String?): SpannedString {
     return buildSpannedString {
-        subtitle?.let { append(it) }
-        code?.let {
+        if (!subtitle.isNullOrBlank()){
+            append(subtitle)
+        }
+        if (!code.isNullOrEmpty()){
             if (!subtitle.isNullOrEmpty()) append(", ")
             bold { color(ContextCompat.getColor(App.instance, R.color.routes_color)) { append("Use code ") } }
-            append(it)
+            append(code)
         }
     }
 }
