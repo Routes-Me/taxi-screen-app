@@ -88,7 +88,7 @@ class AdvertisementsHelper {
                 if (currentImageIndex < images.size) {
                     val uri = Uri.parse(images[currentImageIndex].url)
                     glide.load(uri).apply(imageOptions).into(imageView)
-                    qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex].promotion)
+                    qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
                         currentImageIndex = 0
@@ -123,7 +123,7 @@ class AdvertisementsHelper {
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                    qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
+                    qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -146,7 +146,7 @@ class AdvertisementsHelper {
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
-                                qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
+                                qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
                                 progressbarHandler?.post(progressbarRunnable)
                             }
                         }

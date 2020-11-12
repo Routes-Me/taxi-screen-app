@@ -57,7 +57,11 @@ dependencies {
     implementation 'com.android.support:cardview-v7:29.0.3'
     //View Images
     implementation 'com.github.bumptech.glide:glide:4.11.0'
-    annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    kapt 'com.github.bumptech.glide:compiler:4.11.0'
+    // Zxing barcode dependency
+    implementation 'com.google.zxing:core:3.3.3'
+    implementation 'com.github.illiashenkoo:glide-barcode:0.0.1'
+
     implementation 'com.pixplicity.sharp:library:1.1.0'
     //Pattern Lock View Library.. For PassCode Authentication..
     implementation 'com.andrognito.patternlockview:patternlockview:1.0.0'
@@ -112,12 +116,6 @@ dependencies {
     implementation 'com.google.android.gms:play-services-nearby:17.0.0'
     //RecyclerView animation
     implementation 'jp.wasabeef:recyclerview-animators:4.0.1'
-
-    // Zxing barcode dependency
-    implementation 'me.dm7.barcodescanner:zxing:1.9.8'
     //implementation 'com.intuit.ssp:ssp-android:1.0.6'
     implementation 'com.intuit.sdp:sdp-android:1.0.5'
-
-
-
 }

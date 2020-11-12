@@ -13,6 +13,7 @@ import android.view.View
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.Promotion
 import com.routesme.taxi.MVVM.Model.QRCodeCallback
@@ -95,11 +96,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
         removeFragments()
         recreate()
     }
-    override fun onVideoQRCodeChanged(promotion: Promotion?) {
-        sideMenuFragment?.changeVideoQRCode(promotion)
+    override fun onVideoQRCodeChanged(data: Data) {
+        sideMenuFragment?.changeVideoQRCode(data)
     }
-    override fun onBannerQRCodeChanged(promotion: Promotion?) {
-        sideMenuFragment?.changeBannerQRCode(promotion)
+    override fun onBannerQRCodeChanged(data: Data) {
+        sideMenuFragment?.changeBannerQRCode(data)
     }
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {

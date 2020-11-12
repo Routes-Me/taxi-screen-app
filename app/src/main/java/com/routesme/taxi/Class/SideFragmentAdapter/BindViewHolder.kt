@@ -2,9 +2,9 @@ package com.routesme.taxi.Class.SideFragmentAdapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.net.Uri
-import android.text.*
+import android.graphics.Color
+import android.graphics.ColorSpace
+import android.text.SpannedString
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.View
@@ -20,13 +20,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
-import com.routesme.taxi.Class.AdvertisementsHelper
-import com.routesme.taxi.Class.Helper
-import com.routesme.taxi.Class.QRCodeHelper
+import com.google.zxing.BarcodeFormat
+import com.routesme.taxi.Class.ThemeColor
 import com.routesme.taxi.MVVM.Model.*
-import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
+import net.codecision.glidebarcode.model.Barcode
+import com.routesme.taxi.R
 
 val glide = Glide.with(App.instance)
 val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
@@ -48,23 +47,25 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     holder as ViewHolderVideoDiscount
     cell as VideoDiscountCell
     holder.apply {
-        val promotion = cell.promotion
-
+        val data = cell.data
+        val promotion = data.promotion
+        val promotionColors = data.promotionColors
         promotion?.let {
             val link = it.link
             if (!link.isNullOrEmpty()){
+                val color = ThemeColor(promotionColors).getColor()
+                Log.d("tintColor","All: $color")
                 promotion.logoUrl?.let { logoUrl ->
                     glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
                     videoLogoImage.visibility = View.VISIBLE
                 }
                 if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
-                subTitle.text = getSubtitle(promotion.subtitle, promotion.code)
-                generateQrCode(link, activity).let {bitmap ->
-                    qrCodeImage.setImageBitmap(bitmap)
+                subTitle.text = getSubtitle(promotion.subtitle, promotion.code, color)
+                generateQrCode(link,color).let {qrCode ->
+                    glide.load(qrCode).into(qrCodeImage)
                 }
             }
         }
-
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay?.getMetrics(metrics)
@@ -76,14 +77,14 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     }
 }
 
-fun getSubtitle(subtitle: String?, code: String?): SpannedString {
+fun getSubtitle(subtitle: String?, code: String?, color: Int): SpannedString {
     return buildSpannedString {
         if (!subtitle.isNullOrBlank()){
             append(subtitle)
         }
         if (!code.isNullOrEmpty()){
             if (!subtitle.isNullOrEmpty()) append(", ")
-            bold { color(ContextCompat.getColor(App.instance, R.color.routes_color)) { append("Use code ") } }
+            bold { color(color) { append("Use code ") } }
             append(code)
         }
     }
@@ -108,36 +109,25 @@ fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     }
 }
 
-fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell, activity: FragmentActivity?) {
+fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderBannerDiscount
     cell as BannerDiscountCell
     holder.apply {
-        val promotion = cell.promotion
+        val data = cell.data
+        val promotion = cell.data.promotion
+        val promotionColors = data.promotionColors
 
         promotion?.let {
             it.link?.let {link ->
-                generateQrCode(link, activity).let {bitmap ->
-                    qrCodeImage.setImageBitmap(bitmap)
+                val color = ThemeColor(promotionColors).getColor()
+                generateQrCode(link,color).let {qrCode ->
+                    glide.load(qrCode).into(qrCodeImage)
                 }
             }
         }
     }
 }
 
-private fun generateQrCode(promotionLink: String, activity: FragmentActivity?): Bitmap {
-    Log.d("promotionLink", promotionLink)
-    return qrCodeGenerator
-            .setActivity(activity)
-            .setContent(promotionLink)
-            .qrcOde
-
+private fun generateQrCode(promotionLink: String, color: Int): Barcode {
+    return Barcode(promotionLink, BarcodeFormat.QR_CODE,color,Color.TRANSPARENT)
 }
-
-private val qrCodeGenerator = QRCodeHelper
-        .newInstance(App.instance)
-        .setWidthAndHeight(180, 180)
-        .setErrorCorrectionLevel(ErrorCorrectionLevel.Q)
-        .setMargin(2)
-
-enum class PromotionType(val value: String) { Links("links"), Places("places"), Promotions("promotions") }
-

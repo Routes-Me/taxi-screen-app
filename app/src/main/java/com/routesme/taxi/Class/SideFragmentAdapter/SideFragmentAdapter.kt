@@ -35,7 +35,7 @@ class SideFragmentAdapter(private val list: List<ISideFragmentCell>, private val
         TYPE_DATE -> onBindDate(holder, list[position])
         TYPE_SMALL_EMPTY -> onBindSmallEmpty()
         TYPE_WIFI -> onBindWifi(holder, list[position])
-        else ->  onBindBannerDiscount(holder, list[position], activity)
+        else ->  onBindBannerDiscount(holder, list[position])
     }
 
     override fun getItemCount(): Int = list.size

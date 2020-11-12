@@ -6,17 +6,14 @@ interface IModeChanging {
 
 interface ISideFragmentCell
 class EmptyVideoDiscountCell : ISideFragmentCell
-class VideoDiscountCell(val promotion: Promotion?) : ISideFragmentCell
+class VideoDiscountCell(val data: Data) : ISideFragmentCell
 class LargeEmptyCell : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 class SmallEmptyCell : ISideFragmentCell
 class WifiCell(val name: String, val password: String) : ISideFragmentCell
-class BannerDiscountCell( val promotion: Promotion?) : ISideFragmentCell
-
+class BannerDiscountCell(val data: Data) : ISideFragmentCell
 
 interface QRCodeCallback {
-    fun onVideoQRCodeChanged(promotion: Promotion?)
-    fun onBannerQRCodeChanged(promotion: Promotion?)
+    fun onVideoQRCodeChanged(data: Data)
+    fun onBannerQRCodeChanged(data: Data)
 }
-
-data class ItemAnalytics(val id: Int = 0, val name: String = "item_name")

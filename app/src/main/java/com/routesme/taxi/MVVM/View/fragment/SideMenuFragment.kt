@@ -77,9 +77,10 @@ class SideMenuFragment : Fragment() {
         }
     }
 
-    fun changeVideoQRCode(promotion: Promotion?) {
+    fun changeVideoQRCode(data: Data) {
+        val promotion = data.promotion
         val position = 0
-        sideFragmentCells[position] = if (promotion != null && promotion.isExist) VideoDiscountCell(promotion) else EmptyVideoDiscountCell()
+        sideFragmentCells[position] = if (promotion != null && promotion.isExist) VideoDiscountCell(data) else EmptyVideoDiscountCell()
         sideFragmentAdapter.apply {
             notifyItemChanged(position)
             notifyItemRemoved(position)
@@ -87,9 +88,10 @@ class SideMenuFragment : Fragment() {
         }
     }
 
-    fun changeBannerQRCode(promotion: Promotion?) {
+    fun changeBannerQRCode(data: Data) {
+        val promotion = data.promotion
         val position = 4
-        sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(promotion) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
+        sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(data) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))
         sideFragmentAdapter.apply {
             notifyItemChanged(position)
             notifyItemRemoved(position)

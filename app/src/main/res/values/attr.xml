@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <declare-styleable name="ViewStyle">
     <attr name="homeScreenBackground_color" format="reference" />
     <attr name="cardViewBackground_color" format="reference" />
     <attr name="text_color" format="reference" />
@@ -15,4 +16,5 @@
     <attr name="pfCopyrightTextColor" format="reference" />
     <attr name="pfRoutesLogo" format="reference" />
     <attr name="pfQrCodeShadow" format="reference" />
+    </declare-styleable>
 </resources>
