@@ -126,8 +126,7 @@
                 app:layout_constraintEnd_toStartOf="@id/titleTv"
                 app:layout_constraintTop_toTopOf="@id/guidelineTop"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                android:visibility="gone"
-                android:background="@color/red"/>
+                android:visibility="gone" />
 
             <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/titleTv"
