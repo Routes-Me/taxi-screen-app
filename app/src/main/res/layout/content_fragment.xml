@@ -36,7 +36,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 app:resize_mode="fill"
-                app:use_controller="false" />
+                app:use_controller="true" />
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar
                 android:id="@+id/videoRingProgressBar"
