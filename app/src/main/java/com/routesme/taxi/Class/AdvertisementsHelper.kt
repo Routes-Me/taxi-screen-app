@@ -35,7 +35,7 @@ import org.greenrobot.eventbus.EventBus
 
 class AdvertisementsHelper {
 
-    private var qrCodeCallback: QRCodeCallback? = null
+    //private var qrCodeCallback: QRCodeCallback? = null
     private var player: SimpleExoPlayer? = null
     private var displayImageHandler: Handler? = null
     private var displayImageRunnable: Runnable? = null
@@ -73,11 +73,11 @@ class AdvertisementsHelper {
         }
     }
 
-
+/*
     fun setQrCodeCallback(qrCodeCallback: QRCodeCallback) {
         this.qrCodeCallback = qrCodeCallback
     }
-
+*/
     fun displayImages(images: List<Data>, imageView: ImageView) {
         displayImageHandler = Handler()
 
@@ -88,7 +88,8 @@ class AdvertisementsHelper {
                 if (currentImageIndex < images.size) {
                     val uri = Uri.parse(images[currentImageIndex].url)
                     glide.load(uri).apply(imageOptions).into(imageView)
-                    qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
+                   // qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
+                    EventBus.getDefault().post(images[currentImageIndex])
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
                         currentImageIndex = 0
@@ -123,17 +124,18 @@ class AdvertisementsHelper {
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                    qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
+                   // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
+                    EventBus.getDefault().post(videos[currentMediaItemId])
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-
+                            Log.d("Exo-Player-State", "IDLE")
                             player?.prepare()
-
                         }
                         Player.STATE_BUFFERING -> {
+                            Log.d("Exo-Player-State", "BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
@@ -142,16 +144,19 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
+                            Log.d("Exo-Player-State", "READY")
                             count = 0
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
-                                qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
+                                Log.d("Exo-Player-State", "READY-First-Video")
+                               // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
+                                EventBus.getDefault().post(videos[currentMediaItemId])
                                 progressbarHandler?.post(progressbarRunnable)
                             }
                         }
                         Player.STATE_ENDED -> {
-
+                            Log.d("Exo-Player-State", "ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
 
                         }
@@ -186,7 +191,7 @@ class AdvertisementsHelper {
         return progressbarRunnable
     }
     fun release() {
-        qrCodeCallback = null
+        //qrCodeCallback = null
         displayImageHandler?.removeCallbacks(displayImageRunnable)
         progressbarHandler?.removeCallbacks(progressbarRunnable)
         player?.release()

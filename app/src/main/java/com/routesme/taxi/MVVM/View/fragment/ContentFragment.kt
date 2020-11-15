@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -17,24 +18,27 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.ConnectivityReceiver
 import com.routesme.taxi.Class.Operations
-import com.routesme.taxi.MVVM.Model.ContentResponse
-import com.routesme.taxi.MVVM.Model.Error
-import com.routesme.taxi.MVVM.Model.QRCodeCallback
+import com.routesme.taxi.Class.ThemeColor
+import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
+import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.android.synthetic.main.content_fragment.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.io.IOException
 
 
 class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
-    private var qRCodeCallback: QRCodeCallback? = null
+    //private var qRCodeCallback: QRCodeCallback? = null
     private lateinit var mView: View
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
+    private var videoRingProgressBar: RingProgressBar? = null
     var TYPE_WIFI = 1
     var TYPE_MOBILE = 2
     var TYPE_NOT_CONNECTED = 0
@@ -42,21 +46,23 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onAttach(context: Context) {
         mContext = context
+        /*
         try {
             qRCodeCallback = activity as QRCodeCallback
         } catch (e: ClassCastException) {
             throw ClassCastException(activity.toString() + " must implement QRCodeCallback")
         }
+         */
         super.onAttach(context)
+
     }
 
     override fun onDetach() {
-        qRCodeCallback = null
+      //  qRCodeCallback = null
         super.onDetach()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
         requireActivity().registerReceiver(myReceiver, intentFilter);
         return view
@@ -64,7 +70,8 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
-        qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
+       // qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
+        videoRingProgressBar = view.videoRingProgressBar
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -104,6 +111,16 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     override fun onDestroy() {
         AdvertisementsHelper.instance.release()
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        EventBus.getDefault().register(this)
+        super.onStart()
+    }
+
+    override fun onStop() {
+        EventBus.getDefault().unregister(this)
+        super.onStop()
     }
 
     /*private fun checkConnection() {
@@ -177,5 +194,20 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         }
     }
 
+    @Subscribe()
+    fun onEvent(data: Data){
+        if (data.type ==  ContentType.Video.value){
+            changeVideoProgressbarColor(data.promotionColors)
+        }
+    }
 
+    private fun changeVideoProgressbarColor(promotionColors: PromotionColors) {
+        val color = ThemeColor(promotionColors).getColor()
+        val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
+        videoRingProgressBar?.let {
+
+            it.ringColor = lowOpacityColor
+            it.ringProgressColor = color
+        }
+    }
 }

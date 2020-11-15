@@ -34,7 +34,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 app:resize_mode="fill"
-                app:use_controller="false" />
+                app:use_controller="true" />
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar
                 android:id="@+id/videoRingProgressBar"
@@ -46,8 +46,8 @@
                 android:layout_marginEnd="6dp"
                 app:max="100"
                 app:ringColor="@color/white"
+                app:ringWidth="@dimen/_1sdp"
                 app:ringProgressColor="@color/red"
-                app:ringWidth="1dp"
                 app:style="FILL" />
 
         </RelativeLayout>

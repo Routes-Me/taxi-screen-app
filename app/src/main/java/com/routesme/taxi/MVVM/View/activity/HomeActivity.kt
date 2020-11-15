@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
+class HomeActivity : PermissionsActivity(), IModeChanging {
     private val helper = HomeScreenHelper(this)
     private var isHotspotAlive = false
     private var pressedTime: Long = 0
@@ -96,12 +96,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging, QRCodeCallback {
         removeFragments()
         recreate()
     }
+    /*
     override fun onVideoQRCodeChanged(data: Data) {
         sideMenuFragment?.changeVideoQRCode(data)
     }
     override fun onBannerQRCodeChanged(data: Data) {
         sideMenuFragment?.changeBannerQRCode(data)
     }
+    */
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
             Log.d("Network-Status","onAvailable")

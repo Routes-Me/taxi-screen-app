@@ -4,16 +4,22 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Switch
 import androidx.fragment.app.Fragment
 import com.routesme.taxi.Class.DateOperations
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.ItemAnimator
 import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
+import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
 import java.util.*
 
 
@@ -42,6 +48,16 @@ class SideMenuFragment : Fragment() {
     override fun onDestroy() {
         handlerTime?.removeCallbacks(timeRunnable)
         super.onDestroy()
+    }
+
+    override fun onStart() {
+        EventBus.getDefault().register(this)
+        super.onStart()
+    }
+
+    override fun onStop() {
+        EventBus.getDefault().unregister(this)
+        super.onStop()
     }
 
     private fun setupRecyclerView() {
@@ -77,7 +93,15 @@ class SideMenuFragment : Fragment() {
         }
     }
 
-    fun changeVideoQRCode(data: Data) {
+    @Subscribe()
+    fun onEvent(data: Data){
+        when(data.type){
+            ContentType.Image.value -> changeBannerQRCode(data)
+            else -> changeVideoQRCode(data)
+        }
+    }
+
+    private fun changeVideoQRCode(data: Data) {
         val promotion = data.promotion
         val position = 0
         sideFragmentCells[position] = if (promotion != null && promotion.isExist) VideoDiscountCell(data) else EmptyVideoDiscountCell()
@@ -88,7 +112,7 @@ class SideMenuFragment : Fragment() {
         }
     }
 
-    fun changeBannerQRCode(data: Data) {
+    private fun changeBannerQRCode(data: Data) {
         val promotion = data.promotion
         val position = 4
         sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(data) else WifiCell(getString(R.string.wifi_name), getString(R.string.wifi_password))

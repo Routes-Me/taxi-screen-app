@@ -109,7 +109,7 @@ dependencies {
     implementation 'com.smartarmenia:dotnetcoresignalrclientjava:1.14'
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
-    implementation 'org.greenrobot:eventbus:3.0.0'
+    implementation 'org.greenrobot:eventbus:3.1.1'
     //Runtime Permission Library
     implementation 'com.nabinbhandari.android:permissions:3.8'
     //Nearby API Library
