@@ -1,9 +1,8 @@
 package com.routesme.taxi.Class
 
 import android.graphics.Color
-import com.routesme.taxi.MVVM.Model.PromotionColors
 
-data class ThemeColor(val promotionColors: PromotionColors) {
+data class ThemeColor(val tintColor: Int?) {
 
     companion object {
         private const val ThemeTintColor = 0xFF000000.toInt()
@@ -13,20 +12,11 @@ data class ThemeColor(val promotionColors: PromotionColors) {
     fun getColor(): Int {
         val color: Int
         val isAnteMeridiem = DisplayManager.instance.isAnteMeridiem()
-        val tintColor = promotionColors.tintColor
-        val invertedTintColor = promotionColors.invertedTintColor
-        if (tintColor != null) {
-            if (isAnteMeridiem) {
-                color =  tintColor
-            } else {
-                color = invertedTintColor ?: tintColor
-            }
-        } else {
-            if (isAnteMeridiem) {
-                color = ThemeTintColor
-            } else {
-                color = ThemeInvertedTintColor
-            }
+
+        color = if (isAnteMeridiem){
+            tintColor ?: ThemeTintColor
+        }else{
+            ThemeInvertedTintColor
         }
         return getRgbColor(color)
     }

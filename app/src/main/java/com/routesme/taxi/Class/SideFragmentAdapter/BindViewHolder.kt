@@ -3,7 +3,6 @@ package com.routesme.taxi.Class.SideFragmentAdapter
 import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
-import android.graphics.ColorSpace
 import android.text.SpannedString
 import android.util.DisplayMetrics
 import android.util.Log
@@ -11,8 +10,6 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.ColorUtils
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -26,7 +23,6 @@ import com.routesme.taxi.Class.ThemeColor
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.uplevels.App
 import net.codecision.glidebarcode.model.Barcode
-import com.routesme.taxi.R
 
 val glide = Glide.with(App.instance)
 val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
@@ -49,11 +45,11 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
     holder.apply {
         val data = cell.data
         val promotion = data.promotion
-        val promotionColors = data.promotionColors
+        val tintColor = data.tintColor
         promotion?.let {
             val link = it.link
             if (!link.isNullOrEmpty()){
-                val color = ThemeColor(promotionColors).getColor()
+                val color = ThemeColor(tintColor).getColor()
                 cardShadow.setElevationShadowColor(color)
 
                 promotion.logoUrl?.let { logoUrl ->
@@ -110,11 +106,11 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     holder.apply {
         val data = cell.data
         val promotion = cell.data.promotion
-        val promotionColors = data.promotionColors
+        val tintColor = data.tintColor
 
         promotion?.let {
             it.link?.let {link ->
-                val color = ThemeColor(promotionColors).getColor()
+                val color = ThemeColor(tintColor).getColor()
                 generateQrCode(link,color).let {qrCode ->
                     glide.load(qrCode).into(qrCodeImage)
                 }

@@ -200,12 +200,12 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     @Subscribe()
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){
-            changeVideoCardColor(data.promotionColors)
+            changeVideoCardColor(data.tintColor)
         }
     }
 
-    private fun changeVideoCardColor(promotionColors: PromotionColors) {
-        val color = ThemeColor(promotionColors).getColor()
+    private fun changeVideoCardColor(tintColor: Int?) {
+        val color = ThemeColor(tintColor).getColor()
         val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
         videoShadow?.setElevationShadowColor(color)
         videoRingProgressBar?.let {
