@@ -14,6 +14,7 @@ import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import carbon.widget.RelativeLayout
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.ConnectivityReceiver
@@ -39,6 +40,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
+    private var videoShadow: RelativeLayout? = null
     var TYPE_WIFI = 1
     var TYPE_MOBILE = 2
     var TYPE_NOT_CONNECTED = 0
@@ -72,6 +74,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         mView = view
        // qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
         videoRingProgressBar = view.videoRingProgressBar
+        videoShadow = view.videoShadow
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -197,15 +200,15 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     @Subscribe()
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){
-            changeVideoProgressbarColor(data.promotionColors)
+            changeVideoCardColor(data.promotionColors)
         }
     }
 
-    private fun changeVideoProgressbarColor(promotionColors: PromotionColors) {
+    private fun changeVideoCardColor(promotionColors: PromotionColors) {
         val color = ThemeColor(promotionColors).getColor()
         val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
+        videoShadow?.setElevationShadowColor(lowOpacityColor)
         videoRingProgressBar?.let {
-
             it.ringColor = lowOpacityColor
             it.ringProgressColor = color
         }

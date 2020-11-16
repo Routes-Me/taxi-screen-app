@@ -12,6 +12,7 @@ import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.ColorUtils
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
@@ -39,7 +40,6 @@ fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: Fragment
         val screenWidth = (metrics.widthPixels * 69) / 100
         empty_cardview.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }
-
 }
 
 @SuppressLint("SetTextI18n")
@@ -54,7 +54,10 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
             val link = it.link
             if (!link.isNullOrEmpty()){
                 val color = ThemeColor(promotionColors).getColor()
-                Log.d("tintColor","All: $color")
+                val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
+
+                //Here.. set the shadow color of video promotion card as a [lowOpacityColor]
+
                 promotion.logoUrl?.let { logoUrl ->
                     glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
                     videoLogoImage.visibility = View.VISIBLE
@@ -101,13 +104,7 @@ fun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
 
 fun onBindSmallEmpty() {}
 
-fun onBindWifi(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
-    holder as ViewHolderWifi
-    cell as WifiCell
-    holder.apply {
-        nameTv.text = cell.name; passwordTv.text = cell.password
-    }
-}
+fun onBindWifi() {}
 
 fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderBannerDiscount

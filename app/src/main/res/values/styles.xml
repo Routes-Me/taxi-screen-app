@@ -31,6 +31,7 @@
         <item name="pfCopyrightTextColor">@color/pf_copyrightTextColor_light</item>
         <item name="pfRoutesLogo">@mipmap/routes_icon_light</item>
         <item name="pfQrCodeShadow">@color/pf_copyrightTextColor_light</item>
+        <item name="free_wifi_background_color">@color/free_wifi_background_color_light</item>
     </style>
 
     <style name="FullScreen_Dark_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
@@ -52,6 +53,7 @@
         <item name="pfCopyrightTextColor">@color/white</item>
         <item name="pfRoutesLogo">@mipmap/routes_icon_dark</item>
         <item name="pfQrCodeShadow">@null</item>
+        <item name="free_wifi_background_color">@color/free_wifi_background_color_dark</item>
     </style>
 
     <style name="AppTheme.CustomEditText" parent="android:style/Widget.EditText">

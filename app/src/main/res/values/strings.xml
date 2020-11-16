@@ -35,4 +35,5 @@
     <string name="complete_required_data">Complete required data, please!</string>
     <string name="institutions">Institutions</string>
     <string name="vehicles">Vehicles</string>
+    <string name="free_wifi">FREE WIFI</string>
 </resources>

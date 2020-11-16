@@ -67,17 +67,34 @@
                 tools:layout_constraintVertical_chainStyle="spread_inside" />
 
             <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/freeWifiTv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/free_wifi"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:textColor="?text_color"
+                android:background="@drawable/free_wifi_background"
+                android:textStyle="normal"
+                android:textSize="@dimen/_5sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+                app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                app:layout_constraintTop_toBottomOf="@+id/wifiIcon" />
+
+            <androidx.appcompat.widget.AppCompatTextView
                 android:id="@+id/nameTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:text="@string/wifi_name"
                 android:fontFamily="sans-serif"
                 android:gravity="center"
                 android:textColor="?text_color"
                 android:textStyle="normal"
-                android:textSize="@dimen/_10sdp"
+                android:textSize="@dimen/_8sdp"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                 app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                app:layout_constraintTop_toBottomOf="@+id/wifiIcon" />
+                app:layout_constraintTop_toBottomOf="@+id/freeWifiTv" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/keyIcon"
@@ -92,17 +109,18 @@
                 android:id="@+id/passwordTv"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:text="@string/wifi_password"
+                android:layout_marginTop="@dimen/_1sdp"
                 android:fontFamily="sans-serif"
-                android:gravity="center_vertical"
-                android:textColor="?text_color"
-                android:textStyle="normal"
-                android:layout_marginTop="@dimen/_2sdp"
+                android:gravity="center"
                 android:includeFontPadding="false"
+                android:textColor="?text_color"
                 android:textSize="@dimen/_8sdp"
-                app:layout_constraintStart_toEndOf="@+id/keyIcon"
+                android:textStyle="normal"
+                app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
                 app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                app:layout_constraintTop_toBottomOf="@+id/nameTv"
-                app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"/>
+                app:layout_constraintStart_toEndOf="@+id/keyIcon"
+                app:layout_constraintTop_toBottomOf="@+id/nameTv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

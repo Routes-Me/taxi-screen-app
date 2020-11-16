@@ -118,4 +118,5 @@ dependencies {
     implementation 'jp.wasabeef:recyclerview-animators:4.0.1'
     //implementation 'com.intuit.ssp:ssp-android:1.0.6'
     implementation 'com.intuit.sdp:sdp-android:1.0.5'
+    implementation 'tk.zielony:carbon:0.16.0.1'
 }

@@ -35,10 +35,7 @@ class ViewHolderDate(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class ViewHolderSmallEmpty(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
-class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView) {
-    val nameTv: TextView = itemView.findViewById(R.id.nameTv)
-    val passwordTv: TextView = itemView.findViewById(R.id.passwordTv)
-}
+class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView) {}
 
 class ViewHolderBannerDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val qrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)

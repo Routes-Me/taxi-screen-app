@@ -10,10 +10,5 @@ class VideoDiscountCell(val data: Data) : ISideFragmentCell
 class LargeEmptyCell : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 class SmallEmptyCell : ISideFragmentCell
-class WifiCell(val name: String, val password: String) : ISideFragmentCell
+class WifiCell() : ISideFragmentCell
 class BannerDiscountCell(val data: Data) : ISideFragmentCell
-
-interface QRCodeCallback {
-    fun onVideoQRCodeChanged(data: Data)
-    fun onBannerQRCodeChanged(data: Data)
-}

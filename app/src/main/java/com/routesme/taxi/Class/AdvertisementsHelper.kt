@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.MVVM.Model.Data
-import com.routesme.taxi.MVVM.Model.QRCodeCallback
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App

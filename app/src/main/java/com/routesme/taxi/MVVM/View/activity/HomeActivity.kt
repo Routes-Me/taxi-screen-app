@@ -16,7 +16,6 @@ import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.Promotion
-import com.routesme.taxi.MVVM.Model.QRCodeCallback
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.events.DemoVideo
