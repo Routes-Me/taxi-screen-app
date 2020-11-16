@@ -15,7 +15,7 @@ import java.net.URI
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private var hubConnection: HubConnection? = null
-    private lateinit var locationReceiver: LocationReceiver
+    private var locationReceiver: LocationReceiver? = null
     private var handlerThread: HandlerThread? = null
     private var mHandler: Handler? = null
 
@@ -42,7 +42,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onDestroy() {
         super.onDestroy()
         mHandler?.removeCallbacks(reconnection)
-        locationReceiver.removeLocationUpdates()
+        locationReceiver?.removeLocationUpdates()
         instance.hubConnection?.disconnect()
     }
 
@@ -109,10 +109,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun sharedPref() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
-        locationReceiver.getLastKnownLocationMessage()?.let {
+        locationReceiver?.getLastKnownLocationMessage()?.let {
             instance.hubConnection?.invoke("SendLocation", it)
        }
-        locationReceiver.isHubConnected(true)
+        locationReceiver?.isHubConnected(true)
     }
 
     override fun onMessage(message: HubMessage) {
@@ -123,12 +123,12 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onDisconnected() {
-        locationReceiver.isHubConnected(false)
+        locationReceiver?.isHubConnected(false)
         instance.hubConnection?.connect()
     }
 
     override fun onError(exception: Exception) {
-        locationReceiver.isHubConnected(false)
+        locationReceiver?.isHubConnected(false)
         if (handlerThread == null){
             handlerThread = HandlerThread("reconnection").apply {
                 start()
