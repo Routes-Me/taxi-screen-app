@@ -54,9 +54,7 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
             val link = it.link
             if (!link.isNullOrEmpty()){
                 val color = ThemeColor(promotionColors).getColor()
-                val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
-
-                //Here.. set the shadow color of video promotion card as a [lowOpacityColor]
+                cardShadow.setElevationShadowColor(color)
 
                 promotion.logoUrl?.let { logoUrl ->
                     glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
