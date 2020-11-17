@@ -1,7 +1,7 @@
 package com.routesme.taxi.AdminConsolePanel.Model
 
 data class MasterItem(val id: Int, val type: MasterItemType)
-enum class MasterItemType { Info, Account, Settings, Location_Feeds, Message_Feeds }
+enum class MasterItemType { Info, Account, Settings, Location_Feeds }
 
 interface ICell
 class LabelCell(val title: String) : ICell
