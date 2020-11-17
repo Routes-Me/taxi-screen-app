@@ -22,7 +22,6 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
         const val ARG_ITEM_ID = "itemId"
         private val trackingDatabase = TrackingDatabase.invoke(App.instance)
         private val locationFeedsDao = trackingDatabase.locationFeedsDao()
-        private val messageFeedsDao = trackingDatabase.messageFeedsDao()
     }
     private val adminConsoleLists = AdminConsoleLists(activity)
     private var detailsList = adminConsoleLists.infoCells
@@ -41,8 +40,7 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
                     MasterItemType.Account -> adminConsoleLists.accountCells
                     MasterItemType.Settings -> adminConsoleLists.settingsCells
                     MasterItemType.Info -> adminConsoleLists.infoCells
-                    MasterItemType.Location_Feeds -> getSavedLocations()
-                    else -> getSavedMessage()
+                    else -> getSavedLocations()
                 }
             }
         }
@@ -54,17 +52,6 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
             add(DetailCell("Latitude, Longitude", "Time", true))
             for (location in savedLocationFeeds){
                 add(DetailCell("${location.latitude}, ${location.longitude}",getTime(location.timestamp).toString(),true))
-            }
-        }
-        return liveTrackingCells
-    }
-
-    private fun getSavedMessage(): List<ICell> {
-        val savedMessageFeeds = messageFeedsDao.getAllMessages()
-        val liveTrackingCells = mutableListOf<DetailCell>().apply {
-            add(DetailCell("ID", "Message", true))
-            for (message in savedMessageFeeds){
-                add(DetailCell("${message.id}",message.message,true))
             }
         }
         return liveTrackingCells
