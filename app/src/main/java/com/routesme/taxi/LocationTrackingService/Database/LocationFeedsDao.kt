@@ -13,7 +13,6 @@ interface LocationFeedsDao {
     @Transaction
     @Query("DELETE FROM LocationFeeds WHERE id BETWEEN :id2 AND :id1")
     fun deleteFeeds(id1:Int,id2:Int)
-
     @Transaction
     @Insert
     fun insertLocation(locationFeed: LocationFeed)

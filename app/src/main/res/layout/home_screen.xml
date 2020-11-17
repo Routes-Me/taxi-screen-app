@@ -137,12 +137,14 @@
         android:visibility="gone"
 
         >
-        <VideoView
+        <com.google.android.exoplayer2.ui.StyledPlayerView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:id="@+id/demoVideoPlayer"
             android:keepScreenOn="true"
             android:adjustViewBounds="true"
+            app:resize_mode="fill"
+            app:use_controller="true"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!--<ImageView

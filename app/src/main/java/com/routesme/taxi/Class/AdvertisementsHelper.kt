@@ -71,12 +71,6 @@ class AdvertisementsHelper {
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
-
-/*
-    fun setQrCodeCallback(qrCodeCallback: QRCodeCallback) {
-        this.qrCodeCallback = qrCodeCallback
-    }
-*/
     fun displayImages(images: List<Data>, imageView: ImageView) {
         displayImageHandler = Handler()
 
@@ -108,6 +102,10 @@ class AdvertisementsHelper {
 
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar): SimpleExoPlayer {
+        val videos = mutableListOf<Data>().apply {
+            add(Data("1","video","https://routesme.blob.core.windows.net/advertisements/McDonald's_b60813fa-0f02-4c49-9518-b7cc74d31e89.mp4",null,null))
+            addAll(videos)
+        }.toList()
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
@@ -157,7 +155,14 @@ class AdvertisementsHelper {
                 }
                 override fun onPlayerError(error: ExoPlaybackException) {
                     when (error.type) {
-                        ExoPlaybackException.TYPE_SOURCE -> Log.e(TAG, "TYPE_SOURCE: " + error.sourceException.message)
+                        ExoPlaybackException.TYPE_SOURCE ->{
+                            if(error.sourceException.message == "Response code: 404"){
+
+                                player?.seekTo(player!!.getNextWindowIndex(), 0);
+                                if(videos.indexOf(videos.first()) == 0) progressbarHandler?.post(progressbarRunnable)
+                            }
+
+                        }
                         ExoPlaybackException.TYPE_RENDERER -> Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
                         ExoPlaybackException.TYPE_UNEXPECTED -> Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
                     }
