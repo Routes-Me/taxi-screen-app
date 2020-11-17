@@ -129,7 +129,7 @@ class AdvertisementsHelper {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
                             player?.prepare()
-                            Log.d("Video State","IDLE")
+
                         }
                         Player.STATE_BUFFERING -> {
                             count++
@@ -137,7 +137,7 @@ class AdvertisementsHelper {
                                 count = 0
                                 EventBus.getDefault().post(DemoVideo(true))
                             }
-                            Log.d("Video State","BUFFERING")
+
                         }
                         Player.STATE_READY -> {
                             count = 0
@@ -147,11 +147,11 @@ class AdvertisementsHelper {
                                 EventBus.getDefault().post(videos[currentMediaItemId])
                                 progressbarHandler?.post(progressbarRunnable)
                             }
-                            Log.d("Video State","READY")
+
                         }
                         Player.STATE_ENDED -> {
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-                            Log.d("Video State","END")
+                            
                         }
                     }
                 }
