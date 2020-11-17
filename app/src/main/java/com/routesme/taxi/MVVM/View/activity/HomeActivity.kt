@@ -10,6 +10,13 @@ import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.upstream.DataSpec
+import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
@@ -31,6 +38,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private lateinit var mView: View
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
+    private var player : SimpleExoPlayer?=null
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,13 +55,45 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         setContentView(R.layout.home_screen)
-
+        initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
 
     }
+    private fun initializePlayer() {
+        player = SimpleExoPlayer.Builder(this).build()
+        demoVideoPlayer.player = player
+        val mediaSource = buildRawMediaSource()
+        mediaSource?.let {
+            player!!.apply {
+                setMediaSource(it)
+                prepare()
+                repeatMode = Player.REPEAT_MODE_ONE
+                playWhenReady = true
+            }
+        }
+    }
+    private fun buildRawMediaSource(): MediaSource? {
+        val rawDataSource = RawResourceDataSource(this)
+        // open the /raw resource file
+        rawDataSource.open(DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.offline_video)))
+        // Create media Item
+        val mediaItem = MediaItem.fromUri(rawDataSource.uri!!)
+        // create a media source with the raw DataSource
+        val mediaSource = ProgressiveMediaSource.Factory { rawDataSource }
+                .createMediaSource(mediaItem)
+        return mediaSource
+    }
+
+    fun playVideo(){
+        player?.play()
+    }
+    fun stopVideo(){
+        player?.pause()
+    }
+
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         super.onDestroy()
@@ -64,6 +104,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         EventBus.getDefault().register(this)
         super.onStart()
     }
+
 
     override fun onStop() {
         registerNetworkCallback(false)
@@ -95,14 +136,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         removeFragments()
         recreate()
     }
-    /*
-    override fun onVideoQRCodeChanged(data: Data) {
-        sideMenuFragment?.changeVideoQRCode(data)
-    }
-    override fun onBannerQRCodeChanged(data: Data) {
-        sideMenuFragment?.changeBannerQRCode(data)
-    }
-    */
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
             Log.d("Network-Status","onAvailable")
@@ -111,6 +144,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
 
                     activityCover.visibility = View.GONE
+                    activityVideoCover.visibility = View.GONE
+                    demoVideoPlayer.visibility = View.GONE
+                    if(player!!.isPlaying){
+                        stopVideo()
+                    }
                 })
 
             } catch (e: IllegalArgumentException) {
@@ -169,8 +207,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
         try {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
-                activityCover.visibility = View.VISIBLE
-                //AdvertisementsHelper.instance.release()
+                activityVideoCover.visibility = View.VISIBLE
+                demoVideoPlayer.visibility = View.VISIBLE
+                playVideo()
             })
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()

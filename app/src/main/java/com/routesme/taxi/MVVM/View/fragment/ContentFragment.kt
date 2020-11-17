@@ -34,7 +34,6 @@ import java.io.IOException
 class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
-    //private var qRCodeCallback: QRCodeCallback? = null
     private lateinit var mView: View
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var isDataFetched = false
@@ -72,7 +71,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
-       // qRCodeCallback?.let { it -> AdvertisementsHelper.instance.setQrCodeCallback(it) }
         videoRingProgressBar = view.videoRingProgressBar
         videoShadow = view.videoShadow
         super.onViewCreated(view, savedInstanceState)
@@ -80,27 +78,14 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private val myReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
-            val status = getConnectivityStatusString(context)
-            if (status != "No" && !isDataFetched) {
+            val status = getConnectivityStatus(context)
+            if (status != TYPE_NOT_CONNECTED && !isDataFetched) {
                 fetchContent()
             }
         }
     }
 
-    fun getConnectivityStatusString(context: Context): String? {
-        val conn = getConnectivityStatus(context)
-        var status: String? = null
-        if (conn == TYPE_WIFI) {
-            status = "Wifi" //"Wifi enabled";
-        } else if (conn == TYPE_MOBILE) {
-            status = "Mobile" //"Mobile data enabled";
-        } else if (conn == TYPE_NOT_CONNECTED) {
-            status = "No" //"Not connected to Internet";
-        }
-        return status
-    }
-
-    fun getConnectivityStatus(context: Context): Int {
+    private fun getConnectivityStatus(context: Context): Int {
         val cm = context
                 .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork = cm.activeNetworkInfo
@@ -126,36 +111,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         super.onStop()
     }
 
-    /*private fun checkConnection() {
-        val isConnected = ConnectivityReceiver.isConnected
-        if (isConnected) {
-            fetchContent()
-        }/* else {
-            networkListener()
-        }*/
-    }*/
-
-    /*private fun networkListener() {
-        connectivityReceiver = ConnectivityReceiver()
-        //connectivityReceiverRegistering(true)
-        ConnectivityReceiver.connectivityReceiverListener = this
-    }*/
-
-    private fun connectivityReceiverRegistering(register: Boolean) {
-        try {
-            if (register) {
-                /*val intentFilter = IntentFilter("com.routesme.taxi_screen.SOME_ACTION").apply {
-                    addAction("android.net.conn.CONNECTIVITY_CHANGE")
-                }*/
-                //connectivityReceiver?.let { activity.getInstance(mContext).registerReceiver(it, intentFilter) }
-                connectivityReceiver?.let { requireActivity().registerReceiver(it, intentFilter) }
-            } else {
-                connectivityReceiver?.let { requireActivity().unregisterReceiver(it) }
-            }
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        }
-    }
     private fun fetchContent(){
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {

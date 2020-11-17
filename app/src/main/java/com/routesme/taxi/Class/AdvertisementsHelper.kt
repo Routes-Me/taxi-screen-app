@@ -50,7 +50,7 @@ class AdvertisementsHelper {
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
         private val simpleCache = initializeVideoCaching()
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
-        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
 
         private fun initializeVideoCaching(): SimpleCache {
@@ -104,75 +104,64 @@ class AdvertisementsHelper {
     fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
         progressbarHandler = Handler()
         player = initPlayer(context, videos, playerView, progressBar)
-        player?.playWhenReady
-        player?.apply {
-            prepare()
-            play()
-
-        }
     }
+
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar): SimpleExoPlayer {
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
-        val mediaItems = videos.map { MediaItem.Builder().setUri(it.url).setMediaId("${videos.indexOf(it)}").build() }
-        val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).build().apply {
+        val defaultTrackSelector = DefaultTrackSelector(context)
+        val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
+        val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
             playerView.player = this
+            defaultTrackSelector.setParameters(defaultTrackSelector.parameters.buildUpon().setMaxVideoBitrate(6000))
             setMediaItems(mediaItems)
             repeatMode = Player.REPEAT_MODE_ALL
-
+            playWhenReady = true
+            play()
+            prepare()
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                   // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
+                   // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
                     EventBus.getDefault().post(videos[currentMediaItemId])
                 }
-
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-                            Log.d("Exo-Player-State", "IDLE")
                             player?.prepare()
+                            Log.d("Video State","IDLE")
                         }
                         Player.STATE_BUFFERING -> {
-                            Log.d("Exo-Player-State", "BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
                                 EventBus.getDefault().post(DemoVideo(true))
                             }
-
+                            Log.d("Video State","BUFFERING")
                         }
                         Player.STATE_READY -> {
-                            Log.d("Exo-Player-State", "READY")
                             count = 0
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
-                                Log.d("Exo-Player-State", "READY-First-Video")
-                               // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId])
                                 EventBus.getDefault().post(videos[currentMediaItemId])
                                 progressbarHandler?.post(progressbarRunnable)
                             }
+                            Log.d("Video State","READY")
                         }
                         Player.STATE_ENDED -> {
-                            Log.d("Exo-Player-State", "ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-
+                            Log.d("Video State","END")
                         }
                     }
                 }
-
                 override fun onPlayerError(error: ExoPlaybackException) {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> Log.e(TAG, "TYPE_SOURCE: " + error.sourceException.message)
-
                         ExoPlaybackException.TYPE_RENDERER -> Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
-
                         ExoPlaybackException.TYPE_UNEXPECTED -> Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
                     }
                 }
-
-
             })
         }
         return player
