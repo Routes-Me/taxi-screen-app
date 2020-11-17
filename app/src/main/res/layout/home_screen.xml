@@ -130,23 +130,26 @@
             android:background="@drawable/routes_background"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:id="@+id/activityVideoCover"
         android:layout_height="match_parent"
         android:visibility="gone"
+
         >
-        <com.google.android.exoplayer2.ui.StyledPlayerView
+        <VideoView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:adjustViewBounds="true"
-            app:resize_mode="fill"
-            app:use_controller="false"
-            android:visibility="gone"
             android:id="@+id/demoVideoPlayer"
+            android:keepScreenOn="true"
+            android:adjustViewBounds="true"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--<ImageView
 
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/routes_background"
+        android:visibility="visible"/>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
