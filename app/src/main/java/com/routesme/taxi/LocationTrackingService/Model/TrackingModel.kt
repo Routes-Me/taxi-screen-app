@@ -17,8 +17,8 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
         }
 }
 
-@Entity(tableName = "MessageFeeds")
-class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
+//@Entity(tableName = "MessageFeeds")
+//class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
 
 class LocationJsonObject(private val locationFeed: LocationFeed) {
     fun toJSON(): JsonObject {

@@ -138,7 +138,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
     private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
-            Log.d("Network-Status","onAvailable")
             if (!isHotspotAlive) turnOnHotspot()
             try {
                 this@HomeActivity.runOnUiThread(java.lang.Runnable {
@@ -203,13 +202,26 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     @Subscribe()
     fun onEvent(demoVideo: DemoVideo){
-        Log.d("Tag","HELLO")
-
         try {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
-                activityVideoCover.visibility = View.VISIBLE
-                demoVideoPlayer.visibility = View.VISIBLE
-                playVideo()
+
+                if(demoVideo.isPlay){
+                    activityVideoCover.visibility = View.VISIBLE
+                    demoVideoPlayer.visibility = View.VISIBLE
+                    playVideo()
+                }else{
+                    if(activityVideoCover.visibility == View.VISIBLE){
+                        activityVideoCover.visibility = View.GONE
+                        demoVideoPlayer.visibility = View.GONE
+                        stopVideo()
+
+                    }else{
+                        activityVideoCover.visibility = View.GONE
+                        demoVideoPlayer.visibility = View.GONE
+                    }
+
+                }
+
             })
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()

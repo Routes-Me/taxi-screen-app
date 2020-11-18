@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -22,6 +24,7 @@ import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.ThemeColor
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
+import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
@@ -35,10 +38,15 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
+    private val SEC:Long = 120
+    private val MIL:Long = 1000
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
+    private var timerRunnable: Runnable? = null
+    private var isAlive = false
+    private var timerHandler: Handler? = null
     private var videoShadow: RelativeLayout? = null
     var TYPE_WIFI = 1
     var TYPE_MOBILE = 2
@@ -72,6 +80,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar
+        timerHandler = Handler()
         videoShadow = view.videoShadow
         super.onViewCreated(view, savedInstanceState)
     }
@@ -115,12 +124,13 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
-            Log.d("fetchContent-dialog","dialog")
+            //Log.d("fetchContent-dialog","dialog")
             if (it != null) {
                 if (it.isSuccess) {
                     isDataFetched = true
                     val images = it.imageList.toList()
                     val videos = it.videoList.toList()
+                    if(isAlive) removeThread()
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
                         Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
@@ -130,13 +140,19 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                     }
 
                 } else {
+
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
-                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                        it.mResponseErrors?.errors?.let {
+                            startThread()
+                            //errors -> displayErrors(errors)
+                             }
                     } else if (it.mThrowable != null) {
                         if (it.mThrowable is IOException) {
-                            Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.network_Issue))
+                            startThread()
+                            //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.network_Issue))
                         } else {
-                            Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.conversion_Issue))
+                            startThread()
+                            //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.conversion_Issue))
                         }
                     }
                 }
@@ -152,6 +168,30 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         }
     }
 
+    private fun startThread(){
+
+        EventBus.getDefault().post(DemoVideo(true))
+        isAlive = true
+        timerRunnable = object : Runnable {
+            override fun run() {
+
+                timerHandler!!.postDelayed({
+
+                    fetchContent()
+
+                },SEC*MIL)
+            }
+        }
+        timerHandler!!.post(timerRunnable)
+
+    }
+
+    private fun removeThread(){
+
+        timerHandler!!.removeCallbacks(timerRunnable)
+        EventBus.getDefault().post(DemoVideo(false))
+
+    }
     @Subscribe()
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){

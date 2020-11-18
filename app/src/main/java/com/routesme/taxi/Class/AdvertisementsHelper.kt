@@ -102,12 +102,9 @@ class AdvertisementsHelper {
 
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar): SimpleExoPlayer {
-        val videos = mutableListOf<Data>().apply {
-            add(Data("1","video","https://routesme.blob.core.windows.net/advertisements/McDonald's_b60813fa-0f02-4c49-9518-b7cc74d31e89.mp4",null,null))
-            addAll(videos)
-        }.toList()
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
+        //Log.d()
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
             playerView.player = this
