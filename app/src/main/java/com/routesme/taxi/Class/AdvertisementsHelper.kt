@@ -1,25 +1,26 @@
 package com.routesme.taxi.Class
 
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import android.widget.ImageView
 import androidx.annotation.Nullable
+import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.ExtractorMediaSource
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.ui.AspectRatioFrameLayout
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -95,13 +96,25 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar) {
         progressbarHandler = Handler()
-        player = initPlayer(context, videos, playerView, progressBar)
+        player = initPlayer(context, videos, playerView, videoCardView, progressBar)
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar): SimpleExoPlayer {
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar): SimpleExoPlayer {
+        val videoAnimationIn = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
+        val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
+        val distance = 8000
+        val scale: Float = context.resources.displayMetrics.density * distance
+        videoCardView.apply {
+            cameraDistance = scale
+            pivotX = 0f
+            videoAnimationOut.setTarget(this)
+            videoAnimationIn.setTarget(this)
+
+        }
+
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
         //Log.d()
@@ -116,6 +129,9 @@ class AdvertisementsHelper {
             prepare()
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
+
+                    videoAnimationIn.start()
+
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                    // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
                     EventBus.getDefault().post(videos[currentMediaItemId])
@@ -135,6 +151,15 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
+                            /*
+                            playerView.animate()
+                                    .rotationX(360F)
+                                    .setDuration(7000)
+                                    .setStartDelay(500)
+                                    .interpolator = AccelerateDecelerateInterpolator()
+*/
+                         //   playerView.animation.start()
+
                             count = 0
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
@@ -142,11 +167,11 @@ class AdvertisementsHelper {
                                 EventBus.getDefault().post(videos[currentMediaItemId])
                                 progressbarHandler?.post(progressbarRunnable)
                             }
-
                         }
                         Player.STATE_ENDED -> {
+                            //Log.d("vidoePlayer-state","STATE_ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-                            
+                            videoAnimationOut.start()
                         }
                     }
                 }

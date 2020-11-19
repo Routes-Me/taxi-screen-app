@@ -5,10 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -136,7 +134,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         return@Observer
                     }else{
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
-                          AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)
+                          AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.Advertisement_Video_CardView, mView.videoRingProgressBar)
                     }
 
                 } else {
