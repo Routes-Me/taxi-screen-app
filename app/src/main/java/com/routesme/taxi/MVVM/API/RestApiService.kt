@@ -6,13 +6,16 @@ import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.R
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
 
-
 interface RestApiService {
+
+    @PUT("devices/{id}/applications")
+    fun submitApplicationVersion(@Path("id") deviceId: String, @Body submitApplicationVersionCredentials: SubmitApplicationVersionCredentials): Call<JsonElement>
 
     @Headers("application: screen")
     @POST("signin")

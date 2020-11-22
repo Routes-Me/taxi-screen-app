@@ -1,8 +1,11 @@
 package com.routesme.taxi.MVVM.View.activity
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.net.Network
@@ -10,6 +13,8 @@ import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import androidx.activity.viewModels
+import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -17,21 +22,27 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
-import com.routesme.taxi.MVVM.Model.Data
-import com.routesme.taxi.MVVM.Model.IModeChanging
-import com.routesme.taxi.MVVM.Model.Promotion
+import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
+import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
+import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.home_screen.*
+import kotlinx.android.synthetic.main.technical_login_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.io.IOException
 
 class HomeActivity : PermissionsActivity(), IModeChanging {
+    private var sharedPreferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
     private var isHotspotAlive = false
     private var pressedTime: Long = 0
@@ -55,13 +66,43 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         setContentView(R.layout.home_screen)
+        submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
-
     }
+
+    @SuppressLint("CommitPrefEdits")
+    private fun submitApplicationVersion() {
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor= sharedPreferences?.edit()
+        val submittedVersion = sharedPreferences?.getString(SharedPreferencesHelper.submitted_version, null)
+        val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
+        if (currentVersion.isNotEmpty()){
+            if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
+                val deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+                val packageName = BuildConfig.APPLICATION_ID
+                deviceId?.let {
+                    val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
+                    sendCurrentVersionToServer(it, submitApplicationVersionCredentials)
+                }
+            }
+        }
+    }
+
+    private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
+        val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
+        submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
+            if (it != null) {
+                if (it.isSuccess) {
+                    editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
+                }
+            }
+        })
+    }
+
     private fun initializePlayer() {
         player = SimpleExoPlayer.Builder(this).build()
         demoVideoPlayer.player = player
