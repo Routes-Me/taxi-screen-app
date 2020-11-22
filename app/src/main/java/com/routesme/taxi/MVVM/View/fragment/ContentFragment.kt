@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
-import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.util.Log
@@ -22,12 +21,16 @@ import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.ConnectivityReceiver
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.ContentResponse
+import com.routesme.taxi.MVVM.Model.ContentType
+import com.routesme.taxi.MVVM.Model.Data
+import com.routesme.taxi.MVVM.Model.Error
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -40,6 +43,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private lateinit var mView: View
     private val SEC:Long = 120
     private val MIL:Long = 1000
+    private var count = 0
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
@@ -112,9 +116,9 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onStart() {
         EventBus.getDefault().register(this)
+        Log.d("Video","Start")
         super.onStart()
     }
-
     override fun onStop() {
         EventBus.getDefault().unregister(this)
         super.onStop()
@@ -124,7 +128,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
-            //Log.d("fetchContent-dialog","dialog")
             if (it != null) {
                 if (it.isSuccess) {
                     isDataFetched = true
@@ -136,7 +139,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         return@Observer
                     }else{
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
-                          AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)
+                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,backView)
                     }
 
                 } else {
@@ -161,6 +164,8 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
             }
         })
     }
+
+
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
@@ -199,6 +204,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         }
     }
 
+
     private fun changeVideoCardColor(tintColor: Int?) {
         val color = ThemeColor(tintColor).getColor()
         val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
@@ -208,4 +214,5 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
             it.ringProgressColor = color
         }
     }
+
 }
