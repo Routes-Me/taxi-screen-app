@@ -46,7 +46,6 @@ class AdvertisementsHelper {
     private var count = 0;
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
-    private lateinit var mView: View
     private val distance = -12000f
     private var TAG="ExoPlayer Error"
 
@@ -103,11 +102,11 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,view: View) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
         setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
-        mView = view
+
         player = initPlayer(context, videos, playerView, progressBar)
     }
 
