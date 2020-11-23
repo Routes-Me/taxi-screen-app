@@ -26,16 +26,10 @@ class ContentRepository(val context: Context) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
                     contentResponse.value = ContentResponse(data = content.data)
                 } else{
-                    if (response.errorBody() != null){
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        contentResponse.value = ContentResponse(mResponseErrors = errors)
-                    }else{
-                        val error = Error(detail = response.message(),statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                        val responseErrors = ResponseErrors(errors)
-                        contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
-                    }
+                    val error = Error(detail = response.message(),statusCode = response.code())
+                    val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                    val responseErrors = ResponseErrors(errors)
+                    contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {

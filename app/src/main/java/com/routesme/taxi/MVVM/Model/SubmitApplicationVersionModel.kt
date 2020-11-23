@@ -10,7 +10,4 @@ class SubmitApplicationVersionResponse(val submitApplicationVersionSuccessRespon
 
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
-
-    val isExists: Boolean
-        get() = (mResponseErrors != null && mResponseErrors.errors.first().statusCode == HttpURLConnection.HTTP_NO_CONTENT)
 }

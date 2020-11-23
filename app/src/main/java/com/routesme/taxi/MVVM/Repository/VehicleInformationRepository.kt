@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -30,16 +31,10 @@ class VehicleInformationRepository(val context: Context) {
                     val institutions = Gson().fromJson<Institutions>(response.body(), Institutions::class.java)
                     institutionsResponse.value = InstitutionsResponse(data = institutions.data)
                 } else{
-                    if (response.errorBody() != null){
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        institutionsResponse.value = InstitutionsResponse(mResponseErrors = errors)
-                    }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                         val responseErrors = ResponseErrors(errors)
                         institutionsResponse.value = InstitutionsResponse(mResponseErrors = responseErrors)
-                    }
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
@@ -57,16 +52,10 @@ class VehicleInformationRepository(val context: Context) {
                     val vehicles = Gson().fromJson<Vehicles>(response.body(), Vehicles::class.java)
                     vehiclesResponse.value = VehiclesResponse(data = vehicles.data)
                 } else{
-                    if (response.errorBody() != null){
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        vehiclesResponse.value = VehiclesResponse(mResponseErrors = errors)
-                    }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                         val responseErrors = ResponseErrors(errors)
                         vehiclesResponse.value = VehiclesResponse(mResponseErrors = responseErrors)
-                    }
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {

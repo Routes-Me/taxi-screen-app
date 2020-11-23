@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -11,6 +12,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.HttpURLConnection
 
 
 class LoginRepository(val context: Context) {
@@ -31,7 +33,7 @@ class LoginRepository(val context: Context) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
                     signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else{
-                    if (response.errorBody() != null){
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
                         val objError = JSONObject(response.errorBody()!!.string())
                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         signInResponse.value = LoginResponse(mResponseErrors = errors)

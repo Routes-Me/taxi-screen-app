@@ -144,7 +144,7 @@
             android:keepScreenOn="true"
             android:adjustViewBounds="true"
             app:resize_mode="fill"
-            app:use_controller="true"
+            app:use_controller="false"
             />
     </androidx.constraintlayout.widget.ConstraintLayout>
     <!--<ImageView

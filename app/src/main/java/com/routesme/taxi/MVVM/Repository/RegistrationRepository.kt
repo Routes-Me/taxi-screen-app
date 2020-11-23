@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -10,6 +11,7 @@ import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.HttpURLConnection
 
 class RegistrationRepository(val context: Context) {
     private val registrationResponse = MutableLiveData<RegistrationResponse>()
@@ -20,14 +22,13 @@ class RegistrationRepository(val context: Context) {
 
     fun register(registrationCredentials: RegistrationCredentials): MutableLiveData<RegistrationResponse> {
         val call = thisApiCorService.register(registrationCredentials)
-        registrationCredentials
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
                     registrationResponse.value = RegistrationResponse(deviceId = registrationSuccessResponse.deviceId)
                 } else{
-                    if (response.errorBody() != null){
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT){
                         val objError = JSONObject(response.errorBody()!!.string())
                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         registrationResponse.value = RegistrationResponse(mResponseErrors = errors)
