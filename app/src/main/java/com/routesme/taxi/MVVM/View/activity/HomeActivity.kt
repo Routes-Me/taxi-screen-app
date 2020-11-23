@@ -96,7 +96,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
-                if (it.isSuccess) {
+                if (it.isSuccess || it.isExists) {
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
                 }
             }
@@ -145,7 +145,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         EventBus.getDefault().register(this)
         super.onStart()
     }
-
 
     override fun onStop() {
         registerNetworkCallback(false)
