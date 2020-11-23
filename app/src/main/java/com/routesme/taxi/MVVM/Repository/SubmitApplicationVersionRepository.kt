@@ -26,16 +26,10 @@ class SubmitApplicationVersionRepository(val context: Context) {
                     val submitApplicationVersionSuccessResponse = Gson().fromJson<SubmitApplicationVersionSuccessResponse>(response.body(), SubmitApplicationVersionSuccessResponse::class.java)
                     submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(submitApplicationVersionSuccessResponse = submitApplicationVersionSuccessResponse)
                 } else{
-                    if (response.errorBody() != null){
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(mResponseErrors = errors)
-                    }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                         val responseErrors = ResponseErrors(errors)
                         submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(mResponseErrors = responseErrors)
-                    }
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {

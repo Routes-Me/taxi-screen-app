@@ -93,9 +93,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
+        Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
+                Log.d("SubmitApplicationVersionResponse","${it.mResponseErrors?.errors?.first()?.statusCode}")
                 if (it.isSuccess || it.isExists) {
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
                 }
