@@ -6,6 +6,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.annotation.Nullable
 import carbon.widget.RelativeLayout
@@ -101,15 +102,15 @@ class AdvertisementsHelper {
         player = initPlayer(context, videos, playerView, videoCardView, progressBar)
     }
 
-
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar): SimpleExoPlayer {
+        //val rotate_animation = AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
         val videoAnimationIn = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
-        val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
+        val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
         val distance = 8000
         val scale: Float = context.resources.displayMetrics.density * distance
         videoCardView.apply {
             cameraDistance = scale
-            pivotX = 0f
+            pivotY = videoCardView.height.toFloat() //360f
             videoAnimationOut.setTarget(this)
             videoAnimationIn.setTarget(this)
 
@@ -130,7 +131,9 @@ class AdvertisementsHelper {
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
 
-                   // videoAnimationIn.start()
+                    //videoCardView.startAnimation(rotate_animation)
+
+                    videoAnimationIn.start()
 
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                    // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
@@ -171,7 +174,7 @@ class AdvertisementsHelper {
                         Player.STATE_ENDED -> {
                             //Log.d("vidoePlayer-state","STATE_ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-                            //videoAnimationOut.start()
+                           // videoAnimationOut.start()
                         }
                     }
                 }
