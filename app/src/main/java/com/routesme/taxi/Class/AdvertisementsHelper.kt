@@ -3,14 +3,20 @@ package com.routesme.taxi.Class
 import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
+import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.annotation.Nullable
+import androidx.core.animation.addListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -27,6 +33,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
+import com.routesme.taxi.FlipAnimation
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
@@ -46,7 +53,7 @@ class AdvertisementsHelper {
     private var count = 0;
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
-    private val distance = -12000f
+    private val distance = 8000
     private var TAG="ExoPlayer Error"
 
 
@@ -102,19 +109,20 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
         setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
 
-        player = initPlayer(context, videos, playerView, progressBar)
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout)
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar): SimpleExoPlayer {
-        playerView.setCameraDistance(-12000f)
-        playerView.pivotX = 0f
-        playerView.pivotY = 2f
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout): SimpleExoPlayer {
+        val scale = context!!.getResources().getDisplayMetrics().density;
+        relativeLayout.setCameraDistance(12000f)
+        relativeLayout.pivotX = 0.0f
+        relativeLayout.pivotY = relativeLayout.height / 0.5f
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
@@ -131,7 +139,7 @@ class AdvertisementsHelper {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
 
-                    setAnimation(context,playerView)
+                    setAnimation(context,relativeLayout)
                 }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
@@ -186,12 +194,50 @@ class AdvertisementsHelper {
         return player
     }
 
-    private fun setAnimation(context: Context,playerView: StyledPlayerView){
+    private fun setAnimation(context: Context,playerView: RelativeLayout){
 
-        setOut!!.setTarget(playerView)
+        /*setOut!!.setTarget(playerView)
         setIn!!.setTarget(playerView)
+        setOut!!.setDuration(3000)
+        setIn!!.setDuration(3000)
         setOut!!.start()
-        setIn!!.start()
+        setIn!!.start()*/
+        //playerView.pivotX = 0.0f
+        //playerView.pivotY = playerView.height / 0.5f
+        val animator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        animator.apply {
+            setDuration(3000)
+            animator.addListener(onStart = {player!!.pause()},onEnd = {player!!.play()})
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+        /*val animation = FlipAnimation(0f, -180f, 0.0f, playerView.height / 0.5f)
+        animation.duration = 5000
+        animation.interpolator = AccelerateInterpolator()
+        animation.fillAfter = true
+        animation.setAnimationListener(object : Animation.AnimationListener {
+            override fun onAnimationRepeat(animation: Animation?) {
+
+            }
+
+            override fun onAnimationEnd(animation: Animation?) {
+                // flipCardView.rotationY = endAngor
+                playerView.clearAnimation()
+                player!!.play()
+
+                /*if (!toggle) {
+                    flipCardView.visibility = View.INVISIBLE
+                }*/
+            }
+
+            override fun onAnimationStart(animation: Animation?) {
+
+                player!!.pause()
+            }
+
+        })
+
+        playerView.startAnimation(animation)*/
     }
 
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {

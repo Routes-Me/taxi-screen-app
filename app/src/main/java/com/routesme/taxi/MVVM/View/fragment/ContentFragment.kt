@@ -139,7 +139,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         return@Observer
                     }else{
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
-                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar)
+                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView)
                     }
 
                 } else {

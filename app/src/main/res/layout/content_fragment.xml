@@ -24,7 +24,7 @@
             android:layout_margin="@dimen/_1sdp"
             app:carbon_elevation="@dimen/_8sdp"
             app:carbon_cornerRadius="@dimen/_4sdp">
-            
+
             <com.google.android.exoplayer2.ui.StyledPlayerView
                 android:id="@+id/playerView"
                 android:layout_width="match_parent"
