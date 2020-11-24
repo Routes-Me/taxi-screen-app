@@ -130,7 +130,7 @@ class AdvertisementsHelper {
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
 
-                    videoAnimationIn.start()
+                   // videoAnimationIn.start()
 
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                    // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
@@ -171,7 +171,7 @@ class AdvertisementsHelper {
                         Player.STATE_ENDED -> {
                             //Log.d("vidoePlayer-state","STATE_ENDED")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-                            videoAnimationOut.start()
+                            //videoAnimationOut.start()
                         }
                     }
                 }
