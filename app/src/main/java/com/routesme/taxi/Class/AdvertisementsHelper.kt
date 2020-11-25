@@ -105,13 +105,13 @@ class AdvertisementsHelper {
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar): SimpleExoPlayer {
         //val rotate_animation = AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
         val videoAnimationIn = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
-        val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
+        //val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
         val distance = 8000
         val scale: Float = context.resources.displayMetrics.density * distance
         videoCardView.apply {
             cameraDistance = scale
             pivotY = videoCardView.height.toFloat() //360f
-            videoAnimationOut.setTarget(this)
+            //videoAnimationOut.setTarget(this)
             videoAnimationIn.setTarget(this)
 
         }
@@ -133,7 +133,7 @@ class AdvertisementsHelper {
 
                     //videoCardView.startAnimation(rotate_animation)
 
-                    videoAnimationIn.start()
+                   // videoAnimationIn.start()
 
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                    // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)

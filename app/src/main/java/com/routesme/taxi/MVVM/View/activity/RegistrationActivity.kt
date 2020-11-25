@@ -18,6 +18,7 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.DateOperations
 import com.routesme.taxi.Class.Operations
@@ -206,6 +207,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.device_id_is_null_value))
                             return@Observer
                         }
+                        FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveTabletInfoIntoSharedPreferences(deviceId)
                         openModelPresenterScreen()
                     } else {

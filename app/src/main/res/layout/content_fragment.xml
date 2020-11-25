@@ -4,6 +4,29 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
+    <carbon.widget.RelativeLayout
+        android:id="@+id/bgImage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_percent="0.865"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:padding="@dimen/_5sdp"
+        app:carbon_cornerRadius="@dimen/_4sdp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
+        app:layout_constraintHorizontal_chainStyle="spread_inside">
+        <com.google.android.material.imageview.ShapeableImageView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:scaleType="centerCrop"
+            app:shapeAppearanceOverlay="@style/roundedCornersImageView"
+            android:background="@color/black"
+            />
+    </carbon.widget.RelativeLayout>
+
     <carbon.widget.RelativeLayout
         android:id="@+id/Advertisement_Video_CardView"
         android:layout_width="0dp"
@@ -36,7 +59,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 app:resize_mode="fill"
-                app:use_controller="true" />
+                app:use_controller="false" />
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar
                 android:id="@+id/videoRingProgressBar"
