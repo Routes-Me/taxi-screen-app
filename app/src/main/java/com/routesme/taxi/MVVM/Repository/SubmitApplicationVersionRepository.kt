@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -22,9 +23,9 @@ class SubmitApplicationVersionRepository(val context: Context) {
         val call = thisApiCorService.submitApplicationVersion(deviceId, submitApplicationVersionCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val submitApplicationVersionSuccessResponse = Gson().fromJson<SubmitApplicationVersionSuccessResponse>(response.body(), SubmitApplicationVersionSuccessResponse::class.java)
-                    submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(submitApplicationVersionSuccessResponse = submitApplicationVersionSuccessResponse)
+                Log.d("SubmitApplicationVersionResponse","response code : ${response.code()}")
+                if (response.isSuccessful) {
+                    submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(isSuccess = true)
                 } else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()

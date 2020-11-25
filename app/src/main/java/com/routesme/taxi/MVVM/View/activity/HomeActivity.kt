@@ -98,8 +98,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
                 Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
-                Log.d("SubmitApplicationVersionResponse","successResponse: ${it.submitApplicationVersionSuccessResponse}")
                 if (it.isSuccess) {
+                    Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
                 }
             }
