@@ -1,6 +1,5 @@
 package com.routesme.taxi.Class
 
-import android.animation.Animator
 import android.animation.AnimatorInflater
 import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
@@ -8,9 +7,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
-import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
@@ -33,7 +30,6 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi.FlipAnimation
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
@@ -51,6 +47,7 @@ class AdvertisementsHelper {
     private var progressbarHandler: Handler? = null
     private var progressbarRunnable: Runnable? = null
     private var count = 0;
+    var objectAnimator:ObjectAnimator?=null
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
     private val distance = 8000
@@ -109,20 +106,20 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
         setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
 
-        player = initPlayer(context, videos, playerView, progressBar,relativeLayout)
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout): SimpleExoPlayer {
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout): SimpleExoPlayer {
         val scale = context!!.getResources().getDisplayMetrics().density;
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
-        relativeLayout.pivotY = relativeLayout.height / 0.5f
+        relativeLayout.pivotY = relativeLayout.height / 0.7f
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
@@ -139,7 +136,7 @@ class AdvertisementsHelper {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
 
-                    setAnimation(context,relativeLayout)
+                    setAnimation(context,relativeLayout,relativeLayout2)
                 }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
@@ -194,50 +191,24 @@ class AdvertisementsHelper {
         return player
     }
 
-    private fun setAnimation(context: Context,playerView: RelativeLayout){
+    private fun setAnimation(context: Context,playerView: RelativeLayout,bgImageView: RelativeLayout){
 
-        /*setOut!!.setTarget(playerView)
-        setIn!!.setTarget(playerView)
-        setOut!!.setDuration(3000)
-        setIn!!.setDuration(3000)
-        setOut!!.start()
-        setIn!!.start()*/
-        //playerView.pivotX = 0.0f
-        //playerView.pivotY = playerView.height / 0.5f
-        val animator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        animator.apply {
-            setDuration(3000)
-            animator.addListener(onStart = {player!!.pause()},onEnd = {player!!.play()})
+        objectAnimator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        objectAnimator!!.apply {
+            setDuration(1500)
+            objectAnimator!!.addListener(onStart = {player!!.pause()},onEnd = {player!!.play()})
             AccelerateDecelerateInterpolator()
             start()
         }
-        /*val animation = FlipAnimation(0f, -180f, 0.0f, playerView.height / 0.5f)
-        animation.duration = 5000
-        animation.interpolator = AccelerateInterpolator()
-        animation.fillAfter = true
-        animation.setAnimationListener(object : Animation.AnimationListener {
-            override fun onAnimationRepeat(animation: Animation?) {
-
-            }
-
-            override fun onAnimationEnd(animation: Animation?) {
-                // flipCardView.rotationY = endAngor
-                playerView.clearAnimation()
-                player!!.play()
-
-                /*if (!toggle) {
-                    flipCardView.visibility = View.INVISIBLE
-                }*/
-            }
-
-            override fun onAnimationStart(animation: Animation?) {
-
-                player!!.pause()
-            }
-
-        })
-
-        playerView.startAnimation(animation)*/
+        /*val alphaAnimation = AlphaAnimation(0.0f, 1.0f)
+        alphaAnimation.apply {
+            duration = 1500
+            repeatCount = 1
+            repeatMode = Animation.REVERSE
+        }*/
+        val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        bgImageView.startAnimation(zoomout)
+        playerView.bringToFront()
     }
 
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
