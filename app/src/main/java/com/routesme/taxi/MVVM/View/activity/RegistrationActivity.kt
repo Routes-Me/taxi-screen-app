@@ -102,8 +102,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private fun initializeViews() {
         taxiOffice_tv.setOnClickListener(this)
         taxiPlateNumber_tv.setOnClickListener(this)
-        deviceSerialNumber_tv.setOnClickListener(this)
-        SimCardNumber_tv.setOnClickListener(this)
+        deviceId_tv.setOnClickListener(this)
+        SimSerialNumber_tv.setOnClickListener(this)
         register_btn.setOnClickListener(this)
         dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
     }
@@ -133,10 +133,10 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             return
         } else {
             registerCredentials.apply {
-                SerialNumber = telephonyManager.imei
+                deviceId = telephonyManager.imei
                 SimSerialNumber = telephonyManager.simSerialNumber
-                deviceSerialNumber_tv.text = SerialNumber
-                SimCardNumber_tv.text = SimSerialNumber
+                deviceId_tv.text = deviceId
+                SimSerialNumber_tv.text = SimSerialNumber
             }
             showTabletInfoError(false)
         }
@@ -164,7 +164,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.deviceSerialNumber_tv, R.id.SimCardNumber_tv -> clickOnGetDeviceInfo()
+            R.id.deviceId_tv, R.id.SimSerialNumber_tv -> clickOnGetDeviceInfo()
             R.id.taxiOffice_tv -> openInstitutionsList()
             R.id.taxiPlateNumber_tv -> openVehiclesList()
             R.id.register_btn ->   register() //register()
@@ -264,7 +264,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun tabletInformationExist(): Boolean {
-        val tabletSerialNumber = registerCredentials.SerialNumber
+        val tabletSerialNumber = registerCredentials.deviceId
         val simCardNumber = registerCredentials.SimSerialNumber
         return if (tabletSerialNumber.isNullOrEmpty() || simCardNumber.isNullOrEmpty()) {
             showTabletInfoError(true)
@@ -283,7 +283,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreferencesHelper.vehicle_id, app.vehicleId)
             putString(SharedPreferencesHelper.vehicle_plate_number, app.taxiPlateNumber)
             putString(SharedPreferencesHelper.device_id, deviceId)
-            putString(SharedPreferencesHelper.device_serial_number, registerCredentials.SerialNumber)
+            putString(SharedPreferencesHelper.device_serial_number, registerCredentials.deviceId)
             putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
         }.apply()
     }
@@ -335,23 +335,23 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun showTabletInfoError(show: Boolean) {
         if (show) {
-            deviceSerialNumber_tv.apply {
+            deviceId_tv.apply {
                 error = getString(R.string.click_here_to_get_serial_number)
                 requestFocus()
             }
-            SimCardNumber_tv.apply {
+            SimSerialNumber_tv.apply {
                 error = getString(R.string.click_here_to_get_sim_card_number)
                 requestFocus()
             }
             getDeviceInfo = false
             return
         } else {
-            deviceSerialNumber_tv.apply {
+            deviceId_tv.apply {
                 error = null
                 clearFocus()
                 isClickable = false
             }
-            SimCardNumber_tv.apply {
+            SimSerialNumber_tv.apply {
                 error = null
                 clearFocus()
                 isClickable = false

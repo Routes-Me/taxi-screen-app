@@ -108,25 +108,33 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start"
                     android:layout_marginBottom="15dp"
-                    android:text="Device" />
+                    android:text="@string/device_id" />
 
                 <TextView
-                    android:id="@+id/deviceSerialNumber_tv"
+                    android:id="@+id/deviceId_tv"
                     style="@style/AppTheme.CustomEditText"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="10dp"
                     android:background="@drawable/grey_border_text_view"
-                    android:hint="Tablet Serial Number"
+                    android:hint="@string/device_id"
                     android:nextFocusDown="@id/password_et" />
 
                 <TextView
-                    android:id="@+id/SimCardNumber_tv"
+                    style="@style/AppTheme.CustomTextViewTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="start"
+                    android:layout_marginBottom="15dp"
+                    android:text="@string/sim_serial_number" />
+
+                <TextView
+                    android:id="@+id/SimSerialNumber_tv"
                     style="@style/AppTheme.CustomEditText"
                     android:layout_width="482dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/grey_border_text_view"
-                    android:hint="SIM Card Number"
+                    android:hint="@string/sim_serial_number"
                     android:nextFocusDown="@id/password_et" />
 
             </LinearLayout>
