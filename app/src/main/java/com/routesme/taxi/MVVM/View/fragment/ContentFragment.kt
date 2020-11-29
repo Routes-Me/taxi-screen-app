@@ -19,8 +19,12 @@ import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.ConnectivityReceiver
 import com.routesme.taxi.Class.Operations
+import com.routesme.taxi.Class.SideFragmentAdapter.ImageViewPager
 import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.ContentResponse
+import com.routesme.taxi.MVVM.Model.ContentType
+import com.routesme.taxi.MVVM.Model.Data
+import com.routesme.taxi.MVVM.Model.Error
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
@@ -36,9 +40,12 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
+    private var pager: Int = 1
     private val SEC:Long = 120
     private val MIL:Long = 1000
+    var delay = 15 * 1000
     private var connectivityReceiver: ConnectivityReceiver? = null
+    private var imageViewPagerAdapter:ImageViewPager?=null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
@@ -138,8 +145,9 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext, images, mView.advertisementsImageView)
-                          AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.Advertisement_Video_CardView, mView.videoRingProgressBar)
+
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2)
+                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage)
                     }
 
                 } else {

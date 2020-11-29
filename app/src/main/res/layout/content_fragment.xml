@@ -26,7 +26,6 @@
             android:background="@color/black"
             />
     </carbon.widget.RelativeLayout>
-
     <carbon.widget.RelativeLayout
         android:id="@+id/Advertisement_Video_CardView"
         android:layout_width="0dp"
@@ -39,6 +38,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
         app:layout_constraintHorizontal_chainStyle="spread_inside">
+
+
 
         <carbon.widget.RelativeLayout
             android:id="@+id/videoShadow"
@@ -59,7 +60,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 app:resize_mode="fill"
-                app:use_controller="false" />
+                app:use_controller="true" />
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar
                 android:id="@+id/videoRingProgressBar"
@@ -96,15 +97,19 @@
             app:carbon_elevation="@dimen/_8sdp"
             app:carbon_cornerRadius="@dimen/_4sdp"
             app:carbon_elevationShadowColor="@color/card_shadow">
+            <androidx.appcompat.widget.AppCompatImageView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:id="@+id/advertisementsImageView2"
+                />
 
-            <ImageView
+            <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/advertisementsImageView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_alignParentTop="true"
-                android:adjustViewBounds="true"
-                android:background="#0f000000"
-                android:scaleType="fitXY" />
+                android:scaleType="centerCrop"
+                android:adjustViewBounds="true" />
 
         </carbon.widget.RelativeLayout>
 

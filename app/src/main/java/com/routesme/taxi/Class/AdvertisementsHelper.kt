@@ -1,15 +1,17 @@
 package com.routesme.taxi.Class
 
-import android.animation.*
+import android.animation.AnimatorInflater
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.DecelerateInterpolator
+import android.view.animation.*
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import androidx.annotation.Nullable
-import carbon.widget.RelativeLayout
+import androidx.core.animation.addListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -43,7 +45,12 @@ class AdvertisementsHelper {
     private var progressbarHandler: Handler? = null
     private var progressbarRunnable: Runnable? = null
     private var count = 0;
+    var objectAnimator:ObjectAnimator?=null
+    var objectAnimator_image:ObjectAnimator?=null
+    var setOut: AnimatorSet?=null
+    var setIn:AnimatorSet?=null
     private var TAG="ExoPlayer Error"
+
 
     companion object {
         @get:Synchronized
@@ -73,58 +80,25 @@ class AdvertisementsHelper {
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
-    fun displayImages(context: Context, images: List<Data>, imageView: ImageView) {
-
-        var videoUrl: Uri? = null
-        var oa1: ObjectAnimator? = null
-
-        val distance = 8000
-        val scale: Float = context.resources.displayMetrics.density * distance
-        imageView.apply {
-            cameraDistance = scale
-            pivotX = this.width.toFloat()
-            oa1 = ObjectAnimator.ofFloat(this, "rotationY", 0F, 180f).setDuration(2000)
-            val oa2: ObjectAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0f, 1f)
-            oa1?.interpolator = DecelerateInterpolator()
-            oa2.interpolator = AccelerateDecelerateInterpolator()
-            oa1?.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator?) {
-                    super.onAnimationEnd(animation)
-                    // imageView.setImageResource(R.drawable.frontSide)
-                    videoUrl?.let { glide.load(it).apply(imageOptions).into(imageView) }
-                    oa2.start()
-                }
-            })
-        }
-
-
-
-/*
-        val bannerAnimation = AnimatorInflater.loadAnimator(context, R.animator.banner_animation) as AnimatorSet
-        val distance = 8000
-        val scale: Float = context.resources.displayMetrics.density * distance
-
-        imageView.apply {
-            cameraDistance = scale
-            pivotX = this.width.toFloat()
-            bannerAnimation.setTarget(this)
-        }
-*/
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
         displayImageHandler = Handler()
-
+        imageView.cameraDistance = 12000f
+        imageView.pivotX = imageView.height * 0.7f
+        imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
 
         displayImageRunnable = object : Runnable {
             override fun run() {
                 if (currentImageIndex < images.size) {
-                   // bannerAnimation.start()
-                    // qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
+                    val uri = Uri.parse(images[currentImageIndex].url)
+                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView)
+                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView2)
                     EventBus.getDefault().post(images[currentImageIndex])
-                    //videoUrl = Uri.parse(images[currentImageIndex].url)
-                    //oa1?.start()
+                    if(currentImageIndex != 0){
 
-                    val url = Uri.parse(images[currentImageIndex].url)
-                    url?.let { glide.load(it).apply(imageOptions).into(imageView) }
+                        setImageAnimation(context,imageView,imageView2)
+
+                    }
 
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
@@ -138,28 +112,22 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
         progressbarHandler = Handler()
-        player = initPlayer(context, videos, playerView, videoCardView, progressBar)
+        setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
+        setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
+
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
     }
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar): SimpleExoPlayer {
-        //val rotate_animation = AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
-        val videoAnimation = AnimatorInflater.loadAnimator(context, R.animator.video_animation) as AnimatorSet
-        //val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
-        val distance = 8000
-        val scale: Float = context.resources.displayMetrics.density * distance
-        videoCardView.apply {
-            cameraDistance = scale
-            pivotY = this.height.toFloat()
-            //videoAnimationOut.setTarget(this)
-            videoAnimation.setTarget(this)
 
-        }
-
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout): SimpleExoPlayer {
+        val scale = context!!.getResources().getDisplayMetrics().density;
+        relativeLayout.setCameraDistance(12000f)
+        relativeLayout.pivotX = 0.0f
+        relativeLayout.pivotY = relativeLayout.height / 0.7f
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
-        //Log.d()
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
             playerView.player = this
@@ -171,22 +139,20 @@ class AdvertisementsHelper {
             prepare()
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
-
-                    //videoCardView.startAnimation(rotate_animation)
-
-                  //  videoAnimation.start()
-
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                   // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
                     EventBus.getDefault().post(videos[currentMediaItemId])
+
+                    setAnimation(context,relativeLayout,relativeLayout2)
                 }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
+                            Log.d("VideoState","IDLE")
                             player?.prepare()
 
                         }
                         Player.STATE_BUFFERING -> {
+                            Log.d("VideoState","BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
@@ -195,15 +161,7 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
-                            /*
-                            playerView.animate()
-                                    .rotationX(360F)
-                                    .setDuration(7000)
-                                    .setStartDelay(500)
-                                    .interpolator = AccelerateDecelerateInterpolator()
-*/
-                         //   playerView.animation.start()
-
+                            Log.d("VideoState","READ")
                             count = 0
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
@@ -211,11 +169,12 @@ class AdvertisementsHelper {
                                 EventBus.getDefault().post(videos[currentMediaItemId])
                                 progressbarHandler?.post(progressbarRunnable)
                             }
+
                         }
                         Player.STATE_ENDED -> {
-                            //Log.d("vidoePlayer-state","STATE_ENDED")
+                            Log.d("VideoState","END")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-                           // videoAnimationOut.start()
+
                         }
                     }
                 }
@@ -236,6 +195,42 @@ class AdvertisementsHelper {
             })
         }
         return player
+    }
+
+    private fun setAnimation(context: Context,playerView: RelativeLayout,bgImageView: RelativeLayout){
+
+        objectAnimator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        objectAnimator!!.apply {
+            setDuration(1500)
+            objectAnimator!!.addListener(onStart = {player!!.pause()},onEnd = {player!!.play()})
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+
+        val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        bgImageView.startAnimation(zoomout)
+        playerView.bringToFront()
+    }
+
+
+    private fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
+
+        objectAnimator_image = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
+        objectAnimator_image!!.apply {
+            setDuration(1500)
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+        objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "rotationY", 330f, 360f)
+        objectAnimator_image!!.apply {
+            setDuration(2500)
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+        /*val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        imageView2.startAnimation(zoomIn)*/
+        imageView.bringToFront()
+
     }
 
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
