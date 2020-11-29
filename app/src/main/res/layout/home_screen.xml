@@ -35,7 +35,6 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.993" />
 
-
     <FrameLayout
         android:id="@+id/contentFragment_container"
         android:layout_width="0dp"
@@ -65,7 +64,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.746" />
+        app:layout_constraintGuide_percent="0.728" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineDividerAccessoryBottom"
@@ -73,7 +72,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.815" />
+        app:layout_constraintGuide_percent="0.833" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineDividerAccessoryStart"
@@ -96,16 +95,26 @@
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
         app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
-        app:layout_constraintDimensionRatio="H,7 : 28"/>
+        app:layout_constraintDimensionRatio="H,5 : 31"/>
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="?banner_divider"
+        android:src="?side_divider"
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
-        app:layout_constraintEnd_toEndOf="@id/guidelineDividerAccessoryEnd"
-        app:layout_constraintDimensionRatio="H,47 : 45"/>
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="H,58 : 43"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="?side_divider"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="@dimen/_14sdp"
+        app:layout_constraintDimensionRatio="H,58 : 43"/>
+
 
     <ImageView
         android:id="@+id/openPatternBtn"
@@ -123,7 +132,7 @@
        android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/activityCover"
-        >
+        android:visibility="gone">
         <androidx.appcompat.widget.AppCompatImageView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
