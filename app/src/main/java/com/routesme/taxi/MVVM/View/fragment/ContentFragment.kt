@@ -133,7 +133,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext, images, mView.advertisementsImageView)
                           AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.Advertisement_Video_CardView, mView.videoRingProgressBar)
                     }
 

@@ -1,12 +1,12 @@
 package com.routesme.taxi.Class
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
+import android.animation.*
 import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
-import android.view.animation.AnimationUtils
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.DecelerateInterpolator
 import android.widget.ImageView
 import androidx.annotation.Nullable
 import carbon.widget.RelativeLayout
@@ -73,7 +73,43 @@ class AdvertisementsHelper {
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
-    fun displayImages(images: List<Data>, imageView: ImageView) {
+    fun displayImages(context: Context, images: List<Data>, imageView: ImageView) {
+
+        var videoUrl: Uri? = null
+        var oa1: ObjectAnimator? = null
+
+        val distance = 8000
+        val scale: Float = context.resources.displayMetrics.density * distance
+        imageView.apply {
+            cameraDistance = scale
+            pivotX = this.width.toFloat()
+            oa1 = ObjectAnimator.ofFloat(this, "rotationY", 0F, 180f).setDuration(2000)
+            val oa2: ObjectAnimator = ObjectAnimator.ofFloat(this, "scaleY", 0f, 1f)
+            oa1?.interpolator = DecelerateInterpolator()
+            oa2.interpolator = AccelerateDecelerateInterpolator()
+            oa1?.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator?) {
+                    super.onAnimationEnd(animation)
+                    // imageView.setImageResource(R.drawable.frontSide)
+                    videoUrl?.let { glide.load(it).apply(imageOptions).into(imageView) }
+                    oa2.start()
+                }
+            })
+        }
+
+
+
+/*
+        val bannerAnimation = AnimatorInflater.loadAnimator(context, R.animator.banner_animation) as AnimatorSet
+        val distance = 8000
+        val scale: Float = context.resources.displayMetrics.density * distance
+
+        imageView.apply {
+            cameraDistance = scale
+            pivotX = this.width.toFloat()
+            bannerAnimation.setTarget(this)
+        }
+*/
         displayImageHandler = Handler()
 
         var currentImageIndex = 0
@@ -81,10 +117,12 @@ class AdvertisementsHelper {
         displayImageRunnable = object : Runnable {
             override fun run() {
                 if (currentImageIndex < images.size) {
-                    val uri = Uri.parse(images[currentImageIndex].url)
-                    glide.load(uri).apply(imageOptions).into(imageView)
-                   // qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
+                   // bannerAnimation.start()
+                    // qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
                     EventBus.getDefault().post(images[currentImageIndex])
+                    videoUrl = Uri.parse(images[currentImageIndex].url)
+                    oa1?.start()
+
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
                         currentImageIndex = 0
@@ -104,15 +142,15 @@ class AdvertisementsHelper {
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, videoCardView: RelativeLayout, progressBar: RingProgressBar): SimpleExoPlayer {
         //val rotate_animation = AnimationUtils.loadAnimation(context, R.anim.rotate_animation)
-        val videoAnimationIn = AnimatorInflater.loadAnimator(context, R.animator.in_animation) as AnimatorSet
+        val videoAnimation = AnimatorInflater.loadAnimator(context, R.animator.video_animation) as AnimatorSet
         //val videoAnimationOut = AnimatorInflater.loadAnimator(context, R.animator.out_animation) as AnimatorSet
         val distance = 8000
         val scale: Float = context.resources.displayMetrics.density * distance
         videoCardView.apply {
             cameraDistance = scale
-            pivotY = videoCardView.height.toFloat() //360f
+            pivotY = this.height.toFloat()
             //videoAnimationOut.setTarget(this)
-            videoAnimationIn.setTarget(this)
+            videoAnimation.setTarget(this)
 
         }
 
@@ -133,7 +171,7 @@ class AdvertisementsHelper {
 
                     //videoCardView.startAnimation(rotate_animation)
 
-                   // videoAnimationIn.start()
+                    videoAnimation.start()
 
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                    // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
