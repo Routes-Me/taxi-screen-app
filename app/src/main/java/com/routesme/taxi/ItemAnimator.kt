@@ -9,6 +9,11 @@ import android.view.animation.*
 import androidx.core.animation.addListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
+import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
+import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_BANNER_DISCOUNT
+import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_EMPTY_VIDEO_DISCOUNT
+import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_VIDEO_DISCOUNT
+import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_WIFI
 
 class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     var objectAnimator: ObjectAnimator?=null
@@ -51,37 +56,54 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     private fun animation(oldHolder: RecyclerView.ViewHolder?, newHolder: RecyclerView.ViewHolder?) {
-
         /*val set1 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_in)
         set1.interpolator = AccelerateDecelerateInterpolator()
         set1.setTarget(newHolder?.itemView)
         set1.start()*/
         if(newHolder != null){
-            newHolder.itemView.pivotX = 0.0f
-            newHolder.itemView.pivotY = -newHolder.itemView.height / 0.7f
-            Log.d("Pivot Y",(-newHolder.itemView.height / 0.7f).toString())
-            newHolder.itemView.cameraDistance = 12000f
-            objectAnimator = ObjectAnimator.ofFloat(newHolder.itemView, "rotationX", 180f, 0f)
-            objectAnimator!!.apply {
-                setDuration(2000)
-                AccelerateInterpolator()
-                start()
-            }
+            if(newHolder!!.itemViewType == TYPE_VIDEO_DISCOUNT || newHolder!!.itemViewType == TYPE_EMPTY_VIDEO_DISCOUNT){
+                newHolder.itemView.pivotX = 0.0f
+                newHolder.itemView.pivotY = -newHolder.itemView.height / 0.7f
+                newHolder.itemView.cameraDistance = 12000f
+                objectAnimator = ObjectAnimator.ofFloat(newHolder.itemView, "rotationX", 180f, 0f)
+                objectAnimator!!.apply {
+                    setDuration(2000)
+                    AccelerateInterpolator()
+                    start()
+                }
 
+            }else if(newHolder!!.itemViewType == TYPE_WIFI || newHolder.itemViewType == TYPE_BANNER_DISCOUNT){
+
+                val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
+                newHolder.itemView.startAnimation(zoomIn)
+
+            }
         }
 
         if(oldHolder!= null){
+            if(oldHolder!!.itemViewType == TYPE_VIDEO_DISCOUNT || oldHolder!!.itemViewType == TYPE_EMPTY_VIDEO_DISCOUNT){
 
-            /*val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
-            zoomout.interpolator = AccelerateInterpolator()
-            oldHolder.itemView.startAnimation(zoomout)*/
-            val set2 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_left_out)
-            set2.interpolator = AccelerateInterpolator()
-            set2.setTarget(oldHolder?.itemView)
-            set2.start()
+                val set2 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_left_out)
+                set2.interpolator = AccelerateInterpolator()
+                set2.setTarget(oldHolder?.itemView)
+                set2.start()
+
+            }else if(oldHolder.itemViewType == TYPE_WIFI || oldHolder.itemViewType == TYPE_BANNER_DISCOUNT){
+
+                oldHolder.itemView.cameraDistance = 12000f
+                oldHolder.itemView.pivotX =180f
+                oldHolder.itemView.pivotY = 0f
+                objectAnimator = ObjectAnimator.ofFloat(oldHolder.itemView, "rotationY", 0f, 180f)
+                objectAnimator!!.apply {
+                    setDuration(1500)
+                    AccelerateDecelerateInterpolator()
+                    start()
+                }
+
+
+            }
 
         }
-
 
     }
 }

@@ -90,13 +90,16 @@ class AdvertisementsHelper {
         displayImageRunnable = object : Runnable {
             override fun run() {
                 if (currentImageIndex < images.size) {
-                    val uri = Uri.parse(images[currentImageIndex].url)
-                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView)
-                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView2)
+                    //val uri = Uri.parse(images[currentImageIndex].url)
                     EventBus.getDefault().post(images[currentImageIndex])
                     if(currentImageIndex != 0){
-
+                        glide.load(images[currentImageIndex - 1].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView)
+                        glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView2)
                         setImageAnimation(context,imageView,imageView2)
+                    }else{
+
+                        glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView)
+                        glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView2)
 
                     }
 
@@ -116,7 +119,6 @@ class AdvertisementsHelper {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
         setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
-
         player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
     }
 
@@ -221,14 +223,8 @@ class AdvertisementsHelper {
             AccelerateDecelerateInterpolator()
             start()
         }
-        objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "rotationY", 330f, 360f)
-        objectAnimator_image!!.apply {
-            setDuration(2500)
-            AccelerateDecelerateInterpolator()
-            start()
-        }
-        /*val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
-        imageView2.startAnimation(zoomIn)*/
+        val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
+        imageView2.startAnimation(zoomIn)
         imageView.bringToFront()
 
     }
