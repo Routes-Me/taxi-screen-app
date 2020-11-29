@@ -8,6 +8,7 @@
         <attr name="key_icon" format="reference" />
         <attr name="video_divider" format="reference" />
         <attr name="banner_divider" format="reference" />
+        <attr name="side_divider" format="reference" />
         <attr name="free_wifi_background_color" format="reference" />
 
         <!-- Payment Fragment -->
