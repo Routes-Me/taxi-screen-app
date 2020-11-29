@@ -97,11 +97,18 @@
             app:carbon_elevation="@dimen/_8sdp"
             app:carbon_cornerRadius="@dimen/_4sdp"
             app:carbon_elevationShadowColor="@color/card_shadow">
-
-            <androidx.viewpager.widget.ViewPager
-                android:id="@+id/advertisementsViewPager"
+            <androidx.appcompat.widget.AppCompatImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:scaleType="centerCrop"
+                android:id="@+id/advertisementsImageView2"
+                />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/advertisementsImageView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:scaleType="centerCrop"
                 android:adjustViewBounds="true" />
 
         </carbon.widget.RelativeLayout>

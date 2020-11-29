@@ -59,6 +59,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
         if(newHolder != null){
             newHolder.itemView.pivotX = 0.0f
             newHolder.itemView.pivotY = -newHolder.itemView.height / 0.7f
+            Log.d("Pivot Y",(-newHolder.itemView.height / 0.7f).toString())
             newHolder.itemView.cameraDistance = 12000f
             objectAnimator = ObjectAnimator.ofFloat(newHolder.itemView, "rotationX", 180f, 0f)
             objectAnimator!!.apply {

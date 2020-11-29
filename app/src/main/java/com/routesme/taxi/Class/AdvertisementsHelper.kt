@@ -7,9 +7,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
-import android.view.animation.AccelerateDecelerateInterpolator
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
+import android.view.animation.*
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.annotation.Nullable
@@ -48,9 +46,9 @@ class AdvertisementsHelper {
     private var progressbarRunnable: Runnable? = null
     private var count = 0;
     var objectAnimator:ObjectAnimator?=null
+    var objectAnimator_image:ObjectAnimator?=null
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
-    private val distance = 8000
     private var TAG="ExoPlayer Error"
 
 
@@ -82,18 +80,25 @@ class AdvertisementsHelper {
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
-    fun displayImages(images: List<Data>, imageView: ImageView) {
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
         displayImageHandler = Handler()
-
+        imageView.cameraDistance = 12000f
+        imageView.pivotX = imageView.height * 0.7f
+        imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
-
         displayImageRunnable = object : Runnable {
             override fun run() {
                 if (currentImageIndex < images.size) {
                     val uri = Uri.parse(images[currentImageIndex].url)
-                    glide.load(uri).apply(imageOptions).into(imageView)
-                   // qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
+                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView)
+                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView2)
                     EventBus.getDefault().post(images[currentImageIndex])
+                    if(currentImageIndex != 0){
+
+                        setImageAnimation(context,imageView,imageView2)
+
+                    }
+
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
                         currentImageIndex = 0
@@ -200,15 +205,31 @@ class AdvertisementsHelper {
             AccelerateDecelerateInterpolator()
             start()
         }
-        /*val alphaAnimation = AlphaAnimation(0.0f, 1.0f)
-        alphaAnimation.apply {
-            duration = 1500
-            repeatCount = 1
-            repeatMode = Animation.REVERSE
-        }*/
+
         val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         bgImageView.startAnimation(zoomout)
         playerView.bringToFront()
+    }
+
+
+    private fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
+
+        objectAnimator_image = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
+        objectAnimator_image!!.apply {
+            setDuration(1500)
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+        objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "rotationY", 330f, 360f)
+        objectAnimator_image!!.apply {
+            setDuration(2500)
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+        /*val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        imageView2.startAnimation(zoomIn)*/
+        imageView.bringToFront()
+
     }
 
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {

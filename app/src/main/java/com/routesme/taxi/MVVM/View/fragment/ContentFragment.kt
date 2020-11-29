@@ -7,7 +7,6 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +16,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import carbon.widget.RelativeLayout
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.routesme.taxi.BookFlipPageTransformer
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.ConnectivityReceiver
 import com.routesme.taxi.Class.Operations
@@ -32,7 +30,6 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
-import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -46,7 +43,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private var pager: Int = 1
     private val SEC:Long = 120
     private val MIL:Long = 1000
-    var delay = 15*1000
+    var delay = 15 * 1000
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var imageViewPagerAdapter:ImageViewPager?=null
     private var isDataFetched = false
@@ -56,7 +53,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private var isAlive = false
     private var timerHandler: Handler? = null
     private var videoShadow: RelativeLayout? = null
-    lateinit var handler: Handler
     var TYPE_WIFI = 1
     var TYPE_MOBILE = 2
     var TYPE_NOT_CONNECTED = 0
@@ -90,9 +86,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar
         timerHandler = Handler()
-        handler = Handler()
-        handler.postDelayed(runnable, delay.toLong())
-        //videoShadow = view.videoShadow
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -123,11 +116,9 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onStart() {
         EventBus.getDefault().register(this)
-        Log.d("Video","Start")
         super.onStart()
     }
     override fun onStop() {
-        handler.removeCallbacks(runnable)
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
@@ -146,19 +137,8 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        if(!images.isNullOrEmpty()){
-                            imageViewPagerAdapter = ImageViewPager(mContext,images,object : ImageViewPager.RecycleViewClick{
-                                override fun onItemClick(data: Data) {
 
-
-                                }
-
-                            })
-                            advertisementsViewPager.adapter = imageViewPagerAdapter
-                            advertisementsViewPager.setPageTransformer(true,BookFlipPageTransformer())
-                        }
-
-                        //if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(images, mView.advertisementsImageView)
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2)
                         AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage)
                     }
 
@@ -232,25 +212,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         videoRingProgressBar?.let {
             it.ringColor = lowOpacityColor
             it.ringProgressColor = color
-        }
-    }
-
-    private var runnable = object : Runnable {
-        override fun run() {
-            if (imageViewPagerAdapter != null) {
-                if (pager < imageViewPagerAdapter!!.count) {
-                    Log.d("Runner","Running")
-                    advertisementsViewPager.setCurrentItem(pager, true)
-                    advertisementsViewPager.scrollBarFadeDuration = 2000
-                    EventBus.getDefault().post(imageViewPagerAdapter!!.getImageItem(pager))
-                    pager++
-                } else {
-                    pager = 0
-                    //pageIndicator.attachTo(viewPager)
-                }
-                handler.postDelayed(this,  delay.toLong())
-            }
-
         }
     }
 

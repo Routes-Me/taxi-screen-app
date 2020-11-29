@@ -29,15 +29,15 @@ class ImageViewPager(var context: Context, var list:List<Data>, var itemClick:Re
            // itemClick.onItemClick(list[position])
         }
         imageView.context?.let {
-             Glide.with(it).load(list[position].url).apply(RequestOptions().transforms(CenterCrop(),RoundedCorners(8))).into(imageView)
+             Glide.with(it).load(list[position].url).apply(RequestOptions().transforms(CenterCrop(),RoundedCorners(8))).placeholder(R.drawable.empty_promotion).error(R.drawable.empty_promotion).into(imageView)
             //Glide.with(it).load(list[position].url).into(imageView)
         }
         return view
     }
 
-    fun getImageItem(position:Int) : String{
+    fun getImageItem(position:Int) : Data{
 
-        return list[position].url!!
+        return list[position]!!
 
     }
 
