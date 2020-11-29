@@ -75,6 +75,11 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         return view
     }
 
+    override fun onDestroyView() {
+        requireActivity().unregisterReceiver(myReceiver)
+        super.onDestroyView()
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar

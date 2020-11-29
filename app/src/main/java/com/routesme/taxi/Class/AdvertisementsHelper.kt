@@ -120,8 +120,11 @@ class AdvertisementsHelper {
                    // bannerAnimation.start()
                     // qrCodeCallback?.onBannerQRCodeChanged(images[currentImageIndex])
                     EventBus.getDefault().post(images[currentImageIndex])
-                    videoUrl = Uri.parse(images[currentImageIndex].url)
-                    oa1?.start()
+                    //videoUrl = Uri.parse(images[currentImageIndex].url)
+                    //oa1?.start()
+
+                    val url = Uri.parse(images[currentImageIndex].url)
+                    url?.let { glide.load(it).apply(imageOptions).into(imageView) }
 
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
@@ -171,7 +174,7 @@ class AdvertisementsHelper {
 
                     //videoCardView.startAnimation(rotate_animation)
 
-                    videoAnimation.start()
+                  //  videoAnimation.start()
 
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                    // qrCodeCallback?.onVideoQRCodeChanged(videos[currentMediaItemId].promotion)
