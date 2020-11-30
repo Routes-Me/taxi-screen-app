@@ -33,6 +33,7 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+import kotlinx.coroutines.delay
 import org.greenrobot.eventbus.EventBus
 
 
@@ -45,12 +46,11 @@ class AdvertisementsHelper {
     private var progressbarHandler: Handler? = null
     private var progressbarRunnable: Runnable? = null
     private var count = 0;
-    var objectAnimator:ObjectAnimator?=null
-    var objectAnimator_image:ObjectAnimator?=null
-    var setOut: AnimatorSet?=null
-    var setIn:AnimatorSet?=null
+    private var objectAnimator:ObjectAnimator?=null
+    private var objectAnimator_image:ObjectAnimator?=null
+    private var setOut: AnimatorSet?=null
+    private var setIn:AnimatorSet?=null
     private var TAG="ExoPlayer Error"
-
 
     companion object {
         @get:Synchronized
@@ -86,18 +86,26 @@ class AdvertisementsHelper {
         imageView.pivotX = imageView.height * 0.7f
         imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
+        var firstTime = false
 
         displayImageRunnable = object : Runnable {
             override fun run() {
                 if (currentImageIndex < images.size) {
-                    val uri = Uri.parse(images[currentImageIndex].url)
-                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView)
-                    glide.load(uri).error(R.drawable.empty_promotion).into(imageView2)
+                    if (currentImageIndex > 0){
+                        val previousImageIndex = currentImageIndex - 1
+                        val previousUri = Uri.parse(images[previousImageIndex].url)
+                        glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
+                    }
+
+                    val newUri = Uri.parse(images[currentImageIndex].url)
+                    //val previousUri = Uri.parse(images[previousImageIndex].url)
+                    //glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
+                    glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
+
                     EventBus.getDefault().post(images[currentImageIndex])
-                    if(currentImageIndex != 0){
-
+                    if (firstTime || currentImageIndex != 0){
+                        firstTime = true
                         setImageAnimation(context,imageView,imageView2)
-
                     }
 
                     currentImageIndex++
@@ -216,17 +224,27 @@ class AdvertisementsHelper {
     private fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
 
         objectAnimator_image = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
-        objectAnimator_image!!.apply {
-            setDuration(1500)
+        objectAnimator_image?.apply {
+            setDuration(1000)
             AccelerateDecelerateInterpolator()
             start()
         }
-        objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "rotationY", 330f, 360f)
-        objectAnimator_image!!.apply {
-            setDuration(2500)
+        objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "scaleX", 0.9f, 1f)
+       // objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "scaleY", 0.8f, 1f)
+        objectAnimator_image?.apply {
+            setDuration(1400)
             AccelerateDecelerateInterpolator()
             start()
         }
+
+        objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "scaleY", 0.9f, 1f)
+        // objectAnimator_image = ObjectAnimator.ofFloat(imageView2, "scaleY", 0.8f, 1f)
+        objectAnimator_image?.apply {
+            setDuration(1400)
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+
         /*val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         imageView2.startAnimation(zoomIn)*/
         imageView.bringToFront()
