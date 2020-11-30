@@ -7,6 +7,7 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
+import android.view.TextureView
 import android.view.animation.*
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -15,10 +16,7 @@ import androidx.core.animation.addListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -165,7 +163,7 @@ class AdvertisementsHelper {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
-        val progressbarRunnable = videoProgressbarRunnable(progressBar)
+        val progressbarRunnable = videoProgressbarRunnable(progressBar,playerView)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
@@ -183,6 +181,12 @@ class AdvertisementsHelper {
 
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
+
+                override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                    Log.d("onTimelineChanged", "${timeline}, re: $reason")
+                    super.onTimelineChanged(timeline, reason)
+                }
+
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
@@ -239,7 +243,7 @@ class AdvertisementsHelper {
 
         objectAnimator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
         objectAnimator!!.apply {
-            setDuration(1500)
+            setDuration(1000)
             objectAnimator!!.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
             start()
@@ -265,11 +269,19 @@ class AdvertisementsHelper {
 
     }
 
-    private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
+    private fun videoProgressbarRunnable(progressBar: RingProgressBar, playerView: StyledPlayerView): Runnable? {
         progressbarRunnable = object : Runnable {
             override fun run() {
+
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
+                /*
+                if (progress){
+
+                    val textureView =  playerView.videoSurfaceView as TextureView
+                    val bitmap = textureView.bitmap
+                }
+                */
                 progressBar.progress = progress
                 progressbarHandler?.postDelayed(this, 1000)
             }
