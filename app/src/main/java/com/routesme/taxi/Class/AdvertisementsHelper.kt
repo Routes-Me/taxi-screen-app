@@ -7,7 +7,6 @@ import android.content.Context
 import android.net.Uri
 import android.os.Handler
 import android.util.Log
-import android.view.TextureView
 import android.view.animation.*
 import android.widget.ImageView
 import android.widget.RelativeLayout
@@ -33,7 +32,6 @@ import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import org.greenrobot.eventbus.EventBus
 
-
 class AdvertisementsHelper {
 
     //private var qrCodeCallback: QRCodeCallback? = null
@@ -48,7 +46,6 @@ class AdvertisementsHelper {
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
     private var TAG="ExoPlayer Error"
-
 
     companion object {
         @get:Synchronized
@@ -163,7 +160,7 @@ class AdvertisementsHelper {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
-        val progressbarRunnable = videoProgressbarRunnable(progressBar,playerView)
+        val progressbarRunnable = videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
@@ -269,19 +266,12 @@ class AdvertisementsHelper {
 
     }
 
-    private fun videoProgressbarRunnable(progressBar: RingProgressBar, playerView: StyledPlayerView): Runnable? {
+    private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
         progressbarRunnable = object : Runnable {
             override fun run() {
 
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
-                /*
-                if (progress){
-
-                    val textureView =  playerView.videoSurfaceView as TextureView
-                    val bitmap = textureView.bitmap
-                }
-                */
                 progressBar.progress = progress
                 progressbarHandler?.postDelayed(this, 1000)
             }
