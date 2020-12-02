@@ -22,11 +22,13 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.google.firebase.iid.FirebaseInstanceId
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.NearBy.NearByOperation
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
@@ -68,6 +70,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         setContentView(R.layout.home_screen)
         submitApplicationVersion()
         initializePlayer()
+        Log.d("FCM Token", FirebaseInstanceId.getInstance().token.toString())
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
@@ -146,12 +149,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     override fun onStart() {
         registerNetworkCallback(true)
         EventBus.getDefault().register(this)
+        NearByOperation.instance.publish("123456",this)
         super.onStart()
     }
 
     override fun onStop() {
         registerNetworkCallback(false)
         EventBus.getDefault().unregister(this)
+        NearByOperation.instance.unPublish("123456",this)
         super.onStop()
     }
     private fun addFragments() {

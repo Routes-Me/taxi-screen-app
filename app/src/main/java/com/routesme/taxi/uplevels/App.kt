@@ -11,6 +11,9 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.google.android.gms.nearby.messages.PublishOptions
+import com.google.android.gms.nearby.messages.Strategy
+import com.google.android.gms.nearby.messages.SubscribeOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
@@ -33,6 +36,21 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
+        val nearbySubscribeOptions: SubscribeOptions = SubscribeOptions.Builder()
+                .setStrategy(nearbyStrategy())
+                .build()
+
+
+        val nearbyPublishOptions: PublishOptions = PublishOptions.Builder()
+                .setStrategy(nearbyStrategy())
+                .build()
+
+        private fun nearbyStrategy(): Strategy {
+            return Strategy.Builder()
+                    .setTtlSeconds(Strategy.TTL_SECONDS_INFINITE)
+                    .setDistanceType(Strategy.DISTANCE_TYPE_EARSHOT)
+                    .build()
+        }
     }
 
     override fun onCreate() {
