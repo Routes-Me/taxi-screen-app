@@ -15,10 +15,7 @@ import androidx.core.animation.addListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -35,7 +32,6 @@ import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import org.greenrobot.eventbus.EventBus
 
-
 class AdvertisementsHelper {
 
     //private var qrCodeCallback: QRCodeCallback? = null
@@ -50,7 +46,6 @@ class AdvertisementsHelper {
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
     private var TAG="ExoPlayer Error"
-
 
     companion object {
         @get:Synchronized
@@ -115,6 +110,7 @@ class AdvertisementsHelper {
         }
         displayImageHandler?.post(displayImageRunnable)
     }
+
     /*
     fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
         displayImageHandler = Handler()
@@ -122,18 +118,19 @@ class AdvertisementsHelper {
         imageView.pivotX = imageView.height * 0.7f
         imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
+        var firstTime = false
 
         displayImageRunnable = object : Runnable {
             override fun run() {
                 if (currentImageIndex < images.size) {
                     //val uri = Uri.parse(images[currentImageIndex].url)
                     EventBus.getDefault().post(images[currentImageIndex])
-                    if(currentImageIndex != 0){
+                    if(firstTime){
                         glide.load(images[currentImageIndex - 1].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView)
                         glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView2)
                         setImageAnimation(context,imageView,imageView2)
                     }else{
-
+                        firstTime = true
                         glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView)
                         glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView2)
 
@@ -178,8 +175,15 @@ class AdvertisementsHelper {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
+
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
+
+                override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                    Log.d("onTimelineChanged", "${timeline}, re: $reason")
+                    super.onTimelineChanged(timeline, reason)
+                }
+
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
@@ -210,7 +214,6 @@ class AdvertisementsHelper {
                         Player.STATE_ENDED -> {
                             Log.d("VideoState","END")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
-
                         }
                     }
                 }
@@ -237,8 +240,8 @@ class AdvertisementsHelper {
 
         objectAnimator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
         objectAnimator!!.apply {
-            setDuration(1500)
-            objectAnimator!!.addListener(onStart = {player!!.pause()},onEnd = {player!!.play()})
+            setDuration(1000)
+            objectAnimator!!.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
             start()
         }
@@ -253,7 +256,7 @@ class AdvertisementsHelper {
 
         objectAnimator_image = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
         objectAnimator_image!!.apply {
-            setDuration(1500)
+            setDuration(1000)
             AccelerateDecelerateInterpolator()
             start()
         }
@@ -266,6 +269,7 @@ class AdvertisementsHelper {
     private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
         progressbarRunnable = object : Runnable {
             override fun run() {
+
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
                 progressBar.progress = progress

@@ -15,7 +15,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,53 : 55">
+        app:layout_constraintDimensionRatio="H,53 : 55"
+        android:background="?homeScreenBackground_color">
 
         <carbon.widget.RelativeLayout
             android:layout_width="match_parent"
@@ -24,7 +25,7 @@
             app:carbon_elevation="@dimen/_8sdp"
             app:carbon_cornerRadius="@dimen/_4sdp"
             app:carbon_elevationShadowColor="@color/card_shadow"
-            android:background="?homeScreenBackground_color">
+            android:background="?cardViewBackground_color">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

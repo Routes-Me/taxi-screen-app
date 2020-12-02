@@ -100,22 +100,30 @@
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="?side_divider"
-        app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
+        android:src="?qrcode_divider"
+        app:layout_constraintTop_toBottomOf="@id/guidelineDividerAccessoryTop"
+
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,58 : 43"/>
+        app:layout_constraintDimensionRatio="H,14 : 26"/>
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="?side_divider"
+        android:src="?qrcode_divider"
+        app:layout_constraintBottom_toTopOf="@id/guidelineDividerAccessoryBottom"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintDimensionRatio="H,14 : 26"/>
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="?banner_divider"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="@dimen/_14sdp"
-        app:layout_constraintDimensionRatio="H,58 : 43"/>
+        android:layout_marginTop="@dimen/_12sdp"
+        app:layout_constraintDimensionRatio="H,26 : 28.2"/>
 
-
+s
     <ImageView
         android:id="@+id/openPatternBtn"
         android:layout_width="60dp"
