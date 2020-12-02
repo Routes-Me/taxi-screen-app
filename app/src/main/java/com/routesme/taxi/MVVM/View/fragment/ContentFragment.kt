@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -184,7 +185,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         isAlive = true
         timerRunnable = object : Runnable {
             override fun run() {
-
+                Log.d("Thread","Background thread is running")
                 timerHandler!!.postDelayed({
 
                     fetchContent()

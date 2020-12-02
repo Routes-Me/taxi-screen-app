@@ -80,6 +80,42 @@ class AdvertisementsHelper {
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
+
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
+        displayImageHandler = Handler()
+        imageView.cameraDistance = 12000f
+        imageView.pivotX = imageView.height * 0.7f
+        imageView.pivotY = imageView.height / 0.7f
+        var currentImageIndex = 0
+        var firstTime = false
+        displayImageRunnable = object : Runnable {
+            override fun run() {
+                if (currentImageIndex < images.size) {
+                    if (currentImageIndex > 0){
+                        val previousImageIndex = currentImageIndex - 1
+                        val previousUri = Uri.parse(images[previousImageIndex].url)
+                        glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
+                    }
+                    val newUri = Uri.parse(images[currentImageIndex].url)
+                    //val previousUri = Uri.parse(images[previousImageIndex].url)
+                    //glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
+                    glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
+                    EventBus.getDefault().post(images[currentImageIndex])
+                    if (firstTime || currentImageIndex != 0){
+                        firstTime = true
+                        setImageAnimation(context,imageView,imageView2)
+                    }
+                    currentImageIndex++
+                    if (currentImageIndex >= images.size) {
+                        currentImageIndex = 0
+                    }
+                }
+                displayImageHandler?.postDelayed(this, 15 * 1000)
+            }
+        }
+        displayImageHandler?.post(displayImageRunnable)
+    }
+    /*
     fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
         displayImageHandler = Handler()
         imageView.cameraDistance = 12000f
@@ -114,7 +150,7 @@ class AdvertisementsHelper {
 
         displayImageHandler?.post(displayImageRunnable)
     }
-
+*/
     fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
@@ -124,7 +160,6 @@ class AdvertisementsHelper {
 
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout): SimpleExoPlayer {
-        val scale = context!!.getResources().getDisplayMetrics().density;
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
@@ -143,7 +178,6 @@ class AdvertisementsHelper {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
