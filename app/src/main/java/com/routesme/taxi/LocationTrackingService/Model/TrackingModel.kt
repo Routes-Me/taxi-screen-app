@@ -5,6 +5,8 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
+import java.sql.Time
+import java.sql.Timestamp
 
 @Entity(tableName = "LocationFeeds")
 class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long) {
@@ -17,6 +19,8 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
         }
 }
 
+@Entity(tableName = "tbl_video_tracking")
+class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Long = 0,@ColumnInfo(name = "video_id") var video_id:Long,@ColumnInfo(name = "timestamp") var timestamp: String)
 //@Entity(tableName = "MessageFeeds")
 //class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
 

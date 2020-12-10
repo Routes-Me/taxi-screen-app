@@ -1,17 +1,47 @@
 package com.routesme.taxi.MVVM.NearBy
 
+import android.R.id
 import android.app.Activity
 import android.content.Context
+import android.content.ServiceConnection
+import android.util.Log
+import android.widget.Toast
+import com.google.android.gms.common.api.GoogleApiClient
 import com.google.android.gms.nearby.Nearby
-import com.google.android.gms.nearby.messages.Message
+import com.google.android.gms.nearby.messages.*
+import com.google.gson.Gson
+import com.routesme.taxi.MVVM.Model.Parameter
+import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.events.PublishNearBy
 import com.routesme.taxi.uplevels.App
+import org.greenrobot.eventbus.EventBus
+
 
 class NearByOperation {
-    lateinit var context: Context
+    lateinit var mContext: Context
+    private var current: Activity? = null
+    private var mMessageClient: MessagesClient? = null
 
     companion object{
         @get:Synchronized
         var instance = NearByOperation()
+        /*var nearbyPublishOptions = PublishOptions.Builder()
+                .setStrategy(nearbyStrategy())
+                .setCallback(object : PublishCallback() {
+                    override fun onExpired() {
+                        super.onExpired()
+                        Log.d("Publish","Expire")
+                        EventBus.getDefault().post(PublishNearBy(true))
+                    }
+                }).build()
+
+        private fun nearbyStrategy(): Strategy {
+            return Strategy.Builder()
+                    .setTtlSeconds(Strategy.TTL_SECONDS_DEFAULT)
+                    .setDistanceType(Strategy.DISTANCE_TYPE_EARSHOT)
+                    .setDiscoveryMode(Strategy.DISCOVERY_MODE_BROADCAST)
+                    .build()
+        }*/
     }
 
     //Enable / Disable Next Button ...
@@ -25,13 +55,48 @@ class NearByOperation {
         }
     }*/
 
-    fun publish(message: String, activity: Activity) {
-        Nearby.getMessagesClient(activity).publish(nearbyMessage(message), App.nearbyPublishOptions)
+
+
+    fun publish(message: Parameter,context: Context) {
+        mContext = context
+        mMessageClient = Nearby.getMessagesClient(mContext!!)
+        mMessageClient!!.publish(nearbyMessage(message),App.nearbyPublishOptions).addOnSuccessListener {
+
+            Log.d("Publish",message.deviceID)
+
+        }.addOnFailureListener {
+
+            Log.d("Publish","Failed")
+            EventBus.getDefault().post(PublishNearBy(true))
+
+        }.addOnCanceledListener {
+
+            Log.d("Publish","Cancelled")
+            EventBus.getDefault().post(PublishNearBy(true))
+
+        }.addOnCompleteListener {
+
+            Log.d("Publish","Complete")
+
+        }
+       /* Nearby.getMessagesClient(activity).publish(nearbyMessage(message), App.nearbyPublishOptions).addOnFailureListener {
+
+            Log.d("Publish","Failure")
+
+        }.addOnSuccessListener {
+
+            Log.d("Publish","Success")
+
+        }*/
+        //messagesClient.publish(Message(message.), App.nearbyPublishOptions)
+
+
     }
 
-    fun unPublish(message: String, activity: Activity) {
-        Nearby.getMessagesClient(activity).unpublish(nearbyMessage(message))
+    fun unPublish(message: Parameter,context: Context) {
+        Nearby.getMessagesClient(context).unpublish(nearbyMessage(message))
     }
 
-    private fun nearbyMessage(s: String) = Message(s.toByteArray())
+    private fun nearbyMessage(s: Parameter) = Message(Gson().toJson(s).toByteArray())
+
 }

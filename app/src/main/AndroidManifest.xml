@@ -64,6 +64,12 @@
 
         </activity>
         <activity
+            android:name="com.routesme.taxi.MVVM.View.activity.PaymentActivity"
+            android:screenOrientation="landscape"
+            android:windowSoftInputMode="adjustNothing">
+
+        </activity>
+        <activity
             android:name="com.routesme.taxi.MVVM.View.activity.ModelPresenter"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">

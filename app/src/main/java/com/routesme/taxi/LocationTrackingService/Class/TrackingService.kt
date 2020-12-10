@@ -1,11 +1,16 @@
 package com.routesme.taxi.LocationTrackingService.Class
 
 import android.app.*
+import android.content.Context
 import android.content.Intent
+import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.*
 import android.util.Log
 import com.routesme.taxi.Class.Helper
+import com.routesme.taxi.MVVM.Model.Parameter
+import com.routesme.taxi.MVVM.NearBy.NearByOperation
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
@@ -18,6 +23,8 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private var locationReceiver: LocationReceiver? = null
     private var handlerThread: HandlerThread? = null
     private var mHandler: Handler? = null
+    private var sharedPreferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
 
     companion object {
         @get:Synchronized
@@ -31,6 +38,8 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onCreate() {
         super.onCreate()
         startForeground(1, getNotification())
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor= sharedPreferences?.edit()
     }
 
     private fun getNotification(): Notification {
@@ -57,7 +66,9 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
      fun startTrackingService() {
+
          this.hubConnection = getHubConnection()
+
         locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
@@ -66,6 +77,27 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         }
 
     }
+
+    /*fun publishNearby(context: Context){
+        Log.d("Publish","Publish Near By")
+        NearByOperation.instance.publish(getScreenInfo(),context)
+    }
+
+    fun unPublishNearby(context: Context){
+        Log.d("Publish","Un Publish Near By")
+        NearByOperation.instance.unPublish(getScreenInfo(),context)
+    }*/
+
+    /*private fun getScreenInfo(): Parameter {
+
+        val item = Parameter()
+        item.deviceID = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        item.plateNo = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
+
+        return item
+    }*/
+
+
 
     private fun getHubConnection() = createHubConnection().apply {
         addListener(this@TrackingService)

@@ -25,12 +25,23 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
+import com.routesme.taxi.LocationTrackingService.Class.TrackingVideoLayer
+import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
+import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
+import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import org.greenrobot.eventbus.EventBus
+import org.json.JSONArray
+import org.json.JSONException
+import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AdvertisementsHelper {
 
@@ -41,6 +52,7 @@ class AdvertisementsHelper {
     private var progressbarHandler: Handler? = null
     private var progressbarRunnable: Runnable? = null
     private var count = 0;
+    private var videoTrackingVideoLayer = TrackingVideoLayer()
     var objectAnimator:ObjectAnimator?=null
     var objectAnimator_image:ObjectAnimator?=null
     var setOut: AnimatorSet?=null
@@ -161,10 +173,14 @@ class AdvertisementsHelper {
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
+        //val videoTracking =
+        videoTrackingVideoLayer.insertVideoItem(VideoTracking(video_id = videos[0].contentId!!.toLong(),timestamp = (SimpleDateFormat("dd-M-yyyy HH:mm").format(Date())).toString()))
         val defaultTrackSelector = DefaultTrackSelector(context)
+
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
             playerView.player = this
+            volume = 0f
             defaultTrackSelector.setParameters(defaultTrackSelector.parameters.buildUpon().setMaxVideoBitrate(6000))
             setMediaItems(mediaItems)
             repeatMode = Player.REPEAT_MODE_ALL
@@ -175,7 +191,9 @@ class AdvertisementsHelper {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-
+                    Log.d("Media Item",currentMediaItemId.toString())
+                    videoTrackingVideoLayer.insertVideoItem(VideoTracking(video_id = currentMediaItemId!!.toLong(),timestamp = (SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())).toString()))
+                    Log.d("Media item",videoTrackingVideoLayer.getVideoList().toString())
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
 
@@ -284,4 +302,14 @@ class AdvertisementsHelper {
         progressbarHandler?.removeCallbacks(progressbarRunnable)
         player?.release()
     }
+
+   /* private fun getJsonArray(locationFeeds: List<LocationFeed>): JsonArray {
+        val locationJsonArray = JsonArray()
+        for (l in locationFeeds) {
+            Log.d("Media item",locationFeeds[l].id.toString())
+            val locationJsonObject: JsonObject = LocationJsonObject(l).toJSON()
+            locationJsonArray.add(locationJsonObject)
+        }
+        return locationJsonArray
+    }*/
 }
