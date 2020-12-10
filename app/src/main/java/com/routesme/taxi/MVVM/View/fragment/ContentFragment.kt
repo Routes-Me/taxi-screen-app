@@ -22,6 +22,8 @@ import com.routesme.taxi.Class.ConnectivityReceiver
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.SideFragmentAdapter.ImageViewPager
 import com.routesme.taxi.Class.ThemeColor
+import com.routesme.taxi.LocationTrackingService.Class.TrackingVideoLayer
+import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.ContentResponse
 import com.routesme.taxi.MVVM.Model.ContentType
 import com.routesme.taxi.MVVM.Model.Data
@@ -47,6 +49,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     var delay = 15 * 1000
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var imageViewPagerAdapter:ImageViewPager?=null
+    private var trackingVideoLayer = TrackingVideoLayer()
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
@@ -61,19 +64,12 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onAttach(context: Context) {
         mContext = context
-        /*
-        try {
-            qRCodeCallback = activity as QRCodeCallback
-        } catch (e: ClassCastException) {
-            throw ClassCastException(activity.toString() + " must implement QRCodeCallback")
-        }
-         */
         super.onAttach(context)
 
     }
 
     override fun onDetach() {
-      //  qRCodeCallback = null
+
         super.onDetach()
     }
 
@@ -93,6 +89,12 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         videoRingProgressBar = view.videoRingProgressBar
         timerHandler = Handler()
         videoShadow = view.videoShadow
+        //Log.d("Video_List", trackingVideoLayer.getVideoList())
+        /*var arrayList : List<VideoTracking> = trackingVideoLayer.getVideoList() as List<VideoTracking>
+        for(i in arrayList.size until 0){
+
+            Log.d("Media item",arrayList[i].id.toString()+","+arrayList[i].video_id+","+arrayList[i].timestamp)
+        }*/
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -130,6 +132,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
+
 
     private fun fetchContent(){
         val contentViewModel: ContentViewModel by viewModels()
