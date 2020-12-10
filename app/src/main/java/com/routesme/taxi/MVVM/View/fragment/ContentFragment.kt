@@ -22,8 +22,6 @@ import com.routesme.taxi.Class.ConnectivityReceiver
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.SideFragmentAdapter.ImageViewPager
 import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.LocationTrackingService.Class.TrackingVideoLayer
-import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.ContentResponse
 import com.routesme.taxi.MVVM.Model.ContentType
 import com.routesme.taxi.MVVM.Model.Data
@@ -49,7 +47,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     var delay = 15 * 1000
     private var connectivityReceiver: ConnectivityReceiver? = null
     private var imageViewPagerAdapter:ImageViewPager?=null
-    private var trackingVideoLayer = TrackingVideoLayer()
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
