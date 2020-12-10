@@ -19,6 +19,7 @@ class ModelPresenter : AppCompatActivity() {
         val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
         if (isRegistered) {
             openActivity(HomeActivity())
+            //openActivity(PaymentActivity())
         } else {
             openActivity(LoginActivity())
         }

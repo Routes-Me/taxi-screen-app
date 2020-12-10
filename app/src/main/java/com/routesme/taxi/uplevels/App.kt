@@ -11,16 +11,21 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.google.android.gms.nearby.messages.PublishCallback
 import com.google.android.gms.nearby.messages.PublishOptions
 import com.google.android.gms.nearby.messages.Strategy
-import com.google.android.gms.nearby.messages.SubscribeOptions
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
+import com.routesme.taxi.MVVM.Model.Parameter
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import com.routesme.taxi.MVVM.NearBy.NearByOperation
+import com.routesme.taxi.MVVM.events.PublishNearBy
+import com.routesme.taxi.helper.SharedPreferencesHelper
+import org.greenrobot.eventbus.EventBus
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class App : Application() {
     val account = Account()
@@ -32,33 +37,44 @@ class App : Application() {
     var vehicleId: String? = null
     var institutionName: String? = null
     private var trackingService: TrackingService? = null
+    private var sharedPreferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
 
     companion object {
         @get:Synchronized
         var instance = App()
-        val nearbySubscribeOptions: SubscribeOptions = SubscribeOptions.Builder()
+        /*val nearbySubscribeOptions: SubscribeOptions = SubscribeOptions.Builder()
                 .setStrategy(nearbyStrategy())
-                .build()
+                .build()*/
 
 
-        val nearbyPublishOptions: PublishOptions = PublishOptions.Builder()
+        var nearbyPublishOptions = PublishOptions.Builder()
                 .setStrategy(nearbyStrategy())
-                .build()
+                .setCallback(object : PublishCallback() {
+                    override fun onExpired() {
+                        super.onExpired()
+                        EventBus.getDefault().post(PublishNearBy(true))
+                        Log.d("Publish","Expire")
+                    }
+                }).build()
+
 
         private fun nearbyStrategy(): Strategy {
             return Strategy.Builder()
-                    .setTtlSeconds(Strategy.TTL_SECONDS_INFINITE)
+                    .setTtlSeconds(Strategy.TTL_SECONDS_DEFAULT)
                     .setDistanceType(Strategy.DISTANCE_TYPE_EARSHOT)
+                    .setDiscoveryMode(Strategy.DISCOVERY_MODE_BROADCAST)
                     .build()
         }
     }
 
     override fun onCreate() {
         super.onCreate()
-
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor= sharedPreferences?.edit()
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
@@ -97,6 +113,7 @@ class App : Application() {
                 Log.i("trackingWebSocket:", "onServiceConnected")
                 trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
                 trackingService?.startTrackingService()
+
             }
         }
 
@@ -121,3 +138,4 @@ class App : Application() {
     }
     private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
 }
+

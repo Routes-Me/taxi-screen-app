@@ -38,4 +38,12 @@
     <string name="free_wifi">FREE WIFI</string>
     <string name="device_id">Device ID</string>
     <string name="sim_serial_number">SIM serial number</string>
+    <string name="waiting_payment">WAITING PAYMENT</string>
+    <string name="kwd">KWD</string>
+    <string name="payment_success">PAYMENT SUCCESSFUL</string>
+    <string name="payment_success_description">Thank you for paying through Routes Pay</string>
+    <string name="copyright_2020_routes_co">Copyright © 2020 Routes Co.</string>
+
+    <string name="open_camera_scan_qr_code_to_pay_taxi_fare_and_learn_more">Open camera, scan QR Code to pay taxi fare and learn more</string>
+
 </resources>

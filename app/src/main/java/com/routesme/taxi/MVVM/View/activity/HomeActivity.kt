@@ -11,6 +11,7 @@ import android.net.ConnectivityManager
 import android.net.Network
 import android.net.NetworkRequest
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -22,6 +23,13 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.google.android.gms.common.api.GoogleApi
+import com.google.android.gms.common.api.GoogleApiClient
+import com.google.android.gms.nearby.Nearby
+import com.google.android.gms.nearby.messages.MessagesClient
+import com.google.android.gms.nearby.messages.PublishCallback
+import com.google.android.gms.nearby.messages.PublishOptions
+import com.google.android.gms.nearby.messages.Strategy
 import com.google.firebase.iid.FirebaseInstanceId
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.Class.DisplayManager
@@ -34,6 +42,7 @@ import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.events.PublishNearBy
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.home_screen.*
@@ -52,6 +61,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
+    //private var isPublishRunning = false
+    //private var runNearByThread:Runnable?=null
+    //private var handleNearByThread:Handler?=null
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,6 +86,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
+        if(!isHotspotAlive) turnOnHotspot()
         addFragments()
     }
 
@@ -141,26 +154,21 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         player?.pause()
     }
 
-    override fun onDestroy() {
-        if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-        super.onDestroy()
+
+
+    private fun getScreenInfo():Parameter{
+
+        val item = Parameter()
+        item.deviceID = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        item.plateNo = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
+
+        return item
     }
 
-    override fun onStart() {
-        registerNetworkCallback(true)
-        EventBus.getDefault().register(this)
-        NearByOperation.instance.publish("123456",this)
-        super.onStart()
-    }
 
-    override fun onStop() {
-        registerNetworkCallback(false)
-        EventBus.getDefault().unregister(this)
-        NearByOperation.instance.unPublish("123456",this)
-        super.onStop()
-    }
+
     private fun addFragments() {
-        Log.d("Network-Status","addFragments")
+        Log.d("Network-Status", "addFragments")
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
@@ -209,14 +217,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun turnOnHotspot() {
-        Log.d("Network-Status","turnOnHotspot")
         val intent = Intent(getString(R.string.intent_action_turnon))
         sendImplicitBroadcast(intent)
         isHotspotAlive = true
     }
 
     private fun turnOffHotspot() {
-        Log.d("Network-Status","turnOffHotspot")
         val intent = Intent(getString(R.string.intent_action_turnoff))
         sendImplicitBroadcast(intent)
         isHotspotAlive = false
@@ -276,4 +282,58 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         }
 
     }
+
+    @Subscribe()
+    fun onEvent(publishNearBy: PublishNearBy){
+        Log.d("Publish","Event Trigger")
+        NearByOperation.instance.publish(getScreenInfo(),this)
+
+    }
+
+    /*private fun startThread(){
+        isPublishRunning = true
+        runNearByThread = object :Runnable{
+            override fun run() {
+                Log.d("Publish","Running Thread")
+                handleNearByThread?.postDelayed({
+
+                    publishAndUnPublishNearBy()
+
+                },300*1000)
+
+            }
+        }
+        handleNearByThread?.post(runNearByThread)
+
+    }*/
+
+   /* private fun publishAndUnPublishNearBy(){
+
+        NearByOperation.instance.publish(getScreenInfo(),this)
+        startThread()
+
+    }*/
+
+
+
+    override fun onStart() {
+        registerNetworkCallback(true)
+        EventBus.getDefault().register(this)
+        NearByOperation.instance.publish(getScreenInfo(),this)
+        super.onStart()
+    }
+
+    override fun onStop() {
+        registerNetworkCallback(false)
+        EventBus.getDefault().unregister(this)
+        NearByOperation.instance.unPublish(getScreenInfo(),this)
+        super.onStop()
+    }
+    override fun onDestroy() {
+        //handleNearByThread?.removeCallbacks(runNearByThread)
+        //NearByOperation.instance.unPublish(getScreenInfo(),this)
+        if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
+        super.onDestroy()
+    }
+
 }
