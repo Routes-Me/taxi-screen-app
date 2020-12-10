@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    android:layout_width="wrap_content"
+    android:layout_height="match_parent"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <carbon.widget.RelativeLayout
+        android:id="@+id/emptyCardView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:carbon_cornerRadius="@dimen/_4sdp"
+        android:layout_gravity="center"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintDimensionRatio="6: 1.4">
+
+        <carbon.widget.RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/_1sdp"
+            app:carbon_elevation="@dimen/_8sdp"
+            app:carbon_cornerRadius="@dimen/_4sdp"
+            app:carbon_elevationShadowColor="@color/card_shadow"
+            android:background="?homeScreenBackground_color">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:background="?cardViewBackground_color">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:background="@drawable/empty_promotion"
+                android:visibility="visible"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </carbon.widget.RelativeLayout>
+
+    </carbon.widget.RelativeLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -6,9 +6,36 @@
     <string name="intent_data_scheme">wifihotspot</string>
     <string name="intent_data_host_turnon">turnon</string>
     <string name="intent_data_host_turnoff">turnoff</string>
-    <string name="on_uri"><a href="wifihotspot://turnon">wifihotspot://turnon</a></string>
-    <string name="off_uri"><a href="wifihotspot://turnoff">wifihotspot://turnoff</a></string>
     <string name="notification_chnnl">Hot Spot</string>
     <string name="notification_chnnl_location_descr">Keeps wifi hot spot persistent</string>
     <string name="learn_more">Learn more</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="wifi_name">Routes</string>
+    <string name="wifi_password">12345678</string>
+    <string name="phone_permission_required">Phone Permission required</string>
+    <string name="enable_phone_permission_from_app_settings_is_required_to_get_device_information">Enable phone permission from app settings is required to get device information</string>
+    <string name="open_settings">Open settings</string>
+    <string name="later">Later</string>
+    <string name="click_here_to_get_serial_number">Click here to get serial number</string>
+    <string name="click_here_to_get_sim_card_number">Click here to get SIM card number</string>
+    <string name="list_type_key">List_Type_Key</string>
+    <string name="search_for_taxi_offices">Search for taxi offices</string>
+    <string name="search_plate_numbers">Search plate numbers</string>
+    <string name="login_error_title">Login error</string>
+    <string name="registration_error_title">Registration error</string>
+    <string name="vehicle_information_error_title">Vehicle information error</string>
+    <string name="content_error_title">Content error</string>
+    <string name="token_is_null_value">Token is null value</string>
+    <string name="device_id_is_null_value">Device ID is null value</string>
+    <string name="no_data_found">No data found !</string>
+    <string name="network_Issue">Network Issue !</string>
+    <string name="conversion_Issue">Conversion Issue !</string>
+    <string name="unknown_error">unknown error</string>
+    <string name="complete_required_data">Complete required data, please!</string>
+    <string name="institutions">Institutions</string>
+    <string name="vehicles">Vehicles</string>
+    <string name="free_wifi">FREE WIFI</string>
+    <string name="device_id">Device ID</string>
+    <string name="sim_serial_number">SIM serial number</string>
 </resources>

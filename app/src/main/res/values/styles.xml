@@ -1,23 +1,63 @@
 <resources>
+
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+
     </style>
-    <style name="noActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="windowActionBar">false</item>
-        <item name="dialogCornerRadius">12dp</item>
-        <item name="android:windowNoTitle">true</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+
+    <style name="roundedCornersImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
     </style>
-    <style name="Theme.AppCompat.Light.NoActionBar.FullScreen" parent="@style/Theme.AppCompat.Light.NoActionBar">
+
+    <style name="FullScreen_Light_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowActionBar">false</item>
         <item name="android:windowFullscreen">true</item>
         <item name="android:windowContentOverlay">@null</item>
-        <item name="editTextStyle">@style/AppTheme.CustomEditText</item>
+        <item name="android:windowDisablePreview">true</item>
+        <item name="homeScreenBackground_color">@color/homeScreen_lightBackground</item>
+        <item name="cardViewBackground_color">@color/white</item>
+        <item name="text_color">@color/black</item>
+        <item name="wifi_icon">@drawable/ic_wifi_light</item>
+        <item name="key_icon">@drawable/ic_key_light</item>
+        <item name="video_divider">@drawable/ic_promotion_divider_light</item>
+        <item name="banner_divider">@drawable/ic_banner_divider_light</item>
+        <item name="qrcode_divider">@drawable/ic_qrcode_divider_light</item>
+        <item name="pfBackground_color">@color/pf_lightBackground</item>
+        <item name="pfTopBackground_color">@drawable/pf_blue_background</item>
+        <item name="pfText_color">@color/pf_textColorLight</item>
+        <item name="pfCopyrightTextColor">@color/pf_copyrightTextColor_light</item>
+        <item name="pfRoutesLogo">@mipmap/routes_icon_light</item>
+        <item name="pfQrCodeShadow">@color/pf_copyrightTextColor_light</item>
+        <item name="free_wifi_background_color">@color/free_wifi_background_color_light</item>
     </style>
+
+    <style name="FullScreen_Dark_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+
+        <item name="homeScreenBackground_color">@color/black</item>
+        <item name="cardViewBackground_color">@color/cardView_darkBackground</item>
+        <item name="text_color">@color/white</item>
+        <item name="wifi_icon">@drawable/ic_wifi_dark</item>
+        <item name="video_divider">@drawable/ic_promotion_divider_dark</item>
+        <item name="banner_divider">@drawable/ic_banner_divider_dark</item>
+        <item name="qrcode_divider">@drawable/ic_qrcode_divider_dark</item>
+        <item name="key_icon">@drawable/ic_key_dark</item>
+        <item name="pfBackground_color">@color/pf_darkBackground</item>
+        <item name="pfTopBackground_color">@color/pf_darkBackground</item>
+        <item name="pfText_color">@color/white</item>
+        <item name="pfCopyrightTextColor">@color/white</item>
+        <item name="pfRoutesLogo">@mipmap/routes_icon_dark</item>
+        <item name="pfQrCodeShadow">@null</item>
+        <item name="free_wifi_background_color">@color/free_wifi_background_color_dark</item>
+    </style>
+
     <style name="AppTheme.CustomEditText" parent="android:style/Widget.EditText">
         <item name="android:imeOptions">actionNext</item>
         <item name="android:singleLine">true</item>
@@ -29,12 +69,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:layout_gravity">start</item>
     </style>
-    <style name="AppTheme.scrollingTextView">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:textSize">16sp</item>
-        <item name="android:fontFamily">sans-serif-medium</item>
-    </style>
+
     <style name="AppTheme.CustomTextViewToolbar">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/grey</item>
@@ -42,6 +77,7 @@
         <item name="android:fontFamily">sans-serif-medium</item>
         <item name="android:background">@color/white</item>
     </style>
+
     <style name="AppTheme.CustomTextViewList">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/grey</item>
@@ -49,17 +85,14 @@
         <item name="android:fontFamily">sans-serif</item>
         <item name="android:padding">2dp</item>
     </style>
-    <style name="AppTheme.counterText">
-        <item name="android:textStyle">normal</item>
-        <item name="android:textColor">@color/black</item>
-        <item name="android:fontFamily">sans-serif-light</item>
-    </style>
+
     <style name="AppTheme.CustomTextViewTitle">
         <item name="android:textStyle">normal</item>
         <item name="android:textColor">@color/grey</item>
         <item name="android:textSize">18sp</item>
         <item name="android:fontFamily">sans-serif</item>
     </style>
+
     <style name="AppTheme.CustomButton" parent="Widget.AppCompat.ActionButton">
         <item name="android:textSize">18sp</item>
         <item name="android:gravity">center</item>
@@ -68,6 +101,7 @@
         <item name="android:textStyle">normal</item>
         <item name="android:fontFamily">sans-serif-medium</item>
     </style>
+
     <style name="AppTheme.CustomTextView">
         <item name="android:imeOptions">actionNext</item>
         <item name="android:singleLine">true</item>
@@ -80,6 +114,7 @@
         <item name="android:layout_gravity">start</item>
         <item name="android:clickable">false</item>
     </style>
+
     <style name="SpotsDialogStyle" parent="android:Theme.DeviceDefault.Dialog">
         <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
         <item name="android:background">@color/tint_color</item>
