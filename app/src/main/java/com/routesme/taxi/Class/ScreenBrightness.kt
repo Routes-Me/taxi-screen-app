@@ -29,27 +29,22 @@ class ScreenBrightness {
     @RequiresApi(Build.VERSION_CODES.M)
     private fun hasWriteSettingsPermission(context: Context): Boolean {
         var canWrite = true
-        // Get the result from below code.
         canWrite = Settings.System.canWrite(context)
         return canWrite
     }
 
-    // Start can modify system settings panel to let user change the write
-    // settings permission.
+    // Start can modify system settings panel to let user change the write settings permission.
     private fun changeWriteSettingsPermission(context: Context) {
         val intent = Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
         context.startActivity(intent)
     }
 
-    // This function only take effect in real physical android device,
-    // it can not take effect in android emulator.
+    // This function only take effect in real physical android device, it can not take effect in android emulator.
     private fun changeScreenBrightness(context: Context, screenBrightnessValue: Int) {   // Change the screen brightness change mode to manual.
-      //  val value = screenBrightnessValue/255
         Log.d("BrightnessValue", "Set: $screenBrightnessValue")
         Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS_MODE, Settings.System.SCREEN_BRIGHTNESS_MODE_MANUAL)
         Settings.System.putInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS, screenBrightnessValue)
 
-        val brightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
-        Log.d("BrightnessValue", "Get: $brightness")
+       // val brightness = Settings.System.getInt(context.contentResolver, Settings.System.SCREEN_BRIGHTNESS)
     }
 }
