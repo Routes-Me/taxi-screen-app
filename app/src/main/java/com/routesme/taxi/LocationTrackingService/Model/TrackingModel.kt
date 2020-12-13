@@ -20,8 +20,8 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
 }
 
 @Entity(tableName = "tbl_video_tracking")
-class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Long = 0,@ColumnInfo(name = "video_id") var video_id:Long,@ColumnInfo(name = "timestamp") var timestamp: String)
-//@Entity(tableName = "MessageFeeds")
+class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0, @ColumnInfo(name = "advertisement_id") var advertisement_id:Int, @ColumnInfo(name = "count") var count:Int, @ColumnInfo(name = "device_id") var device_id: Int, @ColumnInfo(name = "media_type") var media_type:String, @ColumnInfo(name ="length") var length : Int, @ColumnInfo(name="timestamp") var timestamp: String)
+//@Entity(tableName = "MessageFeeds")"
 //class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
 
 class LocationJsonObject(private val locationFeed: LocationFeed) {

@@ -88,7 +88,7 @@ class AdvertisementsHelper {
         }
     }
 
-    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,device_id: String) {
         displayImageHandler = Handler()
         imageView.cameraDistance = 12000f
         imageView.pivotX = imageView.height * 0.7f
@@ -103,6 +103,7 @@ class AdvertisementsHelper {
                         val previousUri = Uri.parse(images[previousImageIndex].url)
                         glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
                     }
+                    videoTrackingVideoLayer.insertVideoItem(VideoTracking(advertisement_id = images[currentImageIndex].contentId!!.toInt(),device_id = device_id.toInt(),length = 15 ,media_type = "image",timestamp = (SimpleDateFormat("dd-M-yyyy HH:mm").format(Date())).toString(),count = 1))
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     //val previousUri = Uri.parse(images[previousImageIndex].url)
                     //glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
@@ -160,23 +161,23 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 */
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id:String) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
         setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
-        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,device_id)
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout): SimpleExoPlayer {
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id: String): SimpleExoPlayer {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
         val progressbarRunnable = videoProgressbarRunnable(progressBar)
-        //val videoTracking =
-        videoTrackingVideoLayer.insertVideoItem(VideoTracking(video_id = videos[0].contentId!!.toLong(),timestamp = (SimpleDateFormat("dd-M-yyyy HH:mm").format(Date())).toString()))
+        Log.d("Video Duration",player?.totalBufferedDuration.toString())
+        videoTrackingVideoLayer.insertVideoItem(VideoTracking(advertisement_id = videos[0].contentId!!.toInt(),device_id = device_id.toInt(),length = 30 ,media_type = "video",timestamp = (SimpleDateFormat("dd-M-yyyy HH:mm").format(Date())).toString(),count = 1))
+        //videoTrackingVideoLayer.insertVideoItem(VideoTracking(video_id = videos[0].contentId!!.toLong(),timestamp = (SimpleDateFormat("dd-M-yyyy HH:mm").format(Date())).toString()))
         val defaultTrackSelector = DefaultTrackSelector(context)
-
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
             playerView.player = this
@@ -191,9 +192,7 @@ class AdvertisementsHelper {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    Log.d("Media Item",currentMediaItemId.toString())
-                    videoTrackingVideoLayer.insertVideoItem(VideoTracking(video_id = currentMediaItemId!!.toLong(),timestamp = (SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())).toString()))
-                    Log.d("Media item",videoTrackingVideoLayer.getVideoList().toString())
+                    videoTrackingVideoLayer.insertVideoItem(VideoTracking(advertisement_id = videos[currentMediaItemId].contentId!!.toInt(),device_id = 1223342,length = 30 ,media_type = "video",timestamp = (SimpleDateFormat("dd-M-yyyy HH:mm").format(Date())).toString(),count = 1))
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
 
@@ -220,7 +219,12 @@ class AdvertisementsHelper {
                         }
                         Player.STATE_READY -> {
                             Log.d("VideoState","READ")
+                            /*if(count >= 5){
+                                count = 0
+                                EventBus.getDefault().post(DemoVideo(false))
+                            }*/
                             count = 0
+
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
@@ -253,6 +257,7 @@ class AdvertisementsHelper {
         }
         return player
     }
+
 
     private fun setAnimation(context: Context,playerView: RelativeLayout,bgImageView: RelativeLayout){
 

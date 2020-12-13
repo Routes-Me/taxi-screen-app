@@ -35,6 +35,8 @@ import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi.LocationTrackingService.Class.TrackingVideoLayer
+import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.NearBy.NearByOperation
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
@@ -45,6 +47,7 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.MVVM.events.PublishNearBy
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.android.synthetic.main.technical_login_layout.*
 import org.greenrobot.eventbus.EventBus
@@ -61,9 +64,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
-    //private var isPublishRunning = false
-    //private var runNearByThread:Runnable?=null
-    //private var handleNearByThread:Handler?=null
+    //private var trackingVideoLayer = TrackingVideoLayer()
+    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
+    private val trackingVideoDeo = trackingDatabase.videoTrackingDeo()
+    private var arrayListVideoTracking:ArrayList<VideoTrackingModel>?=null
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -80,12 +84,24 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
         setContentView(R.layout.home_screen)
+
         submitApplicationVersion()
         initializePlayer()
         Log.d("FCM Token", FirebaseInstanceId.getInstance().token.toString())
         sideMenuFragment = SideMenuFragment()
-        openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
+
+        trackingVideoDeo.getVideoListAnalyticsReport().forEach(){
+
+            Log.d("Media item","ID : :${it.id}, Video Id Count ${it.count},Advertisement_Id ${it.advertisement_id}, Timestamp ${it.timestamp}, Length ${it.length},Device_Id ${it.device_id},Media Type ${it.media_type}")
+
+        }
+        //trackingVideoLayer.getVideoAnalyticsReport()
+       //
+        /*for(i in arrayListVideoTracking!!.size until 0){
+            Log.d("Media Item","${arrayListVideoTracking!![i].id},${arrayListVideoTracking!![i].video_id},${arrayListVideoTracking!![i].time_stamp}")
+
+        }*/
         if(!isHotspotAlive) turnOnHotspot()
         addFragments()
     }
