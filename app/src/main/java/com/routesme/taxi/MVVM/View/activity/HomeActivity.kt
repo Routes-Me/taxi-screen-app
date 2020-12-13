@@ -57,7 +57,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             ScreenBrightness.instance.setBrightnessValue(this, 80)
         } else {
             setTheme(R.style.FullScreen_Dark_Mode)
-            ScreenBrightness.instance.setBrightnessValue(this, 30)
+            ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
         setSystemUiVisibility()
         setContentView(R.layout.home_screen)
