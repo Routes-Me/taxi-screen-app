@@ -25,20 +25,18 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
+import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.home_screen.*
-import kotlinx.android.synthetic.main.technical_login_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.io.IOException
 
 class HomeActivity : PermissionsActivity(), IModeChanging {
     private var sharedPreferences: SharedPreferences? = null
@@ -56,15 +54,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         DisplayManager.instance.registerActivity(this)
         if (DisplayManager.instance.isAnteMeridiem()) {
             setTheme(R.style.FullScreen_Light_Mode)
+            ScreenBrightness.instance.setBrightnessValue(this, 80)
         } else {
             setTheme(R.style.FullScreen_Dark_Mode)
+            ScreenBrightness.instance.setBrightnessValue(this, 30)
         }
-        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                or View.SYSTEM_UI_FLAG_FULLSCREEN
-                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+        setSystemUiVisibility()
         setContentView(R.layout.home_screen)
         submitApplicationVersion()
         initializePlayer()
@@ -72,6 +67,15 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
+    }
+
+    private fun setSystemUiVisibility() {
+        window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                or View.SYSTEM_UI_FLAG_FULLSCREEN
+                or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
     }
 
     @SuppressLint("CommitPrefEdits")
