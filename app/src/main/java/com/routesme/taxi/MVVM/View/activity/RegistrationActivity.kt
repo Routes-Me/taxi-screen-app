@@ -33,6 +33,7 @@ import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
@@ -285,6 +286,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreferencesHelper.device_id, deviceId)
             putString(SharedPreferencesHelper.device_serial_number, registerCredentials.deviceId)
             putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
+            putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
         }.apply()
     }
 

@@ -8,7 +8,6 @@ import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 class TrackingDataLayer() {
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     private val locationFeedsDao = trackingDatabase.locationFeedsDao()
-
     fun insertLocation(location: Location) {
         locationFeedsDao.insertLocation(getLocationFeed(location))
     }

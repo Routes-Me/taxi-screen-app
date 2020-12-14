@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi.Class.Helper
+import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
@@ -33,6 +34,8 @@ interface RestApiService {
     @GET("contents")
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
+    @POST("analytics/playbacks")
+    fun postReport(@Query("data") data:List<VideoTracking>): Call<JsonElement>
 /*
     //Advertisements...
     @GET("Channels")
