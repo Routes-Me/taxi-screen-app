@@ -13,14 +13,14 @@ interface VideoTrackingDeo {
     @Query("SELECT * FROM tbl_video_tracking")
     fun getVideoList(): List<VideoTracking>
     @Transaction
-    @Query("SELECT id, COUNT(advertisement_id) as count,device_id, advertisement_id,date_time,length,media_type FROM tbl_video_tracking GROUP BY advertisement_id")
-    fun getVideoAnalaysisReport():List<VideoTracking>
+    @Query("SELECT id, COUNT(advertisementId) as count,deviceId, advertisementId,createdAt,length,mediaType FROM tbl_video_tracking WHERE createdAt BETWEEN :from_date and :from_date GROUP BY advertisementId")
+    fun getVideoAnalaysisReport(from_date:String):List<VideoTracking>
     
     @Insert
     fun insertVideoTrackingDetails(videoTracking: VideoTracking)
 
-    @Query("DELETE FROM tbl_video_tracking")
-    fun deleteTable(): Int
+    @Query("DELETE FROM tbl_video_tracking WHERE createdAt BETWEEN :from_date and :from_date")
+    fun deleteTable(from_date: String): Int
 
     /*@Query("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='tbl_video_tracking'")
     fun resetTable(): Int*/

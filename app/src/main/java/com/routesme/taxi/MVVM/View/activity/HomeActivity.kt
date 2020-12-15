@@ -61,7 +61,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var player : SimpleExoPlayer?=null
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     //private var from_date:String?=null
-    private var from_date = "12-12-2020"
+    private var from_date = "14-12-2020"
     private val videoTrackingFeed = trackingDatabase.videoTracking()
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +86,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
-        videoTrackingFeed.getVideoAnalaysisReport().forEach {
+        videoTrackingFeed.getVideoAnalaysisReport(from_date).forEach {
 
             Log.d("Report","ID ${it.id}, advertisement ID ${it.advertisement_id}, device_id ${it.device_id}, date ${it.date_time}, count ${it.count}, Length ${it.length}, media_type ${it.media_type}")
         }
@@ -167,19 +167,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private fun checkDateAndUploadResult(){
         Log.d("Date", from_date)
         if(DisplayManager.instance.checkDate(from_date!!)){
-            Log.d("Date", "Running")
+            /*Log.d("Date", "Running")
             val feed = videoTrackingFeed.getVideoAnalaysisReport().forEach {
                 val locationJsonArray = JsonArray()
                 val locationJsonObject: JsonObject = VideoJsonObject(it).toJSON()
                 locationJsonArray.add(locationJsonObject)
 
-            }
+            }*/
 
-            /*val postReportViewModel: ContentViewModel by viewModels()
-            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport()).observe(this , Observer<ReportResponse> {
+            val postReportViewModel: ContentViewModel by viewModels()
+            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date)).observe(this , Observer<ReportResponse> {
                 Log.d("Date", "${it.token}")
                 if(it.isSuccess){
 
+                    videoTrackingFeed.deleteTable(from_date)
                     editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
 
                 }
@@ -187,7 +188,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
 
                 }
-            })*/
+            })
 
 
         }

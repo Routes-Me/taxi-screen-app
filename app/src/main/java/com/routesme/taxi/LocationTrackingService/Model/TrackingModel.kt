@@ -18,7 +18,7 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
 }
 
 @Entity(tableName = "tbl_video_tracking")
-class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "device_id") var device_id:Int,@ColumnInfo(name = "advertisement_id") var advertisement_id:Int,@ColumnInfo(name = "date_time") var date_time:String,@ColumnInfo(name = "count") var count:Int,@ColumnInfo(name = "length") var length:Int,@ColumnInfo(name = "media_type") var media_type:String)
+class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "deviceId") var device_id:Int,@ColumnInfo(name = "advertisementId") var advertisement_id:Int,@ColumnInfo(name = "createdAt") var date_time:String,@ColumnInfo(name = "count") var count:Int,@ColumnInfo(name = "length") var length:Int,@ColumnInfo(name = "mediaType") var media_type:String)
 
 //@Entity(tableName = "MessageFeeds")
 //class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)

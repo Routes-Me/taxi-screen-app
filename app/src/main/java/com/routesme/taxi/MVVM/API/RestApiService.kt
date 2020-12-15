@@ -35,7 +35,7 @@ interface RestApiService {
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
     @POST("analytics/playbacks")
-    fun postReport(@Query("data") data:List<VideoTracking>): Call<JsonElement>
+    fun postReport(@Body data:List<VideoTracking>): Call<JsonElement>
 /*
     //Advertisements...
     @GET("Channels")
