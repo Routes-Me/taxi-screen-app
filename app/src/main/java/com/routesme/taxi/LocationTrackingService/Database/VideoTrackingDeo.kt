@@ -13,8 +13,8 @@ interface VideoTrackingDeo {
     @Query("SELECT * FROM tbl_video_tracking")
     fun getVideoList(): List<VideoTracking>
     @Transaction
-    @Query("SELECT id, COUNT(advertisementId) as count,deviceId, advertisementId,createdAt,length,mediaType FROM tbl_video_tracking WHERE createdAt BETWEEN :from_date and :from_date GROUP BY advertisementId")
-    fun getVideoAnalaysisReport(from_date:String):List<VideoTracking>
+    @Query("SELECT id, COUNT(advertisementId) as count,deviceId, advertisementId,createdAt,length,mediaType FROM tbl_video_tracking WHERE createdAt BETWEEN :from_date AND :from_date    GROUP BY advertisementId")
+    fun getVideoAnalaysisReport(from_date: String):List<VideoTracking>
     
     @Insert
     fun insertVideoTrackingDetails(videoTracking: VideoTracking)

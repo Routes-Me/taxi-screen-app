@@ -56,8 +56,6 @@ open class DisplayManager() {
         val date1: Date = myFormat.parse(from_date)
         val date2: Date = myFormat.parse(to_date)
         diff =TimeUnit.DAYS.convert((date2.time - date1.time), TimeUnit.MILLISECONDS)
-        System.out.println("Days: " + diff)
-        Log.d("Date",diff.toString())
         if(diff > 0){
 
             return true

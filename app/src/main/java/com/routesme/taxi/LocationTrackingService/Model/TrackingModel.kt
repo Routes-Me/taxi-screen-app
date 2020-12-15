@@ -18,7 +18,7 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
 }
 
 @Entity(tableName = "tbl_video_tracking")
-class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "deviceId") var device_id:Int,@ColumnInfo(name = "advertisementId") var advertisement_id:Int,@ColumnInfo(name = "createdAt") var date_time:String,@ColumnInfo(name = "count") var count:Int,@ColumnInfo(name = "length") var length:Int,@ColumnInfo(name = "mediaType") var media_type:String)
+class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "deviceId") var deviceId:Int,@ColumnInfo(name = "advertisementId") var advertisementId:Int,@ColumnInfo(name = "createdAt") var createdAt:String,@ColumnInfo(name = "count") var count:Int,@ColumnInfo(name = "length") var length:Int,@ColumnInfo(name = "mediaType") var mediaType:String)
 
 //@Entity(tableName = "MessageFeeds")
 //class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
@@ -36,11 +36,11 @@ class LocationJsonObject(private val locationFeed: LocationFeed) {
 class VideoJsonObject(private val videoTracking: VideoTracking) {
     fun toJSON(): JsonObject {
         val jo = JsonObject()
-        jo.addProperty("advertisementId", videoTracking.advertisement_id)
-        jo.addProperty("deviceId", videoTracking.device_id)
-        jo.addProperty("createdAt", videoTracking.date_time)
+        jo.addProperty("advertisementId", videoTracking.advertisementId)
+        jo.addProperty("deviceId", videoTracking.deviceId)
+        jo.addProperty("createdAt", videoTracking.createdAt)
         jo.addProperty("count", videoTracking.count)
-        jo.addProperty("mediaType", videoTracking.media_type)
+        jo.addProperty("mediaType", videoTracking.mediaType)
         jo.addProperty("length", videoTracking.length)
         return jo
     }

@@ -18,7 +18,6 @@ class ReportResponse(token: Int? = null, val mResponseErrors: ResponseErrors? = 
     init {
         this.token = token
     }
-
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
 }

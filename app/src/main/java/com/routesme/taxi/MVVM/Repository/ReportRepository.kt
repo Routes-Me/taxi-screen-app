@@ -23,9 +23,9 @@ class ReportRepository(context:Context,data:List<VideoTracking>){
         val call = thisApiCorService.postReport(data)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("Date","Success ${response.code()}")
-                if(response.code() == 202){
-                    val content = Gson().fromJson<Content>(response.body(), Report::class.java)
+
+                if(response.code() == 201){
+                    val content = Gson().fromJson<Report>(response.body(), Report::class.java)
                     reportResponse.value = ReportResponse(content.statusCode)
 
                 }else{

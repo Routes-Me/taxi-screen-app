@@ -60,8 +60,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
-    //private var from_date:String?=null
-    private var from_date = "14-12-2020"
+    val locationJsonArray = JsonArray()
+    private var from_date:String?=null
     private val videoTrackingFeed = trackingDatabase.videoTracking()
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,17 +79,17 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        //from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
+        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
         submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
-        videoTrackingFeed.getVideoAnalaysisReport(from_date).forEach {
+        /*videoTrackingFeed.getVideoAnalaysisReport(from_date!!).forEach {
 
-            Log.d("Report","ID ${it.id}, advertisement ID ${it.advertisement_id}, device_id ${it.device_id}, date ${it.date_time}, count ${it.count}, Length ${it.length}, media_type ${it.media_type}")
-        }
+            Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.createdAt}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
+        }*/
         addFragments()
     }
 
@@ -165,35 +165,24 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun checkDateAndUploadResult(){
-        Log.d("Date", from_date)
+
         if(DisplayManager.instance.checkDate(from_date!!)){
-            /*Log.d("Date", "Running")
-            val feed = videoTrackingFeed.getVideoAnalaysisReport().forEach {
-                val locationJsonArray = JsonArray()
-                val locationJsonObject: JsonObject = VideoJsonObject(it).toJSON()
-                locationJsonArray.add(locationJsonObject)
-
-            }*/
-
             val postReportViewModel: ContentViewModel by viewModels()
-            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date)).observe(this , Observer<ReportResponse> {
-                Log.d("Date", "${it.token}")
+            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date!!)).observe(this , Observer<ReportResponse> {
                 if(it.isSuccess){
-
-                    videoTrackingFeed.deleteTable(from_date)
+                    val delete = videoTrackingFeed.deleteTable(from_date!!)
                     editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
+                    editor?.commit()
 
                 }
                 else{
 
-
                 }
             })
-
-
         }
 
     }
+
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
@@ -304,7 +293,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     fun onEvent(demoVideo: DemoVideo){
         try {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
-                Log.d("Video State", "Called Demo video ${demoVideo.isPlay}")
+
                 if(demoVideo.isPlay){
                     activityVideoCover.visibility = View.VISIBLE
                     demoVideoPlayer.visibility = View.VISIBLE
