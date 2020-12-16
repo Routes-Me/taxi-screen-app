@@ -6,13 +6,13 @@ apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.jetbrains.kotlin.kapt"
 android {
     compileSdkVersion 29
-    buildToolsVersion "28.0.3"
+    buildToolsVersion '29.0.3'
     defaultConfig {
         applicationId "com.routesme.taxi"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 10
-        versionName "1.8"
+        versionCode 11
+        versionName "1.9"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
