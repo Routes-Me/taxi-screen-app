@@ -79,16 +79,17 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
+        //from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
+        from_date = "16-12-2020"
         submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
-        /*videoTrackingFeed.getVideoAnalaysisReport(from_date!!).forEach {
+        /*videoTrackingFeed.getVideoAnalaysisReport(from_date!!,from_date!!).forEach {
 
-            Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.createdAt}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
+            Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
         }*/
         addFragments()
     }
@@ -168,9 +169,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
         if(DisplayManager.instance.checkDate(from_date!!)){
             val postReportViewModel: ContentViewModel by viewModels()
-            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date!!)).observe(this , Observer<ReportResponse> {
+            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())!!).observe(this , Observer<ReportResponse> {
                 if(it.isSuccess){
-                    val delete = videoTrackingFeed.deleteTable(from_date!!)
+                    val delete = videoTrackingFeed.deleteTable(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())
                     editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
                     editor?.commit()
 

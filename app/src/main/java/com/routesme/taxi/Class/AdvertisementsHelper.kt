@@ -101,7 +101,7 @@ class AdvertisementsHelper {
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     //val previousUri = Uri.parse(images[previousImageIndex].url)
                     //glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),createdAt = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 15,mediaType = "image",count = 1))
+                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 15,mediaType = "image",count = 1))
 
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
                     EventBus.getDefault().post(images[currentImageIndex])
@@ -181,12 +181,12 @@ class AdvertisementsHelper {
             play()
             prepare()
             volume = 0f
-            videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[0].contentId!!.toInt(),createdAt = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 30,mediaType = "video",count = 1))
+            videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[0].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 30,mediaType = "video",count = 1))
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[currentMediaItemId].contentId!!.toInt(),createdAt = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 30,mediaType = "video",count = 1))
+                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[currentMediaItemId].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 30,mediaType = "video",count = 1))
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
 
