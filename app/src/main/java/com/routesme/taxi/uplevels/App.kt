@@ -41,6 +41,11 @@ class App : Application() {
         instance = this
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
+        startTrackingService()
+
+    }
+
+    fun startTrackingService(){
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
@@ -75,6 +80,7 @@ class App : Application() {
     private val serviceConnection: ServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(className: ComponentName, service: IBinder) {
             val name = className.className
+            Log.i("trackingWebSocket:", name)
             if (name.endsWith("TrackingService")) {
                 Log.i("trackingWebSocket:", "onServiceConnected")
                 trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
