@@ -14,6 +14,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -22,23 +23,31 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.Class.DisplayManager
-import com.routesme.taxi.Class.HomeScreenHelper
+import com.routesme.taxi.Class.*
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
+import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
+import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
+import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
+import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.App
+import kotlinx.android.synthetic.main.content_fragment.view.*
 import kotlinx.android.synthetic.main.home_screen.*
-import kotlinx.android.synthetic.main.technical_login_layout.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.io.IOException
+import java.text.SimpleDateFormat
+import java.util.*
 
 class HomeActivity : PermissionsActivity(), IModeChanging {
     private var sharedPreferences: SharedPreferences? = null
@@ -50,34 +59,52 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
+    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
+    val locationJsonArray = JsonArray()
+    private var from_date:String?=null
+    private val videoTrackingFeed = trackingDatabase.videoTracking()
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
         if (DisplayManager.instance.isAnteMeridiem()) {
             setTheme(R.style.FullScreen_Light_Mode)
+            ScreenBrightness.instance.setBrightnessValue(this, 80)
         } else {
             setTheme(R.style.FullScreen_Dark_Mode)
+            ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
+
+        setSystemUiVisibility()
+        setContentView(R.layout.home_screen)
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor= sharedPreferences?.edit()
+        //from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
+        from_date = "16-12-2020"
+        submitApplicationVersion()
+        initializePlayer()
+        sideMenuFragment = SideMenuFragment()
+        openPatternBtn.setOnClickListener { openPattern() }
+        helper.requestRuntimePermissions()
+        checkDateAndUploadResult()
+        /*videoTrackingFeed.getVideoAnalaysisReport(from_date!!,from_date!!).forEach {
+
+            Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
+        }*/
+        addFragments()
+    }
+
+    private fun setSystemUiVisibility() {
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-        setContentView(R.layout.home_screen)
-        submitApplicationVersion()
-        initializePlayer()
-        sideMenuFragment = SideMenuFragment()
-        openPatternBtn.setOnClickListener { openPattern() }
-        helper.requestRuntimePermissions()
-        addFragments()
     }
 
     @SuppressLint("CommitPrefEdits")
     private fun submitApplicationVersion() {
-        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        editor= sharedPreferences?.edit()
         val submittedVersion = sharedPreferences?.getString(SharedPreferencesHelper.submitted_version, null)
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         if (currentVersion.isNotEmpty()){
@@ -137,6 +164,26 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     fun stopVideo(){
         player?.pause()
     }
+
+    private fun checkDateAndUploadResult(){
+
+        if(DisplayManager.instance.checkDate(from_date!!)){
+            val postReportViewModel: ContentViewModel by viewModels()
+            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())!!).observe(this , Observer<ReportResponse> {
+                if(it.isSuccess){
+                    val delete = videoTrackingFeed.deleteTable(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())
+                    editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
+                    editor?.commit()
+
+                }
+                else{
+
+                }
+            })
+        }
+
+    }
+
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)

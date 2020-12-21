@@ -33,6 +33,7 @@ import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
+import java.text.SimpleDateFormat
 import java.util.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
@@ -133,9 +134,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             return
         } else {
             registerCredentials.apply {
-                deviceId = telephonyManager.imei
+                serialNumber = telephonyManager.imei
                 SimSerialNumber = telephonyManager.simSerialNumber
-                deviceId_tv.text = deviceId
+                deviceId_tv.text = serialNumber
                 SimSerialNumber_tv.text = SimSerialNumber
             }
             showTabletInfoError(false)
@@ -209,7 +210,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveTabletInfoIntoSharedPreferences(deviceId)
-                        openModelPresenterScreen()
+                        App.instance.startTrackingService()
+                        `openModelPresenterScreen`()
                     } else {
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
@@ -264,7 +266,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun tabletInformationExist(): Boolean {
-        val tabletSerialNumber = registerCredentials.deviceId
+        val tabletSerialNumber = registerCredentials.serialNumber
         val simCardNumber = registerCredentials.SimSerialNumber
         return if (tabletSerialNumber.isNullOrEmpty() || simCardNumber.isNullOrEmpty()) {
             showTabletInfoError(true)
@@ -283,8 +285,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreferencesHelper.vehicle_id, app.vehicleId)
             putString(SharedPreferencesHelper.vehicle_plate_number, app.taxiPlateNumber)
             putString(SharedPreferencesHelper.device_id, deviceId)
-            putString(SharedPreferencesHelper.device_serial_number, registerCredentials.deviceId)
+            putString(SharedPreferencesHelper.device_serial_number, registerCredentials.serialNumber)
             putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
+            putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
         }.apply()
     }
 

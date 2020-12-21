@@ -21,6 +21,7 @@ class RegistrationRepository(val context: Context) {
     }
 
     fun register(registrationCredentials: RegistrationCredentials): MutableLiveData<RegistrationResponse> {
+        Log.d("Register-Cre","${registrationCredentials}")
         val call = thisApiCorService.register(registrationCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {

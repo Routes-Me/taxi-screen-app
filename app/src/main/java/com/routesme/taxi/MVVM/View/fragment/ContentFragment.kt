@@ -1,9 +1,7 @@
 package com.routesme.taxi.MVVM.View.fragment
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.app.Activity
+import android.content.*
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
@@ -29,6 +27,7 @@ import com.routesme.taxi.MVVM.Model.Error
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import dmax.dialog.SpotsDialog
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.android.synthetic.main.content_fragment.view.*
@@ -41,7 +40,10 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
+    private var sharedPreferences: SharedPreferences? = null
+    private var editor: SharedPreferences.Editor? = null
     private var pager: Int = 1
+    private var device_id : Int = 0
     private val SEC:Long = 120
     private val MIL:Long = 1000
     var delay = 15 * 1000
@@ -93,6 +95,9 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
         videoRingProgressBar = view.videoRingProgressBar
         timerHandler = Handler()
         videoShadow = view.videoShadow
+        sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor= sharedPreferences?.edit()
+        device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -146,8 +151,8 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                         Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2)
-                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage)
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2,device_id)
+                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,device_id)
                     }
 
                 } else {

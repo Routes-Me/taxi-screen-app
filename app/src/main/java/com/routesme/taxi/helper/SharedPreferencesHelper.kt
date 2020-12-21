@@ -14,5 +14,6 @@ class SharedPreferencesHelper {
         const val device_id = "device_id"
         const val device_serial_number = "device_serial_number"
         const val sim_serial_number = "sim_serial_number"
+        const val from_date = "from_date"
     }
 }

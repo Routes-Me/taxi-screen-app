@@ -7,9 +7,12 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.util.Log
 import com.routesme.taxi.MVVM.Model.IModeChanging
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 open class DisplayManager() {
@@ -44,6 +47,20 @@ open class DisplayManager() {
         alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal1.timeInMillis, morningAlarm)
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis, eveningAlarm)
+    }
+
+    fun checkDate(from_date:String) : Boolean{
+        val myFormat = SimpleDateFormat("dd-M-yyyy")
+        val to_date = SimpleDateFormat("dd-M-yyyy").format(Date()).toString()
+        var diff = 0L
+        val date1: Date = myFormat.parse(from_date)
+        val date2: Date = myFormat.parse(to_date)
+        diff =TimeUnit.DAYS.convert((date2.time - date1.time), TimeUnit.MILLISECONDS)
+        if(diff > 0){
+
+            return true
+        }
+        return false
     }
 
     fun isAnteMeridiem() = currentDate().after(parseDate("05:00")) && currentDate().before(parseDate("17:00"))
