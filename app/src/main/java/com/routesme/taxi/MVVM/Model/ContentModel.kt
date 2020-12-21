@@ -12,6 +12,8 @@ enum class ContentType(val value: String) { Image("image"), Video("video") }
 
 class Report(val status:Boolean?=null,val message:String?=null,val statusCode:Int?=null)
 
+
+
 class ReportResponse(token: Int? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
     var token: Int? = null
@@ -31,7 +33,10 @@ class ContentResponse(data: List<Data>? = null, val mResponseErrors: ResponseErr
         if (!data.isNullOrEmpty()){
             for (d in data){
                 when(d.type){
-                    ContentType.Image.value -> imageList.add(d)
+                    ContentType.Image.value -> {
+                        imageList.add(d)
+                        imageList.add(d)
+                    }
                     else -> videoList.add(d)
                 }
             }

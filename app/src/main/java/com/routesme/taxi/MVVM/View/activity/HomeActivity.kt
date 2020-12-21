@@ -36,8 +36,10 @@ import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
+import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.events.ErrorMessage
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
@@ -180,6 +182,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
                 }
             })
+
+
         }
 
     }
@@ -296,16 +300,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
 
                 if(demoVideo.isPlay){
+                    textViewError.visibility = View.VISIBLE
+                    textViewError.text = demoVideo.errorMessage
                     activityVideoCover.visibility = View.VISIBLE
                     demoVideoPlayer.visibility = View.VISIBLE
                     playVideo()
                 }else{
                     if(activityVideoCover.visibility == View.VISIBLE){
+                        textViewError.visibility = View.GONE
                         activityVideoCover.visibility = View.GONE
                         demoVideoPlayer.visibility = View.GONE
                         stopVideo()
 
                     }else{
+                        textViewError.visibility = View.GONE
                         activityVideoCover.visibility = View.GONE
                         demoVideoPlayer.visibility = View.GONE
                     }
@@ -316,6 +324,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
+
+    }
+
+    @Subscribe()
+    fun onEvent(data: Data){
+        Log.d("Calls","Calls Home Activity")
 
     }
 }

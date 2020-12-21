@@ -104,10 +104,12 @@ class AdvertisementsHelper {
                     videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 15,mediaType = "image",count = 1))
 
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
-                    EventBus.getDefault().post(images[currentImageIndex])
+
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         setImageAnimation(context,imageView,imageView2)
+                        Log.d("Calls","Call from Adver ${images.size}")
+                        EventBus.getDefault().post(images[currentImageIndex])
                     }
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
@@ -207,7 +209,7 @@ class AdvertisementsHelper {
                             count++
                             if(count >= 5 ){
                                 count = 0
-                                EventBus.getDefault().post(DemoVideo(true))
+                                EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
                                 isPlayingDemoVideo = true
                             }
 
@@ -216,7 +218,7 @@ class AdvertisementsHelper {
                             Log.d("VideoState","READ")
                             Log.d("VideoState",count.toString())
                             if(isPlayingDemoVideo) {
-                                EventBus.getDefault().post(DemoVideo(false))
+                                EventBus.getDefault().post(DemoVideo(false,""))
                                 isPlayingDemoVideo = false
                             }
                             count = 0

@@ -95,7 +95,9 @@ class SideMenuFragment : Fragment() {
 
     @Subscribe()
     fun onEvent(data: Data){
+        Log.d("Calls","Calls")
         when(data.type){
+
             ContentType.Image.value -> changeBannerQRCode(data)
             else -> changeVideoQRCode(data)
         }

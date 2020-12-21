@@ -28,10 +28,10 @@
     <string name="content_error_title">Content error</string>
     <string name="token_is_null_value">Token is null value</string>
     <string name="device_id_is_null_value">Device ID is null value</string>
-    <string name="no_data_found">No data found !</string>
-    <string name="network_Issue">Network Issue !</string>
-    <string name="conversion_Issue">Conversion Issue !</string>
-    <string name="unknown_error">unknown error</string>
+    <string name="no_data_found">NO DATA FOUND</string>
+    <string name="network_Issue">NETWORK ISSUE</string>
+    <string name="conversion_Issue">CONVERSION ISSUE</string>
+    <string name="unknown_error">UNKNOWN ERROR</string>
     <string name="complete_required_data">Complete required data, please!</string>
     <string name="institutions">Institutions</string>
     <string name="vehicles">Vehicles</string>

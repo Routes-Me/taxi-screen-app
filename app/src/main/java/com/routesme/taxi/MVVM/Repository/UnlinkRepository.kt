@@ -13,39 +13,41 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.net.HttpURLConnection
 
-class RegistrationRepository(val context: Context) {
-    private val registrationResponse = MutableLiveData<RegistrationResponse>()
-
+class UnlinkRepository(context:Context){
+    private val unlinkResponse = MutableLiveData<UnlinkResponse>()
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
-
-    fun register(registrationCredentials: RegistrationCredentials): MutableLiveData<RegistrationResponse> {
-        Log.d("Data Payload","${registrationCredentials}")
-        val call = thisApiCorService.register(registrationCredentials)
+    fun unlink(vehicleId:String,deviceId:String): MutableLiveData<UnlinkResponse> {
+        Log.d("TAG","${vehicleId},${deviceId}")
+        val call = thisApiCorService.deleteVehicle(vehicleId,deviceId)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("Data Payload","${response}")
+                Log.d("TAG", "${response}")
+                Log.d("TAG", "${response.body()}")
                 if (response.isSuccessful && response.body() != null) {
-                    val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
-                    registrationResponse.value = RegistrationResponse(deviceId = registrationSuccessResponse.deviceId)
+                    val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), UnlinkModel::class.java)
+
+                    unlinkResponse.value = UnlinkResponse(token = signInSuccessResponse.statusCode)
+
                 } else{
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT){
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
                         val objError = JSONObject(response.errorBody()!!.string())
                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        registrationResponse.value = RegistrationResponse(mResponseErrors = errors)
+                        unlinkResponse.value = UnlinkResponse(mResponseErrors = errors)
                     }else{
                         val error = Error(detail = response.message(),statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                         val responseErrors = ResponseErrors(errors)
-                        registrationResponse.value = RegistrationResponse(mResponseErrors = responseErrors)
+                        unlinkResponse.value = UnlinkResponse(mResponseErrors = responseErrors)
                     }
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                registrationResponse.value = RegistrationResponse(mThrowable = throwable)
+                unlinkResponse.value = UnlinkResponse(mThrowable = throwable)
             }
         })
-        return registrationResponse
+        return unlinkResponse
     }
+
 }

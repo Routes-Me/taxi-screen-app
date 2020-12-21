@@ -24,13 +24,15 @@ class LoginRepository(val context: Context) {
 
     fun signIn(signInCredentials: SignInCredentials): MutableLiveData<LoginResponse> {
         val encryptedPassword = encrypt(signInCredentials.password)
-        //Log.d("Encryption", encryptedPassword)
         val encryptedCredentials = SignInCredentials(signInCredentials.userName, encryptedPassword)
+        Log.d("Data Payload", "${encryptedCredentials}")
         val call = thisApiCorService.signIn(encryptedCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                Log.d("Data Payload", "${response.body()}")
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
+
                     signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){

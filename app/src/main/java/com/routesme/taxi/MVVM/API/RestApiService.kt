@@ -36,6 +36,9 @@ interface RestApiService {
 
     @POST("analytics/playbacks")
     fun postReport(@Body data:List<VideoTracking>): Call<JsonElement>
+
+    @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
+    fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>
 /*
     //Advertisements...
     @GET("Channels")

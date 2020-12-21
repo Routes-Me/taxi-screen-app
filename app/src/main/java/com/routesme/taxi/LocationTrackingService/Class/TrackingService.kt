@@ -61,6 +61,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
+
                 instance.hubConnection?.connect()
             }
         }
