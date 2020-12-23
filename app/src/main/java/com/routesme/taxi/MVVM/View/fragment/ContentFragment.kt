@@ -5,6 +5,7 @@ import android.content.*
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -85,6 +86,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(myReceiver)
+        Log.d("State","onDestroyView")
         super.onDestroyView()
     }
 
@@ -120,16 +122,19 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     }
 
     override fun onDestroy() {
+
         AdvertisementsHelper.instance.release()
         super.onDestroy()
     }
 
     override fun onStart() {
+
         EventBus.getDefault().register(this)
         super.onStart()
     }
 
     override fun onStop() {
+
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
@@ -207,15 +212,10 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private fun removeThread(){
 
         timerHandler!!.removeCallbacks(timerRunnable)
-
-
-
-
-
-
         EventBus.getDefault().post(DemoVideo(false,""))
 
     }
+
     @Subscribe()
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){

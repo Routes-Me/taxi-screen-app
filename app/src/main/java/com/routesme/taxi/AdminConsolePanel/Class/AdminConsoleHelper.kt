@@ -78,7 +78,6 @@ class AdminConsoleHelper(val activity: Activity) {
     }
 
     fun logOff() {
-        Log.d("TAG","Run from Admin Console Helper")
         EventBus.getDefault().post(LogOff(true))
 
     }

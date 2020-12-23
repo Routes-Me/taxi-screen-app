@@ -11,8 +11,8 @@ android {
         applicationId "com.routesme.taxi"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 11
-        versionName "1.9"
+        versionCode 12
+        versionName "2.0.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
@@ -122,4 +122,5 @@ dependencies {
     //implementation 'com.intuit.ssp:ssp-android:1.0.6'
     implementation 'com.intuit.sdp:sdp-android:1.0.5'
     implementation 'tk.zielony:carbon:0.16.0.1'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.3.1'
 }

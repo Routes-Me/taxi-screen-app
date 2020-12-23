@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.API.RestApiService
@@ -12,18 +13,20 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ReportRepository(context:Context,data:List<VideoTracking>){
+class ReportRepository(context:Context,data: JsonArray){
 
     private val reportResponse = MutableLiveData<ReportResponse>()
 
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
-    fun postReport(data: List<VideoTracking>): MutableLiveData<ReportResponse> {
+    fun postReport(data: JsonArray): MutableLiveData<ReportResponse> {
         val call = thisApiCorService.postReport(data)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-
+                Log.d("Report Test","${response.body()}")
+                Log.d("Report Test","${response}")
+                Log.d("Report Test","${data}")
                 if(response.code() == 201){
                     val content = Gson().fromJson<Report>(response.body(), Report::class.java)
                     reportResponse.value = ReportResponse(content.statusCode)

@@ -32,6 +32,7 @@ import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
 import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
+import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
@@ -81,18 +82,17 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        //from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
-        from_date = "16-12-2020"
+        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
         submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
-        /*videoTrackingFeed.getVideoAnalaysisReport(from_date!!,from_date!!).forEach {
+        videoTrackingFeed.getVideoAnalaysisReport(from_date!!,from_date!!).forEach {
 
             Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
-        }*/
+        }
         addFragments()
     }
 
@@ -122,13 +122,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
-        Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
+        //Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
-                Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
+                //Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
                 if (it.isSuccess) {
-                    Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
+                    //Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
                 }
             }
@@ -171,8 +171,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
         if(DisplayManager.instance.checkDate(from_date!!)){
             val postReportViewModel: ContentViewModel by viewModels()
-            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())!!).observe(this , Observer<ReportResponse> {
+            postReportViewModel.postReport(this,getJsonArray(videoTrackingFeed.getVideoAnalaysisReport(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())!!)).observe(this , Observer<ReportResponse> {
                 if(it.isSuccess){
+                    //Log.d("Report Success","${it.isSuccess}")
                     val delete = videoTrackingFeed.deleteTable(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())
                     editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
                     editor?.commit()
@@ -188,6 +189,15 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     }
 
+
+    private fun getJsonArray(data: List<VideoTracking>): JsonArray {
+        val videoJsonArrayJsonArray = JsonArray()
+        for (v in data) {
+            val locationJsonObject: JsonObject = VideoJsonObject(v).toJSON()
+            locationJsonArray.add(locationJsonObject)
+        }
+        return locationJsonArray
+    }
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
@@ -206,7 +216,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         super.onStop()
     }
     private fun addFragments() {
-        Log.d("Network-Status","addFragments")
+        //Log.d("Network-Status","addFragments")
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
@@ -249,20 +259,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             }
         }
         override fun onLost(network: Network?) {
-            Log.d("Network-Status","onLost")
+            //Log.d("Network-Status","onLost")
             if (isHotspotAlive) turnOffHotspot()
         }
     }
 
     private fun turnOnHotspot() {
-        Log.d("Network-Status","turnOnHotspot")
+        //Log.d("Network-Status","turnOnHotspot")
         val intent = Intent(getString(R.string.intent_action_turnon))
         sendImplicitBroadcast(intent)
         isHotspotAlive = true
     }
 
     private fun turnOffHotspot() {
-        Log.d("Network-Status","turnOffHotspot")
+        //Log.d("Network-Status","turnOffHotspot")
         val intent = Intent(getString(R.string.intent_action_turnoff))
         sendImplicitBroadcast(intent)
         isHotspotAlive = false
@@ -327,9 +337,5 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     }
 
-    @Subscribe()
-    fun onEvent(data: Data){
-        Log.d("Calls","Calls Home Activity")
 
-    }
 }

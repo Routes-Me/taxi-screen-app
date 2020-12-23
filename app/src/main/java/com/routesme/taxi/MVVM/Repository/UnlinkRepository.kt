@@ -19,16 +19,13 @@ class UnlinkRepository(context:Context){
         RestApiService.createCorService(context)
     }
     fun unlink(vehicleId:String,deviceId:String): MutableLiveData<UnlinkResponse> {
-        Log.d("TAG","${vehicleId},${deviceId}")
+
         val call = thisApiCorService.deleteVehicle(vehicleId,deviceId)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("TAG", "${response}")
-                Log.d("TAG", "${response.body()}")
-                if (response.isSuccessful && response.body() != null) {
-                    val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), UnlinkModel::class.java)
 
-                    unlinkResponse.value = UnlinkResponse(token = signInSuccessResponse.statusCode)
+                if (response.isSuccessful) {
+                    unlinkResponse.value = UnlinkResponse(token = response.code())
 
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){

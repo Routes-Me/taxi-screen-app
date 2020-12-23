@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.API
 
 import android.content.Context
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi.Class.Helper
@@ -35,7 +36,7 @@ interface RestApiService {
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
     @POST("analytics/playbacks")
-    fun postReport(@Body data:List<VideoTracking>): Call<JsonElement>
+    fun postReport(@Body data: JsonArray): Call<JsonElement>
 
     @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
     fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>
@@ -52,6 +53,7 @@ interface RestApiService {
 */
 
     companion object {
+
         fun createCorService(context: Context): RestApiService {
             return Retrofit.Builder()
                     .baseUrl(Helper.getConfigValue("baseUrl", R.raw.config)!!)

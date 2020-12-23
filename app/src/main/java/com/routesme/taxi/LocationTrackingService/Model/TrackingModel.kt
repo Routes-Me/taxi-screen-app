@@ -1,10 +1,13 @@
 package com.routesme.taxi.LocationTrackingService.Model
 
 import android.location.Location
+import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
+import java.sql.Timestamp
+import java.text.SimpleDateFormat
 
 @Entity(tableName = "LocationFeeds")
 class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long) {
@@ -38,10 +41,20 @@ class VideoJsonObject(private val videoTracking: VideoTracking) {
         val jo = JsonObject()
         jo.addProperty("advertisementId", videoTracking.advertisementId)
         jo.addProperty("deviceId", videoTracking.deviceId)
-        jo.addProperty("createdAt", videoTracking.date)
+        jo.addProperty("date", convertDateToTimeStamp(videoTracking.date))
         jo.addProperty("count", videoTracking.count)
         jo.addProperty("mediaType", videoTracking.mediaType)
         jo.addProperty("length", videoTracking.length)
         return jo
     }
+
+
+    fun convertDateToTimeStamp(date:String):Long{
+        val sdf = SimpleDateFormat("dd-M-yyyy")
+        val date = sdf.parse(date)
+        val timeInMillis = date.time/1000
+        Log.d("Report Test","${timeInMillis}")
+        return timeInMillis
+    }
+
 }

@@ -70,12 +70,12 @@ class AdvertisementsHelper {
             val totalMemory = Runtime.getRuntime().totalMemory()
             val used = totalMemory -freeMemory
             val free = maxMemory - used
-            Log.d("memory-size","maxMemory: $maxMemory")
-            Log.d("memory-size","freeMemory: $freeMemory")
-            Log.d("memory-size","totalMemory: $totalMemory")
+            //Log.d("memory-size","maxMemory: $maxMemory")
+            //Log.d("memory-size","freeMemory: $freeMemory")
+            //Log.d("memory-size","totalMemory: $totalMemory")
             //val exoPlayerCacheSize: Long = 90 * 1024 * 1024
             val exoPlayerCacheSize: Long = free/5
-            Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
+            //Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
 
@@ -108,7 +108,6 @@ class AdvertisementsHelper {
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         setImageAnimation(context,imageView,imageView2)
-                        Log.d("Calls","Call from Adver ${images.size}")
                         EventBus.getDefault().post(images[currentImageIndex])
                     }
                     currentImageIndex++
@@ -193,19 +192,19 @@ class AdvertisementsHelper {
                 }
 
                 override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                    Log.d("onTimelineChanged", "${timeline}, re: $reason")
+                    //Log.d("onTimelineChanged", "${timeline}, re: $reason")
                     super.onTimelineChanged(timeline, reason)
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-                            Log.d("VideoState","IDLE")
+                            //Log.d("VideoState","IDLE")
                             player?.prepare()
 
                         }
                         Player.STATE_BUFFERING -> {
-                            Log.d("VideoState","BUFFERING")
+                            //Log.d("VideoState","BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
@@ -215,8 +214,8 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
-                            Log.d("VideoState","READ")
-                            Log.d("VideoState",count.toString())
+                            //Log.d("VideoState","READ")
+                            //Log.d("VideoState",count.toString())
                             if(isPlayingDemoVideo) {
                                 EventBus.getDefault().post(DemoVideo(false,""))
                                 isPlayingDemoVideo = false
@@ -231,7 +230,7 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_ENDED -> {
-                            Log.d("VideoState","END")
+                            //Log.d("VideoState","END")
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
                         }
                     }

@@ -56,6 +56,7 @@ open class DisplayManager() {
         val date1: Date = myFormat.parse(from_date)
         val date2: Date = myFormat.parse(to_date)
         diff =TimeUnit.DAYS.convert((date2.time - date1.time), TimeUnit.MILLISECONDS)
+        Log.d("Report Test","$diff")
         if(diff > 0){
 
             return true

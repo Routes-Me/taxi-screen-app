@@ -33,7 +33,7 @@ class ConnectivityReceiver: BroadcastReceiver()  {
 
     override fun onReceive(context: Context?, intent: Intent?) {
 
-        Log.d("NetworkChangeReceiver","Connection status changed");
+        //Log.d("NetworkChangeReceiver","Connection status changed");
         //connectivityReceiverListener?.onNetworkConnectionChanged(getObservable()!!.connectionChanged();)
         getObservable()!!.connectionChanged();
     }

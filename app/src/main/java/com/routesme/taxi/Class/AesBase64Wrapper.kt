@@ -60,7 +60,7 @@ class AesBase64Wrapper() {
 
          val result = StringBuilder().append(saltIndexChars).append(saltExcluded).append(encryptedBody)
 
-         Log.d("Encryption", "saltIndex: $saltIndexChars")
+        /* Log.d("Encryption", "saltIndex: $saltIndexChars")
          Log.d("Encryption", "${saltIndexChars[0]}: ${saltIndexChars[0].toInt()}")
          Log.d("Encryption", "${saltIndexChars[1]}: ${saltIndexChars[1].toInt()}")
          Log.d("Encryption", "index: $saltIndexNumber")
@@ -68,7 +68,7 @@ class AesBase64Wrapper() {
          Log.d("Encryption", "saltExcluded: $saltExcluded")
          Log.d("Encryption", "fullSalt: $fullSalt")
          Log.d("Encryption", "realSalt: $realSalt")
-         Log.d("Encryption", "encryptStr: $encryptStr")
+         Log.d("Encryption", "encryptStr: $encryptStr")*/
 
          return result.toString()
     }

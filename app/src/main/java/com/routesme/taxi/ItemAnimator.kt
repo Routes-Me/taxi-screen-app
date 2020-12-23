@@ -18,21 +18,22 @@ import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion
 class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     var objectAnimator: ObjectAnimator?=null
     override fun animateAdd(holder: RecyclerView.ViewHolder?): Boolean {
-        Log.d("item-animation","animateAdd , Holder: ${holder?.itemViewType}")
+        //Log.d("item-animation","animateAdd , Holder: ${holder?.itemViewType}")
         animation(null,holder)
         return true
     }
 
     override fun runPendingAnimations() {
+
     }
 
     override fun animateMove(holder: RecyclerView.ViewHolder?, fromX: Int, fromY: Int, toX: Int, toY: Int): Boolean {
-        Log.d("item-animation","animateMove , Holder: ${holder?.itemViewType}")
+        //Log.d("item-animation","animateMove , Holder: ${holder?.itemViewType}")
         return false
     }
 
     override fun animateChange(oldHolder: RecyclerView.ViewHolder?, newHolder: RecyclerView.ViewHolder?, fromLeft: Int, fromTop: Int, toLeft: Int, toTop: Int): Boolean {
-        Log.d("item-animation","animateChange , Old Holder: ${oldHolder?.itemViewType} , New Holder: ${newHolder?.itemViewType}")
+        //Log.d("item-animation","animateChange , Old Holder: ${oldHolder?.itemViewType} , New Holder: ${newHolder?.itemViewType}")
         animation(oldHolder,newHolder)
 
         return true
@@ -43,10 +44,11 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     override fun endAnimation(item: RecyclerView.ViewHolder) {
+
     }
 
     override fun animateRemove(holder: RecyclerView.ViewHolder?): Boolean {
-        Log.d("item-animation","animateRemove , Holder: ${holder?.itemViewType}")
+        //Log.d("item-animation","animateRemove , Holder: ${holder?.itemViewType}")
         animation(holder,null)
         return true
     }

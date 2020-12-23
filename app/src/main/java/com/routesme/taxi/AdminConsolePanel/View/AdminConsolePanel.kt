@@ -87,7 +87,7 @@ class AdminConsolePanel : AppCompatActivity() {
                 dialog?.show()
                 val loginViewModel : LoginViewModel by viewModels()
                 loginViewModel.unlinkDevice(adminConsoleHelper?.vehicleId()!!,adminConsoleHelper?.deviceId()!!,this!!).observe(this, Observer<UnlinkResponse> {
-                    if (it.isSuccess) {
+                    if (it.token == 204) {
                         dialog?.hide()
                         this?.apply {
                             sharedPreferences?.edit(commit = true) {
