@@ -60,7 +60,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var player : SimpleExoPlayer?=null
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     val locationJsonArray = JsonArray()
-    private lateinit var from_date:String
+    private  var from_date:String?=null
     private val videoTrackingFeed = trackingDatabase.videoTracking()
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,17 +78,22 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
+        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
-        videoTrackingFeed.getVideoAnalaysisReport(from_date!!,from_date!!).forEach {
+        /*from_date?.let {
 
-            Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
-        }
+            videoTrackingFeed.getVideoAnalaysisReport(it,it).forEach {
+
+                Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
+            }
+
+        }*/
+
         addFragments()
     }
 
