@@ -6,7 +6,6 @@ import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi.MVVM.API.RestApiService
 import com.routesme.taxi.MVVM.Model.*
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

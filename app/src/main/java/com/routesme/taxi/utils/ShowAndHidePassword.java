@@ -15,14 +15,12 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.EditText;
 import androidx.annotation.ColorInt;
 import androidx.annotation.DrawableRes;
 import androidx.appcompat.widget.AppCompatEditText;
 import androidx.core.content.ContextCompat;
 import androidx.core.graphics.drawable.DrawableCompat;
 import com.routesme.taxi.R;
-import com.scottyab.showhidepasswordedittext.ShowHidePasswordEditText;
 
 public class ShowAndHidePassword extends AppCompatEditText {
     private boolean isShowingPassword = false;
@@ -170,7 +168,6 @@ public class ShowAndHidePassword extends AppCompatEditText {
     }
 
     private void showPasswordVisibilityIndicator(boolean show) {
-        //Log.d(TAG, "showPasswordVisibilityIndicator() called with: " + "show = [" + show + "]");
         //preserve and existing CompoundDrawables
         Drawable[] existingDrawables = getCompoundDrawables();
         Drawable left = existingDrawables[0];

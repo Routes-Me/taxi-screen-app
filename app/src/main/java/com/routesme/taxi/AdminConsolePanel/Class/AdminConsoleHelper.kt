@@ -10,25 +10,12 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
-import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.routesme.taxi.AdminConsolePanel.Model.DetailActionStatus
 import com.routesme.taxi.AdminConsolePanel.Model.LogOff
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.MVVM.Model.ReportResponse
-import com.routesme.taxi.MVVM.Model.UnlinkResponse
-import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
-import com.routesme.taxi.MVVM.events.DemoVideo
 import org.greenrobot.eventbus.EventBus
-import java.text.SimpleDateFormat
-import java.util.*
 import kotlin.collections.ArrayList
 
 class AdminConsoleHelper(val activity: Activity) {

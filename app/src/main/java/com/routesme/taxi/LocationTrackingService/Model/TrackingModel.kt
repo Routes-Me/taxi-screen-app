@@ -6,7 +6,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
-import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 @Entity(tableName = "LocationFeeds")
@@ -22,9 +21,6 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
 
 @Entity(tableName = "tbl_video_tracking")
 class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "deviceId") var deviceId:Int,@ColumnInfo(name = "advertisementId") var advertisementId:Int,@ColumnInfo(name = "createdAt") var date:String,@ColumnInfo(name = "count") var count:Int,@ColumnInfo(name = "length") var length:Int,@ColumnInfo(name = "mediaType") var mediaType:String)
-
-//@Entity(tableName = "MessageFeeds")
-//class MessageFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "message") var message: String)
 
 class LocationJsonObject(private val locationFeed: LocationFeed) {
     fun toJSON(): JsonObject {

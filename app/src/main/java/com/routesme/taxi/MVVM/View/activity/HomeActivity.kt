@@ -37,18 +37,14 @@ import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
-import com.routesme.taxi.MVVM.events.ErrorMessage
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
-import kotlinx.android.synthetic.main.content_fragment.view.*
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 

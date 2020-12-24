@@ -9,5 +9,5 @@ import com.routesme.taxi.MVVM.Repository.UnlinkRepository
 class LoginViewModel() : ViewModel() {
     fun signIn(signInCredentials: SignInCredentials, context: Context) = LoginRepository(context).signIn(signInCredentials)
 
-    fun unlinkDevice(vehicleId:String,deviceId:String,context: Context) = UnlinkRepository(context).unlink(vehicleId,deviceId)
+
 }

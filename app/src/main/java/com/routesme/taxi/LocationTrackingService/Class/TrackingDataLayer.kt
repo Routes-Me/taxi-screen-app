@@ -4,7 +4,6 @@ import android.location.Location
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
-
 class TrackingDataLayer() {
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     private val locationFeedsDao = trackingDatabase.locationFeedsDao()

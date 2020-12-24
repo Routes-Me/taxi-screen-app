@@ -42,7 +42,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private var registerCredentials = RegistrationCredentials()
     private val operations = Operations.instance
     private val READ_PHONE_STATE_REQUEST_CODE = 101
-    //private val listTypeKey = getString(R.string.list_type_key)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var telephonyManager: TelephonyManager
@@ -63,7 +62,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-        // requestRuntimePermissions();
+        //requestRuntimePermissions();
         toolbarSetUp()
         initializeViews()
         getTabletInfo()
@@ -115,8 +114,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         operations.enableNextButton(register_btn, true)
         getTabletInfo()
         institutionId = app.institutionId
-        //deviceInfo.setTaxiOfficeId(app.getTaxiOfficeId());
-        //deviceInfo.setTaxiPlateNumber(app.getTaxiPlateNumber());
         registerCredentials.VehicleId = app.vehicleId
         taxiOffice_tv.text = showTaxiOfficeName(app.institutionName)
         taxiPlateNumber_tv.text = showTaxiPlateNumber(app.taxiPlateNumber)

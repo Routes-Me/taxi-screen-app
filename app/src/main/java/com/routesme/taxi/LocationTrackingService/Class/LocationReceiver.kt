@@ -8,9 +8,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
 import android.util.Log
-import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.location.LocationRequest
-import com.google.android.gms.location.LocationSettingsResult
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
@@ -50,7 +48,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     fun getLastKnownLocationMessage(): String? {
         locationManager.getLastKnownLocation(bestProvider)?.let {
             try {
-                Log.d("send-location-testing","LastKnownLocation: lat: ${it.latitude}, long: ${it.longitude} ")
+
                 val feed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
                 val locationJsonArray = JsonArray()
                 val locationJsonObject: JsonObject = LocationJsonObject(feed).toJSON()
@@ -66,17 +64,17 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     override fun onLocationChanged(location: Location?) {
         val provider = if (isGPSEnabled()) "GPS_PROVIDER" else if (isNetworkEnabled()) "NETWORK_PROVIDER" else "No Provider"
         val messageOnLocationChanged = "onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider"
-        Log.d("send-location-testing",messageOnLocationChanged)
+
         location?.let { location ->
             dataLayer.insertLocation(location)
             val messageInsert = "Insert location into DB: $location"
-            Log.d("send-location-testing",messageInsert)
+
             if (isConnected) {
                 dataLayer.getFeeds().let {
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
                         hubConnection?.invoke("SendLocation", it1)
                         val messageSend = "Send locations from DB: $it1"
-                        Log.d("send-location-testing",messageSend)
+
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }

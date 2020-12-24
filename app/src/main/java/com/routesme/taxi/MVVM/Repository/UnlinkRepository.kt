@@ -1,7 +1,6 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -25,7 +24,7 @@ class UnlinkRepository(context:Context){
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
 
                 if (response.isSuccessful) {
-                    unlinkResponse.value = UnlinkResponse(token = response.code())
+                    unlinkResponse.value = UnlinkResponse(code = response.code())
 
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){

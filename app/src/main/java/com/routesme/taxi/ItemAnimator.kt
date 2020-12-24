@@ -3,13 +3,9 @@ package com.routesme.taxi
 import android.animation.AnimatorInflater
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.util.Log
-import android.view.View
 import android.view.animation.*
-import androidx.core.animation.addListener
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.SimpleItemAnimator
-import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_BANNER_DISCOUNT
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_EMPTY_VIDEO_DISCOUNT
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_VIDEO_DISCOUNT
@@ -18,7 +14,6 @@ import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion
 class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     var objectAnimator: ObjectAnimator?=null
     override fun animateAdd(holder: RecyclerView.ViewHolder?): Boolean {
-        //Log.d("item-animation","animateAdd , Holder: ${holder?.itemViewType}")
         animation(null,holder)
         return true
     }
@@ -28,12 +23,12 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     override fun animateMove(holder: RecyclerView.ViewHolder?, fromX: Int, fromY: Int, toX: Int, toY: Int): Boolean {
-        //Log.d("item-animation","animateMove , Holder: ${holder?.itemViewType}")
+
         return false
     }
 
     override fun animateChange(oldHolder: RecyclerView.ViewHolder?, newHolder: RecyclerView.ViewHolder?, fromLeft: Int, fromTop: Int, toLeft: Int, toTop: Int): Boolean {
-        //Log.d("item-animation","animateChange , Old Holder: ${oldHolder?.itemViewType} , New Holder: ${newHolder?.itemViewType}")
+
         animation(oldHolder,newHolder)
 
         return true
@@ -48,7 +43,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     override fun animateRemove(holder: RecyclerView.ViewHolder?): Boolean {
-        //Log.d("item-animation","animateRemove , Holder: ${holder?.itemViewType}")
+
         animation(holder,null)
         return true
     }
@@ -58,10 +53,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     private fun animation(oldHolder: RecyclerView.ViewHolder?, newHolder: RecyclerView.ViewHolder?) {
-        /*val set1 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_in)
-        set1.interpolator = AccelerateDecelerateInterpolator()
-        set1.setTarget(newHolder?.itemView)
-        set1.start()*/
+
         if(newHolder != null){
             if(newHolder.itemViewType == TYPE_VIDEO_DISCOUNT || newHolder.itemViewType == TYPE_EMPTY_VIDEO_DISCOUNT){
                 newHolder.itemView.pivotX = 0.0f

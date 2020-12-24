@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi.AdminConsolePanel.Model.*
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.R
 
 class AdminConsoleDetailsListAdapter(private val activity: Activity, private val list: List<ICell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {

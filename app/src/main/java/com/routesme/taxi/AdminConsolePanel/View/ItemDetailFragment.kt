@@ -3,16 +3,11 @@ package com.routesme.taxi.AdminConsolePanel.View
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.content.edit
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleDetailsListAdapter
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleHelper
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleLists
@@ -29,9 +24,6 @@ import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.item_detail_fragment.*
-import org.greenrobot.eventbus.EventBus
-import org.greenrobot.eventbus.Subscribe
-import java.sql.SQLException
 import java.text.SimpleDateFormat
 import java.util.*
 

@@ -5,11 +5,9 @@ import android.content.*
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.os.Handler
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.viewModels
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -17,13 +15,10 @@ import androidx.lifecycle.Observer
 import carbon.widget.RelativeLayout
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.taxi.Class.AdvertisementsHelper
-import com.routesme.taxi.Class.ConnectivityReceiver
-import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.SideFragmentAdapter.ImageViewPager
 import com.routesme.taxi.Class.ThemeColor
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
@@ -46,7 +41,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private val SEC:Long = 300
     private val MIL:Long = 1000
     var delay = 15 * 1000
-    private var connectivityReceiver: ConnectivityReceiver? = null
     private var imageViewPagerAdapter:ImageViewPager?=null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
@@ -62,19 +56,13 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onAttach(context: Context) {
         mContext = context
-        /*
-        try {
-            qRCodeCallback = activity as QRCodeCallback
-        } catch (e: ClassCastException) {
-            throw ClassCastException(activity.toString() + " must implement QRCodeCallback")
-        }
-         */
+
         super.onAttach(context)
 
     }
 
     override fun onDetach() {
-      //  qRCodeCallback = null
+
         super.onDetach()
     }
 
@@ -86,7 +74,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(myReceiver)
-        Log.d("State","onDestroyView")
+
         super.onDestroyView()
     }
 
@@ -152,7 +140,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                     val videos = it.videoList.toList()
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
                         startThread(getString(R.string.no_data_found))
-                        //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
+
                         return@Observer
                     }else{
                         isDataFetched = true
@@ -171,25 +159,25 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                     } else if (it.mThrowable != null) {
                         if (it.mThrowable is IOException) {
                             startThread(getString(R.string.network_Issue))
-                            //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.network_Issue))
+
                         } else {
                             startThread(getString(R.string.conversion_Issue))
-                            //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.conversion_Issue))
+
                         }
                     }
                 }
             } else {
                 startThread(getString(R.string.unknown_error))
-                //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.unknown_error))
+
             }
         })
     }
 
-    private fun displayErrors(errors: List<Error>) {
+    /*private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
             Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
         }
-    }
+    }*/
 
     private fun startThread(errorMessage:String){
 

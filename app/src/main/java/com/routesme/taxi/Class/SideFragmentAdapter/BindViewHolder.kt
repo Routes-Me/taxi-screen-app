@@ -23,7 +23,6 @@ import com.routesme.taxi.Class.ThemeColor
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.uplevels.App
 import net.codecision.glidebarcode.model.Barcode
-
 val glide = Glide.with(App.instance)
 val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
 

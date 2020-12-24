@@ -35,7 +35,7 @@ class ContentResponse(data: List<Data>? = null, val mResponseErrors: ResponseErr
                 when(d.type){
                     ContentType.Image.value -> {
                         imageList.add(d)
-                        imageList.add(d)
+
                     }
                     else -> videoList.add(d)
                 }

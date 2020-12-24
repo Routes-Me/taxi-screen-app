@@ -10,7 +10,6 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleHelper
@@ -20,7 +19,7 @@ import com.routesme.taxi.AdminConsolePanel.Model.LogOff
 import com.routesme.taxi.MVVM.Model.UnlinkResponse
 import com.routesme.taxi.MVVM.View.activity.HomeActivity
 import com.routesme.taxi.MVVM.View.activity.LoginActivity
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
+import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import dmax.dialog.SpotsDialog
@@ -85,9 +84,9 @@ class AdminConsolePanel : AppCompatActivity() {
         if(isLogOff.isLogOff){
             try {
                 dialog?.show()
-                val loginViewModel : LoginViewModel by viewModels()
-                loginViewModel.unlinkDevice(adminConsoleHelper?.vehicleId()!!,adminConsoleHelper?.deviceId()!!,this!!).observe(this, Observer<UnlinkResponse> {
-                    if (it.token == 204) {
+                val contentViewModel : ContentViewModel by viewModels()
+                contentViewModel.unlinkDevice(adminConsoleHelper?.vehicleId()!!,adminConsoleHelper?.deviceId()!!,this!!).observe(this, Observer<UnlinkResponse> {
+                    if (it.code == 204) {
                         dialog?.hide()
                         this?.apply {
                             sharedPreferences?.edit(commit = true) {
