@@ -52,9 +52,10 @@ open class DisplayManager() {
         val myFormat = SimpleDateFormat("dd-M-yyyy")
         val to_date = SimpleDateFormat("dd-M-yyyy").format(Date()).toString()
         var diff = 0L
-        val date1: Date = myFormat.parse(from_date)
+        val date1: Date = myFormat.parse(from_date.toString())
         val date2: Date = myFormat.parse(to_date)
         diff =TimeUnit.DAYS.convert((date2.time - date1.time), TimeUnit.MILLISECONDS)
+        Log.d("Report","${diff}")
         if(diff > 0){
 
             return true
@@ -69,6 +70,8 @@ open class DisplayManager() {
         val minute = calendar.get(Calendar.MINUTE)
         return parseDate("$hour:$minute")
     }
+
+    fun getCurrentDate() = Calendar.getInstance().timeInMillis
 
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)

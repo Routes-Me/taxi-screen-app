@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.DateOperations
+import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.MVVM.Model.Authorization
@@ -284,7 +285,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreferencesHelper.device_id, deviceId)
             putString(SharedPreferencesHelper.device_serial_number, registerCredentials.serialNumber)
             putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
-            putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
+            putString(SharedPreferencesHelper.from_date, DisplayManager.instance.getCurrentDate().toString())
         }.apply()
     }
 

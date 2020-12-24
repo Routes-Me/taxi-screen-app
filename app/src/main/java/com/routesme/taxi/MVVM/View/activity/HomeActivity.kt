@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -26,14 +25,17 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.Class.*
+import com.routesme.taxi.Class.DisplayManager
+import com.routesme.taxi.Class.HomeScreenHelper
+import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
-import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
-import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
 import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
 import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.IModeChanging
+import com.routesme.taxi.MVVM.Model.ReportResponse
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
@@ -85,6 +87,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
+        val calendar = Calendar.getInstance().timeInMillis
+        Log.d("Time","${calendar}")
         /*from_date?.let {
 
             videoTrackingFeed.getVideoAnalaysisReport(it,it).forEach {
