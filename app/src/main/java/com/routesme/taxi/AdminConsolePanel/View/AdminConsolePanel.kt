@@ -87,7 +87,7 @@ class AdminConsolePanel : AppCompatActivity() {
                 dialog?.show()
                 val contentViewModel : ContentViewModel by viewModels()
                 contentViewModel.unlinkDevice(adminConsoleHelper?.vehicleId()!!,adminConsoleHelper?.deviceId()!!,this!!).observe(this, Observer<UnlinkResponse> {
-                    if (it.code == HttpURLConnection.HTTP_NO_CONTENT) {
+                    if (it.isSuccess) {
                         dialog?.hide()
                         sharedPreferences?.edit()?.clear()?.apply()
                         startActivity(Intent(this, LoginActivity::class.java))

@@ -20,12 +20,8 @@ class LoginResponse(token: String? = null, val mResponseErrors: ResponseErrors? 
         get() = (mResponseErrors == null && mThrowable == null)
 }
 
-class UnlinkResponse(code: Int? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
+class UnlinkResponse(val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
-    var code: Int? = null
-    init {
-        this.code = code
-    }
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
 }

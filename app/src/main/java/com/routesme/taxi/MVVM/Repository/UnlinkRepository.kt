@@ -24,7 +24,7 @@ class UnlinkRepository(context:Context){
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
 
                 if (response.isSuccessful) {
-                    unlinkResponse.value = UnlinkResponse(code = response.code())
+                    unlinkResponse.value = UnlinkResponse()
 
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){

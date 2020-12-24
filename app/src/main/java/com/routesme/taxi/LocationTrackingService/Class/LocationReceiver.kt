@@ -64,17 +64,15 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
     override fun onLocationChanged(location: Location?) {
         val provider = if (isGPSEnabled()) "GPS_PROVIDER" else if (isNetworkEnabled()) "NETWORK_PROVIDER" else "No Provider"
         val messageOnLocationChanged = "onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider"
-
+        Log.d("send-location-testing",messageOnLocationChanged)
         location?.let { location ->
             dataLayer.insertLocation(location)
             val messageInsert = "Insert location into DB: $location"
-
             if (isConnected) {
                 dataLayer.getFeeds().let {
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
                         hubConnection?.invoke("SendLocation", it1)
                         val messageSend = "Send locations from DB: $it1"
-
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }
