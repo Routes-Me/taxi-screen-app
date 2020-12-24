@@ -60,7 +60,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var player : SimpleExoPlayer?=null
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     val locationJsonArray = JsonArray()
-    private var from_date:String?=null
+    private lateinit var from_date:String
     private val videoTrackingFeed = trackingDatabase.videoTracking()
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -164,26 +164,30 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun checkDateAndUploadResult(){
+        from_date?.let {from_date->
+            if(DisplayManager.instance.checkDate(from_date)){
+                val postReportViewModel: ContentViewModel by viewModels()
+                postReportViewModel.postReport(this,getJsonArray(videoTrackingFeed.getVideoAnalaysisReport(from_date,getCurrentDate()))).observe(this , Observer<ReportResponse> {
+                    if(it.isSuccess){
 
-        if(DisplayManager.instance.checkDate(from_date!!)){
-            val postReportViewModel: ContentViewModel by viewModels()
-            postReportViewModel.postReport(this,getJsonArray(videoTrackingFeed.getVideoAnalaysisReport(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())!!)).observe(this , Observer<ReportResponse> {
-                if(it.isSuccess){
-                    //Log.d("Report Success","${it.isSuccess}")
-                    val delete = videoTrackingFeed.deleteTable(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())
-                    editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
-                    editor?.commit()
+                       videoTrackingFeed.deleteTable(from_date,getCurrentDate())
+                        editor?.putString(SharedPreferencesHelper.from_date, getCurrentDate())
+                        editor?.commit()
 
-                }
-                else{
+                    }
+                    else{
 
-                }
-            })
+                    }
+                })
 
+            }
 
         }
 
+
     }
+
+    fun getCurrentDate() = SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString()
 
 
     private fun getJsonArray(data: List<VideoTracking>): JsonArray {

@@ -27,6 +27,7 @@ import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.net.HttpURLConnection
 import java.sql.SQLException
 
 class AdminConsolePanel : AppCompatActivity() {
@@ -86,17 +87,11 @@ class AdminConsolePanel : AppCompatActivity() {
                 dialog?.show()
                 val contentViewModel : ContentViewModel by viewModels()
                 contentViewModel.unlinkDevice(adminConsoleHelper?.vehicleId()!!,adminConsoleHelper?.deviceId()!!,this!!).observe(this, Observer<UnlinkResponse> {
-                    if (it.code == 204) {
+                    if (it.code == HttpURLConnection.HTTP_NO_CONTENT) {
                         dialog?.hide()
-                        this?.apply {
-                            sharedPreferences?.edit(commit = true) {
-                                clear()
-                            }
-                            startActivity(Intent(this, LoginActivity::class.java))
-                            finish()
-
-                        }
-
+                        sharedPreferences?.edit()?.clear()?.apply()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
                     }else{
 
                         dialog?.hide()
