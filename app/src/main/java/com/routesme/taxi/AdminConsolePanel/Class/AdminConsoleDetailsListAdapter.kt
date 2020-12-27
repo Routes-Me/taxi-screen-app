@@ -7,7 +7,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi.AdminConsolePanel.Model.*
 import com.routesme.taxi.R
 
-class AdminConsoleDetailsListAdapter(private val activity: Activity,private val list: List<ICell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class AdminConsoleDetailsListAdapter(private val activity: Activity, private val list: List<ICell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val adminConsoleHelper = AdminConsoleHelper(activity)
     companion object {
         private const val TYPE_LABEL = 0
@@ -21,7 +21,9 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity,private val 
         TYPE_DETAIL -> DetailViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_cell_row, parent, false))
         TYPE_ACTION -> ActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.action_cell_row, parent, false)).listen { pos, _ ->
             val actionCell = list[pos] as ActionCell
+
             when(actionCell.action){
+
                 Actions.LogOff.title -> adminConsoleHelper.logOff()
             }
         }
@@ -55,4 +57,5 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity,private val 
         }
         return this
     }
+
 }

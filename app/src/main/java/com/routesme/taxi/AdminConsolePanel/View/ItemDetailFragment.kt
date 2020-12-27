@@ -2,17 +2,27 @@ package com.routesme.taxi.AdminConsolePanel.View
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleDetailsListAdapter
+import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleHelper
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleLists
-import com.routesme.taxi.AdminConsolePanel.Model.*
-import com.routesme.taxi.uplevels.App
+import com.routesme.taxi.AdminConsolePanel.Model.DetailCell
+import com.routesme.taxi.AdminConsolePanel.Model.LogOff
+import com.routesme.taxi.AdminConsolePanel.Model.MasterItemType
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
+import com.routesme.taxi.MVVM.Model.ContentResponse
+import com.routesme.taxi.MVVM.Model.UnlinkResponse
+import com.routesme.taxi.MVVM.View.activity.LoginActivity
+import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
+import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.R
+import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -23,12 +33,14 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
         private val trackingDatabase = TrackingDatabase.invoke(App.instance)
         private val locationFeedsDao = trackingDatabase.locationFeedsDao()
     }
+    private var mContext:Context?=null
     private val adminConsoleLists = AdminConsoleLists(activity)
     private var detailsList = adminConsoleLists.infoCells
+    private val adminConsoleHelper = AdminConsoleHelper(activity)
+    private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         getSelectedItemList()
     }
 
@@ -69,6 +81,14 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.item_detail_fragment, container, false)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         ItemDetailsRecyclerView.apply { adapter = activity?.let { AdminConsoleDetailsListAdapter(it, detailsList) } }
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+
+    }
+
+
 }

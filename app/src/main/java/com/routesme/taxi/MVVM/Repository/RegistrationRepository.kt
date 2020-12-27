@@ -1,7 +1,6 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -21,10 +20,11 @@ class RegistrationRepository(val context: Context) {
     }
 
     fun register(registrationCredentials: RegistrationCredentials): MutableLiveData<RegistrationResponse> {
-        Log.d("Register-Cre","${registrationCredentials}")
+
         val call = thisApiCorService.register(registrationCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+
                 if (response.isSuccessful && response.body() != null) {
                     val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
                     registrationResponse.value = RegistrationResponse(deviceId = registrationSuccessResponse.deviceId)

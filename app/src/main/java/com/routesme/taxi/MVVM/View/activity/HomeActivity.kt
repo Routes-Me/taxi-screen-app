@@ -14,7 +14,6 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -26,13 +25,17 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.Class.*
+import com.routesme.taxi.Class.DisplayManager
+import com.routesme.taxi.Class.HomeScreenHelper
+import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
-import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
-import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
 import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
+import com.routesme.taxi.MVVM.Model.IModeChanging
+import com.routesme.taxi.MVVM.Model.ReportResponse
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
@@ -41,11 +44,9 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
-import kotlinx.android.synthetic.main.content_fragment.view.*
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -61,7 +62,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var player : SimpleExoPlayer?=null
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     val locationJsonArray = JsonArray()
-    private var from_date:String?=null
+    private  var from_date:String?=null
     private val videoTrackingFeed = trackingDatabase.videoTracking()
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,18 +80,24 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        //from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)!!
-        from_date = "16-12-2020"
+        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
-        /*videoTrackingFeed.getVideoAnalaysisReport(from_date!!,from_date!!).forEach {
+        val calendar = Calendar.getInstance().timeInMillis
+        Log.d("Time","${calendar}")
+        /*from_date?.let {
 
-            Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
+            videoTrackingFeed.getVideoAnalaysisReport(it,it).forEach {
+
+                Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
+            }
+
         }*/
+
         addFragments()
     }
 
@@ -120,13 +127,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
-        Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
+        //Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
-                Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
+                //Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
                 if (it.isSuccess) {
-                    Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
+                    //Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
                 }
             }
@@ -166,24 +173,40 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun checkDateAndUploadResult(){
+        from_date?.let {from_date->
+            if(DisplayManager.instance.checkDate(from_date)){
+                val postReportViewModel: ContentViewModel by viewModels()
+                postReportViewModel.postReport(this,getJsonArray(videoTrackingFeed.getVideoAnalaysisReport(from_date,getCurrentDate()))).observe(this , Observer<ReportResponse> {
+                    if(it.isSuccess){
 
-        if(DisplayManager.instance.checkDate(from_date!!)){
-            val postReportViewModel: ContentViewModel by viewModels()
-            postReportViewModel.postReport(this,videoTrackingFeed.getVideoAnalaysisReport(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())!!).observe(this , Observer<ReportResponse> {
-                if(it.isSuccess){
-                    val delete = videoTrackingFeed.deleteTable(from_date!!,SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString())
-                    editor?.putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
-                    editor?.commit()
+                       videoTrackingFeed.deleteTable(from_date,getCurrentDate())
+                        editor?.putString(SharedPreferencesHelper.from_date, getCurrentDate())
+                        editor?.commit()
 
-                }
-                else{
+                    }
+                    else{
 
-                }
-            })
+                    }
+                })
+
+            }
+
         }
+
 
     }
 
+    fun getCurrentDate() = SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString()
+
+
+    private fun getJsonArray(data: List<VideoTracking>): JsonArray {
+        val videoJsonArrayJsonArray = JsonArray()
+        for (v in data) {
+            val locationJsonObject: JsonObject = VideoJsonObject(v).toJSON()
+            locationJsonArray.add(locationJsonObject)
+        }
+        return locationJsonArray
+    }
 
     override fun onDestroy() {
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
@@ -202,7 +225,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         super.onStop()
     }
     private fun addFragments() {
-        Log.d("Network-Status","addFragments")
+        //Log.d("Network-Status","addFragments")
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
@@ -245,20 +268,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             }
         }
         override fun onLost(network: Network?) {
-            Log.d("Network-Status","onLost")
+            //Log.d("Network-Status","onLost")
             if (isHotspotAlive) turnOffHotspot()
         }
     }
 
     private fun turnOnHotspot() {
-        Log.d("Network-Status","turnOnHotspot")
+        //Log.d("Network-Status","turnOnHotspot")
         val intent = Intent(getString(R.string.intent_action_turnon))
         sendImplicitBroadcast(intent)
         isHotspotAlive = true
     }
 
     private fun turnOffHotspot() {
-        Log.d("Network-Status","turnOffHotspot")
+        //Log.d("Network-Status","turnOffHotspot")
         val intent = Intent(getString(R.string.intent_action_turnoff))
         sendImplicitBroadcast(intent)
         isHotspotAlive = false
@@ -296,16 +319,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
 
                 if(demoVideo.isPlay){
+                    textViewError.visibility = View.VISIBLE
+                    textViewError.text = demoVideo.errorMessage
                     activityVideoCover.visibility = View.VISIBLE
                     demoVideoPlayer.visibility = View.VISIBLE
                     playVideo()
                 }else{
                     if(activityVideoCover.visibility == View.VISIBLE){
+                        textViewError.visibility = View.GONE
                         activityVideoCover.visibility = View.GONE
                         demoVideoPlayer.visibility = View.GONE
                         stopVideo()
 
                     }else{
+                        textViewError.visibility = View.GONE
                         activityVideoCover.visibility = View.GONE
                         demoVideoPlayer.visibility = View.GONE
                     }
@@ -318,4 +345,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         }
 
     }
+
+
 }

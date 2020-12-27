@@ -15,14 +15,9 @@ import androidx.lifecycle.Observer
 import carbon.widget.RelativeLayout
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.routesme.taxi.Class.AdvertisementsHelper
-import com.routesme.taxi.Class.ConnectivityReceiver
-import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.SideFragmentAdapter.ImageViewPager
 import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.MVVM.Model.ContentResponse
-import com.routesme.taxi.MVVM.Model.ContentType
-import com.routesme.taxi.MVVM.Model.Data
-import com.routesme.taxi.MVVM.Model.Error
+import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
@@ -43,10 +38,9 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private var editor: SharedPreferences.Editor? = null
     private var pager: Int = 1
     private var device_id : Int = 0
-    private val SEC:Long = 120
+    private val SEC:Long = 300
     private val MIL:Long = 1000
     var delay = 15 * 1000
-    private var connectivityReceiver: ConnectivityReceiver? = null
     private var imageViewPagerAdapter:ImageViewPager?=null
     private var isDataFetched = false
     private var dialog: SpotsDialog? = null
@@ -62,19 +56,13 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onAttach(context: Context) {
         mContext = context
-        /*
-        try {
-            qRCodeCallback = activity as QRCodeCallback
-        } catch (e: ClassCastException) {
-            throw ClassCastException(activity.toString() + " must implement QRCodeCallback")
-        }
-         */
+
         super.onAttach(context)
 
     }
 
     override fun onDetach() {
-      //  qRCodeCallback = null
+
         super.onDetach()
     }
 
@@ -86,6 +74,7 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(myReceiver)
+
         super.onDestroyView()
     }
 
@@ -121,35 +110,41 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     }
 
     override fun onDestroy() {
+
         AdvertisementsHelper.instance.release()
         super.onDestroy()
     }
 
     override fun onStart() {
+
         EventBus.getDefault().register(this)
         super.onStart()
     }
 
     override fun onStop() {
+
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
 
     private fun fetchContent(){
+
+
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
-            //Log.d("fetchContent-dialog","dialog")
             if (it != null) {
                 if (it.isSuccess) {
-                    isDataFetched = true
+
                     val images = it.imageList.toList()
                     val videos = it.videoList.toList()
-                    if(isAlive) removeThread()
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
-                        Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.no_data_found))
+                        startThread(getString(R.string.no_data_found))
+
                         return@Observer
                     }else{
+                        isDataFetched = true
+                        if(isAlive) removeThread()
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2,device_id)
                         AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,device_id)
                     }
@@ -158,34 +153,35 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let {
-                            startThread()
+                            startThread(getString(R.string.no_data_found))
                             //errors -> displayErrors(errors)
                              }
                     } else if (it.mThrowable != null) {
                         if (it.mThrowable is IOException) {
-                            startThread()
-                            //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.network_Issue))
+                            startThread(getString(R.string.network_Issue))
+
                         } else {
-                            startThread()
-                            //Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.conversion_Issue))
+                            startThread(getString(R.string.conversion_Issue))
+
                         }
                     }
                 }
             } else {
-                Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), getString(R.string.unknown_error))
+                startThread(getString(R.string.unknown_error))
+
             }
         })
     }
 
-    private fun displayErrors(errors: List<Error>) {
+    /*private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
             Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
         }
-    }
+    }*/
 
-    private fun startThread(){
+    private fun startThread(errorMessage:String){
 
-        EventBus.getDefault().post(DemoVideo(true))
+        EventBus.getDefault().post(DemoVideo(true,errorMessage))
         isAlive = true
         timerRunnable = object : Runnable {
             override fun run() {
@@ -204,9 +200,10 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
     private fun removeThread(){
 
         timerHandler!!.removeCallbacks(timerRunnable)
-        EventBus.getDefault().post(DemoVideo(false))
+        EventBus.getDefault().post(DemoVideo(false,""))
 
     }
+
     @Subscribe()
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){

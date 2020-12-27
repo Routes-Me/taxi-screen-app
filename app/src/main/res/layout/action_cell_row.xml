@@ -3,16 +3,16 @@
     android:id="@+id/action"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="49.5dp"
     android:background="#33d8d8d8"
     android:fontFamily="sans-serif"
     android:gravity="center"
     android:paddingTop="15dp"
     android:paddingBottom="15dp"
-    android:text="Log off"
+    android:text="Unlink Device"
     android:textColor="#d50000"
     android:textSize="24sp"
-    android:textStyle="normal"
-    android:layout_marginTop="49.5dp"/>
+    android:textStyle="normal" />
 
 
 

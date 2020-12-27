@@ -25,7 +25,7 @@ fun onBindDetail(holder: RecyclerView.ViewHolder, cell: ICell) {
 fun onBindAction(holder: RecyclerView.ViewHolder, cell: ICell) {
     holder as ActionViewHolder
     cell as ActionCell
-    holder.apply { action.text = cell.action }
+    holder.apply { action.text = cell.action}
 }
 
 fun onBindDetailAction(holder: RecyclerView.ViewHolder, cell: ICell) {

@@ -22,6 +22,4 @@ interface VideoTrackingDeo {
     @Query("DELETE FROM tbl_video_tracking WHERE createdAt BETWEEN :from_date and :to_date")
     fun deleteTable(from_date: String,to_date: String): Int
 
-    /*@Query("UPDATE SQLITE_SEQUENCE SET SEQ=0 WHERE NAME='tbl_video_tracking'")
-    fun resetTable(): Int*/
 }

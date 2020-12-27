@@ -21,6 +21,7 @@ import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.DateOperations
+import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.MVVM.Model.Authorization
@@ -42,7 +43,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private var registerCredentials = RegistrationCredentials()
     private val operations = Operations.instance
     private val READ_PHONE_STATE_REQUEST_CODE = 101
-    //private val listTypeKey = getString(R.string.list_type_key)
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var editor: SharedPreferences.Editor
     private lateinit var telephonyManager: TelephonyManager
@@ -63,7 +63,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-        // requestRuntimePermissions();
+        //requestRuntimePermissions();
         toolbarSetUp()
         initializeViews()
         getTabletInfo()
@@ -115,8 +115,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         operations.enableNextButton(register_btn, true)
         getTabletInfo()
         institutionId = app.institutionId
-        //deviceInfo.setTaxiOfficeId(app.getTaxiOfficeId());
-        //deviceInfo.setTaxiPlateNumber(app.getTaxiPlateNumber());
         registerCredentials.VehicleId = app.vehicleId
         taxiOffice_tv.text = showTaxiOfficeName(app.institutionName)
         taxiPlateNumber_tv.text = showTaxiPlateNumber(app.taxiPlateNumber)
@@ -287,7 +285,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             putString(SharedPreferencesHelper.device_id, deviceId)
             putString(SharedPreferencesHelper.device_serial_number, registerCredentials.serialNumber)
             putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
-            putString(SharedPreferencesHelper.from_date, SimpleDateFormat("dd-M-yyyy").format(Date()).toString())
+            putString(SharedPreferencesHelper.from_date, DisplayManager.instance.getCurrentDate().toString())
         }.apply()
     }
 

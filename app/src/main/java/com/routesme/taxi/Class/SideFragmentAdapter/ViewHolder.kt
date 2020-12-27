@@ -3,7 +3,6 @@ package com.routesme.taxi.Class.SideFragmentAdapter
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.cardview.widget.CardView
 import androidx.recyclerview.widget.RecyclerView
 import carbon.widget.RelativeLayout
 import com.routesme.taxi.R

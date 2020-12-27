@@ -31,6 +31,7 @@ import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
+import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import org.greenrobot.eventbus.EventBus
 import java.text.SimpleDateFormat
@@ -70,12 +71,12 @@ class AdvertisementsHelper {
             val totalMemory = Runtime.getRuntime().totalMemory()
             val used = totalMemory -freeMemory
             val free = maxMemory - used
-            Log.d("memory-size","maxMemory: $maxMemory")
-            Log.d("memory-size","freeMemory: $freeMemory")
-            Log.d("memory-size","totalMemory: $totalMemory")
+            //Log.d("memory-size","maxMemory: $maxMemory")
+            //Log.d("memory-size","freeMemory: $freeMemory")
+            //Log.d("memory-size","totalMemory: $totalMemory")
             //val exoPlayerCacheSize: Long = 90 * 1024 * 1024
             val exoPlayerCacheSize: Long = free/5
-            Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
+            //Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
 
@@ -99,15 +100,14 @@ class AdvertisementsHelper {
                         glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
-                    //val previousUri = Uri.parse(images[previousImageIndex].url)
-                    //glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 15,mediaType = "image",count = 1))
+                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 15,mediaType = Type.IMAGE.media_type,count = 1))
 
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
-                    EventBus.getDefault().post(images[currentImageIndex])
+
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         setImageAnimation(context,imageView,imageView2)
+                        EventBus.getDefault().post(images[currentImageIndex])
                     }
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
@@ -120,43 +120,6 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    /*
-    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
-        displayImageHandler = Handler()
-        imageView.cameraDistance = 12000f
-        imageView.pivotX = imageView.height * 0.7f
-        imageView.pivotY = imageView.height / 0.7f
-        var currentImageIndex = 0
-        var firstTime = false
-
-        displayImageRunnable = object : Runnable {
-            override fun run() {
-                if (currentImageIndex < images.size) {
-                    //val uri = Uri.parse(images[currentImageIndex].url)
-                    EventBus.getDefault().post(images[currentImageIndex])
-                    if(firstTime){
-                        glide.load(images[currentImageIndex - 1].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView)
-                        glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView2)
-                        setImageAnimation(context,imageView,imageView2)
-                    }else{
-                        firstTime = true
-                        glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView)
-                        glide.load(images[currentImageIndex].url).error(R.drawable.empty_promotion).placeholder(R.drawable.empty_promotion).into(imageView2)
-
-                    }
-
-                    currentImageIndex++
-                    if (currentImageIndex >= images.size) {
-                        currentImageIndex = 0
-                    }
-                }
-                displayImageHandler?.postDelayed(this, 15 * 1000)
-            }
-        }
-
-        displayImageHandler?.post(displayImageRunnable)
-    }
-*/
     fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id:Int) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
@@ -181,42 +144,41 @@ class AdvertisementsHelper {
             play()
             prepare()
             volume = 0f
-            videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[0].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 30,mediaType = "video",count = 1))
+            videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[0].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 30,mediaType = Type.VIDEO.media_type,count = 1))
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[currentMediaItemId].contentId!!.toInt(),date = (SimpleDateFormat("dd-M-yyyy").format(Date())).toString(),deviceId = device_id,length = 30,mediaType = "video",count = 1))
+                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[currentMediaItemId].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 30,mediaType =  Type.VIDEO.media_type,count = 1))
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
 
                 override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                    Log.d("onTimelineChanged", "${timeline}, re: $reason")
+
                     super.onTimelineChanged(timeline, reason)
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-                            Log.d("VideoState","IDLE")
+
                             player?.prepare()
 
                         }
                         Player.STATE_BUFFERING -> {
-                            Log.d("VideoState","BUFFERING")
+
                             count++
                             if(count >= 5 ){
                                 count = 0
-                                EventBus.getDefault().post(DemoVideo(true))
+                                EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
                                 isPlayingDemoVideo = true
                             }
 
                         }
                         Player.STATE_READY -> {
-                            Log.d("VideoState","READ")
-                            Log.d("VideoState",count.toString())
+
                             if(isPlayingDemoVideo) {
-                                EventBus.getDefault().post(DemoVideo(false))
+                                EventBus.getDefault().post(DemoVideo(false,""))
                                 isPlayingDemoVideo = false
                             }
                             count = 0
@@ -229,7 +191,7 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_ENDED -> {
-                            Log.d("VideoState","END")
+
                             progressbarHandler?.removeCallbacks(progressbarRunnable)
                         }
                     }
@@ -296,7 +258,6 @@ class AdvertisementsHelper {
         return progressbarRunnable
     }
     fun release() {
-        //qrCodeCallback = null
         displayImageHandler?.removeCallbacks(displayImageRunnable)
         progressbarHandler?.removeCallbacks(progressbarRunnable)
         player?.release()

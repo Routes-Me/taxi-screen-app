@@ -1,10 +1,10 @@
 package com.routesme.taxi.MVVM.API
 
 import android.content.Context
+import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.taxi.Class.Helper
-import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
@@ -35,20 +35,13 @@ interface RestApiService {
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
     @POST("analytics/playbacks")
-    fun postReport(@Body data:List<VideoTracking>): Call<JsonElement>
-/*
-    //Advertisements...
-    @GET("Channels")
-    fun getVideos(@Query("channelidvideolist") ch_ID_Videos: Int): Call<List<VideoModel>>
+    fun postReport(@Body data: JsonArray): Call<JsonElement>
 
-    @GET("Channels")
-    fun getBanners(@Query("channelidadvlist") ch_ID_Banners: Int): Call<List<BannerModel>>
-
-    @GET("Contents")
-    fun getContent(): Call<ContentResponse>
-*/
+    @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
+    fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>
 
     companion object {
+
         fun createCorService(context: Context): RestApiService {
             return Retrofit.Builder()
                     .baseUrl(Helper.getConfigValue("baseUrl", R.raw.config)!!)

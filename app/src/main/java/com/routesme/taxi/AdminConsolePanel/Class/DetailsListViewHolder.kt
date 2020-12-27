@@ -17,6 +17,7 @@ class DetailViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
 class ActionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val action: TextView = itemView.findViewById(R.id.action)
+
 }
 
 class DetailActionViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {

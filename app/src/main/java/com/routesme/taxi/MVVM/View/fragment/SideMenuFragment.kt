@@ -8,15 +8,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Switch
 import androidx.fragment.app.Fragment
 import com.routesme.taxi.Class.DateOperations
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.ItemAnimator
 import com.routesme.taxi.MVVM.Model.*
-import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
-import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -95,7 +92,9 @@ class SideMenuFragment : Fragment() {
 
     @Subscribe()
     fun onEvent(data: Data){
+
         when(data.type){
+
             ContentType.Image.value -> changeBannerQRCode(data)
             else -> changeVideoQRCode(data)
         }
