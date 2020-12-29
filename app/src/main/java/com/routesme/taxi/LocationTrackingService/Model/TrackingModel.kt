@@ -1,11 +1,11 @@
 package com.routesme.taxi.LocationTrackingService.Model
 
 import android.location.Location
-import android.util.Log
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 
 @Entity(tableName = "LocationFeeds")
@@ -31,6 +31,9 @@ class LocationJsonObject(private val locationFeed: LocationFeed) {
         return jo
     }
 }
+
+@Entity(tableName = "tbl_advertisement_tracking")
+class AdvertisementTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "advertisementId") var advertisementId: Int,@ColumnInfo(name = "date") var date: Long,@ColumnInfo(name = "morning") var morning:Int,@ColumnInfo(name = "noon") var noon:Int,@ColumnInfo(name = "evening") var evening:Int,@ColumnInfo(name = "night") var night:Int,@ColumnInfo(name = "time_in_day") var time_in_day:Long)
 
 class VideoJsonObject(private val videoTracking: VideoTracking) {
     fun toJSON(): JsonObject {

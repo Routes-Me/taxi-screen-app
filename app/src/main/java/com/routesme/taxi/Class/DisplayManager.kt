@@ -9,6 +9,7 @@ import android.content.Context.ALARM_SERVICE
 import android.content.Intent
 import android.util.Log
 import com.routesme.taxi.MVVM.Model.IModeChanging
+import com.routesme.taxi.utils.Period
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -48,20 +49,44 @@ open class DisplayManager() {
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis, eveningAlarm)
     }
 
-    fun checkDate(from_date:String) : Boolean{
+    fun checkDate(from_date:Long) : Boolean{
         val myFormat = SimpleDateFormat("dd-M-yyyy")
         val to_date = SimpleDateFormat("dd-M-yyyy").format(Date()).toString()
         var diff = 0L
-        val date1: Date = myFormat.parse(from_date.toString())
-        val date2: Date = myFormat.parse(to_date)
-        diff =TimeUnit.DAYS.convert((date2.time - date1.time), TimeUnit.MILLISECONDS)
-        Log.d("Report","${diff}")
+        //val date1: Date = myFormat.parse(from_date)
+        //val date2: Date = myFormat.parse(to_date)
+        //diff =TimeUnit.DAYS.convert((from_date - getCurrentDate()), TimeUnit.MILLISECONDS)
+        diff =TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
+        //Log.d("Report","Current Time ${getCurrentDate()}  Last set date ${from_date}")
+        //Log.d("Report","${diff}")
         if(diff > 0){
 
             return true
         }
         return false
     }
+
+    fun checkCurrentTime():Period{
+        if(isMorning()){
+
+            return Period.MORNING
+        }else if(isNoon()){
+
+            return Period.NOON
+        }else if(isEvening()){
+
+            return Period.EVENING
+        }else{
+
+            return Period.NIGHT
+        }
+
+    }
+
+    fun isMorning() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("11:59"))
+    fun isNoon() = currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("16:59"))
+    fun isEvening() = currentDate().after(parseDate("17:00")) && currentDate().before(parseDate("23:59"))
+    fun isNight() = currentDate().after(parseDate("00:00")) && currentDate().before(parseDate("05:59"))
 
     fun isAnteMeridiem() = currentDate().after(parseDate("05:00")) && currentDate().before(parseDate("17:00"))
     private fun currentDate(): Date {
