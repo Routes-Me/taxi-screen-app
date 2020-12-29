@@ -25,7 +25,9 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
+import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
+import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
@@ -51,9 +53,12 @@ class AdvertisementsHelper {
     var objectAnimator_image:ObjectAnimator?=null
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
+    private val advertisementDataLayer = AdvertisementDataLayer()
     private val trackingDatabase = TrackingDatabase.invoke(App.instance)
     private val videoTrackingFeed = trackingDatabase.videoTracking()
+    private val advertisementTracking = trackingDatabase.advertisementTracking()
     private var TAG="ExoPlayer Error"
+
 
     companion object {
         @get:Synchronized
@@ -79,7 +84,6 @@ class AdvertisementsHelper {
             //Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
-
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
@@ -100,10 +104,8 @@ class AdvertisementsHelper {
                         glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 15,mediaType = Type.IMAGE.media_type,count = 1))
-
+                    advertisementDataLayer.insertOrUpdateRecords(images[currentImageIndex].contentId!!.toInt(),DisplayManager.instance.getCurrentDate(),DisplayManager.instance.checkCurrentTime())
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
-
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         setImageAnimation(context,imageView,imageView2)
@@ -144,12 +146,14 @@ class AdvertisementsHelper {
             play()
             prepare()
             volume = 0f
-            videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[0].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 30,mediaType = Type.VIDEO.media_type,count = 1))
+            advertisementDataLayer.insertOrUpdateRecords(videos[0].contentId!!.toInt(),DisplayManager.instance.getCurrentDate(),DisplayManager.instance.checkCurrentTime())
+
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[currentMediaItemId].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 30,mediaType =  Type.VIDEO.media_type,count = 1))
+                    advertisementDataLayer.insertOrUpdateRecords(videos[currentMediaItemId].contentId!!.toInt(),DisplayManager.instance.getCurrentDate(),DisplayManager.instance.checkCurrentTime())
+
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
 

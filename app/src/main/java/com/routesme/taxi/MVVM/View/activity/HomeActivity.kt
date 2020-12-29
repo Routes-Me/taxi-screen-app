@@ -29,7 +29,9 @@ import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
+import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
 import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.IModeChanging
@@ -47,6 +49,8 @@ import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.json.JSONArray
+import org.json.JSONObject
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -60,10 +64,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
-    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
-    val locationJsonArray = JsonArray()
     private  var from_date:String?=null
-    private val videoTrackingFeed = trackingDatabase.videoTracking()
+    private  var deviceId:String?=null
+    private val advertisementTracking = AdvertisementDataLayer()
+    private var getList:List<AdvertisementTracking>?=null
+
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,20 +91,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
+        getList =  advertisementTracking.getList(DisplayManager.instance.getCurrentDate())
         checkDateAndUploadResult()
-        val calendar = Calendar.getInstance().timeInMillis
-        Log.d("Time","${calendar}")
-        /*from_date?.let {
-
-            videoTrackingFeed.getVideoAnalaysisReport(it,it).forEach {
-
-                Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
-            }
-
-        }*/
-
         addFragments()
     }
+
+
 
     private fun setSystemUiVisibility() {
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -116,7 +113,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         if (currentVersion.isNotEmpty()){
             if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
-                val deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+                deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
                 val packageName = BuildConfig.APPLICATION_ID
                 deviceId?.let {
                     val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
@@ -173,20 +170,21 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun checkDateAndUploadResult(){
+
+
         from_date?.let {from_date->
-            if(DisplayManager.instance.checkDate(from_date)){
+            if(DisplayManager.instance.checkDate(from_date.toLong())){
+                Log.d("Report","${getJsonArray()}")
                 val postReportViewModel: ContentViewModel by viewModels()
-                postReportViewModel.postReport(this,getJsonArray(videoTrackingFeed.getVideoAnalaysisReport(from_date,getCurrentDate()))).observe(this , Observer<ReportResponse> {
+                postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
                     if(it.isSuccess){
 
-                       videoTrackingFeed.deleteTable(from_date,getCurrentDate())
-                        editor?.putString(SharedPreferencesHelper.from_date, getCurrentDate())
+                        advertisementTracking.deleteData(DisplayManager.instance.getCurrentDate())
+                        editor?.putString(SharedPreferencesHelper.from_date, DisplayManager.instance.getCurrentDate().toString())
                         editor?.commit()
 
                     }
-                    else{
 
-                    }
                 })
 
             }
@@ -196,16 +194,40 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     }
 
-    fun getCurrentDate() = SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString()
-
-
-    private fun getJsonArray(data: List<VideoTracking>): JsonArray {
-        val videoJsonArrayJsonArray = JsonArray()
-        for (v in data) {
-            val locationJsonObject: JsonObject = VideoJsonObject(v).toJSON()
-            locationJsonArray.add(locationJsonObject)
+    private fun getJsonArray(): JSONObject {
+        val jsonObject = JSONObject()
+        val jsonArray = JsonArray()
+        getList?.forEach {
+            val jsonObject = JsonObject()
+            jsonObject.addProperty("date",it.date)
+            jsonObject.addProperty("advertisementId",it.advertisementId)
+            jsonObject.add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+            jsonArray.add(jsonObject)
         }
-        return locationJsonArray
+        return jsonObject.put("analytics",jsonArray)
+
+    }
+
+    private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
+        val arrayValue = listOf(morning,noon,evening,night)
+        val arrayKey = listOf("mo","no","ev","ni")
+        val jsonObject = JsonObject()
+        val jsonArray = JsonArray()
+        /*val jsonObject = JsonObject()
+        jsonObject.addProperty("mo",morning)
+        jsonObject.addProperty("no",noon)
+        jsonObject.addProperty("ev",evening)
+        jsonObject.addProperty("ni",night)
+        jsonArray.add(jsonObject)*/
+        for(i in 0 until arrayValue.size){
+           if(arrayValue[i] != 0){
+               jsonObject.addProperty(arrayKey[i],arrayValue[i])
+               jsonArray.add(jsonObject)
+           }
+        }
+
+        return jsonArray
+
     }
 
     override fun onDestroy() {

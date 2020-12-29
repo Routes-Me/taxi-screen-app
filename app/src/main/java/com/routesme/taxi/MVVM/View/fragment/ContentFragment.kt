@@ -61,11 +61,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     }
 
-    override fun onDetach() {
-
-        super.onDetach()
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
         requireActivity().registerReceiver(myReceiver, intentFilter);
@@ -74,7 +69,6 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
 
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(myReceiver)
-
         super.onDestroyView()
     }
 
