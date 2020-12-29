@@ -173,9 +173,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
 
         from_date?.let {from_date->
+            Log.d("Report","${getJsonArray()}")
             if(DisplayManager.instance.checkDate(from_date.toLong())){
                 Log.d("Report","${getJsonArray()}")
-                val postReportViewModel: ContentViewModel by viewModels()
+                /*val postReportViewModel: ContentViewModel by viewModels()
                 postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
                     if(it.isSuccess){
 
@@ -185,7 +186,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
                     }
 
-                })
+                })*/
 
             }
 
@@ -194,7 +195,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     }
 
-    private fun getJsonArray(): JSONObject {
+    private fun getJsonArray(): JsonArray {
         val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
@@ -204,7 +205,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             jsonObject.add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
             jsonArray.add(jsonObject)
         }
-        return jsonObject.put("analytics",jsonArray)
+
+        return jsonArray
+        //return jsonObject.put("analytics",jsonArray)
 
     }
 
