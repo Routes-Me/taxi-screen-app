@@ -67,12 +67,12 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         Log.d("send-location-testing",messageOnLocationChanged)
         location?.let { location ->
             dataLayer.insertLocation(location)
-            val messageInsert = "Insert location into DB: $location"
+            //val messageInsert = "Insert location into DB: $location"
             if (isConnected) {
                 dataLayer.getFeeds().let {
                     getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
                         hubConnection?.invoke("SendLocation", it1)
-                        val messageSend = "Send locations from DB: $it1"
+                        //val messageSend = "Send locations from DB: $it1"
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }
                 }

@@ -5,8 +5,6 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.JsonObject
-import java.sql.Timestamp
-import java.text.SimpleDateFormat
 
 @Entity(tableName = "LocationFeeds")
 class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo(name = "latitude") var latitude: Double, @ColumnInfo(name = "longitude") var longitude: Double, @ColumnInfo(name = "timestamp") var timestamp: Long) {
@@ -18,9 +16,6 @@ class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @ColumnInfo
             return location
         }
 }
-
-@Entity(tableName = "tbl_video_tracking")
-class VideoTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "deviceId") var deviceId:Int,@ColumnInfo(name = "advertisementId") var advertisementId:Int,@ColumnInfo(name = "createdAt") var date:Long,@ColumnInfo(name = "count") var count:Int,@ColumnInfo(name = "length") var length:Int,@ColumnInfo(name = "mediaType") var mediaType:String)
 
 class LocationJsonObject(private val locationFeed: LocationFeed) {
     fun toJSON(): JsonObject {
@@ -34,25 +29,3 @@ class LocationJsonObject(private val locationFeed: LocationFeed) {
 
 @Entity(tableName = "tbl_advertisement_tracking")
 class AdvertisementTracking(@PrimaryKey(autoGenerate = true) var id:Int = 0,@ColumnInfo(name = "advertisementId") var advertisementId: Int,@ColumnInfo(name = "date") var date: Long,@ColumnInfo(name = "morning") var morning:Int,@ColumnInfo(name = "noon") var noon:Int,@ColumnInfo(name = "evening") var evening:Int,@ColumnInfo(name = "night") var night:Int,@ColumnInfo(name = "time_in_day") var time_in_day:Long)
-
-class VideoJsonObject(private val videoTracking: VideoTracking) {
-    fun toJSON(): JsonObject {
-        val jo = JsonObject()
-        jo.addProperty("advertisementId", videoTracking.advertisementId)
-        jo.addProperty("deviceId", videoTracking.deviceId)
-        //jo.addProperty("date", convertDateToTimeStamp(videoTracking.date))
-        jo.addProperty("count", videoTracking.count)
-        jo.addProperty("mediaType", videoTracking.mediaType)
-        jo.addProperty("length", videoTracking.length)
-        return jo
-    }
-
-
-    fun convertDateToTimeStamp(date:String):Long{
-        val sdf = SimpleDateFormat("dd-M-yyyy")
-        val date = sdf.parse(date)
-        val timeInMillis = date.time
-        return timeInMillis
-    }
-
-}

@@ -139,8 +139,8 @@ class ContentFragment : Fragment(),SimpleExoPlayer.VideoListener {
                     }else{
                         isDataFetched = true
                         if(isAlive) removeThread()
-                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2,device_id)
-                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,device_id)
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2)
+                        AdvertisementsHelper.instance.displayVideos(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage)
                     }
 
                 } else {

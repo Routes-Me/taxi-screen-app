@@ -57,9 +57,9 @@ class VehicleInformationActivity : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.ic_close_grey)
         }
     }
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // handle arrow click here
-        if (item?.itemId == android.R.id.home) {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
