@@ -176,7 +176,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             Log.d("Report","${getJsonArray()}")
             if(DisplayManager.instance.checkDate(from_date.toLong())){
                 Log.d("Report","${getJsonArray()}")
-                /*val postReportViewModel: ContentViewModel by viewModels()
+                val postReportViewModel: ContentViewModel by viewModels()
                 postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
                     if(it.isSuccess){
 
@@ -186,7 +186,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
                     }
 
-                })*/
+                })
 
             }
 
@@ -195,11 +195,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     }
 
-    private fun getJsonArray(): JsonArray {
+    private fun getJsonArray(): JSONObject {
         val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
-            Log.d("Report","ID ${it.id}, AD ${it.advertisementId}, Date ${it.date}, Mo ${it.morning}, No ${it.noon}, Ev ${it.evening}, Ni ${it.evening}")
+            //Log.d("Report","ID ${it.id}, AD ${it.advertisementId}, Date ${it.date}, Mo ${it.morning}, No ${it.noon}, Ev ${it.evening}, Ni ${it.evening}")
             val jsonObject = JsonObject()
             jsonObject.addProperty("date",it.date)
             jsonObject.addProperty("advertisementId",it.advertisementId)
@@ -207,8 +207,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             jsonArray.add(jsonObject)
         }
 
-        return jsonArray
-        //return jsonObject.put("analytics",jsonArray)
+        //return jsonArray
+        return jsonObject.put("analytics",jsonArray)
 
     }
 
