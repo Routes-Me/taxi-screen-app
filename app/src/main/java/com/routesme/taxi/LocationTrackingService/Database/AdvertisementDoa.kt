@@ -13,14 +13,6 @@ interface AdvertisementDoa {
     @Insert
     fun insertAdvertisement(advertisement: AdvertisementTracking)
 
-    /*@Transaction
-    @Query("SELECT id, COUNT(slot) as count, advertisementId,date,slot FROM tbl_advertisement_tracking   GROUP BY advertisementId,strftime('%s',date/100000),slot")
-    fun getGroupList():List<AdvertisementTracking>*/
-
-    /*@Transaction
-    @Query("SELECT * FROM tbl_advertisement_tracking   GROUP BY advertisementId")
-    fun getList():List<AdvertisementTracking>*/
-
     @Transaction
     @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day  FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
     fun getItem(id:Int,timestamp: Long):AdvertisementTracking?

@@ -26,27 +26,21 @@ import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvicto
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
-import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
-import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
-import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
-import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import org.greenrobot.eventbus.EventBus
-import java.text.SimpleDateFormat
-import java.util.*
 
 class AdvertisementsHelper {
 
     //private var qrCodeCallback: QRCodeCallback? = null
     private var player: SimpleExoPlayer? = null
     private var displayImageHandler: Handler? = null
-    private var displayImageRunnable: Runnable? = null
+    private lateinit var displayImageRunnable: Runnable
     private var progressbarHandler: Handler? = null
-    private var progressbarRunnable: Runnable? = null
+    private lateinit var progressbarRunnable: Runnable
     private var count = 0;
     private var isPlayingDemoVideo = false
     var objectAnimator:ObjectAnimator?=null
@@ -54,9 +48,6 @@ class AdvertisementsHelper {
     var setOut: AnimatorSet?=null
     var setIn:AnimatorSet?=null
     private val advertisementDataLayer = AdvertisementDataLayer()
-    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
-    private val videoTrackingFeed = trackingDatabase.videoTracking()
-    private val advertisementTracking = trackingDatabase.advertisementTracking()
     private var TAG="ExoPlayer Error"
 
 
@@ -88,7 +79,7 @@ class AdvertisementsHelper {
         }
     }
 
-    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,device_id:Int) {
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
         displayImageHandler = Handler()
         imageView.cameraDistance = 12000f
         imageView.pivotX = imageView.height * 0.7f
@@ -104,7 +95,9 @@ class AdvertisementsHelper {
                         glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
-                    advertisementDataLayer.insertOrUpdateRecords(images[currentImageIndex].contentId!!.toInt(),DisplayManager.instance.getCurrentDate(),DisplayManager.instance.checkCurrentTime())
+                    images[currentImageIndex].contentId?.toInt()?.let {
+                        advertisementDataLayer.insertOrUpdateRecords(it,DisplayManager.instance.getCurrentDate(),DisplayManager.instance.getCurrentPeriod())
+                    }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
@@ -122,15 +115,15 @@ class AdvertisementsHelper {
         displayImageHandler?.post(displayImageRunnable)
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id:Int) {
+    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
         progressbarHandler = Handler()
         setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
         setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
-        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,device_id)
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id:Int): SimpleExoPlayer {
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout): SimpleExoPlayer {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
@@ -146,13 +139,16 @@ class AdvertisementsHelper {
             play()
             prepare()
             volume = 0f
-            advertisementDataLayer.insertOrUpdateRecords(videos[0].contentId!!.toInt(),DisplayManager.instance.getCurrentDate(),DisplayManager.instance.checkCurrentTime())
-
+            videos[0].contentId?.toInt()?.let {
+                advertisementDataLayer.insertOrUpdateRecords(it,DisplayManager.instance.getCurrentDate(),DisplayManager.instance.getCurrentPeriod())
+            }
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    advertisementDataLayer.insertOrUpdateRecords(videos[currentMediaItemId].contentId!!.toInt(),DisplayManager.instance.getCurrentDate(),DisplayManager.instance.checkCurrentTime())
+                    videos[currentMediaItemId].contentId?.toInt()?.let {
+                        advertisementDataLayer.insertOrUpdateRecords(it,DisplayManager.instance.getCurrentDate(),DisplayManager.instance.getCurrentPeriod())
+                    }
 
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }

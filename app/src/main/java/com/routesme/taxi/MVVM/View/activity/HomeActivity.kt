@@ -32,8 +32,6 @@ import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
-import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
-import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
@@ -49,10 +47,7 @@ import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.json.JSONArray
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
 
 class HomeActivity : PermissionsActivity(), IModeChanging {
     private var sharedPreferences: SharedPreferences? = null
@@ -80,7 +75,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             setTheme(R.style.FullScreen_Dark_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
-
         setSystemUiVisibility()
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
@@ -175,7 +169,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         from_date?.let {from_date->
             Log.d("Report","${getJsonArray()}")
             if(DisplayManager.instance.checkDate(from_date.toLong())){
-                Log.d("Report","${getJsonArray()}")
+
                 val postReportViewModel: ContentViewModel by viewModels()
                 postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
                     if(it.isSuccess){
@@ -191,30 +185,30 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             }
 
         }
-
-
     }
 
+
+
     private fun getJsonArray(): JSONObject {
+        getList =  advertisementTracking.getList(DisplayManager.instance.getCurrentDate())
         val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
             //Log.d("Report","ID ${it.id}, AD ${it.advertisementId}, Date ${it.date}, Mo ${it.morning}, No ${it.noon}, Ev ${it.evening}, Ni ${it.evening}")
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("date",it.date)
-            jsonObject.addProperty("advertisementId",it.advertisementId)
-            jsonObject.add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+
+            val jsonObject = JsonObject().apply{
+                addProperty("date",it.date)
+                addProperty("advertisementId",it.advertisementId)
+                add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+            }
             jsonArray.add(jsonObject)
         }
 
-        //return jsonArray
         return jsonObject.put("analytics",jsonArray)
 
     }
 
     private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
-        /*val arrayValue = listOf(morning,noon,evening,night)
-        val arrayKey = listOf("mo","no","ev","ni")*/
         val jsonObject = JsonObject()
         val jsonArray = JsonArray()
         if(morning != 0){
@@ -230,12 +224,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             jsonObject.addProperty("ni",night)
         }
         jsonArray.add(jsonObject)
-        /*for(i in 0 until arrayValue.size){
-           if(arrayValue[i] != 0){
-               jsonObject.addProperty(arrayKey[i],arrayValue[i])
-               jsonArray.add(jsonObject)
-           }
-        }*/
+
         return jsonArray
 
     }

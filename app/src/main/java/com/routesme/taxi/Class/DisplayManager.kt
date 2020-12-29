@@ -50,29 +50,20 @@ open class DisplayManager() {
     }
 
     fun checkDate(from_date:Long) : Boolean{
-        val myFormat = SimpleDateFormat("dd-M-yyyy")
-        val to_date = SimpleDateFormat("dd-M-yyyy").format(Date()).toString()
-        var diff = 0L
-        //val date1: Date = myFormat.parse(from_date)
-        //val date2: Date = myFormat.parse(to_date)
-        //diff =TimeUnit.DAYS.convert((from_date - getCurrentDate()), TimeUnit.MILLISECONDS)
-        diff =TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
-        //Log.d("Report","Current Time ${getCurrentDate()}  Last set date ${from_date}")
-        //Log.d("Report","${diff}")
-        if(diff > 0){
-
-            return true
-        }
-        return false
+        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
+        return diff > 0
     }
 
-    fun checkCurrentTime():Period{
+    fun getCurrentPeriod():Period{
+
         if(isMorning()){
 
             return Period.MORNING
+
         }else if(isNoon()){
 
             return Period.NOON
+
         }else if(isEvening()){
 
             return Period.EVENING

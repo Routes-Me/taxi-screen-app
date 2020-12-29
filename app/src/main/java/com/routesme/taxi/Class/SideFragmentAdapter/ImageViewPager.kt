@@ -36,7 +36,7 @@ class ImageViewPager(var context: Context, var list:List<Data>, var itemClick:Re
 
     fun getImageItem(position:Int) : Data{
 
-        return list[position]!!
+        return list[position]
 
     }
 
