@@ -199,6 +199,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
+            Log.d("Report","ID ${it.id}, AD ${it.advertisementId}, Date ${it.date}, Mo ${it.morning}, No ${it.noon}, Ev ${it.evening}, Ni ${it.evening}")
             val jsonObject = JsonObject()
             jsonObject.addProperty("date",it.date)
             jsonObject.addProperty("advertisementId",it.advertisementId)
@@ -212,23 +213,29 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
-        val arrayValue = listOf(morning,noon,evening,night)
-        val arrayKey = listOf("mo","no","ev","ni")
+        /*val arrayValue = listOf(morning,noon,evening,night)
+        val arrayKey = listOf("mo","no","ev","ni")*/
         val jsonObject = JsonObject()
         val jsonArray = JsonArray()
-        /*val jsonObject = JsonObject()
-        jsonObject.addProperty("mo",morning)
-        jsonObject.addProperty("no",noon)
-        jsonObject.addProperty("ev",evening)
-        jsonObject.addProperty("ni",night)
-        jsonArray.add(jsonObject)*/
-        for(i in 0 until arrayValue.size){
+        if(morning != 0){
+            jsonObject.addProperty("mo",morning)
+        }
+        if(noon != 0){
+            jsonObject.addProperty("no",noon)
+        }
+        if(evening != 0){
+            jsonObject.addProperty("ev",evening)
+        }
+        if(night != 0){
+            jsonObject.addProperty("ni",night)
+        }
+        jsonArray.add(jsonObject)
+        /*for(i in 0 until arrayValue.size){
            if(arrayValue[i] != 0){
                jsonObject.addProperty(arrayKey[i],arrayValue[i])
                jsonArray.add(jsonObject)
            }
-        }
-
+        }*/
         return jsonArray
 
     }
