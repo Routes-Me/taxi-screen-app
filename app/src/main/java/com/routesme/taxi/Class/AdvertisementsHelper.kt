@@ -39,8 +39,6 @@ import java.lang.Runnable
 import java.lang.ref.WeakReference
 
 class AdvertisementsHelper {
-
-    //private var qrCodeCallback: QRCodeCallback? = null
     private var player: SimpleExoPlayer? = null
     private var count = 0;
     private var isPlayingDemoVideo = false
@@ -49,7 +47,7 @@ class AdvertisementsHelper {
     private val advertisementDataLayer = AdvertisementDataLayer()
     private var TAG="ExoPlayer Error"
     private var presentJob = Job()
-
+    private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
 
     companion object {
         @get:Synchronized
@@ -60,8 +58,8 @@ class AdvertisementsHelper {
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
         private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
-       // private lateinit var displayImageRunnable: Runnable
-       // private var progressbarHandler: Handler? = null
+        // private lateinit var displayImageRunnable: Runnable
+        // private var progressbarHandler: Handler? = null
         //private lateinit var progressbarRunnable: Runnable
         //private var displayImageHandler: Handler? = null
 
@@ -84,16 +82,15 @@ class AdvertisementsHelper {
     }
 
     fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
-        //displayImageHandler = Handler()
+
         imageView.cameraDistance = 12000f
         imageView.pivotX = imageView.height * 0.7f
         imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
         var firstTime = false
-        Log.d("Coroutine","I Called")
-        CoroutineScope(Dispatchers.Main + presentJob).launch {
+        coroutineScope.launch {
             while(isActive) {
-                Log.d("Coroutine","Image Fliker")
+
                 if (currentImageIndex < images.size) {
                     if (currentImageIndex > 0){
                         val previousImageIndex = currentImageIndex - 1
@@ -119,37 +116,6 @@ class AdvertisementsHelper {
                 delay(15 * 1000)
             }
         }
-        /*displayImageRunnable = object : Runnable {
-            override fun run() {
-
-
-
-                if (currentImageIndex < images.size) {
-                    if (currentImageIndex > 0){
-                        val previousImageIndex = currentImageIndex - 1
-                        val previousUri = Uri.parse(images[previousImageIndex].url)
-                        glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
-                    }
-                    val newUri = Uri.parse(images[currentImageIndex].url)
-                    images[currentImageIndex].contentId?.toInt()?.let {
-                        advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod())
-                    }
-                    glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
-                    if (firstTime || currentImageIndex != 0){
-                        firstTime = true
-                        setImageAnimation(context,imageView,imageView2)
-                        EventBus.getDefault().post(images[currentImageIndex])
-                    }
-                    currentImageIndex++
-                    if (currentImageIndex >= images.size) {
-                        currentImageIndex = 0
-                    }
-                }
-                displayImageHandler?.postDelayed(this, 15 * 1000)
-            }
-        }
-        displayImageHandler?.post(displayImageRunnable)*/
-
 
     }
 
@@ -163,7 +129,7 @@ class AdvertisementsHelper {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
-        val progressbarRunnable = videoProgressbarRunnable(progressBar)
+        videoProgressbarRunnable(progressBar)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
@@ -187,6 +153,7 @@ class AdvertisementsHelper {
                     EventBus.getDefault().post(videos[currentMediaItemId])
                     setAnimation(context,relativeLayout,relativeLayout2)
                 }
+
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
@@ -216,13 +183,11 @@ class AdvertisementsHelper {
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
                                 EventBus.getDefault().post(videos[currentMediaItemId])
-                                //progressbarHandler?.post(progressbarRunnable)
+
                             }
 
                         }
                         Player.STATE_ENDED -> {
-
-                            //progressbarHandler?.removeCallbacks(progressbarRunnable)
                         }
                     }
                 }
@@ -274,11 +239,9 @@ class AdvertisementsHelper {
 
     }
 
-    private  fun videoProgressbarRunnable(progressBar: RingProgressBar): Job {
-        return CoroutineScope(Dispatchers.Main+presentJob).launch {
-
+    private  fun videoProgressbarRunnable(progressBar: RingProgressBar) {
+        coroutineScope.launch {
             while (isActive){
-                Log.d("Coroutine","RingProgress Bar")
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
                 progressBar.progress = progress
@@ -287,22 +250,11 @@ class AdvertisementsHelper {
             }
 
         }
-        /*progressbarRunnable = object : Runnable {
-            override fun run() {
 
-                val current = (player?.currentPosition)!!.toInt()
-                val progress = current * 100 / (player?.duration)!!.toInt()
-                progressBar.progress = progress
-                progressbarHandler?.postDelayed(this, 1000)
-            }
-        }*/
-        //return progressbarRunnable
     }
 
 
     fun release() {
-        //displayImageHandler?.removeCallbacks(displayImageRunnable)
-        //progressbarHandler?.removeCallbacks(progressbarRunnable)
         player?.release()
         presentJob.cancelChildren()
     }

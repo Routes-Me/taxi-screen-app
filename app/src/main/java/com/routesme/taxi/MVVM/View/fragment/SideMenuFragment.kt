@@ -15,19 +15,20 @@ import com.routesme.taxi.ItemAnimator
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.lang.Runnable
 import java.util.*
 
 
 class SideMenuFragment : Fragment() {
     private lateinit var mView: View
     private lateinit var mContext: Context
-    private var handlerTime: Handler? = null
     private val dateOperations = DateOperations.instance
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
-
+    private val presentJob = Job()
     override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
@@ -43,7 +44,7 @@ class SideMenuFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        handlerTime?.removeCallbacks(timeRunnable)
+        presentJob.cancelChildren()
         super.onDestroy()
     }
 
@@ -77,16 +78,16 @@ class SideMenuFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-        handlerTime = Handler()
-        handlerTime?.post(timeRunnable)
-    }
+        CoroutineScope(Dispatchers.Main + presentJob).launch {
 
-    private val timeRunnable: Runnable = object : Runnable {
-        override fun run() {
-            val date = Date()
-            sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
-            sideFragmentAdapter.notifyDataSetChanged()
-            handlerTime?.postDelayed(this, 60 * 1000)
+            while (isActive){
+
+                val date = Date()
+                sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
+                sideFragmentAdapter.notifyDataSetChanged()
+                delay(60 * 1000)
+            }
+
         }
     }
 

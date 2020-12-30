@@ -39,7 +39,6 @@ class ContentFragment : Fragment() {
     private lateinit var mView: View
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
-    //private var pager: Int = 1
     private var device_id : Int = 0
     private val SEC:Long = 300
     private val MIL:Long = 1000
@@ -47,7 +46,6 @@ class ContentFragment : Fragment() {
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
     private var isAlive = false
-    //private var timerHandler: Handler? = null
     private var videoShadow: RelativeLayout? = null
     var TYPE_WIFI = 1
     var TYPE_MOBILE = 2
@@ -76,7 +74,6 @@ class ContentFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar
-        //timerHandler = Handler()
         videoShadow = view.videoShadow
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
@@ -105,7 +102,6 @@ class ContentFragment : Fragment() {
     }
 
     override fun onDestroy() {
-        Log.d("Coroutine","OnDestroy")
         AdvertisementsHelper.instance.release()
         super.onDestroy()
     }
@@ -181,18 +177,6 @@ class ContentFragment : Fragment() {
                 delay(SEC*MIL)
             }
         }
-        /*isAlive = true
-        timerRunnable = object : Runnable {
-            override fun run() {
-
-                timerHandler!!.postDelayed({
-
-                    fetchContent()
-
-                },SEC*MIL)
-            }
-        }
-        timerHandler!!.post(timerRunnable)*/
 
     }
 
@@ -208,6 +192,7 @@ class ContentFragment : Fragment() {
         if (data.type ==  ContentType.Video.value){
             changeVideoCardColor(data.tintColor)
         }
+
     }
 
     private fun changeVideoCardColor(tintColor: Int?) {
