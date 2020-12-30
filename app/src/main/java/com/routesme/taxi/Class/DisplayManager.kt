@@ -7,12 +7,9 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
-import android.util.Log
 import com.routesme.taxi.MVVM.Model.IModeChanging
-import com.routesme.taxi.utils.Period
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.concurrent.TimeUnit
 import kotlin.collections.ArrayList
 
 open class DisplayManager() {
@@ -49,36 +46,8 @@ open class DisplayManager() {
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis, eveningAlarm)
     }
 
-    fun checkDate(from_date:Long) : Boolean{
-        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
-        return diff > 0
-    }
-
-    fun getCurrentPeriod():Period{
-
-        if(isMorning()){
-
-            return Period.MORNING
-
-        }else if(isNoon()){
-
-            return Period.NOON
-
-        }else if(isEvening()){
-
-            return Period.EVENING
-        }else{
-
-            return Period.NIGHT
-        }
-
-    }
-
-    fun isMorning() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("11:59"))
-    fun isNoon() = currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("16:59"))
-    fun isEvening() = currentDate().after(parseDate("17:00")) && currentDate().before(parseDate("23:59"))
-
     fun isAnteMeridiem() = currentDate().after(parseDate("05:00")) && currentDate().before(parseDate("17:00"))
+
     private fun currentDate(): Date {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -86,7 +55,7 @@ open class DisplayManager() {
         return parseDate("$hour:$minute")
     }
 
-    fun getCurrentDate() = Calendar.getInstance().timeInMillis
+
 
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)

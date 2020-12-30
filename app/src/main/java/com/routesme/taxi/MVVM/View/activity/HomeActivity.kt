@@ -25,6 +25,7 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
+import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
@@ -85,7 +86,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        getList =  advertisementTracking.getList(DisplayManager.instance.getCurrentDate())
         checkDateAndUploadResult()
         addFragments()
     }
@@ -165,17 +165,16 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     private fun checkDateAndUploadResult(){
 
-
         from_date?.let {from_date->
             Log.d("Report","${getJsonArray()}")
-            if(DisplayManager.instance.checkDate(from_date.toLong())){
+            if(DateHelper.instance.checkDate(from_date.toLong())){
 
                 val postReportViewModel: ContentViewModel by viewModels()
                 postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
                     if(it.isSuccess){
 
-                        advertisementTracking.deleteData(DisplayManager.instance.getCurrentDate())
-                        editor?.putString(SharedPreferencesHelper.from_date, DisplayManager.instance.getCurrentDate().toString())
+                        advertisementTracking.deleteData(DateHelper.instance.getCurrentDate())
+                        editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                         editor?.commit()
 
                     }
@@ -190,7 +189,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
 
     private fun getJsonArray(): JSONObject {
-        getList =  advertisementTracking.getList(DisplayManager.instance.getCurrentDate())
+        getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
         val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
