@@ -68,7 +68,6 @@ class ContentFragment : Fragment() {
 
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(myReceiver)
-
         super.onDestroyView()
     }
 
