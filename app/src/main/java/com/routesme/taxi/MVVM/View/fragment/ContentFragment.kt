@@ -68,6 +68,7 @@ class ContentFragment : Fragment() {
 
     override fun onDestroyView() {
         requireActivity().unregisterReceiver(myReceiver)
+
         super.onDestroyView()
     }
 
@@ -119,6 +120,7 @@ class ContentFragment : Fragment() {
     }
 
     private fun fetchContent(){
+
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
@@ -133,6 +135,7 @@ class ContentFragment : Fragment() {
                     }else{
                         isDataFetched = true
                         if(isAlive) removeThread()
+                        //pass job here
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2)
                         AdvertisementsHelper.instance.configuringMediaPlayer(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage)
                     }
@@ -172,9 +175,13 @@ class ContentFragment : Fragment() {
         EventBus.getDefault().post(DemoVideo(true,errorMessage))
         CoroutineScope(Dispatchers.Main+presentJob).launch {
 
+
             while (isActive){
-                fetchContent()
                 delay(SEC*MIL)
+                Log.d("Coroutine","Working")
+
+                fetchContent()
+
             }
         }
 
@@ -184,7 +191,6 @@ class ContentFragment : Fragment() {
         presentJob.cancelChildren()
         isAlive=false
         EventBus.getDefault().post(DemoVideo(false,""))
-
     }
 
     @Subscribe()

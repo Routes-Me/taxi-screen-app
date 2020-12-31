@@ -10,14 +10,16 @@ import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.runBlocking
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private var hubConnection: HubConnection? = null
     private var locationReceiver: LocationReceiver? = null
-    private var handlerThread: HandlerThread? = null
-    private var mHandler: Handler? = null
+    //private var handlerThread: HandlerThread? = null
+    //private var mHandler: Handler? = null
 
     companion object {
         @get:Synchronized
@@ -41,7 +43,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        mHandler?.removeCallbacks(reconnection)
+        //mHandler?.removeCallbacks(reconnection)
         locationReceiver?.removeLocationUpdates()
         instance.hubConnection?.disconnect()
     }
@@ -130,29 +132,35 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onError(exception: Exception) {
         locationReceiver?.isHubConnected(false)
-        if (handlerThread == null){
+        runBlocking {
+
+            delay(60*1000)
+            reconnect()
+        }
+        /*if (handlerThread == null){
             handlerThread = HandlerThread("reconnection").apply {
                 start()
                 if (mHandler == null) {
                     mHandler = Handler(this.looper).apply {
-                        postDelayed(reconnection, 1 * 60 * 1000)
+                        postDelayed(reconnection, 1 * 10 * 1000)
                     }
                 }
             }
-        }
+        }*/
     }
 
-    private val reconnection: Runnable = Runnable { reconnect() }
+    //private val reconnection: Runnable = Runnable { reconnect() }
 
     private fun reconnect() {
-        if (mHandler != null){
+        /*if (mHandler != null){
             mHandler?.removeCallbacks(reconnection)
             mHandler = null
         }
         if (handlerThread != null) {
             handlerThread?.quit()
             handlerThread = null
-        }
+        }*/
+       // Log.d("Signal","Reconnect")
         instance.hubConnection?.connect()
     }
 }

@@ -56,12 +56,9 @@ class AdvertisementsHelper {
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
         private val simpleCache = initializeVideoCaching()
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
-        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
+        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
-        // private lateinit var displayImageRunnable: Runnable
-        // private var progressbarHandler: Handler? = null
-        //private lateinit var progressbarRunnable: Runnable
-        //private var displayImageHandler: Handler? = null
+
 
         private fun initializeVideoCaching(): SimpleCache {
             val maxMemory = Runtime.getRuntime().maxMemory()
@@ -120,7 +117,7 @@ class AdvertisementsHelper {
     }
 
     fun configuringMediaPlayer (context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
-        //progressbarHandler = Handler()
+
         player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
     }
 
@@ -144,16 +141,18 @@ class AdvertisementsHelper {
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                    EventBus.getDefault().post(videos[currentMediaItemId])
+                    setAnimation(context,relativeLayout,relativeLayout2)
+
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId?.let {
                         videos[it].contentId?.toInt()?.let {
                             advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod())
                         }
                     }
-                    EventBus.getDefault().post(videos[currentMediaItemId])
-                    setAnimation(context,relativeLayout,relativeLayout2)
-                }
 
+
+                }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
