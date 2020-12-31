@@ -10,14 +10,14 @@ import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private var hubConnection: HubConnection? = null
     private var locationReceiver: LocationReceiver? = null
+    private lateinit var signalRReconnectionJob: Job
     //private var handlerThread: HandlerThread? = null
     //private var mHandler: Handler? = null
 
@@ -127,40 +127,26 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDisconnected() {
         locationReceiver?.isHubConnected(false)
+
         instance.hubConnection?.connect()
     }
 
     override fun onError(exception: Exception) {
         locationReceiver?.isHubConnected(false)
-        runBlocking {
-
-            delay(60*1000)
-            reconnect()
-        }
-        /*if (handlerThread == null){
-            handlerThread = HandlerThread("reconnection").apply {
-                start()
-                if (mHandler == null) {
-                    mHandler = Handler(this.looper).apply {
-                        postDelayed(reconnection, 1 * 10 * 1000)
-                    }
-                }
-            }
-        }*/
+        Log.d("signalRReconnectionJob-Status","Hub connection error")
+        signalRReconnection()
     }
-
-    //private val reconnection: Runnable = Runnable { reconnect() }
-
-    private fun reconnect() {
-        /*if (mHandler != null){
-            mHandler?.removeCallbacks(reconnection)
-            mHandler = null
+    private fun signalRReconnection(){
+        CoroutineScope(Dispatchers.IO + this.signalRReconnectionJob).launch {
+            if (isActive){
+                Log.d("signalRReconnectionJob-Status","Lunched")
+                delay(1 * 10 * 1000)
+                Log.d("signalRReconnectionJob-Status","isActive")
+                hubConnection?.connect()
+            }
         }
-        if (handlerThread != null) {
-            handlerThread?.quit()
-            handlerThread = null
-        }*/
-       // Log.d("Signal","Reconnect")
-        instance.hubConnection?.connect()
+    }
+    fun setSignalRReconnectionJob(signalRReconnectionJob: Job) {
+        this.signalRReconnectionJob = signalRReconnectionJob
     }
 }

@@ -51,7 +51,9 @@ class ContentFragment : Fragment() {
     var TYPE_MOBILE = 2
     var TYPE_NOT_CONNECTED = 0
     val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
-    private val presentJob = Job()
+    private lateinit var  displayImageJob : Job
+    private lateinit var  videoProgressJob : Job
+    private lateinit var  callApiJob : Job
 
     override fun onAttach(context: Context) {
         mContext = context
@@ -75,6 +77,10 @@ class ContentFragment : Fragment() {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar
         videoShadow = view.videoShadow
+        /*Logic created by Abdullah*/
+        displayImageJob = Job()
+        videoProgressJob = Job()
+        callApiJob = Job()
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
@@ -103,6 +109,9 @@ class ContentFragment : Fragment() {
 
     override fun onDestroy() {
         AdvertisementsHelper.instance.release()
+        displayImageJob.cancel()
+        videoProgressJob.cancel()
+        callApiJob.cancel()
         super.onDestroy()
     }
 
@@ -135,8 +144,8 @@ class ContentFragment : Fragment() {
                         isDataFetched = true
                         if(isAlive) removeThread()
                         //pass job here
-                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2)
-                        AdvertisementsHelper.instance.configuringMediaPlayer(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage)
+                        if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext,images, mView.advertisementsImageView,mView.advertisementsImageView2,displayImageJob)
+                        AdvertisementsHelper.instance.configuringMediaPlayer(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,videoProgressJob)
                     }
 
                 } else {
@@ -172,22 +181,24 @@ class ContentFragment : Fragment() {
     private fun startThread(errorMessage:String){
         isAlive = true
         EventBus.getDefault().post(DemoVideo(true,errorMessage))
-        CoroutineScope(Dispatchers.Main+presentJob).launch {
+        CoroutineScope(Dispatchers.Main + callApiJob).launch {
+
+            delay(SEC*MIL)
+            Log.d("Coroutine","Working")
+            fetchContent()
+
+           /* while (isActive){
 
 
-            while (isActive){
-                delay(SEC*MIL)
-                Log.d("Coroutine","Working")
-
-                fetchContent()
-
-            }
+            }*/
         }
 
     }
 
     private fun removeThread(){
-        presentJob.cancelChildren()
+
+        if(callApiJob.isActive) callApiJob.cancelChildren()
+
         isAlive=false
         EventBus.getDefault().post(DemoVideo(false,""))
     }

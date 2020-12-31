@@ -86,7 +86,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        checkDateAndUploadResult()
+        //checkDateAndUploadResult()
         addFragments()
     }
 

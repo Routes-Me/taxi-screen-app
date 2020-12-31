@@ -3,7 +3,6 @@ package com.routesme.taxi.Class
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
 import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
@@ -18,9 +17,7 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
-import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
@@ -35,8 +32,6 @@ import com.routesme.taxi.uplevels.App
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
-import java.lang.Runnable
-import java.lang.ref.WeakReference
 
 class AdvertisementsHelper {
     private var player: SimpleExoPlayer? = null
@@ -46,8 +41,7 @@ class AdvertisementsHelper {
     private lateinit var animatorImage:ObjectAnimator
     private val advertisementDataLayer = AdvertisementDataLayer()
     private var TAG="ExoPlayer Error"
-    private var presentJob = Job()
-    private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
+    //private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
 
     companion object {
         @get:Synchronized
@@ -78,14 +72,13 @@ class AdvertisementsHelper {
         }
     }
 
-    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView) {
-
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,job:Job) {
         imageView.cameraDistance = 12000f
         imageView.pivotX = imageView.height * 0.7f
         imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
         var firstTime = false
-        coroutineScope.launch {
+        CoroutineScope(Dispatchers.Main + job).launch {
             while(isActive) {
 
                 if (currentImageIndex < images.size) {
@@ -116,17 +109,17 @@ class AdvertisementsHelper {
 
     }
 
-    fun configuringMediaPlayer (context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout) {
+    fun configuringMediaPlayer (context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,videoProgressJob:Job) {
 
-        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2)
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,videoProgressJob)
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout): SimpleExoPlayer {
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar, relativeLayout: RelativeLayout, relativeLayout2: RelativeLayout, videoProgressJob: Job): SimpleExoPlayer {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
-        videoProgressbarRunnable(progressBar)
+        videoProgressbarRunnable(progressBar,videoProgressJob)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
@@ -238,8 +231,8 @@ class AdvertisementsHelper {
 
     }
 
-    private  fun videoProgressbarRunnable(progressBar: RingProgressBar) {
-        coroutineScope.launch {
+    private  fun videoProgressbarRunnable(progressBar: RingProgressBar, videoProgressJob: Job) {
+        CoroutineScope(Dispatchers.Main + videoProgressJob).launch {
             while (isActive){
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
@@ -254,7 +247,8 @@ class AdvertisementsHelper {
 
 
     fun release() {
+
         player?.release()
-        presentJob.cancelChildren()
+
     }
 }

@@ -16,6 +16,7 @@ import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -29,6 +30,7 @@ class App : Application() {
     var vehicleId: String? = null
     var institutionName: String? = null
     private var trackingService: TrackingService? = null
+    private lateinit var signalRReconnectionJob: Job
 
     companion object {
         @get:Synchronized
@@ -38,6 +40,7 @@ class App : Application() {
     override fun onCreate() {
         super.onCreate()
         instance = this
+        signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         startTrackingService()
@@ -82,14 +85,20 @@ class App : Application() {
 
             if (name.endsWith("TrackingService")) {
 
-                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
-                trackingService?.startTrackingService()
+                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service.apply {
+                    setSignalRReconnectionJob(signalRReconnectionJob)
+                    startTrackingService()
+                }
             }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "TrackingService") {
                 trackingService = null
+                signalRReconnectionJob.apply {
+                    if (isActive) cancel()
+                    Log.d("signalRReconnectionJob-Status","$isActive")
+                }
                 Log.i("trackingWebSocket:", "onServiceDisconnected")
             }
         }
