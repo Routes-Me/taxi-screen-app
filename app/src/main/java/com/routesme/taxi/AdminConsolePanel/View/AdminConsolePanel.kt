@@ -12,10 +12,16 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.RecyclerView
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleHelper
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleLists
 import com.routesme.taxi.AdminConsolePanel.Class.MasterItemsAdapter
 import com.routesme.taxi.AdminConsolePanel.Model.LogOff
+import com.routesme.taxi.Class.DateHelper
+import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
+import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
+import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.UnlinkResponse
 import com.routesme.taxi.MVVM.View.activity.HomeActivity
 import com.routesme.taxi.MVVM.View.activity.LoginActivity
@@ -27,6 +33,7 @@ import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.sql.SQLException
 
@@ -34,6 +41,9 @@ class AdminConsolePanel : AppCompatActivity() {
     private var adminConsoleHelper : AdminConsoleHelper?=null
     private var sharedPreferences :SharedPreferences?=null
     private var dialog: AlertDialog? = null
+    val contentViewModel : ContentViewModel by viewModels()
+    private val advertisementTracking = AdvertisementDataLayer()
+    private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.admin_console_panel)
@@ -85,29 +95,25 @@ class AdminConsolePanel : AppCompatActivity() {
         if(isLogOff.isLogOff){
             try {
                 dialog?.show()
-                val contentViewModel : ContentViewModel by viewModels()
-                adminConsoleHelper?.vehicleId()?.let {vehicleId ->
+                adminConsoleHelper?.deviceId()?.let {deviceID ->
 
-                    adminConsoleHelper?.deviceId()?.let {deviceId ->
+                    adminConsoleHelper?.vehicleId()?.let {vehicleId ->
+                        Log.d("Report","${getJsonArray()}")
+                        contentViewModel.postReport(this,getJsonArray(),deviceID).observe(this , Observer<ReportResponse> {
 
-                        contentViewModel.unlinkDevice(vehicleId, deviceId,this).observe(this, Observer<UnlinkResponse> {
-                            if (it.isSuccess) {
-                                dialog?.hide()
-                                sharedPreferences?.edit()?.clear()?.apply()
-                                startActivity(Intent(this, LoginActivity::class.java))
-                                finish()
+                            if(it.isSuccess){
+
+                                val records_deleted = advertisementTracking.deleteAllData()
+                                Log.d("Report","${records_deleted}")
+                                unlinkDeviceFromServer(deviceID,vehicleId)
+
                             }else{
 
                                 dialog?.hide()
-
                             }
                         })
-
                     }
-
                 }
-
-
             } catch (e: ClassNotFoundException) {
                 Log.d("TAG","ClassNotFoundException ${e.message}")
             } catch (e: SQLException) {
@@ -116,6 +122,57 @@ class AdminConsolePanel : AppCompatActivity() {
                 Log.d("TAG","Exception ${e.message}")
             }
         }
+    }
+
+    private fun unlinkDeviceFromServer(deviceId:String,vehicleId:String){
+
+                contentViewModel.unlinkDevice(vehicleId, deviceId,this).observe(this, Observer<UnlinkResponse> {
+                    if (it.isSuccess) {
+                        dialog?.hide()
+                        sharedPreferences?.edit()?.clear()?.apply()
+                        startActivity(Intent(this, LoginActivity::class.java))
+                        finish()
+                    }else{
+                        dialog?.hide()
+                    }
+                })
+    }
+
+    private fun getJsonArray(): JSONObject {
+        getList =  advertisementTracking.getAllList()
+        val jsonObject = JSONObject()
+        val jsonArray = JsonArray()
+        getList?.forEach {
+
+            val jsonObject = JsonObject().apply{
+                addProperty("date",it.date)
+                addProperty("advertisementId",it.advertisementId)
+                add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+            }
+            jsonArray.add(jsonObject)
+        }
+
+        return jsonObject.put("analytics",jsonArray)
+
+    }
+    private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
+        val jsonObject = JsonObject()
+        val jsonArray = JsonArray()
+        if(morning != 0){
+            jsonObject.addProperty("mo",morning)
+        }
+        if(noon != 0){
+            jsonObject.addProperty("no",noon)
+        }
+        if(evening != 0){
+            jsonObject.addProperty("ev",evening)
+        }
+        if(night != 0){
+            jsonObject.addProperty("ni",night)
+        }
+        jsonArray.add(jsonObject)
+
+        return jsonArray
 
     }
 }

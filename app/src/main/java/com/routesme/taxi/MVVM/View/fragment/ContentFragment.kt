@@ -57,9 +57,7 @@ class ContentFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         mContext = context
-
         super.onAttach(context)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -77,7 +75,6 @@ class ContentFragment : Fragment() {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar
         videoShadow = view.videoShadow
-        /*Logic created by Abdullah*/
         displayImageJob = Job()
         videoProgressJob = Job()
         callApiJob = Job()
@@ -128,9 +125,9 @@ class ContentFragment : Fragment() {
     }
 
     private fun fetchContent(){
-
         val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
+
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
@@ -138,6 +135,7 @@ class ContentFragment : Fragment() {
                     val images = it.imageList.toList()
                     val videos = it.videoList.toList()
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
+
                         startThread(getString(R.string.no_data_found))
                         return@Observer
                     }else{
@@ -152,10 +150,12 @@ class ContentFragment : Fragment() {
 
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let {
+
                             startThread(getString(R.string.no_data_found))
                             //errors -> displayErrors(errors)
                              }
                     } else if (it.mThrowable != null) {
+                        Log.e("ExoPlayer_Errorr" ,"mThrowable Call")
                         if (it.mThrowable is IOException) {
                             startThread(getString(R.string.network_Issue))
 
@@ -179,18 +179,13 @@ class ContentFragment : Fragment() {
     }*/
 
     private fun startThread(errorMessage:String){
+
         isAlive = true
         EventBus.getDefault().post(DemoVideo(true,errorMessage))
         CoroutineScope(Dispatchers.Main + callApiJob).launch {
-
             delay(SEC*MIL)
-            Log.d("Coroutine","Working")
             fetchContent()
 
-           /* while (isActive){
-
-
-            }*/
         }
 
     }

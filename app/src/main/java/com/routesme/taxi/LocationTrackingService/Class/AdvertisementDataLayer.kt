@@ -32,7 +32,11 @@ class AdvertisementDataLayer(){
 
     fun deleteData(currentDate: Long) = advertisement.deleteTable(currentDate/MIN)
 
+    fun deleteAllData() = advertisement.deleteAllTable()
+
     fun getList(currentDate:Long) = advertisement.getList(currentDate/MIN)
+
+    fun getAllList() = advertisement.getAllList()
 
     fun update(id:Int,period:Period){
 

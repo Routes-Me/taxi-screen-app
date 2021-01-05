@@ -46,6 +46,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         //mHandler?.removeCallbacks(reconnection)
         locationReceiver?.removeLocationUpdates()
         instance.hubConnection?.disconnect()
+
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -63,7 +64,6 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
-
                 instance.hubConnection?.connect()
             }
         }
@@ -120,9 +120,12 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onMessage(message: HubMessage) {
         Log.d("send-location-testing","onMessage: ${message.arguments.toString()}")
+        Log.d("SignalR-message","${message}")
     }
 
     override fun onEventMessage(message: HubMessage) {
+
+        Log.d("SignalR-message","${message}")
     }
 
     override fun onDisconnected() {
@@ -133,14 +136,14 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onError(exception: Exception) {
         locationReceiver?.isHubConnected(false)
-        Log.d("signalRReconnectionJob-Status","Hub connection error")
+        //Log.d("signalRReconnectionJob-Status","Hub connection error")
         signalRReconnection()
     }
     private fun signalRReconnection(){
         CoroutineScope(Dispatchers.IO + this.signalRReconnectionJob).launch {
             if (isActive){
                 Log.d("signalRReconnectionJob-Status","Lunched")
-                delay(1 * 10 * 1000)
+                delay(1 * 60 * 1000)
                 Log.d("signalRReconnectionJob-Status","isActive")
                 hubConnection?.connect()
             }

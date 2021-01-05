@@ -46,7 +46,6 @@ class AesBase64Wrapper() {
 
          val encryptStr = encryptAndEncode(str, realSalt)
 
-
          val encryptedBody = StringBuilder()
          encryptedBody.append(encryptStr)
 

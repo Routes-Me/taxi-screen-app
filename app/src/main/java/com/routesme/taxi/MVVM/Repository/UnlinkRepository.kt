@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -22,7 +23,7 @@ class UnlinkRepository(context:Context){
         val call = thisApiCorService.deleteVehicle(vehicleId,deviceId)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-
+                Log.d("Unlink Device","${response.code()},${response.body()}")
                 if (response.isSuccessful) {
                     unlinkResponse.value = UnlinkResponse()
 

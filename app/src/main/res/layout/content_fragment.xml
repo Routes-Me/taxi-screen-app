@@ -60,7 +60,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 app:resize_mode="fill"
-                app:use_controller="false"
+                app:use_controller="true"
                 app:surface_type="texture_view"/>
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar

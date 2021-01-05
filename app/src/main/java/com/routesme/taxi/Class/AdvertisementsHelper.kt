@@ -40,7 +40,7 @@ class AdvertisementsHelper {
     private lateinit var animatorVideo:ObjectAnimator
     private lateinit var animatorImage:ObjectAnimator
     private val advertisementDataLayer = AdvertisementDataLayer()
-    private var TAG="ExoPlayer Error"
+    private var TAG="ExoPlayer_Error"
     //private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
 
     companion object {
@@ -50,7 +50,7 @@ class AdvertisementsHelper {
         val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
         private val simpleCache = initializeVideoCaching()
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
-        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
 
 
@@ -138,7 +138,7 @@ class AdvertisementsHelper {
                     setAnimation(context,relativeLayout,relativeLayout2)
 
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
-                    currentMediaItemId?.let {
+                    currentMediaItemId.let {
                         videos[it].contentId?.toInt()?.let {
                             advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod())
                         }
@@ -152,10 +152,10 @@ class AdvertisementsHelper {
                         Player.STATE_IDLE -> {
 
                             player?.prepare()
-
+                            Log.e(TAG ,"IDLE")
                         }
                         Player.STATE_BUFFERING -> {
-
+                            Log.e(TAG ,"STATE_BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
@@ -165,7 +165,7 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
-
+                            Log.e(TAG ,"STATE_BUFFERING")
                             if(isPlayingDemoVideo) {
                                 EventBus.getDefault().post(DemoVideo(false,""))
                                 isPlayingDemoVideo = false
@@ -180,6 +180,8 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_ENDED -> {
+
+                            Log.e(TAG ,"STATE_ENDED")
                         }
                     }
                 }
@@ -193,8 +195,18 @@ class AdvertisementsHelper {
                             }
 
                         }
-                        ExoPlaybackException.TYPE_RENDERER -> Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
-                        ExoPlaybackException.TYPE_UNEXPECTED -> Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
+                        ExoPlaybackException.TYPE_RENDERER ->{
+
+                            Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
+                            //stop()
+
+                        }
+                        ExoPlaybackException.TYPE_UNEXPECTED ->{
+
+                            Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
+                           // stop()
+
+                        }
                     }
                 }
             })
@@ -205,7 +217,7 @@ class AdvertisementsHelper {
     private fun setAnimation(context: Context,playerView: RelativeLayout,bgImageView: RelativeLayout){
 
         animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        animatorVideo!!.apply {
+        animatorVideo.apply {
             setDuration(1000)
             animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
@@ -220,7 +232,7 @@ class AdvertisementsHelper {
     private fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
 
         animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
-        animatorImage!!.apply {
+        animatorImage.apply {
             setDuration(1000)
             AccelerateDecelerateInterpolator()
             start()

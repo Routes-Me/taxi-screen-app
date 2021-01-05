@@ -28,7 +28,7 @@ class SideMenuFragment : Fragment() {
     private val dateOperations = DateOperations.instance
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
-    private val presentJob = Job()
+    private lateinit var presentJob : Job
     override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
@@ -38,14 +38,21 @@ class SideMenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
-
-        setupRecyclerView()
         super.onViewCreated(view, savedInstanceState)
+
     }
 
-    override fun onDestroy() {
-        presentJob.cancelChildren()
-        super.onDestroy()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        presentJob = Job()
+        setupRecyclerView()
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        presentJob.cancel()
     }
 
     override fun onStart() {

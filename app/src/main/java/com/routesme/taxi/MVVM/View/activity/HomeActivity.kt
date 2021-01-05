@@ -64,7 +64,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private  var deviceId:String?=null
     private val advertisementTracking = AdvertisementDataLayer()
     private var getList:List<AdvertisementTracking>?=null
-
     private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,7 +85,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         sideMenuFragment = SideMenuFragment()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        //checkDateAndUploadResult()
+        checkDateAndUploadResult()
         addFragments()
     }
 
@@ -164,13 +163,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     private fun checkDateAndUploadResult(){
-
         from_date?.let {from_date->
             Log.d("Report","${getJsonArray()}")
             if(DateHelper.instance.checkDate(from_date.toLong())){
 
                 val postReportViewModel: ContentViewModel by viewModels()
                 postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
+
                     if(it.isSuccess){
 
                         advertisementTracking.deleteData(DateHelper.instance.getCurrentDate())
@@ -229,6 +228,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     override fun onDestroy() {
+        player?.release()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         super.onDestroy()
     }

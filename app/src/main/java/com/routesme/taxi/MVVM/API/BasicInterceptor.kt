@@ -21,6 +21,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
                 .addHeader(Header.Authorization.toString(), token())
                 .addHeader(Header.CountryCode.toString(), countryCode())
                 .addHeader(Header.AppVersion.toString(), appVersion())
+                .addHeader("application", "c2NyZWVu")
                 .build()
         return chain.proceed(request)
     }
