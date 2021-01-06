@@ -98,6 +98,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+
     }
 
     @SuppressLint("CommitPrefEdits")
