@@ -83,6 +83,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         submitApplicationVersion()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
+        turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         checkDateAndUploadResult()
@@ -136,7 +137,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         demoVideoPlayer.player = player
         val mediaSource = buildRawMediaSource()
         mediaSource?.let {
-            player!!.apply {
+            player?.apply {
                 setMediaSource(it)
                 prepare()
                 repeatMode = Player.REPEAT_MODE_ONE
@@ -230,23 +231,23 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     override fun onDestroy() {
         player?.release()
+        player = null
+        turnOffHotspot()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         super.onDestroy()
     }
 
     override fun onStart() {
-        registerNetworkCallback(true)
         EventBus.getDefault().register(this)
         super.onStart()
     }
 
     override fun onStop() {
-        registerNetworkCallback(false)
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
     private fun addFragments() {
-        //Log.d("Network-Status","addFragments")
+
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
     }
@@ -270,7 +271,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         removeFragments()
         recreate()
     }
-    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
+    /*private val networkCallback = object : ConnectivityManager.NetworkCallback() {
         override fun onAvailable(network: Network?) {
             if (!isHotspotAlive) turnOnHotspot()
             try {
@@ -292,7 +293,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             //Log.d("Network-Status","onLost")
             if (isHotspotAlive) turnOffHotspot()
         }
-    }
+    }*/
 
     private fun turnOnHotspot() {
         //Log.d("Network-Status","turnOnHotspot")
@@ -321,13 +322,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private fun registerNetworkCallback(register: Boolean) {
         if (register) {
             try {
-                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
+                //connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }
         } else {
             try {
-                connectivityManager.unregisterNetworkCallback(networkCallback)
+               // connectivityManager.unregisterNetworkCallback(networkCallback)
             } catch (e: IllegalArgumentException) {
                 e.printStackTrace()
             }

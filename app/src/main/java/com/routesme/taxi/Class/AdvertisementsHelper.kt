@@ -39,7 +39,7 @@ class AdvertisementsHelper {
     private var isPlayingDemoVideo = false
     private lateinit var animatorVideo:ObjectAnimator
     private lateinit var animatorImage:ObjectAnimator
-    private val advertisementDataLayer = AdvertisementDataLayer()
+    public val advertisementDataLayer = AdvertisementDataLayer()
     private var TAG="ExoPlayer_Error"
     //private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
 
@@ -52,6 +52,7 @@ class AdvertisementsHelper {
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
         private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
+
 
 
         private fun initializeVideoCaching(): SimpleCache {
@@ -80,7 +81,6 @@ class AdvertisementsHelper {
         var firstTime = false
         CoroutineScope(Dispatchers.Main + job).launch {
             while(isActive) {
-
                 if (currentImageIndex < images.size) {
                     if (currentImageIndex > 0){
                         val previousImageIndex = currentImageIndex - 1
@@ -112,6 +112,7 @@ class AdvertisementsHelper {
     fun configuringMediaPlayer (context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,videoProgressJob:Job) {
 
         player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,videoProgressJob)
+
     }
 
 
@@ -215,7 +216,6 @@ class AdvertisementsHelper {
     }
 
     private fun setAnimation(context: Context,playerView: RelativeLayout,bgImageView: RelativeLayout){
-
         animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
         animatorVideo.apply {
             setDuration(1000)
@@ -229,7 +229,7 @@ class AdvertisementsHelper {
     }
 
 
-    private fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
+     fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
 
         animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
         animatorImage.apply {

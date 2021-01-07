@@ -85,7 +85,7 @@ class AdminConsolePanel : AppCompatActivity() {
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == android.R.id.home) {
-            this.apply { startActivity(Intent(this, HomeActivity::class.java)); finish() }
+            this.apply { finish() }
         }
         return super.onOptionsItemSelected(item)
     }

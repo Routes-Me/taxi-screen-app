@@ -44,7 +44,6 @@ class SideMenuFragment : Fragment() {
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-
         presentJob = Job()
         setupRecyclerView()
     }
@@ -52,7 +51,6 @@ class SideMenuFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        presentJob.cancel()
     }
 
     override fun onStart() {
@@ -63,6 +61,11 @@ class SideMenuFragment : Fragment() {
     override fun onStop() {
         EventBus.getDefault().unregister(this)
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presentJob?.cancel()
     }
 
     private fun setupRecyclerView() {
@@ -85,17 +88,19 @@ class SideMenuFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-        CoroutineScope(Dispatchers.Main + presentJob).launch {
+        //presentJob?.let {
+            CoroutineScope(Dispatchers.Main + presentJob).launch {
+                while (isActive){
+                    val date = Date()
+                    sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
+                    sideFragmentAdapter.notifyDataSetChanged()
+                    delay(60 * 1000)
+                }
 
-            while (isActive){
-
-                val date = Date()
-                sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
-                sideFragmentAdapter.notifyDataSetChanged()
-                delay(60 * 1000)
             }
 
-        }
+       // }
+
     }
 
     @Subscribe()
@@ -120,6 +125,7 @@ class SideMenuFragment : Fragment() {
     }
 
     private fun changeBannerQRCode(data: Data) {
+
         val promotion = data.promotion
         val position = 4
         sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(data) else WifiCell()

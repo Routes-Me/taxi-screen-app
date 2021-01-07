@@ -30,7 +30,7 @@ class App : Application() {
     var vehicleId: String? = null
     var institutionName: String? = null
     private var trackingService: TrackingService? = null
-    private lateinit var signalRReconnectionJob: Job
+    private lateinit  var signalRReconnectionJob: Job
 
     companion object {
         @get:Synchronized
@@ -48,7 +48,6 @@ class App : Application() {
 
     fun startTrackingService(){
         val isRegistered = !getDeviceId().isNullOrEmpty()
-
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
             ContextCompat.startForegroundService(instance,intent)
@@ -95,7 +94,7 @@ class App : Application() {
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "TrackingService") {
                 trackingService = null
-                signalRReconnectionJob.apply {
+                signalRReconnectionJob?.apply {
                     if (isActive) cancel()
                     Log.d("signalRReconnectionJob-Status","$isActive")
                 }
