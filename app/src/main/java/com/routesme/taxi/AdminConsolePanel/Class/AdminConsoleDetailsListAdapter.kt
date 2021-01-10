@@ -24,7 +24,7 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity, private val
 
             when(actionCell.action){
 
-                Actions.LogOff.title -> adminConsoleHelper.logOff()
+                Actions.LogOff.title -> adminConsoleHelper.sendLogOffRequestToActvitiy()
             }
         }
         else -> DetailActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_action_cell_row, parent, false)).listen { pos, _ ->

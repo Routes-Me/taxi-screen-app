@@ -98,13 +98,13 @@ class AdminConsolePanel : AppCompatActivity() {
                 adminConsoleHelper?.deviceId()?.let {deviceID ->
 
                     adminConsoleHelper?.vehicleId()?.let {vehicleId ->
-                        Log.d("Report","${getJsonArray()}")
+                        //Log.d("Report","${getJsonArray()}")
                         contentViewModel.postReport(this,getJsonArray(),deviceID).observe(this , Observer<ReportResponse> {
 
                             if(it.isSuccess){
 
                                 val records_deleted = advertisementTracking.deleteAllData()
-                                Log.d("Report","${records_deleted}")
+                                //Log.d("Report","${records_deleted}")
                                 unlinkDeviceFromServer(deviceID,vehicleId)
 
                             }else{
@@ -129,9 +129,9 @@ class AdminConsolePanel : AppCompatActivity() {
                 contentViewModel.unlinkDevice(vehicleId, deviceId,this).observe(this, Observer<UnlinkResponse> {
                     if (it.isSuccess) {
                         dialog?.hide()
-                        sharedPreferences?.edit()?.clear()?.apply()
-                        startActivity(Intent(this, LoginActivity::class.java))
-                        finish()
+
+                        adminConsoleHelper?.logOff()
+
                     }else{
                         dialog?.hide()
                     }

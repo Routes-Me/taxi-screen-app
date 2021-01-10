@@ -8,7 +8,7 @@ import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import java.sql.Timestamp
 
 @Dao
-interface AdvertisementDoa {
+interface  AdvertisementDoa {
 
     @Insert
     fun insertAdvertisement(advertisement: AdvertisementTracking)

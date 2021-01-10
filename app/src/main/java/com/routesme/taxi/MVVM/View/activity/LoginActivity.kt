@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -114,6 +115,7 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
+                    Log.d("Token","${token}")
                     saveDataIntoSharedPreference(token)
                     openRegistrationActivity()
                 } else {

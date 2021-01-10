@@ -188,13 +188,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
 
-
     private fun getJsonArray(): JSONObject {
         getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
         val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
-            //Log.d("Report","ID ${it.id}, AD ${it.advertisementId}, Date ${it.date}, Mo ${it.morning}, No ${it.noon}, Ev ${it.evening}, Ni ${it.evening}")
 
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date)
@@ -231,7 +229,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     override fun onDestroy() {
         player?.release()
-        player = null
         turnOffHotspot()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         super.onDestroy()
@@ -250,6 +247,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
+
     }
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
