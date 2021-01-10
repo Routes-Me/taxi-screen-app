@@ -8,8 +8,6 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -31,7 +29,6 @@ import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
-import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.ReportResponse
@@ -44,8 +41,8 @@ import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.json.JSONObject
@@ -80,14 +77,16 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
+        deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         submitApplicationVersion()
+        checkDateAndUploadResult()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        checkDateAndUploadResult()
         addFragments()
+
     }
 
 
@@ -108,7 +107,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         if (currentVersion.isNotEmpty()){
             if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
-                deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+                Log.d("Report","${deviceId}")
                 val packageName = BuildConfig.APPLICATION_ID
                 deviceId?.let {
                     val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
@@ -166,43 +165,39 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     private fun checkDateAndUploadResult(){
         from_date?.let {from_date->
-           // Log.d("Report","${getJsonArray()}")
             if(DateHelper.instance.checkDate(from_date.toLong())){
-
                 val postReportViewModel: ContentViewModel by viewModels()
-                postReportViewModel.postReport(this,getJsonArray(),deviceId!!).observe(this , Observer<ReportResponse> {
-
-                    if(it.isSuccess){
-
-                        advertisementTracking.deleteData(DateHelper.instance.getCurrentDate())
-                        editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                        editor?.commit()
-
+                getJsonArray()?.let { list->
+                    deviceId?.let {deviceId->
+                        postReportViewModel.postReport(this,list,deviceId).observe(this , Observer<ReportResponse> {
+                            if(it.isSuccess){
+                                advertisementTracking.deleteData(DateHelper.instance.getCurrentDate())
+                                editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                                editor?.commit()
+                            }
+                        })
                     }
-
-                })
-
+                }
             }
-
         }
     }
 
 
-    private fun getJsonArray(): JSONObject {
+    private fun getJsonArray(): JsonArray {
         getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
-        val jsonObject = JSONObject()
+       // val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
-
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date)
-                addProperty("advertisementId",it.advertisementId)
+                addProperty("advertisementId",it.advertisementId.toString())
+                addProperty("mediaType",it.media_type)
                 add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
             }
             jsonArray.add(jsonObject)
         }
 
-        return jsonObject.put("analytics",jsonArray)
+        return jsonArray
 
     }
 
@@ -210,16 +205,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val jsonObject = JsonObject()
         val jsonArray = JsonArray()
         if(morning != 0){
-            jsonObject.addProperty("mo",morning)
+            jsonObject.addProperty("period","mo")
+            jsonObject.addProperty("value",morning)
         }
         if(noon != 0){
-            jsonObject.addProperty("no",noon)
+            jsonObject.addProperty("period","no")
+            jsonObject.addProperty("value",noon)
         }
         if(evening != 0){
-            jsonObject.addProperty("ev",evening)
+            jsonObject.addProperty("period","ev")
+            jsonObject.addProperty("value",evening)
         }
         if(night != 0){
-            jsonObject.addProperty("ni",night)
+            jsonObject.addProperty("period","ni")
+            jsonObject.addProperty("value",night)
         }
         jsonArray.add(jsonObject)
 

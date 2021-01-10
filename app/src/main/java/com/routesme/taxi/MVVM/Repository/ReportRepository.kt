@@ -8,23 +8,25 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.routesme.taxi.MVVM.API.RestApiService
 import com.routesme.taxi.MVVM.Model.*
+import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class ReportRepository(context:Context,data: JSONObject){
+class ReportRepository(context:Context,data: JsonArray){
 
     private val reportResponse = MutableLiveData<ReportResponse>()
 
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
-    fun postReport(data: JSONObject,deviceId:String): MutableLiveData<ReportResponse> {
+    fun postReport(data: JsonArray,deviceId:String): MutableLiveData<ReportResponse> {
+        //Log.d("Report","${deviceId},${data}")
         val call = thisApiCorService.postReport(data,deviceId)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("Report","${response.code()}")
+                //Log.d("Report","${response.code()},${response.message()},${call.request().url()}")
                 if(response.code() == 201){
                     val content = Gson().fromJson<Report>(response.body(), Report::class.java)
                     reportResponse.value = ReportResponse(content.statusCode)

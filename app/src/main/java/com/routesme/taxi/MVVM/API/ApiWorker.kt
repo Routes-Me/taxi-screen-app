@@ -5,6 +5,7 @@ import android.content.Context
 import com.google.gson.GsonBuilder
 import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
@@ -15,7 +16,6 @@ class ApiWorker(val context: Context) {
 
     private var mClient: OkHttpClient? = null
     private var mGsonConverter: GsonConverterFactory? = null
-
     val client: OkHttpClient
         @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
         get() {

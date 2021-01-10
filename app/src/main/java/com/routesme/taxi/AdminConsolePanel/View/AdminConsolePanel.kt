@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
 import java.sql.SQLException
@@ -73,6 +74,7 @@ class AdminConsolePanel : AppCompatActivity() {
     }
 
     override fun onStop() {
+        dialog?.dismiss()
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
@@ -138,37 +140,42 @@ class AdminConsolePanel : AppCompatActivity() {
                 })
     }
 
-    private fun getJsonArray(): JSONObject {
+    private fun getJsonArray(): JsonArray {
         getList =  advertisementTracking.getAllList()
-        val jsonObject = JSONObject()
+        //val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
 
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date)
-                addProperty("advertisementId",it.advertisementId)
+                addProperty("advertisementId",it.advertisementId.toString())
+                addProperty("mediaType",it.media_type)
                 add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
             }
             jsonArray.add(jsonObject)
         }
 
-        return jsonObject.put("analytics",jsonArray)
+        return jsonArray
 
     }
     private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
         val jsonObject = JsonObject()
         val jsonArray = JsonArray()
         if(morning != 0){
-            jsonObject.addProperty("mo",morning)
+            jsonObject.addProperty("period","mo")
+            jsonObject.addProperty("value",morning)
         }
         if(noon != 0){
-            jsonObject.addProperty("no",noon)
+            jsonObject.addProperty("period","no")
+            jsonObject.addProperty("value",noon)
         }
         if(evening != 0){
-            jsonObject.addProperty("ev",evening)
+            jsonObject.addProperty("period","ev")
+            jsonObject.addProperty("value",evening)
         }
         if(night != 0){
-            jsonObject.addProperty("ni",night)
+            jsonObject.addProperty("period","ni")
+            jsonObject.addProperty("value",night)
         }
         jsonArray.add(jsonObject)
 

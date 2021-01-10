@@ -14,7 +14,7 @@ interface  AdvertisementDoa {
     fun insertAdvertisement(advertisement: AdvertisementTracking)
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day  FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
+    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type  FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
     fun getItem(id:Int,timestamp: Long):AdvertisementTracking?
 
     @Transaction
@@ -38,11 +38,11 @@ interface  AdvertisementDoa {
     fun getLastItem(id:Int,timestamp: Long):AdvertisementTracking
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate  ORDER BY date ASC" )
+    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate  ORDER BY date ASC" )
     fun getList(currentDate:Long):List<AdvertisementTracking>
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day FROM tbl_advertisement_tracking  ORDER BY date ASC" )
+    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking  ORDER BY date ASC" )
     fun getAllList():List<AdvertisementTracking>
 
     @Query("DELETE FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate")

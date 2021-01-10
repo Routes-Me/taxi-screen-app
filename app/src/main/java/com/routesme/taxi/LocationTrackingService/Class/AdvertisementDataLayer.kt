@@ -12,7 +12,7 @@ class AdvertisementDataLayer(){
     private val advertisement = trackingDatabase.advertisementTracking()
     private val MIN = 100000000
 
-    fun insertOrUpdateRecords(id:Int,timeStamp:Long,period:Period){
+    fun insertOrUpdateRecords(id:Int,timeStamp:Long,period:Period,type:String){
 
         var analysisRecord = advertisement.getItem(id,timeStamp/MIN)
 
@@ -22,7 +22,7 @@ class AdvertisementDataLayer(){
 
         }else{
 
-            advertisement.insertAdvertisement(AdvertisementTracking(advertisementId = id,date = timeStamp,morning = 0,noon = 0,evening = 0,night = 0,time_in_day = timeStamp/MIN))
+            advertisement.insertAdvertisement(AdvertisementTracking(advertisementId = id,date = timeStamp,morning = 0,noon = 0,evening = 0,night = 0,time_in_day = timeStamp/MIN,media_type =type ))
             var lastItem = advertisement.getLastItem(id,timeStamp/MIN)
             update(lastItem.id,period)
 

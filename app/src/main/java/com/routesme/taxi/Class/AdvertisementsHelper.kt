@@ -29,6 +29,7 @@ import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
+import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -89,7 +90,7 @@ class AdvertisementsHelper {
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.toInt()?.let {
-                        advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod())
+                        advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
                     }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
                     if (firstTime || currentImageIndex != 0){
@@ -141,7 +142,7 @@ class AdvertisementsHelper {
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
                         videos[it].contentId?.toInt()?.let {
-                            advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod())
+                            advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
                         }
                     }
 
