@@ -140,19 +140,13 @@ class ContentFragment : Fragment() {
                     val images = it.imageList.toList()
                     val videos = it.videoList.toList()
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
-
                         startThread(getString(R.string.no_data_found))
                         return@Observer
                     }else{
-                        //isDataFetched = true
                         if(isAlive) removeThread()
-
                         if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext, images, mView.advertisementsImageView, mView.advertisementsImageView2, displayImageJob)
-                        //if (!images.isNullOrEmpty()) displayImage(images, mView.advertisementsImageView, mView.advertisementsImageView2)
                         videoProgressJob?.let { coroutineProgressJob->
-
                             AdvertisementsHelper.instance.configuringMediaPlayer(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,coroutineProgressJob)
-
                         }
 
                     }
@@ -200,42 +194,6 @@ class ContentFragment : Fragment() {
             }
         }
     }
-
-    /*private fun displayImage(images: List<Data>, imageView: ImageView, imageView2: ImageView){
-        imageView.cameraDistance = 12000f
-        imageView.pivotX = imageView.height * 0.7f
-        imageView.pivotY = imageView.height / 0.7f
-        var currentImageIndex = 0
-        var firstTime = false
-        CoroutineScope(Dispatchers.Main + displayImageJob!!).launch {
-            while(isActive) {
-                if (currentImageIndex < images.size) {
-                    if (currentImageIndex > 0){
-                        val previousImageIndex = currentImageIndex - 1
-                        val previousUri = Uri.parse(images[previousImageIndex].url)
-                        AdvertisementsHelper.glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
-                    }
-                    val newUri = Uri.parse(images[currentImageIndex].url)
-                    images[currentImageIndex].contentId?.toInt()?.let {
-                        AdvertisementsHelper.instance.advertisementDataLayer.insertOrUpdateRecords(it, DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod())
-                    }
-                    AdvertisementsHelper.glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
-                    if (firstTime || currentImageIndex != 0){
-                        firstTime = true
-                        AdvertisementsHelper.instance.setImageAnimation(mContext,imageView,imageView2)
-                        EventBus.getDefault().post(images[currentImageIndex])
-                    }
-                    currentImageIndex++
-                    if (currentImageIndex >= images.size) {
-                        currentImageIndex = 0
-                    }
-                }
-
-                delay(15 * 1000)
-            }
-        }
-
-    }*/
 
     private fun removeThread(){
 
