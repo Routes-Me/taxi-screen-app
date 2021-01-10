@@ -182,7 +182,6 @@ class AdvertisementsHelper {
                         }
                         Player.STATE_ENDED -> {
 
-                            Log.e(TAG ,"STATE_ENDED")
                         }
                     }
                 }
@@ -190,22 +189,16 @@ class AdvertisementsHelper {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE ->{
                             if(error.sourceException.message == "Response code: 404"){
-
                                 player?.seekTo(player!!.getNextWindowIndex(), 0);
-                                //if(videos.indexOf(videos.first()) == 0) progressbarRunnable
+
                             }
 
                         }
                         ExoPlaybackException.TYPE_RENDERER ->{
 
-                            Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
-                            //stop()
 
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED ->{
-
-                            Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
-                           // stop()
 
                         }
                     }

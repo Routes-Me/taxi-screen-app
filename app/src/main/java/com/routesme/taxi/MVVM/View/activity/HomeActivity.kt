@@ -166,7 +166,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     private fun checkDateAndUploadResult(){
         from_date?.let {from_date->
-            Log.d("Report","${getJsonArray()}")
+           // Log.d("Report","${getJsonArray()}")
             if(DateHelper.instance.checkDate(from_date.toLong())){
 
                 val postReportViewModel: ContentViewModel by viewModels()

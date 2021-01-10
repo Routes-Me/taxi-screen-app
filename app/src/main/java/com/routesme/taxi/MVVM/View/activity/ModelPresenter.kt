@@ -21,7 +21,7 @@ class ModelPresenter : AppCompatActivity() {
     private fun startActivity() {
 
         val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
-        Log.d("IsRegistered","${isRegistered}")
+        //Log.d("IsRegistered","${isRegistered}")
         if (isRegistered) {
             openActivity(HomeActivity())
         } else {
