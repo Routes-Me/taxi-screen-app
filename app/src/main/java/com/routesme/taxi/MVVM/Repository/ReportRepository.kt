@@ -40,7 +40,6 @@ class ReportRepository(context:Context,data: JsonArray){
 
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                Log.d("Date","Failure")
                 reportResponse.value = ReportResponse(mThrowable = throwable)
             }
         })

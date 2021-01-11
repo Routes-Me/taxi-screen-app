@@ -1,6 +1,7 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.routesme.taxi.MVVM.API.RestApiService
@@ -20,6 +21,7 @@ class SubmitApplicationVersionRepository(val context: Context) {
         val call = thisApiCorService.submitApplicationVersion(deviceId, submitApplicationVersionCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                //Log.d("Submit Version","${response.code()},${response.message()},${call.request().url()}")
                 if (response.isSuccessful) {
                     submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(isSuccess = true)
                 } else{

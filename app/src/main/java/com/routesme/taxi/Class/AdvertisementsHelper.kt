@@ -154,10 +154,10 @@ class AdvertisementsHelper {
                         Player.STATE_IDLE -> {
 
                             player?.prepare()
-                            Log.e(TAG ,"IDLE")
+                            //Log.e(TAG ,"IDLE")
                         }
                         Player.STATE_BUFFERING -> {
-                            Log.e(TAG ,"STATE_BUFFERING")
+                            //Log.e(TAG ,"STATE_BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
@@ -167,7 +167,7 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
-                            Log.e(TAG ,"STATE_BUFFERING")
+                           // Log.e(TAG ,"STATE_BUFFERING")
                             if(isPlayingDemoVideo) {
                                 EventBus.getDefault().post(DemoVideo(false,""))
                                 isPlayingDemoVideo = false

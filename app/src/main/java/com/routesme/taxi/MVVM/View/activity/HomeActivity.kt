@@ -107,7 +107,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         if (currentVersion.isNotEmpty()){
             if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
-                Log.d("Report","${deviceId}")
+                //Log.d("Report","${deviceId}")
                 val packageName = BuildConfig.APPLICATION_ID
                 deviceId?.let {
                     val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
@@ -122,7 +122,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
-                //Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
+
                 if (it.isSuccess) {
                     //Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
@@ -185,11 +185,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
 
     private fun getJsonArray(): JsonArray {
         getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
-       // val jsonObject = JSONObject()
         val jsonArray = JsonArray()
         getList?.forEach {
             val jsonObject = JsonObject().apply{
-                addProperty("date",it.date)
+                addProperty("date",it.date/1000)
                 addProperty("advertisementId",it.advertisementId.toString())
                 addProperty("mediaType",it.media_type)
                 add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
