@@ -1,6 +1,7 @@
 package com.routesme.taxi.LocationTrackingService.Class
 
 import android.util.Log
+import com.routesme.taxi.LocationTrackingService.Database.AdvertisementDatabase
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.uplevels.App
@@ -8,7 +9,7 @@ import com.routesme.taxi.utils.Period
 
 class AdvertisementDataLayer(){
 
-    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
+    private val trackingDatabase = AdvertisementDatabase.invoke(App.instance)
     private val advertisement = trackingDatabase.advertisementTracking()
     private val MIN = 100000000
 
