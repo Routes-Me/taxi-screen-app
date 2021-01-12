@@ -117,6 +117,7 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
+                    //Log.d("Token","${token}")
                     saveDataIntoSharedPreference(token)
                     openRegistrationActivity()
 
