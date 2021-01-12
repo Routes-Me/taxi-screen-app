@@ -8,13 +8,12 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
-import android.net.Network
-import android.net.NetworkRequest
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.work.WorkManager
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -25,30 +24,28 @@ import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
+import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
-import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
-import com.routesme.taxi.LocationTrackingService.Model.VideoJsonObject
-import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
-import com.routesme.taxi.MVVM.Model.IModeChanging
-import com.routesme.taxi.MVVM.Model.ReportResponse
-import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
-import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
+import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
+import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
+import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
+import com.routesme.taxi.MVVM.ViewModel.TokenViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
+
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.text.SimpleDateFormat
-import java.util.*
+import java.security.Key
 
 class HomeActivity : PermissionsActivity(), IModeChanging {
     private var sharedPreferences: SharedPreferences? = null
@@ -60,11 +57,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
-    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
-    val locationJsonArray = JsonArray()
     private  var from_date:String?=null
-    private val videoTrackingFeed = trackingDatabase.videoTracking()
-    private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
+    private  var deviceId:String?=null
+    private val advertisementTracking = AdvertisementDataLayer()
+    private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -75,31 +71,24 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             setTheme(R.style.FullScreen_Dark_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
-
         setSystemUiVisibility()
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
+        deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         submitApplicationVersion()
+        checkDateAndUploadResult()
         initializePlayer()
         sideMenuFragment = SideMenuFragment()
+        turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
-        checkDateAndUploadResult()
-        val calendar = Calendar.getInstance().timeInMillis
-        Log.d("Time","${calendar}")
-        /*from_date?.let {
-
-            videoTrackingFeed.getVideoAnalaysisReport(it,it).forEach {
-
-                Log.d("Report Testing","ID ${it.id}, advertisement ID ${it.advertisementId}, device_id ${it.deviceId}, date ${it.date}, count ${it.count}, Length ${it.length}, media_type ${it.mediaType}")
-            }
-
-        }*/
-
         addFragments()
+
     }
+
+
 
     private fun setSystemUiVisibility() {
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -108,6 +97,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -116,7 +106,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         if (currentVersion.isNotEmpty()){
             if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
-                val deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+                //Log.d("Report","${deviceId}")
                 val packageName = BuildConfig.APPLICATION_ID
                 deviceId?.let {
                     val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
@@ -126,12 +116,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         }
     }
 
+
+
     private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
         //Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
-                //Log.d("SubmitApplicationVersionResponse","mResponseErrors: ${it.mResponseErrors?.errors?.first()?.statusCode}")
+
                 if (it.isSuccess) {
                     //Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
@@ -140,12 +132,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         })
     }
 
+
+
     private fun initializePlayer() {
         player = SimpleExoPlayer.Builder(this).build()
         demoVideoPlayer.player = player
         val mediaSource = buildRawMediaSource()
         mediaSource?.let {
-            player!!.apply {
+            player?.apply {
                 setMediaSource(it)
                 prepare()
                 repeatMode = Player.REPEAT_MODE_ONE
@@ -166,68 +160,99 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     fun playVideo(){
+
         player?.play()
+
     }
     fun stopVideo(){
+
         player?.pause()
+
     }
 
     private fun checkDateAndUploadResult(){
         from_date?.let {from_date->
-            if(DisplayManager.instance.checkDate(from_date)){
+            if(DateHelper.instance.checkDate(from_date.toLong())){
                 val postReportViewModel: ContentViewModel by viewModels()
-                postReportViewModel.postReport(this,getJsonArray(videoTrackingFeed.getVideoAnalaysisReport(from_date,getCurrentDate()))).observe(this , Observer<ReportResponse> {
-                    if(it.isSuccess){
-
-                       videoTrackingFeed.deleteTable(from_date,getCurrentDate())
-                        editor?.putString(SharedPreferencesHelper.from_date, getCurrentDate())
-                        editor?.commit()
-
+                getJsonArray()?.let { list->
+                    deviceId?.let {deviceId->
+                        postReportViewModel.postReport(this,list,deviceId).observe(this , Observer<ReportResponse> {
+                            if(it.isSuccess){
+                                advertisementTracking.deleteData(DateHelper.instance.getCurrentDate())
+                                editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                                editor?.commit()
+                            }
+                        })
                     }
-                    else{
-
-                    }
-                })
-
+                }
             }
+        }
+    }
 
+
+    private fun getJsonArray(): JsonArray {
+        getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
+        val jsonArray = JsonArray()
+        getList?.forEach {
+            val jsonObject = JsonObject().apply{
+                addProperty("date",it.date/1000)
+                addProperty("advertisementId",it.advertisementId.toString())
+                addProperty("mediaType",it.media_type)
+                add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+            }
+            jsonArray.add(jsonObject)
         }
 
+        return jsonArray
 
     }
 
-    fun getCurrentDate() = SimpleDateFormat("dd-M-yyyy").format(Date(System.currentTimeMillis()-24*60*60*1000)).toString()
-
-
-    private fun getJsonArray(data: List<VideoTracking>): JsonArray {
-        val videoJsonArrayJsonArray = JsonArray()
-        for (v in data) {
-            val locationJsonObject: JsonObject = VideoJsonObject(v).toJSON()
-            locationJsonArray.add(locationJsonObject)
+    private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
+        val jsonObject = JsonObject()
+        val jsonArray = JsonArray()
+        if(morning != 0){
+            jsonObject.addProperty("period","mo")
+            jsonObject.addProperty("value",morning)
         }
-        return locationJsonArray
+        if(noon != 0){
+            jsonObject.addProperty("period","no")
+            jsonObject.addProperty("value",noon)
+        }
+        if(evening != 0){
+            jsonObject.addProperty("period","ev")
+            jsonObject.addProperty("value",evening)
+        }
+        if(night != 0){
+            jsonObject.addProperty("period","ni")
+            jsonObject.addProperty("value",night)
+        }
+        jsonArray.add(jsonObject)
+
+        return jsonArray
+
     }
 
     override fun onDestroy() {
+        player?.release()
+        turnOffHotspot()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         super.onDestroy()
     }
 
     override fun onStart() {
-        registerNetworkCallback(true)
         EventBus.getDefault().register(this)
         super.onStart()
     }
 
     override fun onStop() {
-        registerNetworkCallback(false)
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
     private fun addFragments() {
-        //Log.d("Network-Status","addFragments")
+
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
+
     }
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
@@ -249,39 +274,16 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         removeFragments()
         recreate()
     }
-    private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network?) {
-            if (!isHotspotAlive) turnOnHotspot()
-            try {
-                this@HomeActivity.runOnUiThread(java.lang.Runnable {
-
-                    activityCover.visibility = View.GONE
-                    activityVideoCover.visibility = View.GONE
-                    demoVideoPlayer.visibility = View.GONE
-                    if(player!!.isPlaying){
-                        stopVideo()
-                    }
-                })
-
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-        }
-        override fun onLost(network: Network?) {
-            //Log.d("Network-Status","onLost")
-            if (isHotspotAlive) turnOffHotspot()
-        }
-    }
 
     private fun turnOnHotspot() {
-        //Log.d("Network-Status","turnOnHotspot")
+
         val intent = Intent(getString(R.string.intent_action_turnon))
         sendImplicitBroadcast(intent)
         isHotspotAlive = true
     }
 
     private fun turnOffHotspot() {
-        //Log.d("Network-Status","turnOffHotspot")
+
         val intent = Intent(getString(R.string.intent_action_turnoff))
         sendImplicitBroadcast(intent)
         isHotspotAlive = false
@@ -294,22 +296,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             val cn = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
             explicit.component = cn
             this.sendBroadcast(explicit)
-        }
-    }
-
-    private fun registerNetworkCallback(register: Boolean) {
-        if (register) {
-            try {
-                connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-        } else {
-            try {
-                connectivityManager.unregisterNetworkCallback(networkCallback)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
         }
     }
 

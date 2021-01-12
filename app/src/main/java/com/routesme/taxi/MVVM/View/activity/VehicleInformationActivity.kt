@@ -57,9 +57,10 @@ class VehicleInformationActivity : AppCompatActivity() {
             setHomeAsUpIndicator(R.drawable.ic_close_grey)
         }
     }
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
         // handle arrow click here
-        if (item?.itemId == android.R.id.home) {
+        if (item.itemId == android.R.id.home) {
             finish()
         }
         return super.onOptionsItemSelected(item)
@@ -189,5 +190,10 @@ class VehicleInformationActivity : AppCompatActivity() {
         for (error in errors) {
             operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), "Error message: ${error.detail}")
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        dialog?.dismiss()
     }
 }

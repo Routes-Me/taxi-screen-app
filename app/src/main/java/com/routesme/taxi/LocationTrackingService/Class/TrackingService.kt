@@ -10,14 +10,16 @@ import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
+import kotlinx.coroutines.*
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private var hubConnection: HubConnection? = null
     private var locationReceiver: LocationReceiver? = null
-    private var handlerThread: HandlerThread? = null
-    private var mHandler: Handler? = null
+    private lateinit var signalRReconnectionJob: Job
+    //private var handlerThread: HandlerThread? = null
+    //private var mHandler: Handler? = null
 
     companion object {
         @get:Synchronized
@@ -41,9 +43,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        mHandler?.removeCallbacks(reconnection)
+        //mHandler?.removeCallbacks(reconnection)
         locationReceiver?.removeLocationUpdates()
         instance.hubConnection?.disconnect()
+
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -61,7 +64,6 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
-
                 instance.hubConnection?.connect()
             }
         }
@@ -118,41 +120,36 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onMessage(message: HubMessage) {
         Log.d("send-location-testing","onMessage: ${message.arguments.toString()}")
+        Log.d("SignalR-message","${message}")
     }
 
     override fun onEventMessage(message: HubMessage) {
+
+        Log.d("SignalR-message","${message}")
     }
 
     override fun onDisconnected() {
         locationReceiver?.isHubConnected(false)
+
         instance.hubConnection?.connect()
     }
 
     override fun onError(exception: Exception) {
         locationReceiver?.isHubConnected(false)
-        if (handlerThread == null){
-            handlerThread = HandlerThread("reconnection").apply {
-                start()
-                if (mHandler == null) {
-                    mHandler = Handler(this.looper).apply {
-                        postDelayed(reconnection, 1 * 60 * 1000)
-                    }
-                }
+        //Log.d("signalRReconnectionJob-Status","Hub connection error")
+        signalRReconnection()
+    }
+    private fun signalRReconnection(){
+        CoroutineScope(Dispatchers.IO + this.signalRReconnectionJob).launch {
+            if (isActive){
+                Log.d("signalRReconnectionJob-Status","Lunched")
+                delay(1 * 60 * 1000)
+                Log.d("signalRReconnectionJob-Status","isActive")
+                hubConnection?.connect()
             }
         }
     }
-
-    private val reconnection: Runnable = Runnable { reconnect() }
-
-    private fun reconnect() {
-        if (mHandler != null){
-            mHandler?.removeCallbacks(reconnection)
-            mHandler = null
-        }
-        if (handlerThread != null) {
-            handlerThread?.quit()
-            handlerThread = null
-        }
-        instance.hubConnection?.connect()
+    fun setSignalRReconnectionJob(signalRReconnectionJob: Job) {
+        this.signalRReconnectionJob = signalRReconnectionJob
     }
 }

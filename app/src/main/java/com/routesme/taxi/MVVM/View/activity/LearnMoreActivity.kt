@@ -46,7 +46,7 @@ class LearnMoreActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
     private fun backToLoginScreen() {
-        App.instance!!.isNewLogin = true
+        App.instance.isNewLogin = true
         startActivity(Intent(this@LearnMoreActivity, LoginActivity::class.java))
         finish()
     }

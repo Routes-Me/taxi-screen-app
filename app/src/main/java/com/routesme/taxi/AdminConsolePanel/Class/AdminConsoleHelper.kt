@@ -10,11 +10,13 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.routesme.taxi.AdminConsolePanel.Model.DetailActionStatus
 import com.routesme.taxi.AdminConsolePanel.Model.LogOff
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.BuildConfig
+import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import org.greenrobot.eventbus.EventBus
 import kotlin.collections.ArrayList
 
@@ -61,12 +63,19 @@ class AdminConsoleHelper(val activity: Activity) {
     }
     fun openAppGeneralSettings(){
         activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", appPackageName, null)))
-        // activity.startActivity(Intent().setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", appPackageName, null)))
     }
 
-    fun logOff() {
+    fun sendLogOffRequestToActvitiy() {
         EventBus.getDefault().post(LogOff(true))
 
+    }
+    fun logOff(){
+
+        sharedPreferences?.edit()?.clear()?.apply()
+        activity.apply {
+            startActivity(Intent(this,LoginActivity::class.java))
+            finish()
+        }
     }
     fun isLocationProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)

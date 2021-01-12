@@ -56,7 +56,7 @@ class HomeScreenHelper(val activity: Activity) {
         })
     }
     private fun openAdminConsolePanel() {
-      activity.apply { startActivity(Intent(activity,AdminConsolePanel::class.java)); finish() }
+      activity.apply { startActivity(Intent(activity,AdminConsolePanel::class.java)); }
     }
 
     private fun exitPassword(): String? = Helper.getConfigValue("exitPassword", R.raw.config)

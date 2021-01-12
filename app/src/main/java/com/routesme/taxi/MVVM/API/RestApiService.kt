@@ -9,6 +9,8 @@ import com.routesme.taxi.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.R
+import org.json.JSONArray
+import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
@@ -18,7 +20,7 @@ interface RestApiService {
     @PUT("devices/{id}/applications")
     fun submitApplicationVersion(@Path("id") deviceId: String, @Body submitApplicationVersionCredentials: SubmitApplicationVersionCredentials): Call<JsonElement>
 
-    @Headers("application: screen")
+
     @POST("signin")
     fun signIn(@Body signInCredentials: SignInCredentials): Call<JsonElement>
 
@@ -34,8 +36,11 @@ interface RestApiService {
     @GET("contents")
     fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
-    @POST("analytics/playbacks")
-    fun postReport(@Body data: JsonArray): Call<JsonElement>
+    @POST("analytics/devices/{deviceId}/playbacks")
+    fun postReport(@Body data: JsonArray, @Path("deviceId") deviceId: String): Call<JsonElement>
+
+    @POST("analytics/devices/playbacks")
+    fun refreshToken(): Call<JsonElement>
 
     @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
     fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>

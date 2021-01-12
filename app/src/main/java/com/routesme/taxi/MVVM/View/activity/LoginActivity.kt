@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -19,15 +20,17 @@ import androidx.lifecycle.Observer
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
+import com.auth0.android.jwt.Claim
+import com.auth0.android.jwt.JWT
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.MVVM.Model.Error
 import com.routesme.taxi.MVVM.Model.LoginResponse
 import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
+import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
-import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 import kotlinx.android.synthetic.main.login_screen.*
@@ -114,8 +117,10 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
+                    //Log.d("Token","${token}")
                     saveDataIntoSharedPreference(token)
                     openRegistrationActivity()
+
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
@@ -143,10 +148,15 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun saveDataIntoSharedPreference(token: String) {
+    private fun saveDataIntoSharedPreference(access_token: String) {
         val editor = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).edit()
-        editor.putString(SharedPreferencesHelper.token, token).apply()
+        editor.apply{
+            putString(SharedPreferencesHelper.token, access_token)
+        }.apply()
+
     }
+
+
 
     private fun openRegistrationActivity() {
         startActivity(Intent(this, RegistrationActivity::class.java))

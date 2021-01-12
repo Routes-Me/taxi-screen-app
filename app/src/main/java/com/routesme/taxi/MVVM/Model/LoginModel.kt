@@ -20,6 +20,8 @@ class LoginResponse(token: String? = null, val mResponseErrors: ResponseErrors? 
         get() = (mResponseErrors == null && mThrowable == null)
 }
 
+data class RefreshModel(val access_token:String?=null,val refreshToken:String?=null,val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null):Response(mResponseErrors,mThrowable)
+
 class UnlinkResponse(val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
     val isSuccess: Boolean

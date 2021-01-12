@@ -15,19 +15,20 @@ import com.routesme.taxi.ItemAnimator
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.lang.Runnable
 import java.util.*
 
 
 class SideMenuFragment : Fragment() {
     private lateinit var mView: View
     private lateinit var mContext: Context
-    private var handlerTime: Handler? = null
     private val dateOperations = DateOperations.instance
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
-
+    private lateinit var presentJob : Job
     override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
@@ -37,14 +38,19 @@ class SideMenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
-
-        setupRecyclerView()
         super.onViewCreated(view, savedInstanceState)
+
     }
 
-    override fun onDestroy() {
-        handlerTime?.removeCallbacks(timeRunnable)
-        super.onDestroy()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        presentJob = Job()
+        setupRecyclerView()
+    }
+
+
+    override fun onDestroyView() {
+        super.onDestroyView()
     }
 
     override fun onStart() {
@@ -55,6 +61,11 @@ class SideMenuFragment : Fragment() {
     override fun onStop() {
         EventBus.getDefault().unregister(this)
         super.onStop()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        presentJob?.cancel()
     }
 
     private fun setupRecyclerView() {
@@ -77,17 +88,19 @@ class SideMenuFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-        handlerTime = Handler()
-        handlerTime?.post(timeRunnable)
-    }
+        //presentJob?.let {
+            CoroutineScope(Dispatchers.Main + presentJob).launch {
+                while (isActive){
+                    val date = Date()
+                    sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
+                    sideFragmentAdapter.notifyDataSetChanged()
+                    delay(60 * 1000)
+                }
 
-    private val timeRunnable: Runnable = object : Runnable {
-        override fun run() {
-            val date = Date()
-            sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
-            sideFragmentAdapter.notifyDataSetChanged()
-            handlerTime?.postDelayed(this, 60 * 1000)
-        }
+            }
+
+       // }
+
     }
 
     @Subscribe()
@@ -112,6 +125,7 @@ class SideMenuFragment : Fragment() {
     }
 
     private fun changeBannerQRCode(data: Data) {
+
         val promotion = data.promotion
         val position = 4
         sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(data) else WifiCell()

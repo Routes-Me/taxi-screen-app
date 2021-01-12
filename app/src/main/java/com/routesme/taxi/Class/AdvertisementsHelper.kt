@@ -1,13 +1,12 @@
 package com.routesme.taxi.Class
 
-import android.animation.AnimatorInflater
-import android.animation.AnimatorSet
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
 import android.util.Log
-import android.view.animation.*
+import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.annotation.Nullable
@@ -25,35 +24,25 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
-import com.routesme.taxi.LocationTrackingService.Model.VideoTracking
+import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
-import java.text.SimpleDateFormat
-import java.util.*
 
 class AdvertisementsHelper {
-
-    //private var qrCodeCallback: QRCodeCallback? = null
     private var player: SimpleExoPlayer? = null
-    private var displayImageHandler: Handler? = null
-    private var displayImageRunnable: Runnable? = null
-    private var progressbarHandler: Handler? = null
-    private var progressbarRunnable: Runnable? = null
     private var count = 0;
     private var isPlayingDemoVideo = false
-    var objectAnimator:ObjectAnimator?=null
-    var objectAnimator_image:ObjectAnimator?=null
-    var setOut: AnimatorSet?=null
-    var setIn:AnimatorSet?=null
-    private val trackingDatabase = TrackingDatabase.invoke(App.instance)
-    private val videoTrackingFeed = trackingDatabase.videoTracking()
-    private var TAG="ExoPlayer Error"
+    private lateinit var animatorVideo:ObjectAnimator
+    private lateinit var animatorImage:ObjectAnimator
+    public val advertisementDataLayer = AdvertisementDataLayer()
+    private var TAG="ExoPlayer_Error"
+    //private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
 
     companion object {
         @get:Synchronized
@@ -64,6 +53,8 @@ class AdvertisementsHelper {
         private val upstreamDataSourceFactory = DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))
         private val cacheDataSource = CacheDataSource.Factory().setCache(simpleCache).setUpstreamDataSourceFactory(upstreamDataSourceFactory).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         private val  mediaSourceFactory = DefaultMediaSourceFactory(cacheDataSource)
+
+
 
         private fun initializeVideoCaching(): SimpleCache {
             val maxMemory = Runtime.getRuntime().maxMemory()
@@ -79,20 +70,18 @@ class AdvertisementsHelper {
             //Log.d("memory-size","exoPlayerCacheSize: $exoPlayerCacheSize")
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
-
             return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
     }
 
-    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,device_id:Int) {
-        displayImageHandler = Handler()
+    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,job:Job) {
         imageView.cameraDistance = 12000f
         imageView.pivotX = imageView.height * 0.7f
         imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
         var firstTime = false
-        displayImageRunnable = object : Runnable {
-            override fun run() {
+        CoroutineScope(Dispatchers.Main + job).launch {
+            while(isActive) {
                 if (currentImageIndex < images.size) {
                     if (currentImageIndex > 0){
                         val previousImageIndex = currentImageIndex - 1
@@ -100,10 +89,10 @@ class AdvertisementsHelper {
                         glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = images[currentImageIndex].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 15,mediaType = Type.IMAGE.media_type,count = 1))
-
+                    images[currentImageIndex].contentId?.toInt()?.let {
+                        advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
+                    }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
-
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         setImageAnimation(context,imageView,imageView2)
@@ -114,25 +103,25 @@ class AdvertisementsHelper {
                         currentImageIndex = 0
                     }
                 }
-                displayImageHandler?.postDelayed(this, 15 * 1000)
+
+                delay(15 * 1000)
             }
         }
-        displayImageHandler?.post(displayImageRunnable)
+
     }
 
-    fun displayVideos(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id:Int) {
-        progressbarHandler = Handler()
-        setOut = AnimatorInflater.loadAnimator(context, R.animator.card_flip_upper_out) as AnimatorSet?
-        setIn = AnimatorInflater.loadAnimator(context,R.animator.card_flip_upper_in) as AnimatorSet?
-        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,device_id)
+    fun configuringMediaPlayer (context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,videoProgressJob:Job) {
+
+        player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,videoProgressJob)
+
     }
 
 
-    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,device_id:Int): SimpleExoPlayer {
+    private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar, relativeLayout: RelativeLayout, relativeLayout2: RelativeLayout, videoProgressJob: Job): SimpleExoPlayer {
         relativeLayout.setCameraDistance(12000f)
         relativeLayout.pivotX = 0.0f
         relativeLayout.pivotY = relativeLayout.height / 0.7f
-        val progressbarRunnable = videoProgressbarRunnable(progressBar)
+        videoProgressbarRunnable(progressBar,videoProgressJob)
         val defaultTrackSelector = DefaultTrackSelector(context)
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         val player = SimpleExoPlayer.Builder(context).setMediaSourceFactory(mediaSourceFactory).setTrackSelector(defaultTrackSelector).build().apply {
@@ -141,21 +130,23 @@ class AdvertisementsHelper {
             setMediaItems(mediaItems)
             repeatMode = Player.REPEAT_MODE_ALL
             playWhenReady = true
-            play()
             prepare()
+            play()
             volume = 0f
-            videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[0].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 30,mediaType = Type.VIDEO.media_type,count = 1))
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
-                    val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                    var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    videoTrackingFeed.insertVideoTrackingDetails(VideoTracking(advertisementId = videos[currentMediaItemId].contentId!!.toInt(),date = DisplayManager.instance.getCurrentDate(),deviceId = device_id,length = 30,mediaType =  Type.VIDEO.media_type,count = 1))
                     setAnimation(context,relativeLayout,relativeLayout2)
-                }
 
-                override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                    if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
+                    currentMediaItemId.let {
+                        videos[it].contentId?.toInt()?.let {
+                            advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
+                        }
+                    }
 
-                    super.onTimelineChanged(timeline, reason)
+
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
@@ -163,10 +154,10 @@ class AdvertisementsHelper {
                         Player.STATE_IDLE -> {
 
                             player?.prepare()
-
+                            //Log.e(TAG ,"IDLE")
                         }
                         Player.STATE_BUFFERING -> {
-
+                            //Log.e(TAG ,"STATE_BUFFERING")
                             count++
                             if(count >= 5 ){
                                 count = 0
@@ -176,7 +167,7 @@ class AdvertisementsHelper {
 
                         }
                         Player.STATE_READY -> {
-
+                           // Log.e(TAG ,"STATE_BUFFERING")
                             if(isPlayingDemoVideo) {
                                 EventBus.getDefault().post(DemoVideo(false,""))
                                 isPlayingDemoVideo = false
@@ -186,13 +177,12 @@ class AdvertisementsHelper {
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
                                 EventBus.getDefault().post(videos[currentMediaItemId])
-                                progressbarHandler?.post(progressbarRunnable)
+
                             }
 
                         }
                         Player.STATE_ENDED -> {
 
-                            progressbarHandler?.removeCallbacks(progressbarRunnable)
                         }
                     }
                 }
@@ -200,14 +190,18 @@ class AdvertisementsHelper {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE ->{
                             if(error.sourceException.message == "Response code: 404"){
-
                                 player?.seekTo(player!!.getNextWindowIndex(), 0);
-                                if(videos.indexOf(videos.first()) == 0) progressbarHandler?.post(progressbarRunnable)
+
                             }
 
                         }
-                        ExoPlaybackException.TYPE_RENDERER -> Log.e(TAG, "TYPE_RENDERER: " + error.rendererException.message)
-                        ExoPlaybackException.TYPE_UNEXPECTED -> Log.e(TAG, "TYPE_UNEXPECTED: " + error.unexpectedException.message)
+                        ExoPlaybackException.TYPE_RENDERER ->{
+
+
+                        }
+                        ExoPlaybackException.TYPE_UNEXPECTED ->{
+
+                        }
                     }
                 }
             })
@@ -216,25 +210,23 @@ class AdvertisementsHelper {
     }
 
     private fun setAnimation(context: Context,playerView: RelativeLayout,bgImageView: RelativeLayout){
-
-        objectAnimator = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        objectAnimator!!.apply {
+        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        animatorVideo.apply {
             setDuration(1000)
-            objectAnimator!!.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
             start()
         }
-
         val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         bgImageView.startAnimation(zoomout)
         playerView.bringToFront()
     }
 
 
-    private fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
+     fun setImageAnimation(context: Context,imageView: ImageView,imageView2: ImageView){
 
-        objectAnimator_image = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
-        objectAnimator_image!!.apply {
+        animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
+        animatorImage.apply {
             setDuration(1000)
             AccelerateDecelerateInterpolator()
             start()
@@ -245,21 +237,24 @@ class AdvertisementsHelper {
 
     }
 
-    private fun videoProgressbarRunnable(progressBar: RingProgressBar): Runnable? {
-        progressbarRunnable = object : Runnable {
-            override fun run() {
-
+    private  fun videoProgressbarRunnable(progressBar: RingProgressBar, videoProgressJob: Job) {
+        CoroutineScope(Dispatchers.Main + videoProgressJob).launch {
+            while (isActive){
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
                 progressBar.progress = progress
-                progressbarHandler?.postDelayed(this, 1000)
+                delay(1000)
+
             }
+
         }
-        return progressbarRunnable
+
     }
+
+
     fun release() {
-        displayImageHandler?.removeCallbacks(displayImageRunnable)
-        progressbarHandler?.removeCallbacks(progressbarRunnable)
+
         player?.release()
+
     }
 }

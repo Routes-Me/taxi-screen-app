@@ -11,13 +11,19 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
     val account = Account()
@@ -29,16 +35,18 @@ class App : Application() {
     var vehicleId: String? = null
     var institutionName: String? = null
     private var trackingService: TrackingService? = null
+    private lateinit  var signalRReconnectionJob: Job
 
     companion object {
         @get:Synchronized
         var instance = App()
+
     }
 
     override fun onCreate() {
         super.onCreate()
-
         instance = this
+        signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         startTrackingService()
@@ -46,7 +54,6 @@ class App : Application() {
 
     fun startTrackingService(){
         val isRegistered = !getDeviceId().isNullOrEmpty()
-
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
             ContextCompat.startForegroundService(instance,intent)
@@ -83,14 +90,20 @@ class App : Application() {
 
             if (name.endsWith("TrackingService")) {
 
-                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service
-                trackingService?.startTrackingService()
+                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service.apply {
+                    setSignalRReconnectionJob(signalRReconnectionJob)
+                    startTrackingService()
+                }
             }
         }
 
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "TrackingService") {
                 trackingService = null
+                signalRReconnectionJob?.apply {
+                    if (isActive) cancel()
+                    Log.d("signalRReconnectionJob-Status","$isActive")
+                }
                 Log.i("trackingWebSocket:", "onServiceDisconnected")
             }
         }
