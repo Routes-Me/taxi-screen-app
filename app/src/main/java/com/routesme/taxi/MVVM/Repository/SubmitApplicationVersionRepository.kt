@@ -21,7 +21,6 @@ class SubmitApplicationVersionRepository(val context: Context) {
         val call = thisApiCorService.submitApplicationVersion(deviceId, submitApplicationVersionCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                //Log.d("Submit Version","${response.code()},${response.message()},${call.request().url()}")
                 if (response.isSuccessful) {
                     submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(isSuccess = true)
                 } else{

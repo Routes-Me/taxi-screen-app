@@ -16,6 +16,8 @@ class ApiWorker(val context: Context) {
 
     private var mClient: OkHttpClient? = null
     private var mGsonConverter: GsonConverterFactory? = null
+    private val interceptor = HttpLoggingInterceptor()
+
     val client: OkHttpClient
         @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
         get() {
@@ -24,6 +26,7 @@ class ApiWorker(val context: Context) {
                      connectTimeout(1, TimeUnit.MINUTES)
                      readTimeout(30, TimeUnit.SECONDS)
                      writeTimeout(15, TimeUnit.SECONDS)
+                     //addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                      addInterceptor(BasicAuthInterceptor(context as Activity))
                      if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
                  }.build()
