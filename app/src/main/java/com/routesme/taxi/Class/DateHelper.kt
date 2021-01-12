@@ -28,6 +28,20 @@ class DateHelper(){
         return diff > 0
     }
 
+    fun checkRefreshTokenExp(from_date:Long):Boolean{
+
+        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
+        return diff > 0
+
+    }
+
+    fun checkAccessTokenExp(from_date:Long):Boolean{
+
+        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
+        return diff < 5
+
+    }
+
     fun getCurrentPeriod(): Period {
 
         if(isMorning()){
@@ -47,7 +61,6 @@ class DateHelper(){
         }
 
     }
-
     fun getCurrentDate() = Calendar.getInstance().timeInMillis
 
     fun isMorning() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("11:59"))

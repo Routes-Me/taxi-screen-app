@@ -11,6 +11,10 @@ import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.core.content.ContextCompat
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.OneTimeWorkRequest
+import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
@@ -19,6 +23,7 @@ import com.routesme.taxi.MVVM.Model.SignInCredentials
 import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
     val account = Account()
@@ -35,6 +40,7 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
+
     }
 
     override fun onCreate() {

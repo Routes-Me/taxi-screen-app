@@ -16,6 +16,8 @@ import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
+import java.net.HttpURLConnection
+
 internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
@@ -24,7 +26,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
                 .addHeader(Header.Authorization.toString(), token())
                 .addHeader(Header.CountryCode.toString(), countryCode())
                 .addHeader(Header.AppVersion.toString(), appVersion())
-                .addHeader("application", "c2NyZWVu")
+                .addHeader(Header.application.toString(), "screen")
                 .build()
         return chain.proceed(request)
     }
@@ -43,7 +45,7 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(@NonNull chain: Interceptor.Chain): Response {
         val response: Response = chain.proceed(chain.request())
-        if (response.code() == 401) openModelPresenterScreen(activity, response.code())
+        if (response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) openModelPresenterScreen(activity, response.code())
         return response
     }
 
@@ -53,5 +55,5 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
 }
 
 enum class Header {
-    Authorization, CountryCode, AppVersion
+    Authorization, CountryCode, AppVersion,application
 }

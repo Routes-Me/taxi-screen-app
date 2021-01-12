@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.work.WorkManager
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -30,22 +31,21 @@ import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
-import com.routesme.taxi.MVVM.Model.IModeChanging
-import com.routesme.taxi.MVVM.Model.ReportResponse
-import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
-import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
+import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
+import com.routesme.taxi.MVVM.ViewModel.TokenViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.App
+
 import kotlinx.android.synthetic.main.home_screen.*
-import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import org.json.JSONObject
+import java.security.Key
 
 class HomeActivity : PermissionsActivity(), IModeChanging {
     private var sharedPreferences: SharedPreferences? = null
@@ -61,7 +61,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private  var deviceId:String?=null
     private val advertisementTracking = AdvertisementDataLayer()
     private var getList:List<AdvertisementTracking>?=null
-    private val connectivityManager by lazy { getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -117,6 +116,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         }
     }
 
+
+
     private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
         //Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
@@ -130,6 +131,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             }
         })
     }
+
+
 
     private fun initializePlayer() {
         player = SimpleExoPlayer.Builder(this).build()
@@ -157,10 +160,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     }
 
     fun playVideo(){
+
         player?.play()
+
     }
     fun stopVideo(){
+
         player?.pause()
+
     }
 
     private fun checkDateAndUploadResult(){
@@ -267,39 +274,16 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         removeFragments()
         recreate()
     }
-    /*private val networkCallback = object : ConnectivityManager.NetworkCallback() {
-        override fun onAvailable(network: Network?) {
-            if (!isHotspotAlive) turnOnHotspot()
-            try {
-                this@HomeActivity.runOnUiThread(java.lang.Runnable {
-
-                    activityCover.visibility = View.GONE
-                    activityVideoCover.visibility = View.GONE
-                    demoVideoPlayer.visibility = View.GONE
-                    if(player!!.isPlaying){
-                        stopVideo()
-                    }
-                })
-
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-        }
-        override fun onLost(network: Network?) {
-            //Log.d("Network-Status","onLost")
-            if (isHotspotAlive) turnOffHotspot()
-        }
-    }*/
 
     private fun turnOnHotspot() {
-        //Log.d("Network-Status","turnOnHotspot")
+
         val intent = Intent(getString(R.string.intent_action_turnon))
         sendImplicitBroadcast(intent)
         isHotspotAlive = true
     }
 
     private fun turnOffHotspot() {
-        //Log.d("Network-Status","turnOffHotspot")
+
         val intent = Intent(getString(R.string.intent_action_turnoff))
         sendImplicitBroadcast(intent)
         isHotspotAlive = false
@@ -312,22 +296,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
             val cn = ComponentName(resolveInfo.activityInfo.applicationInfo.packageName, resolveInfo.activityInfo.name)
             explicit.component = cn
             this.sendBroadcast(explicit)
-        }
-    }
-
-    private fun registerNetworkCallback(register: Boolean) {
-        if (register) {
-            try {
-                //connectivityManager.registerNetworkCallback(NetworkRequest.Builder().build(), networkCallback)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
-        } else {
-            try {
-               // connectivityManager.unregisterNetworkCallback(networkCallback)
-            } catch (e: IllegalArgumentException) {
-                e.printStackTrace()
-            }
         }
     }
 
