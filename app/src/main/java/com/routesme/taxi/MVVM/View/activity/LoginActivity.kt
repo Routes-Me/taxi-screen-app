@@ -117,19 +117,18 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
-
-                    val access_token_exp = JWT(token).getClaim("exp").asString()
-                    val refresh_token_exp = JWT(token).getClaim("exp").asString()
-                    access_token_exp?.let {access_token_exp->
-                        refresh_token_exp?.let {refresh_token_exp->
-
-                            saveDataIntoSharedPreference(token,access_token_exp,refresh_token_exp)
+                    /*val token = it.token
+                    val refresh_token = it.refresh_token
+                    refresh_token?.let {refreshToken->
+                        token?.let {accessToken->
+                            val access_token_exp = JWT(refreshToken).getClaim("exp").asString()
+                            val refresh_token_exp = JWT(accessToken).getClaim("exp").asString()
+                            saveDataIntoSharedPreference(accessToken,refreshToken,access_token_exp,refresh_token_exp)
                             openRegistrationActivity()
-
                         }
-                    }
-                    /*saveDataIntoSharedPreference(token)
-                    openRegistrationActivity()*/
+                    }*/
+                    saveDataIntoSharedPreference(token)
+                    openRegistrationActivity()
 
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
@@ -166,13 +165,13 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun saveDataIntoSharedPreference(access_token: String,access_token_exp: String,refresh_token_exp:String) {
+    private fun saveDataIntoSharedPreference(access_token: String?,refresh_token:String?,access_token_exp: String?,refresh_token_exp:String?) {
         val editor = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).edit()
         editor.apply{
             putString(SharedPreferencesHelper.token, access_token)
+            putString(SharedPreferencesHelper.refresh_token, refresh_token)
             putString(SharedPreferencesHelper.access_token_exp, access_token_exp)
             putString(SharedPreferencesHelper.refresh_token_exp, refresh_token_exp)
-            putString(SharedPreferencesHelper.refresh_token, access_token)
         }.apply()
 
     }

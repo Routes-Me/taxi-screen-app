@@ -42,7 +42,7 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TokenTaskManager::class.java,1,TimeUnit.DAYS)
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TokenTaskManager::class.java,0,TimeUnit.MINUTES)
                 .setConstraints(constraint)
                 .build()
 

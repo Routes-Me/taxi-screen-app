@@ -39,7 +39,7 @@ interface RestApiService {
     fun postReport(@Body data: JsonArray, @Path("deviceId") deviceId: String): Call<JsonElement>
 
     @POST("analytics/devices/playbacks")
-    fun refreshToken(): Call<JsonElement>
+    fun refreshToken(@Query("refreshToken") refresh_token:String?): Call<JsonElement>
 
     @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
     fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>

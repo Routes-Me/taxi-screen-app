@@ -2,11 +2,12 @@ package com.routesme.taxi.AdminConsolePanel.Class
 
 import android.app.Activity
 import com.routesme.taxi.AdminConsolePanel.Model.*
+import com.routesme.taxi.utils.Session
 
 class AdminConsoleLists(val activity: Activity) {
 
+    private val session = Session(activity)
     private val adminConsoleHelper = AdminConsoleHelper(activity)
-
     val masterItems = listOf(
             MasterItem(0, MasterItemType.Info),
             MasterItem(1, MasterItemType.Account),
@@ -15,18 +16,18 @@ class AdminConsoleLists(val activity: Activity) {
     )
     val infoCells = listOf(
             LabelCell("Vehicle"),
-            DetailCell("Plate Number", "${adminConsoleHelper.plateNumber()}", true),
-            DetailCell("Institution Name", "${adminConsoleHelper.institutionName()}", false),
+            DetailCell("Plate Number", "${session.plateNumber()}", true),
+            DetailCell("Institution Name", "${session.institutionName()}", false),
             LabelCell("General"),
            // DetailCell("Channel ID", "#${adminConsoleHelper.channelId()}", true),
-            DetailCell("App Version", adminConsoleHelper.appVersion(), true),
-            DetailCell("Sim Serial Number", "${adminConsoleHelper.simSerialNumber()}", true),
-            DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)
+            DetailCell("App Version", session.appVersion(), true),
+            DetailCell("Sim Serial Number", "${session.simSerialNumber()}", true),
+            DetailCell("Device Serial Number", "${session.deviceSerialNumber()}", false)
     )
     val accountCells = listOf(
             LabelCell("Technician"),
-            DetailCell("User Name", "${adminConsoleHelper.technicalUserName()?.capitalize()}", true),
-            DetailCell("Registration Date", "${adminConsoleHelper.registrationDate()}", false),
+            DetailCell("User Name", "${session.technicalUserName()?.capitalize()}", true),
+            DetailCell("Registration Date", "${session.registrationDate()}", false),
             ActionCell(Actions.LogOff.title)
     )
     val settingsCells = listOf(

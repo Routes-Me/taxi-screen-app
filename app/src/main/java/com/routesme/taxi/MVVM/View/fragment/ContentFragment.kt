@@ -26,6 +26,7 @@ import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.utils.Session
 import dmax.dialog.SpotsDialog
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.android.synthetic.main.content_fragment.view.*
@@ -40,20 +41,18 @@ class ContentFragment : Fragment() {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
-    private var sharedPreferences: SharedPreferences? = null
-    private var editor: SharedPreferences.Editor? = null
+    //private var sharedPreferences: SharedPreferences? = null
+    //private var editor: SharedPreferences.Editor? = null
     private var device_id : Int = 0
     private val SEC:Long = 300
     private val MIL:Long = 1000
-    private var isDataFetched = false
+    //private var isDataFetched = false
     private var dialog: SpotsDialog? = null
     private var videoRingProgressBar: RingProgressBar? = null
     private var isAlive = false
     private var videoShadow: RelativeLayout? = null
-    var TYPE_WIFI = 1
-    var TYPE_MOBILE = 2
-    var TYPE_NOT_CONNECTED = 0
-    val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
+    private var session:Session?=null
+    //val intentFilter = IntentFilter("android.net.conn.CONNECTIVITY_CHANGE")
     private lateinit var  displayImageJob : Job
     private lateinit var  videoProgressJob : Job
     private lateinit var  callApiJob : Job
@@ -65,48 +64,30 @@ class ContentFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
-        //requireActivity().registerReceiver(myReceiver, intentFilter);
+
         return view
     }
 
     override fun onDestroyView() {
-        //requireActivity().unregisterReceiver(myReceiver)
+
         super.onDestroyView()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
         videoRingProgressBar = view.videoRingProgressBar
+        session = Session(this.requireActivity())
         videoShadow = view.videoShadow
         displayImageJob = Job()
         videoProgressJob = Job()
         callApiJob = Job()
-        sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        editor= sharedPreferences?.edit()
-        device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
+        //sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        //editor= sharedPreferences?.edit()
+        device_id = session?.deviceId()!!.toInt()
         fetchContent()
         super.onViewCreated(view, savedInstanceState)
     }
 
-    /*private val myReceiver: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val status = getConnectivityStatus(context)
-            if (status != TYPE_NOT_CONNECTED && !isDataFetched) {
-                fetchContent()
-            }
-        }
-    }*/
-
-    /*private fun getConnectivityStatus(context: Context): Int {
-        val cm = context
-                .getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetwork = cm.activeNetworkInfo
-        if (null != activeNetwork) {
-            if (activeNetwork.type == TYPE_WIFI) return TYPE_WIFI
-            if (activeNetwork.type == ConnectivityManager.TYPE_MOBILE) return TYPE_MOBILE
-        }
-        return TYPE_NOT_CONNECTED
-    }*/
 
     override fun onDestroy() {
         AdvertisementsHelper.instance.release()
