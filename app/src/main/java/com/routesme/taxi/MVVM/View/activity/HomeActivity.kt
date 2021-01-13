@@ -85,9 +85,50 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
+        WorkManager.getInstance().enqueue(App.periodicWorkRequest)
+        observeTokenManager()
 
     }
 
+    private fun observeTokenManager(){
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
+                .observe(this, Observer { workInfo ->
+                    val status = workInfo.state.name
+                    if(status.equals("SUCCEEDED")){
+                        Log.d("Work_Manager", "Task cancel")
+                        refereshToken()
+                        WorkManager.getInstance().cancelWorkById(App.periodicWorkRequest.id)
+
+                    }else{
+                        Log.d("Work_Manager", "Task continue")
+                        WorkManager.getInstance().enqueue(App.periodicWorkRequest);
+
+                    }
+
+                })
+
+    }
+
+    private fun refereshToken(){
+        val access_token_exp = sharedPreferences?.getString(SharedPreferencesHelper.access_token_exp,null)
+        val refresh_token_exp = sharedPreferences?.getString(SharedPreferencesHelper.refresh_token_exp,null)
+        if(DateHelper.instance.checkRefreshTokenExp(access_token_exp!!.toLong())){
+
+            if(DateHelper.instance.checkAccessTokenExp(access_token_exp.toLong())){
+
+                val refreshTokenViewModel : TokenViewModel by viewModels()
+                refreshTokenViewModel.refreshToken(this).observe(this, Observer<RefreshModel> {
+
+
+                })
+
+            }
+
+        }
+
+
+    }
 
 
     private fun setSystemUiVisibility() {

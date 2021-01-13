@@ -20,6 +20,7 @@ import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import com.routesme.taxi.MVVM.task.TokenTaskManager
 import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
@@ -40,6 +41,10 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
+        val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TokenTaskManager::class.java,1,TimeUnit.DAYS)
+                .setConstraints(constraint)
+                .build()
 
     }
 
