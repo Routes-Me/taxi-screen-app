@@ -128,9 +128,8 @@ class LoginActivity : AppCompatActivity() {
 
                         }
                     }
-                    //Log.d("Token","${token}")
-                    saveDataIntoSharedPreference(token)
-                    openRegistrationActivity()
+                    /*saveDataIntoSharedPreference(token)
+                    openRegistrationActivity()*/
 
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {

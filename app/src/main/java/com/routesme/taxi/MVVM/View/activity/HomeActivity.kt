@@ -120,6 +120,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
                 val refreshTokenViewModel : TokenViewModel by viewModels()
                 refreshTokenViewModel.refreshToken(this).observe(this, Observer<RefreshModel> {
 
+                    //Further Logic will be here
 
                 })
 
