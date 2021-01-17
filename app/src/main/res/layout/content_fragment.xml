@@ -39,8 +39,6 @@
         app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
         app:layout_constraintHorizontal_chainStyle="spread_inside">
 
-
-
         <carbon.widget.RelativeLayout
             android:id="@+id/videoShadow"
             android:layout_width="match_parent"
@@ -60,7 +58,7 @@
                 android:layout_gravity="center"
                 android:adjustViewBounds="true"
                 app:resize_mode="fill"
-                app:use_controller="false"
+                app:use_controller="true"
                 app:surface_type="texture_view"/>
 
             <io.netopen.hotbitmapgg.library.view.RingProgressBar

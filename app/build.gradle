@@ -30,6 +30,24 @@ android {
         checkReleaseBuilds false
     }
 
+    flavorDimensions "target"
+    productFlavors {
+        taxi {
+
+            applicationId 'com.routesme.vehicles.taxi'
+            versionCode 1
+            versionName "1.1"
+            buildConfigField("String","TYPE","\"TAXI\"")
+        }
+
+        bus {
+            applicationId 'com.routesme.vehicles.bus'
+            versionCode 1
+            versionName "1.1"
+            buildConfigField("String","TYPE","\"BUS\"")
+        }
+    }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

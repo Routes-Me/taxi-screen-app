@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/white"
-    tools:context=".kotlin.View.RegistrationScreen.RegistrationActivity">
+    >
 
 <RelativeLayout
     android:layout_width="match_parent"
@@ -52,7 +52,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="15dp"
-                    android:text="Taxi" />
+                    android:text="Bus" />
 
                 <TextView
                     android:id="@+id/taxiOffice_tv"
@@ -62,7 +62,7 @@
                     android:layout_marginBottom="3dp"
                     android:background="@drawable/tab_text_selector"
                     android:drawableRight="@drawable/ic_right_arrow"
-                    android:hint="Taxi office"
+                    android:hint="Bus office"
                     android:nextFocusDown="@id/password_et" />
 
                 <TextView
@@ -72,7 +72,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="7dp"
                     android:gravity="start"
-                    android:text="* Select taxi office"
+                    android:text="* Select bus office"
                     android:textColor="@color/red"
                     android:textSize="16sp"
                     android:textStyle="normal"
@@ -86,7 +86,7 @@
                     android:layout_marginBottom="3dp"
                     android:background="@drawable/tab_text_selector"
                     android:drawableRight="@drawable/ic_right_arrow"
-                    android:hint="Taxi plate number"
+                    android:hint="Bus plate number"
                     android:nextFocusDown="@id/password_et" />
 
                 <TextView
@@ -96,7 +96,7 @@
                     android:layout_gravity="center"
                     android:layout_marginBottom="20dp"
                     android:gravity="start"
-                    android:text="* Select taxi plate number"
+                    android:text="* Select bus plate number"
                     android:textColor="@color/red"
                     android:textSize="16sp"
                     android:textStyle="normal"

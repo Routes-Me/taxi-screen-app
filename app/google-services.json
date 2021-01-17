@@ -44,6 +44,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "599108135088-3mm71ntnqshq3g0u5m41ge6ag89n0ual.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.routesme.taxi",
+            "certificate_hash": "02ce79f6880f91b1fb65fda6a8ce317f6d291a3f"
+          }
+        },
+        {
           "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -80,6 +88,64 @@
             "certificate_hash": "205650018b43beb132d4434c4f05495d5a24768c"
           }
         },
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:1857635826c59cdc5ff375",
+        "android_client_info": {
+          "package_name": "com.routesme.vehicles.bus"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:2119feff1c93b1385ff375",
+        "android_client_info": {
+          "package_name": "com.routesme.vehicles.taxi"
+        }
+      },
+      "oauth_client": [
         {
           "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
           "client_type": 3

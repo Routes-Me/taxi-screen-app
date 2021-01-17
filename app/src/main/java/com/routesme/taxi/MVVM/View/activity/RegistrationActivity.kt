@@ -34,7 +34,7 @@ import com.routesme.taxi.MVVM.Model.VehicleInformationModel.VehicleInformationLi
 import com.routesme.taxi.MVVM.ViewModel.RegistrationViewModel
 import com.routesme.taxi.R
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.main.activity_registration.*
+import kotlinx.android.synthetic.taxi.activity_registration.*
 import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -56,7 +56,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
-
         initialize()
     }
 
