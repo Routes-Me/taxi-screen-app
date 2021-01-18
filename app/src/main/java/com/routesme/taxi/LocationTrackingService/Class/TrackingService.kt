@@ -64,7 +64,15 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
-                instance.hubConnection?.connect()
+                try{
+                    instance.hubConnection?.connect()
+
+                }catch (e:IllegalStateException){
+
+                    Log.d("Exception",e.message)
+
+                }
+
             }
         }
 
@@ -113,9 +121,10 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onConnected() {
         locationReceiver?.getLastKnownLocationMessage()?.let {
+
             instance.hubConnection?.invoke("SendLocation", it)
        }
-        locationReceiver?.isHubConnected(true)
+
     }
 
     override fun onMessage(message: HubMessage) {
@@ -129,23 +138,35 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onDisconnected() {
-        locationReceiver?.isHubConnected(false)
 
-        instance.hubConnection?.connect()
+        try{
+            instance.hubConnection?.connect()
+
+        }catch (e:IllegalStateException){
+
+            Log.d("Exception",e.message)
+
+        }
+
     }
 
     override fun onError(exception: Exception) {
-        locationReceiver?.isHubConnected(false)
-        //Log.d("signalRReconnectionJob-Status","Hub connection error")
+
         signalRReconnection()
     }
-    private fun signalRReconnection(){
+        private fun signalRReconnection(){
         CoroutineScope(Dispatchers.IO + this.signalRReconnectionJob).launch {
             if (isActive){
                 Log.d("signalRReconnectionJob-Status","Lunched")
                 delay(1 * 60 * 1000)
                 Log.d("signalRReconnectionJob-Status","isActive")
-                hubConnection?.connect()
+                try{
+                    instance.hubConnection?.connect()
+
+                }catch (e:IllegalStateException){
+
+                    Log.d("Exception",e.message)
+                }
             }
         }
     }

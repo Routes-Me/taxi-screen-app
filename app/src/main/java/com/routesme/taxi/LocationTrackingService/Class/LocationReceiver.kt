@@ -22,7 +22,6 @@ import org.json.JSONObject
 class LocationReceiver(private val hubConnection: HubConnection?) : LocationListener{
     private var dataLayer = TrackingDataLayer()
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
-    private var isConnected = false
     private val minTime = 5000L
     private val minDistance = 27F
     private val mLocationRequest: LocationRequest? = null
@@ -67,16 +66,39 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         Log.d("send-location-testing",messageOnLocationChanged)
         location?.let { location ->
             dataLayer.insertLocation(location)
-            //val messageInsert = "Insert location into DB: $location"
-            if (isConnected) {
-                dataLayer.getFeeds().let {
-                    getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
+            val messageInsert = "Insert location into DB: $location"
+            Log.d("send-location-testing",messageInsert)
+            dataLayer.getFeeds().let {
+                getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
+                    try {
                         hubConnection?.invoke("SendLocation", it1)
-                        //val messageSend = "Send locations from DB: $it1"
+                        val messageSend = "Send locations from DB: $it1"
+                        Log.d("send-location-testing",messageSend)
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
+                    }catch (e:RuntimeException){
+
+                        Log.d("Exception",e.message)
+
                     }
                 }
             }
+            /*hubConnection?.let {hub ->
+                if (hub.isConnected){
+                    dataLayer.getFeeds().let {
+                        getMessage(getFeedsJsonArray(it).toString())?.let { it1 ->
+                            try {
+                                hub.invoke("SendLocation", it1)
+                                val messageSend = "Send locations from DB: $it1"
+                                Log.d("send-location-testing",messageSend)
+                                dataLayer.deleteFeeds(it.first().id, it.last().id)
+                            }catch (e:RuntimeException){
+
+
+                            }
+                        }
+                    }
+                }
+            }*/
         }
     }
 
@@ -119,10 +141,6 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
             e.printStackTrace()
         }
         return messageObject.toString()
-    }
-
-    fun isHubConnected(isConnected: Boolean) {
-        this.isConnected = isConnected
     }
 
     private val bestProvider = locationManager.getBestProvider(createFineCriteria(),true)
