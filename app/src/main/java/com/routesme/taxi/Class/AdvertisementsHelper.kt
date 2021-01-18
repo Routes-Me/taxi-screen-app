@@ -136,7 +136,7 @@ class AdvertisementsHelper {
                     var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
                     setAnimation(context,relativeLayout,relativeLayout2)
-                    System.gc();
+
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
                         videos[it].contentId?.toInt()?.let {

@@ -2,15 +2,16 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.*
+import android.content.ComponentCallbacks2
+import android.content.ComponentName
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
-import android.net.ConnectivityManager
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
-import androidx.work.WorkManager
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -28,21 +29,20 @@ import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.IModeChanging
+import com.routesme.taxi.MVVM.Model.ReportResponse
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
+import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
-import com.routesme.taxi.MVVM.ViewModel.TokenViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.uplevels.App
-
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
-import java.security.Key
 
 class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
     private var sharedPreferences: SharedPreferences? = null
@@ -331,6 +331,16 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
 
     override fun onTrimMemory(level: Int) {
         super.onTrimMemory(level)
+        System.runFinalization();
+        //Runtime.getRuntime().gc();
+        //System.gc();
+        Log.d("Low Memory","Trim memory called ${level}")
+
+    }
+
+    override fun onLowMemory() {
+        super.onLowMemory()
+        Log.d("Low Memory","Low memory called")
 
     }
 

@@ -11,6 +11,7 @@ import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
 import kotlinx.coroutines.*
+import java.lang.RuntimeException
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
@@ -64,14 +65,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         locationReceiver = LocationReceiver(hubConnection).apply {
             if (isProviderEnabled()) {
                 initializeLocationManager()
-                try{
-                    instance.hubConnection?.connect()
-
-                }catch (e:IllegalStateException){
-
-                    Log.d("Exception",e.message)
-
-                }
+                connectSignal()
 
             }
         }
@@ -121,8 +115,16 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onConnected() {
         locationReceiver?.getLastKnownLocationMessage()?.let {
+            try{
 
-            instance.hubConnection?.invoke("SendLocation", it)
+                instance.hubConnection?.invoke("SendLocation", it)
+
+            }catch (e:RuntimeException){
+
+                Log.d("Exception",e.message)
+            }
+
+
        }
 
     }
@@ -139,14 +141,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDisconnected() {
 
-        try{
-            instance.hubConnection?.connect()
-
-        }catch (e:IllegalStateException){
-
-            Log.d("Exception",e.message)
-
-        }
+        connectSignal()
 
     }
 
@@ -160,17 +155,23 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
                 Log.d("signalRReconnectionJob-Status","Lunched")
                 delay(1 * 60 * 1000)
                 Log.d("signalRReconnectionJob-Status","isActive")
-                try{
-                    instance.hubConnection?.connect()
-
-                }catch (e:IllegalStateException){
-
-                    Log.d("Exception",e.message)
-                }
+                connectSignal()
             }
         }
     }
     fun setSignalRReconnectionJob(signalRReconnectionJob: Job) {
         this.signalRReconnectionJob = signalRReconnectionJob
+    }
+
+    fun connectSignal(){
+
+        try{
+            instance.hubConnection?.connect()
+
+        }catch (e:IllegalStateException){
+
+            Log.d("Exception",e.message)
+        }
+
     }
 }
