@@ -11,6 +11,7 @@ import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
 import kotlinx.coroutines.*
+import java.lang.IllegalStateException
 import java.net.URI
 
 class TrackingService() : Service(), HubConnectionListener, HubEventListener {
@@ -130,8 +131,11 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDisconnected() {
         locationReceiver?.isHubConnected(false)
-
-        instance.hubConnection?.connect()
+        try {
+            instance.hubConnection?.connect()
+        }catch (illegalState:IllegalStateException){
+            Log.d("IllegalStateException",illegalState.message)
+        }
     }
 
     override fun onError(exception: Exception) {
@@ -145,7 +149,11 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
                 Log.d("signalRReconnectionJob-Status","Lunched")
                 delay(1 * 60 * 1000)
                 Log.d("signalRReconnectionJob-Status","isActive")
-                hubConnection?.connect()
+                try {
+                    instance.hubConnection?.connect()
+                }catch (illegalState:IllegalStateException){
+                    Log.d("IllegalStateException",illegalState.message)
+                }
             }
         }
     }
