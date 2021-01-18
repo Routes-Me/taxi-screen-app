@@ -2,10 +2,7 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.net.ConnectivityManager
 import android.os.Bundle
@@ -47,7 +44,7 @@ import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import java.security.Key
 
-class HomeActivity : PermissionsActivity(), IModeChanging {
+class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
@@ -329,6 +326,11 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
+
+    }
+
+    override fun onTrimMemory(level: Int) {
+        super.onTrimMemory(level)
 
     }
 

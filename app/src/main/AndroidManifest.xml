@@ -76,17 +76,17 @@
             </intent-filter>
         </activity>
 
-        <receiver
+        <!--<receiver
             android:name="com.routesme.taxi.Class.ConnectivityReceiver"
             android:enabled="true">
-            <intent-filter>
+            <intent-filter>-->
 
                 <!-- Intent filters for broadcast receiver -->
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
         <activity android:name="com.routesme.taxi.Hotspot_Configuration.MagicActivity">
             <intent-filter>
