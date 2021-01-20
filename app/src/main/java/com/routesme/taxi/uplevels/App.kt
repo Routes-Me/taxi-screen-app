@@ -4,11 +4,16 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.content.*
+import android.content.ComponentName
+import android.content.Context
+import android.content.Intent
+import android.content.ServiceConnection
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.StrictMode
+import android.os.StrictMode.VmPolicy
 import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.work.Constraints
@@ -17,13 +22,14 @@ import androidx.work.OneTimeWorkRequest
 import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class App : Application() {
     val account = Account()
@@ -45,11 +51,18 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        /*StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .penaltyLog()
+                .build())*/
         instance = this
         signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         startTrackingService()
+
     }
 
     fun startTrackingService(){

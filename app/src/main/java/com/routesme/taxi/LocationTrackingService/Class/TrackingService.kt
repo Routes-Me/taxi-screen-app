@@ -113,7 +113,16 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onConnected() {
         locationReceiver?.getLastKnownLocationMessage()?.let {
-            instance.hubConnection?.invoke("SendLocation", it)
+            try {
+
+                instance.hubConnection?.invoke("SendLocation", it)
+
+            }catch (e:RuntimeException){
+
+                Log.d("Exception",e.message)
+
+            }
+
        }
         locationReceiver?.isHubConnected(true)
     }
@@ -130,8 +139,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDisconnected() {
         locationReceiver?.isHubConnected(false)
-
-        instance.hubConnection?.connect()
+        connectSignalR()
     }
 
     override fun onError(exception: Exception) {
@@ -145,11 +153,26 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
                 Log.d("signalRReconnectionJob-Status","Lunched")
                 delay(1 * 60 * 1000)
                 Log.d("signalRReconnectionJob-Status","isActive")
-                hubConnection?.connect()
+                connectSignalR()
+
             }
         }
     }
     fun setSignalRReconnectionJob(signalRReconnectionJob: Job) {
         this.signalRReconnectionJob = signalRReconnectionJob
+    }
+
+    fun connectSignalR(){
+
+        try {
+
+            instance.hubConnection?.connect()
+
+        }catch (e:IllegalStateException){
+
+            Log.d("Exception",e.message)
+
+        }
+
     }
 }
