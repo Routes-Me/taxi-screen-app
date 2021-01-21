@@ -56,7 +56,7 @@ class App : Application() {
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
-            ContextCompat.startForegroundService(instance,intent)
+            startService(intent)
             this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }

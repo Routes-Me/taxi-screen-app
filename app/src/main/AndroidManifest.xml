@@ -118,7 +118,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <service android:name="com.routesme.taxi.LocationTrackingService.Class.TrackingService" />
+        <service android:enabled="true" android:name="com.routesme.taxi.LocationTrackingService.Class.TrackingService"/>
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"

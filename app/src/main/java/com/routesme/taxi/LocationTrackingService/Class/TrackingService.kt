@@ -32,13 +32,6 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onCreate() {
         super.onCreate()
-        startForeground(1, getNotification())
-    }
-
-    private fun getNotification(): Notification {
-        val channel = NotificationChannel("channel_1", "Live Tracking Channel", NotificationManager.IMPORTANCE_DEFAULT)
-        getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(applicationContext, "channel_1").setAutoCancel(true).build()
     }
 
     override fun onDestroy() {
@@ -55,8 +48,14 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-         Log.d("TS-L","onStartCommand")
+        startForeground(1, getNotification())
         return START_STICKY
+    }
+
+    private fun getNotification(): Notification {
+        val channel = NotificationChannel("channel_1", "Live Tracking Channel", NotificationManager.IMPORTANCE_NONE)
+        getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
+        return Notification.Builder(this, "channel_1").setAutoCancel(true).build()
     }
 
      fun startTrackingService() {
