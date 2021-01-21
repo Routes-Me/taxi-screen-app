@@ -2,8 +2,6 @@ package com.routesme.taxi.Class
 
 import android.animation.ObjectAnimator
 import android.content.Context
-import android.net.Uri
-import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -24,10 +22,10 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
 import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
+import com.routesme.taxi.service.AdvertisementService
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
@@ -40,7 +38,7 @@ class AdvertisementsHelper {
     private var isPlayingDemoVideo = false
     private lateinit var animatorVideo:ObjectAnimator
     private lateinit var animatorImage:ObjectAnimator
-    public val advertisementDataLayer = AdvertisementDataLayer()
+    //public val advertisementDataLayer = AdvertisementDataLayer()
     private var TAG="ExoPlayer_Error"
     //private val coroutineScope = CoroutineScope(Dispatchers.Main+presentJob)
 
@@ -72,13 +70,13 @@ class AdvertisementsHelper {
         }
     }
 
-    fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,job:Job) {
+    /*fun displayImages(context: Context,images: List<Data>, imageView: ImageView,imageView2: ImageView,job:Job) {
         imageView.cameraDistance = 12000f
         imageView.pivotX = imageView.height * 0.7f
         imageView.pivotY = imageView.height / 0.7f
         var currentImageIndex = 0
         var firstTime = false
-        CoroutineScope(Dispatchers.Main + job).launch {
+        CoroutineScope(Dispatchers.Main).launch {
             while(isActive) {
                 if (currentImageIndex < images.size) {
                     if (currentImageIndex > 0){
@@ -88,7 +86,9 @@ class AdvertisementsHelper {
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.toInt()?.let {
-                        advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
+
+                        AdvertisementService.instance.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
+                        //advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
                     }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
                     if (firstTime || currentImageIndex != 0){
@@ -106,14 +106,13 @@ class AdvertisementsHelper {
             }
         }
 
-    }
+    }*/
 
     fun configuringMediaPlayer (context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar,relativeLayout: RelativeLayout,relativeLayout2: RelativeLayout,videoProgressJob:Job) {
 
         player = initPlayer(context, videos, playerView, progressBar,relativeLayout,relativeLayout2,videoProgressJob)
 
     }
-
 
     private fun initPlayer(context: Context, videos: List<Data>, playerView: StyledPlayerView, progressBar: RingProgressBar, relativeLayout: RelativeLayout, relativeLayout2: RelativeLayout, videoProgressJob: Job): SimpleExoPlayer {
         relativeLayout.setCameraDistance(12000f)
@@ -133,18 +132,17 @@ class AdvertisementsHelper {
             volume = 0f
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
-                    var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                    EventBus.getDefault().post(videos[currentMediaItemId])
-                    setAnimation(context,relativeLayout,relativeLayout2)
+                        var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                        EventBus.getDefault().post(videos[currentMediaItemId])
+                        setAnimation(context,relativeLayout,relativeLayout2)
+                        if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
+                        currentMediaItemId.let {
+                                videos[it].contentId?.toInt()?.let {
 
-                    if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
-                    currentMediaItemId.let {
-                        videos[it].contentId?.toInt()?.let {
-                            advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
+                                    // AdvertisementService.instance.log(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
+
+                                }
                         }
-                    }
-
-
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {

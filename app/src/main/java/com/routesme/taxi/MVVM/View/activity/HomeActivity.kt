@@ -2,15 +2,14 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentCallbacks2
-import android.content.ComponentName
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -40,11 +39,14 @@ import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.service.AdvertisementService
+import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 
-class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
+class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(),ServiceConnection{
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
@@ -57,6 +59,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
     private  var from_date:String?=null
     private  var deviceId:String?=null
     private val advertisementTracking = AdvertisementDataLayer()
+    private var advertisementService: AdvertisementService? = null
     private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,16 +79,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         submitApplicationVersion()
         checkDateAndUploadResult()
-        initializePlayer()
+        launch {initializePlayer()}
         sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
-
+        startAdvertisementService()
     }
-
-
 
     private fun setSystemUiVisibility() {
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -103,7 +104,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         if (currentVersion.isNotEmpty()){
             if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
-                //Log.d("Report","${deviceId}")
                 val packageName = BuildConfig.APPLICATION_ID
                 deviceId?.let {
                     val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
@@ -113,60 +113,45 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
         }
     }
 
-
-
     private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
-        //Log.d("SubmitApplicationVersionResponse","deviceId: $deviceId")
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
-
                 if (it.isSuccess) {
-                    //Log.d("SubmitApplicationVersionResponse","successResponse: ${it.isSuccess}")
+
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
+
                 }
             }
         })
     }
 
-
-
-    private fun initializePlayer() {
+    private suspend fun initializePlayer() {
         player = SimpleExoPlayer.Builder(this).build()
         demoVideoPlayer.player = player
         val mediaSource = buildRawMediaSource()
-        mediaSource?.let {
-            player?.apply {
-                setMediaSource(it)
-                prepare()
-                repeatMode = Player.REPEAT_MODE_ONE
-                playWhenReady = true
+        withContext(Dispatchers.Main){
+            mediaSource?.let {
+                player?.apply {
+                    setMediaSource(it)
+                    prepare()
+                    repeatMode = Player.REPEAT_MODE_ONE
+                    playWhenReady = true
+                }
             }
         }
     }
-    private fun buildRawMediaSource(): MediaSource? {
-        val rawDataSource = RawResourceDataSource(this)
-        // open the /raw resource file
-        rawDataSource.open(DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.offline_video)))
-        // Create media Item
-        val mediaItem = MediaItem.fromUri(rawDataSource.uri!!)
-        // create a media source with the raw DataSource
-        val mediaSource = ProgressiveMediaSource.Factory { rawDataSource }
-                .createMediaSource(mediaItem)
-        return mediaSource
+
+    private suspend fun buildRawMediaSource(): MediaSource? {
+        return withContext(Dispatchers.Default){
+            val rawDataSource = RawResourceDataSource(this@HomeActivity)
+            rawDataSource.open(DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.offline_video)))
+            val mediaItem = MediaItem.fromUri(rawDataSource.uri!!)
+            rawDataSource.close()
+            val mediaSource = ProgressiveMediaSource.Factory { rawDataSource }.createMediaSource(mediaItem)
+            return@withContext mediaSource
+        }
     }
-
-    fun playVideo(){
-
-        player?.play()
-
-    }
-    fun stopVideo(){
-
-        player?.pause()
-
-    }
-
     private fun checkDateAndUploadResult(){
         from_date?.let {from_date->
             if(DateHelper.instance.checkDate(from_date.toLong())){
@@ -185,7 +170,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
             }
         }
     }
-
 
     private fun getJsonArray(): JsonArray {
         getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
@@ -229,22 +213,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
 
     }
 
-    override fun onDestroy() {
-        player?.release()
-        turnOffHotspot()
-        if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-        super.onDestroy()
-    }
 
-    override fun onStart() {
-        EventBus.getDefault().register(this)
-        super.onStart()
-    }
-
-    override fun onStop() {
-        EventBus.getDefault().unregister(this)
-        super.onStop()
-    }
     private fun addFragments() {
 
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
@@ -329,20 +298,60 @@ class HomeActivity : PermissionsActivity(), IModeChanging, ComponentCallbacks2 {
 
     }
 
-    override fun onTrimMemory(level: Int) {
-        super.onTrimMemory(level)
-        System.runFinalization();
-        //Runtime.getRuntime().gc();
-        //System.gc();
-        Log.d("Low Memory","Trim memory called ${level}")
+    override fun onServiceDisconnected(p0: ComponentName?) {
+
+        Log.d("Services","Services DisConnected")
 
     }
 
-    override fun onLowMemory() {
-        super.onLowMemory()
-        Log.d("Low Memory","Low memory called")
+    override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+
+
+        Log.d("Services","Services Connected")
+
+    }
+    private fun startAdvertisementService(){
+        startService(Intent(this@HomeActivity, AdvertisementService::class.java))
+        ContextCompat.startForegroundService(this,intent)
+        this.bindService(intent, this, Context.BIND_AUTO_CREATE)
+    }
+
+    private fun stopAdvertisementService(){
+
+        stopService(Intent(this@HomeActivity, AdvertisementService::class.java))
 
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        player?.release()
+        turnOffHotspot()
+        if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
+        this.cancel()
+        stopAdvertisementService()
+
+    }
+
+    override fun onStart() {
+        EventBus.getDefault().register(this)
+        super.onStart()
+    }
+
+    override fun onStop() {
+        EventBus.getDefault().unregister(this)
+        super.onStop()
+    }
+
+    fun playVideo(){
+
+        player?.play()
+
+    }
+
+    fun stopVideo(){
+
+        player?.pause()
+
+    }
 
 }

@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.StrictMode
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -40,6 +41,12 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+                .detectDiskReads()
+                .detectDiskWrites()
+                .detectNetwork()
+                .penaltyLog()
+                .build())
         instance = this
         signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())

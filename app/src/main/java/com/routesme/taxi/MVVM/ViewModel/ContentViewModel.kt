@@ -10,6 +10,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 
 class ContentViewModel() : ViewModel() {
+
     fun getContent(offset: Int, limit: Int, context: Context) = ContentRepository(context).getContent(offset,limit)
 
     fun postReport(context: Context,data: JsonArray,deviceId: String) = ReportRepository(context,data).postReport(data,deviceId)

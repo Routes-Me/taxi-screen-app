@@ -64,6 +64,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
         val provider = if (isGPSEnabled()) "GPS_PROVIDER" else if (isNetworkEnabled()) "NETWORK_PROVIDER" else "No Provider"
         val messageOnLocationChanged = "onLocationChanged: $location, Accuracy: ${location?.accuracy}, Provider: ${location?.provider},,,  Enabled Provider: $provider"
         Log.d("send-location-testing",messageOnLocationChanged)
+        Log.d("Services Tracking","${Thread.currentThread().name}")
         location?.let { location ->
             dataLayer.insertLocation(location)
             val messageInsert = "Insert location into DB: $location"
