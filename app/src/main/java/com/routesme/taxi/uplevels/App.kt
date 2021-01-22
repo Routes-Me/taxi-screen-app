@@ -8,6 +8,8 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.os.IBinder
+import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
@@ -26,12 +28,11 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
-   // private var trackingService: TrackingService? = null
+    private var trackingService: TrackingService? = null
 
     companion object {
         @get:Synchronized
         var instance = App()
-
     }
 
     override fun onCreate() {
@@ -47,7 +48,8 @@ class App : Application() {
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
             startService(intent)
-          //  this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+           // ContextCompat.startForegroundService(instance,intent)
+           // this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -79,7 +81,7 @@ class App : Application() {
             val name = className.className
             if (name.endsWith("TrackingService")) {
                 trackingService = (service as TrackingService.Companion.LocationServiceBinder).service.apply {
-                    startTrackingService()
+                    //startTrackingService()
                 }
             }
         }

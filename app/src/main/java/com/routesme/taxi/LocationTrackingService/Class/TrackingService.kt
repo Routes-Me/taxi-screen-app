@@ -49,6 +49,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
+        Log.d("Test-location-service","onStartCommand")
         startForeground(1, getNotification())
         startTracking()
         return START_STICKY
@@ -76,7 +77,9 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
             schedule(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(5)) {
                 hubConnection?.let { hub ->
                         try {
+                            Log.d("Test-location-service","sendSavedLocationFeedsTimer")
                             if (hub.isConnected){
+                                Log.d("Test-location-service","sendSavedLocationFeedsTimer-CheckHubConnection")
                                 sendSavedLocationFeeds(hub)
                             }
                         }catch (e: Exception){
@@ -93,7 +96,8 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
                     try {
                         hub.invoke("SendLocation", message)
                         dataLayer.deleteFeeds(feeds.first().id, feeds.last().id)
-                       // Log.d("Tracking-New-Logic", "Send offline feeds.. \n Number of feeds: ${feeds.size} \n  Total number from DB after delete: ${dataLayer.getAllFeeds().size}  \n Message: $message")
+                        Log.d("Test-location-service","Sent feeds: $feeds")
+                        Log.d("Test-location-service","Sent message: $message")
                     } catch (e: Exception) {
                         Log.d("Exception", e.message)
                     }
@@ -144,9 +148,11 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun sharedPref() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
+        Log.d("Test-location-service","Hub connected")
         locationReceiver?.getLastKnownLocationMessage()?.let {
             try {
             instance.hubConnection?.invoke("SendLocation", it)
+                Log.d("Test-location-service","Sent last known message: $it")
         } catch (e: Exception) {
             Log.d("Exception", e.message)
         }
@@ -160,12 +166,15 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onDisconnected() {
+        Log.d("Test-location-service","Hub disconnected")
         connectSignalRHub()
     }
 
     override fun onError(exception: Exception) {
+        Log.d("Test-location-service","Hub error")
         Timer("signalRReconnection", true).apply {
             schedule(TimeUnit.MINUTES.toMillis(1)) {
+                Log.d("Test-location-service","Hub error")
                 connectSignalRHub()
             }
         }
@@ -173,6 +182,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private fun connectSignalRHub(){
         try{
+            Log.d("Test-location-service","Try to connect the hub")
             instance.hubConnection?.connect()
         }catch (e: Exception){
             Log.d("Exception",e.message)

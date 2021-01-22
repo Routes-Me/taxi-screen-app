@@ -57,7 +57,7 @@ class LocationReceiver() : LocationListener{
     override fun onLocationChanged(location: Location?) {
         location?.let { location ->
             dataLayer.insertLocation(location)
-            Log.d("Tracking-New-Logic","Insert new location: $location")
+            Log.d("Test-location-service","Inserted location: $location")
         }
     }
 
