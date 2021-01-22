@@ -63,6 +63,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
      private fun startTracking() {
          this.hubConnection = getHubConnection()
+         Log.d("Test-location-service","hubConnection: $hubConnection")
          sendSavedLocationFeedsTimer(hubConnection)
         locationReceiver = LocationReceiver().apply {
             if (isProviderEnabled()) {
@@ -113,6 +114,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     private fun createHubConnection(): HubConnection {
         val url = getTrackingUrl().toString()
+        Log.d("Test-location-service","Hub url: $url")
         return WebSocketHubConnectionP2(url, getToken())
     }
 
@@ -160,6 +162,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onMessage(message: HubMessage) {
+        Log.d("Test-location-service","onMessage: $message")
     }
 
     override fun onEventMessage(message: HubMessage) {
