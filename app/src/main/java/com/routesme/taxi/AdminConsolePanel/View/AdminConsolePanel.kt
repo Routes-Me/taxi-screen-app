@@ -148,7 +148,7 @@ class AdminConsolePanel : AppCompatActivity() {
 
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
-                addProperty("advertisementId",it.advertisementId.toString())
+                addProperty("advertisementId",it.advertisementId)
                 addProperty("mediaType",it.media_type)
                 add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
             }

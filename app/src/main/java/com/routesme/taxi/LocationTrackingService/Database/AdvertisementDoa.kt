@@ -15,7 +15,7 @@ interface  AdvertisementDoa {
 
     @Transaction
     @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type  FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
-    fun getItem(id:Int,timestamp: Long):AdvertisementTracking?
+    fun getItem(id:String,timestamp: Long):AdvertisementTracking?
 
     @Transaction
     @Query("UPDATE tbl_advertisement_tracking SET morning = morning+1 WHERE id = :id ")
@@ -35,7 +35,7 @@ interface  AdvertisementDoa {
 
     @Transaction
     @Query("SELECT * FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
-    fun getLastItem(id:Int,timestamp: Long):AdvertisementTracking
+    fun getLastItem(id:String,timestamp: Long):AdvertisementTracking
 
     @Transaction
     @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate  ORDER BY date ASC" )

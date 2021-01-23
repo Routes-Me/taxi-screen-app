@@ -2,14 +2,16 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.*
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
@@ -40,7 +42,6 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.service.AdvertisementService
-import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -177,7 +178,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         getList?.forEach {
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
-                addProperty("advertisementId",it.advertisementId.toString())
+                addProperty("advertisementId",it.advertisementId)
                 addProperty("mediaType",it.media_type)
                 add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
             }
@@ -310,10 +311,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         Log.d("Services","Services Connected")
 
     }
-    private fun startAdvertisementService(){
-        startService(Intent(this@HomeActivity, AdvertisementService::class.java))
-        ContextCompat.startForegroundService(this,intent)
-        this.bindService(intent, this, Context.BIND_AUTO_CREATE)
+    private  fun startAdvertisementService(){
+
+        startService(Intent(this, AdvertisementService::class.java))
+
     }
 
     private fun stopAdvertisementService(){
@@ -327,9 +328,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         player?.release()
         turnOffHotspot()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
-        this.cancel()
+        cancel()
         stopAdvertisementService()
-
     }
 
     override fun onStart() {

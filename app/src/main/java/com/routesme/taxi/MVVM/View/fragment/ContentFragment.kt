@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.*
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,18 +13,20 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import androidx.annotation.Nullable
+import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import carbon.widget.RelativeLayout
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.Timeline
+import com.bumptech.glide.Glide
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.CacheDataSink
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -31,6 +34,7 @@ import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.ThemeColor
+import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
@@ -38,14 +42,17 @@ import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.service.AdvertisementService
 import com.routesme.taxi.uplevels.App
+import com.routesme.taxi.utils.Period
 import com.routesme.taxi.utils.Type
 import dmax.dialog.SpotsDialog
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
+import kotlinx.android.synthetic.*
 import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.content_fragment.view.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import java.io.File
 import java.io.IOException
 
 
@@ -59,14 +66,16 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     private val SEC:Long = 300
     private val MIL:Long = 1000
     private var dialog: SpotsDialog? = null
-    private var videoRingProgressBar: RingProgressBar? = null
     private var isAlive = false
     private var videoShadow: RelativeLayout? = null
-    //private lateinit var  videoProgressJob : Job
+    private var count = 0;
+    private var isPlayingDemoVideo = false
     private lateinit var  callApiJob : Job
     private lateinit var animatorVideo:ObjectAnimator
     private lateinit var animatorImage:ObjectAnimator
     private var player : SimpleExoPlayer?=null
+    val advertisementDataLayer = AdvertisementDataLayer()
+
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -77,27 +86,12 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         return view
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        //mView = view
-        //videoRingProgressBar = view.videoRingProgressBar
-        //videoShadow = view.videoShadow
-        //videoProgressJob = Job()
-
-
-    }
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
-        //launch { setUpMediaPlayer() }
         player = SimpleExoPlayer.Builder(mContext).build()
         fetchContent()
     }
@@ -122,8 +116,17 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                                     pivotX = advertisementsImageView.height * 0.7f
                                     pivotY = advertisementsImageView.height / 0.7f
                                 }
+                                Advertisement_Video_CardView.apply {
+                                    cameraDistance = 12000f
+                                    pivotX = 0.0f
+                                    pivotY = Advertisement_Video_CardView.height / 0.7f
+                                }
                                 if (!images.isNullOrEmpty())setUpImage(images)
-                                launch {setUpMediaPlayer(videos)}
+                                launch {
+
+                                    setUpMediaPlayer(videos)
+                                    videoProgressbarRunnable()
+                                }
                                 /* if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext, images, mView.advertisementsImageView, mView.advertisementsImageView2, displayImageJob)*/
                                 /*videoProgressJob?.let { coroutineProgressJob->
                                     AdvertisementsHelper.instance.configuringMediaPlayer(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,coroutineProgressJob)
@@ -161,7 +164,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
             Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
         }
     }*/
-
     private fun startThread(errorMessage:String){
         isAlive = true
         EventBus.getDefault().post(DemoVideo(true,errorMessage))
@@ -199,21 +201,22 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     fun setUpImage(images: List<Data>){
         var currentImageIndex = 0
         var firstTime = false
-        CoroutineScope(Dispatchers.Main).launch {
+        val glide = Glide.with(mContext)
+        launch {
             while(isActive) {
                 if (currentImageIndex < images.size) {
                     if (currentImageIndex > 0){
                         val previousImageIndex = currentImageIndex - 1
                         val previousUri = Uri.parse(images[previousImageIndex].url)
-                        AdvertisementsHelper.glide.load(previousUri).error(R.drawable.empty_promotion).into(advertisementsImageView)
+                        glide.load(previousUri).error(R.drawable.empty_promotion).into(advertisementsImageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
-                    images[currentImageIndex].contentId?.toInt()?.let {
+                    images[currentImageIndex].contentId?.let {
 
-                        AdvertisementService.instance.log(it,Type.IMAGE.media_type)
+                            AdvertisementService.instance.log(it,Type.IMAGE.media_type)
 
                     }
-                    AdvertisementsHelper.glide.load(newUri).error(R.drawable.empty_promotion).into(advertisementsImageView2)
+                    glide.load(newUri).error(R.drawable.empty_promotion).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         setImageAnimation(advertisementsImageView,advertisementsImageView2)
@@ -231,29 +234,105 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
 
     }
 
-    suspend fun setUpMediaPlayer(videos: List<Data>){
+    private suspend fun setUpMediaPlayer(videos: List<Data>){
+        val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
+        player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).build().apply {
+            playerView.player = this
+            setMediaItems(mediaItems)
+            repeatMode = Player.REPEAT_MODE_ALL
+            playWhenReady = true
+            prepare()
+            play()
+            volume = 0f
+            addListener(object : Player.EventListener {
+                override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
+                    var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                    EventBus.getDefault().post(videos[currentMediaItemId])
 
-        player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).build()
+                    setAnimation(Advertisement_Video_CardView,bgImage)
+                    if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
+                    currentMediaItemId.let {
+                        videos[it].contentId?.let {
+                            //addLog()
+                            AdvertisementService.instance.log(it,Type.VIDEO.media_type)
 
-    }
+                        }
+                    }
+                }
+                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                    when (playbackState) {
+                        Player.STATE_IDLE -> {
 
-    suspend fun getMediaSourceFactory():DefaultMediaSourceFactory{
-        return withContext(Dispatchers.Default){
-            val cacheDataSourceFactory = CacheDataSource.Factory().setCache(getSimpleCache()).setUpstreamDataSourceFactory( DefaultHttpDataSourceFactory(Util.getUserAgent(App.instance, App.instance.getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            return@withContext DefaultMediaSourceFactory(cacheDataSourceFactory)
+                            player?.prepare()
+
+                        }
+                        Player.STATE_BUFFERING -> {
+
+                            count++
+                            if(count >= 5 ){
+                                count = 0
+                                EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
+                                isPlayingDemoVideo = true
+                            }
+
+                        }
+                        Player.STATE_READY -> {
+                            if(isPlayingDemoVideo) {
+                                EventBus.getDefault().post(DemoVideo(false,""))
+                                isPlayingDemoVideo = false
+                            }
+                            count = 0
+                            val currentMediaItem = playerView.player?.currentMediaItem
+                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                            if (currentMediaItemId == videos.indexOf(videos.first())){
+                                EventBus.getDefault().post(videos[currentMediaItemId])
+
+                            }
+
+                        }
+                        Player.STATE_ENDED -> {
+
+                        }
+                    }
+                }
+                override fun onPlayerError(error: ExoPlaybackException) {
+                    when (error.type) {
+                        ExoPlaybackException.TYPE_SOURCE ->{
+                            if(error.sourceException.message == "Response code: 404"){
+                                player?.seekTo(player!!.getNextWindowIndex(), 0);
+
+                            }
+
+                        }
+                        ExoPlaybackException.TYPE_RENDERER ->{
+
+
+                        }
+                        ExoPlaybackException.TYPE_UNEXPECTED ->{
+
+                        }
+                    }
+                }
+            })
         }
 
     }
 
-    suspend fun getSimpleCache(): SimpleCache{
+    private suspend fun videoProgressbarRunnable() {
+        launch {
+            while (isActive){
+                val current = (player?.currentPosition)!!.toInt()
+                val progress = current * 100 / (player?.duration)!!.toInt()
+                videoRingProgressBar?.progress = progress
+                delay(1000)
+            }
+        }
+    }
+
+    private suspend fun getMediaSourceFactory():DefaultMediaSourceFactory{
         return withContext(Dispatchers.Default){
-            val maxMemory = Runtime.getRuntime().maxMemory()
-            val freeMemory = Runtime.getRuntime().freeMemory()
-            val totalMemory = Runtime.getRuntime().totalMemory()
-            val used = totalMemory -freeMemory
-            val free = maxMemory - used
-            val exoPlayerCacheSize: Long = free/5
-            return@withContext SimpleCache(App.instance.cacheDir, LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize), ExoDatabaseProvider(App.instance))
+            val cacheDataSourceFactory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(mContext,getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+            return@withContext DefaultMediaSourceFactory(cacheDataSourceFactory)
         }
 
     }
@@ -271,14 +350,25 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         imageView.bringToFront()
 
     }
+
+    private fun setAnimation(playerView: RelativeLayout,bgImageView: RelativeLayout){
+        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        animatorVideo.apply {
+            setDuration(1000)
+            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            AccelerateDecelerateInterpolator()
+            start()
+        }
+        val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        bgImageView.startAnimation(zoomout)
+        playerView.bringToFront()
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        AdvertisementsHelper.instance.release()
-        this.cancel()
-        //displayImageJob?.cancel()
-        //videoProgressJob?.cancel()
+        cancel()
+        player?.release()
         callApiJob?.cancel()
-
     }
 
     override fun onStart() {

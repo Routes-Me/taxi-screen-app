@@ -13,7 +13,7 @@ class AdvertisementDataLayer(){
     private val advertisement = trackingDatabase.advertisementTracking()
     private val MIN = 100000000
 
-    fun insertOrUpdateRecords(id:Int,timeStamp:Long,period:Period,type:String){
+    fun insertOrUpdateRecords(id:String,timeStamp:Long,period:Period,type:String){
 
         var analysisRecord = advertisement.getItem(id,timeStamp/MIN)
 

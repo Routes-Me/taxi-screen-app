@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 
-@Database(entities = [AdvertisementTracking::class], version = 1 ,exportSchema = false)
+@Database(entities = [AdvertisementTracking::class], version = 2 ,exportSchema = false)
 public abstract class AdvertisementDatabase  : RoomDatabase(){
     abstract fun advertisementTracking():AdvertisementDoa
     companion object {
@@ -16,6 +16,6 @@ public abstract class AdvertisementDatabase  : RoomDatabase(){
 
         operator fun invoke(context: Context)= instance ?: synchronized(LOCK){ instance ?: buildDatabase(context).also { instance = it} }
 
-        private fun buildDatabase(context: Context) = Room.databaseBuilder(context, AdvertisementDatabase::class.java, "advertisement.db").allowMainThreadQueries().build()
+        private fun buildDatabase(context: Context) = Room.databaseBuilder(context, AdvertisementDatabase::class.java, "advertisement.db").allowMainThreadQueries().fallbackToDestructiveMigration().build()
     }
 }
