@@ -30,7 +30,6 @@ class AdvertisementService : Service(){
     }
     fun log(id:String, type:String){
         Log.d("Services","${Thread.currentThread().name} ${type}")
-
         advertisementDataLayer.insertOrUpdateRecords(id,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),type)
     }
 
