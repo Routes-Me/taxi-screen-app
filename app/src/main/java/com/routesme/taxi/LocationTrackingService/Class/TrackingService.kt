@@ -7,7 +7,6 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import com.routesme.taxi.Class.Helper
-import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
@@ -22,7 +21,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private var hubConnection: HubConnection? = null
     private var locationReceiver: LocationReceiver? = null
     private val helper = TrackingServiceHelper.instance
-    private var timer: Timer? = null
+    private var SendSavedLocationFeedsTimer: Timer? = null
     private var dataLayer = TrackingDataLayer()
 
     companion object {
@@ -40,8 +39,8 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
-        locationReceiver?.removeLocationUpdates()
-        timer?.cancel()
+        locationReceiver?.destroyLocationReceiver()
+        SendSavedLocationFeedsTimer?.cancel()
         hubConnection?.disconnect()
     }
 
@@ -88,7 +87,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     private fun sendSavedLocationFeedsTimer(hubConnection: HubConnection?) {
-        timer = Timer("SendSavedLocationFeeds", true).apply {
+        SendSavedLocationFeedsTimer = Timer("SendSavedLocationFeeds", true).apply {
             schedule(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(5)) {
                 hubConnection?.let { hub ->
                         try {
