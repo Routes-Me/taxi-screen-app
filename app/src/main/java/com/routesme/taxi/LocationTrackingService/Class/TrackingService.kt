@@ -63,7 +63,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
      private fun startTracking() {
-     //    insertTestFeeds()
+       //insertTestFeeds()
          hubConnection = getHubConnection()
          Log.d("Test-location-service","hubConnection: $hubConnection")
          sendSavedLocationFeedsTimer(hubConnection)
@@ -164,6 +164,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun sharedPref() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
+        Log.d("SignalR-Thread","onConnected... ${Thread.currentThread().name}")
         Log.d("Test-location-service","Hub connected")
         locationReceiver?.getLastKnownLocationMessage()?.let {
             try {
@@ -175,17 +176,22 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
        }
     }
 
-    override fun onMessage(message: HubMessage) {}
+    override fun onMessage(message: HubMessage) {
+        Log.d("SignalR-Thread","onMessage... ${Thread.currentThread().name}")
+    }
 
     override fun onEventMessage(message: HubMessage) {
+        Log.d("SignalR-Thread","onEventMessage... ${Thread.currentThread().name}")
     }
 
     override fun onDisconnected() {
+        Log.d("SignalR-Thread","onDisconnected... ${Thread.currentThread().name}")
         Log.d("Test-location-service","Hub disconnected")
         connectSignalRHub()
     }
 
     override fun onError(exception: Exception) {
+        Log.d("SignalR-Thread","onError... ${Thread.currentThread().name}")
         Log.d("Test-location-service","Hub error")
         Timer("signalRReconnection", true).apply {
             schedule(TimeUnit.MINUTES.toMillis(1)) {
