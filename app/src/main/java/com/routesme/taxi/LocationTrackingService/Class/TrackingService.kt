@@ -40,7 +40,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         super.onDestroy()
         locationReceiver?.removeLocationUpdates()
         timer?.cancel()
-        instance.hubConnection?.disconnect()
+        hubConnection?.disconnect()
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -62,7 +62,8 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
      private fun startTracking() {
-         this.hubConnection = getHubConnection()
+        
+         hubConnection = getHubConnection()
          Log.d("Test-location-service","hubConnection: $hubConnection")
          sendSavedLocationFeedsTimer(hubConnection)
         locationReceiver = LocationReceiver().apply {
@@ -91,7 +92,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     private fun sendSavedLocationFeeds(hub: HubConnection) {
-        dataLayer.getFeeds().let { feeds ->
+       dataLayer.getFeeds().let { feeds ->
             if (!feeds.isNullOrEmpty()){
                 helper.getMessage(helper.getFeedsJsonArray(feeds).toString())?.let { message ->
                     try {
@@ -153,7 +154,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         Log.d("Test-location-service","Hub connected")
         locationReceiver?.getLastKnownLocationMessage()?.let {
             try {
-            instance.hubConnection?.invoke("SendLocation", it)
+            hubConnection?.invoke("SendLocation", it)
                 Log.d("Test-location-service","Sent last known message: $it")
         } catch (e: Exception) {
             Log.d("Exception", e.message)
@@ -161,9 +162,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
        }
     }
 
-    override fun onMessage(message: HubMessage) {
-        Log.d("Test-location-service","onMessage: $message")
-    }
+    override fun onMessage(message: HubMessage) {}
 
     override fun onEventMessage(message: HubMessage) {
     }
@@ -186,7 +185,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private fun connectSignalRHub(){
         try{
             Log.d("Test-location-service","Try to connect the hub")
-            instance.hubConnection?.connect()
+            hubConnection?.connect()
         }catch (e: Exception){
             Log.d("Exception",e.message)
         }

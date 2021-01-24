@@ -14,6 +14,7 @@ import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
 import com.routesme.taxi.uplevels.App
 import org.json.JSONException
+import org.json.JSONObject
 
 class LocationReceiver() : LocationListener{
     private var dataLayer = TrackingDataLayer()
