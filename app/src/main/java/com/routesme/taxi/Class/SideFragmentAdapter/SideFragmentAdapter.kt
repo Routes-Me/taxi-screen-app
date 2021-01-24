@@ -9,13 +9,13 @@ import com.routesme.taxi.R
 
 class SideFragmentAdapter(private val list: List<ISideFragmentCell>, private val activity: FragmentActivity?) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
     companion object {
-        public const val TYPE_EMPTY_VIDEO_DISCOUNT =0
-        public const val TYPE_VIDEO_DISCOUNT = 1
+        const val TYPE_EMPTY_VIDEO_DISCOUNT =0
+        const val TYPE_VIDEO_DISCOUNT = 1
         private const val TYPE_LARGE_EMPTY = 2
         private const val TYPE_DATE= 3
         private const val TYPE_SMALL_EMPTY = 4
-        public const val TYPE_WIFI = 5
-        public const val TYPE_BANNER_DISCOUNT = 6
+        const val TYPE_WIFI = 5
+        const val TYPE_BANNER_DISCOUNT = 6
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = when (viewType) {

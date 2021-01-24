@@ -14,7 +14,7 @@ import javax.crypto.spec.PBEKeySpec
 import javax.crypto.spec.SecretKeySpec
 import kotlin.random.Random
 
-class AesBase64Wrapper() {
+class AesBase64Wrapper {
 
     companion object {
         private  val encrypt: EncryptModel = EncryptModel()

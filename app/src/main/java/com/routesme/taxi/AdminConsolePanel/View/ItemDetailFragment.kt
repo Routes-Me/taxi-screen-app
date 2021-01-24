@@ -85,10 +85,5 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
         ItemDetailsRecyclerView.apply { adapter = activity?.let { AdminConsoleDetailsListAdapter(it, detailsList) } }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
 
 }

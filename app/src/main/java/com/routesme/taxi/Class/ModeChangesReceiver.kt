@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 
-class ModeChangesReceiver() : BroadcastReceiver() {
+class ModeChangesReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         DisplayManager.instance.notifyRegisteredActivity()

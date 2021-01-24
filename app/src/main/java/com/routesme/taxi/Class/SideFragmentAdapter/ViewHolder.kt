@@ -21,16 +21,16 @@ class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView
     val cardShadow = itemView.findViewById(R.id.videoPromotionShadow) as RelativeLayout
 }
 
-class ViewHolderLargeEmpty(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+class ViewHolderLargeEmpty(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 class ViewHolderDate(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val clockTv: TextView = itemView.findViewById(R.id.clockTv)
     val dayTv: TextView = itemView.findViewById(R.id.dayTv)
 }
 
-class ViewHolderSmallEmpty(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+class ViewHolderSmallEmpty(itemView: View) : RecyclerView.ViewHolder(itemView)
 
-class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView) {}
+class ViewHolderWifi(itemView: View) : RecyclerView.ViewHolder(itemView)
 
 class ViewHolderBannerDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val qrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)

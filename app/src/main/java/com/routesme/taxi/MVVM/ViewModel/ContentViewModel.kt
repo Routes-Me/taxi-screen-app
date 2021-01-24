@@ -9,7 +9,7 @@ import com.routesme.taxi.MVVM.Repository.UnlinkRepository
 import org.json.JSONArray
 import org.json.JSONObject
 
-class ContentViewModel() : ViewModel() {
+class ContentViewModel : ViewModel() {
 
     fun getContent(offset: Int, limit: Int, context: Context) = ContentRepository(context).getContent(offset,limit)
 

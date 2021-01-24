@@ -17,9 +17,9 @@ import java.lang.reflect.Method;
 public class MyOreoWifiManager {
     private static final String TAG = MyOreoWifiManager.class.getSimpleName();
 
-    private Context mContext;
-    private WifiManager mWifiManager;
-    private ConnectivityManager mConnectivityManager;
+    private final Context mContext;
+    private final WifiManager mWifiManager;
+    private final ConnectivityManager mConnectivityManager;
 
     public MyOreoWifiManager(Context c) {
         mContext = c;

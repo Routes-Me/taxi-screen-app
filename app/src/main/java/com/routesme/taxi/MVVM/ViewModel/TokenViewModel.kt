@@ -6,7 +6,7 @@ import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.Repository.LoginRepository
 import com.routesme.taxi.MVVM.Repository.TokenRepository
 
-class TokenViewModel():ViewModel(){
+class TokenViewModel :ViewModel(){
 
     fun refreshToken(context: Context) = TokenRepository(context).refreshToken()
 }

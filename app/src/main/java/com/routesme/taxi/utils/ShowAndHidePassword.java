@@ -97,11 +97,7 @@ public class ShowAndHidePassword extends AppCompatEditText {
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() > 0) {
-                    showPasswordVisibilityIndicator(true);
-                } else {
-                    showPasswordVisibilityIndicator(false);
-                }
+                showPasswordVisibilityIndicator(s.length() > 0);
             }
 
             @Override

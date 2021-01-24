@@ -21,7 +21,7 @@ class MasterItemsAdapter(private val parentActivity: AdminConsolePanel, private 
     init {
         onClickListener = View.OnClickListener {
             val item = it.tag as MasterItem
-            rowIndex = item.id;
+            rowIndex = item.id
             notifyDataSetChanged()
             val fragment = ItemDetailFragment(parentActivity).apply { arguments = Bundle().apply { putInt(ItemDetailFragment.ARG_ITEM_ID, rowIndex) } }
             parentActivity.supportFragmentManager.beginTransaction().replace(R.id.item_detail_container, fragment).commit()

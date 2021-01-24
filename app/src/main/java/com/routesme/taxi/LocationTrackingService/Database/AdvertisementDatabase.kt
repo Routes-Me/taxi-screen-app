@@ -8,7 +8,7 @@ import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 
 @Database(entities = [AdvertisementTracking::class], version = 2 ,exportSchema = false)
-public abstract class AdvertisementDatabase  : RoomDatabase(){
+abstract class AdvertisementDatabase  : RoomDatabase(){
     abstract fun advertisementTracking():AdvertisementDoa
     companion object {
         @Volatile private var instance: AdvertisementDatabase? = null

@@ -5,6 +5,6 @@ import androidx.lifecycle.ViewModel
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.MVVM.Repository.SubmitApplicationVersionRepository
 
-class SubmitApplicationVersionViewModel() : ViewModel() {
+class SubmitApplicationVersionViewModel : ViewModel() {
     fun submitApplicationVersion(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials, context: Context) = SubmitApplicationVersionRepository(context).submitApplicationVersion(deviceId, submitApplicationVersionCredentials)
 }

@@ -61,7 +61,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
                 newHolder.itemView.cameraDistance = 12000f
                 objectAnimator = ObjectAnimator.ofFloat(newHolder.itemView, "rotationX", 180f, 0f)
                 objectAnimator!!.apply {
-                    setDuration(1000)
+                    duration = 1000
                     AccelerateInterpolator()
                     start()
                 }
@@ -89,7 +89,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
                 oldHolder.itemView.pivotY = 0f
                 objectAnimator = ObjectAnimator.ofFloat(oldHolder.itemView, "rotationY", 0f, 180f)
                 objectAnimator!!.apply {
-                    setDuration(1000)
+                    duration = 1000
                     AccelerateDecelerateInterpolator()
                     start()
                 }

@@ -27,7 +27,7 @@ import static android.content.ContentValues.TAG;
 public class HotSpotIntentService extends IntentService {
 
 
-    private static int FOREGROUND_ID=1338;
+    private static final int FOREGROUND_ID=1338;
     private static final String CHANNEL_ID = "control_app";
 
     // Action names...assigned in manifest.

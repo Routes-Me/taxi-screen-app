@@ -3,7 +3,7 @@ package com.routesme.taxi.MVVM.Model
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.R
 
-class EncryptModel() {
+class EncryptModel {
     val iv: String = Helper.getConfigValue("iv", R.raw.encryption).toString()
     val password: String = Helper.getConfigValue("password", R.raw.encryption).toString()
     val cipher: String = Helper.getConfigValue("cipher", R.raw.encryption).toString()

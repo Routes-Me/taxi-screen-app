@@ -46,8 +46,8 @@ class HomeScreenHelper(val activity: Activity) {
                     adminVerificationDialog.dismiss()
                     openAdminConsolePanel()
                 } else {
-                    adminVerificationPattern.clearPattern();
-                    adminVerificationDialog.dismiss();
+                    adminVerificationPattern.clearPattern()
+                    adminVerificationDialog.dismiss()
                 }
             }
             override fun onCleared() {}

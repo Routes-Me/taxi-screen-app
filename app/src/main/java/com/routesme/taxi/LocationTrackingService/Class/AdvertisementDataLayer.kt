@@ -7,7 +7,7 @@ import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.utils.Period
 
-class AdvertisementDataLayer(){
+class AdvertisementDataLayer {
 
     private val trackingDatabase = AdvertisementDatabase.invoke(App.instance)
     private val advertisement = trackingDatabase.advertisementTracking()

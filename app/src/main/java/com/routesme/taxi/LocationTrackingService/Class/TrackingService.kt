@@ -14,7 +14,7 @@ import kotlinx.coroutines.*
 import java.lang.RuntimeException
 import java.net.URI
 
-class TrackingService() : Service(), HubConnectionListener, HubEventListener {
+class TrackingService : Service(), HubConnectionListener, HubEventListener {
 
     private var hubConnection: HubConnection? = null
     private var locationReceiver: LocationReceiver? = null
@@ -130,7 +130,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     override fun onMessage(message: HubMessage) {
-        Log.d("send-location-testing","onMessage: ${message.arguments.toString()}")
+        Log.d("send-location-testing","onMessage: ${message.arguments}")
         Log.d("SignalR-message","${message}")
     }
 

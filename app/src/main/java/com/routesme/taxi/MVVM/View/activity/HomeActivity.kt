@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -40,6 +41,11 @@ import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
+import com.routesme.taxi.database.ResponseBody
+import com.routesme.taxi.database.database.AdvertisementDatabase
+import com.routesme.taxi.database.factory.ViewModelFactory
+import com.routesme.taxi.database.helper.DatabaseHelperImpl
+import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.service.AdvertisementService
 import kotlinx.android.synthetic.main.home_screen.*
@@ -61,6 +67,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private  var deviceId:String?=null
     private val advertisementTracking = AdvertisementDataLayer()
     private var advertisementService: AdvertisementService? = null
+    private lateinit var viewModel: RoomDBViewModel
     private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +85,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
         checkDateAndUploadResult()
         launch {initializePlayer()}
@@ -87,6 +95,32 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         helper.requestRuntimePermissions()
         addFragments()
         startAdvertisementService()
+        observeAnalytics()
+    }
+
+    private fun observeAnalytics(){
+
+        viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(this, Observer {
+
+            when(it.status){
+
+                ResponseBody.Status.SUCCESS -> {
+
+
+                    //it.data?.let { users -> renderList(users) }
+
+                }
+                ResponseBody.Status.LOADING -> {
+
+                }
+                ResponseBody.Status.ERROR -> {
+                    //Handle Error
+
+                }
+            }
+        })
+
+
     }
 
     private fun setSystemUiVisibility() {
@@ -157,7 +191,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         from_date?.let {from_date->
             if(DateHelper.instance.checkDate(from_date.toLong())){
                 val postReportViewModel: ContentViewModel by viewModels()
-                getJsonArray()?.let { list->
+                getJsonArray().let { list->
                     deviceId?.let {deviceId->
                         postReportViewModel.postReport(this,list,deviceId).observe(this , Observer<ReportResponse> {
                             if(it.isSuccess){

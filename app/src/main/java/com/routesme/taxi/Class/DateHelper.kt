@@ -6,7 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class DateHelper(){
+class DateHelper {
 
     companion object{
 

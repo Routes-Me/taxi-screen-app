@@ -10,5 +10,5 @@ class VideoDiscountCell(val data: Data) : ISideFragmentCell
 class LargeEmptyCell : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 class SmallEmptyCell : ISideFragmentCell
-class WifiCell() : ISideFragmentCell
+class WifiCell : ISideFragmentCell
 class BannerDiscountCell(val data: Data) : ISideFragmentCell

@@ -110,7 +110,7 @@ class App : Application() {
         override fun onServiceDisconnected(className: ComponentName) {
             if (className.className == "TrackingService") {
                 trackingService = null
-                signalRReconnectionJob?.apply {
+                signalRReconnectionJob.apply {
                     if (isActive) cancel()
                     Log.d("signalRReconnectionJob-Status","$isActive")
                 }

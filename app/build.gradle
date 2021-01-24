@@ -86,8 +86,9 @@ dependencies {
     //MVVM Architecture
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
-    implementation "android.arch.lifecycle:viewmodel:1.1.1"
+    //implementation "android.arch.lifecycle:viewmodel:1.1.1"
     implementation 'com.google.android.material:material:1.2.1'
     //Location tracking service by kotlin ...
     //Location Listener
@@ -104,6 +105,7 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "android.arch.persistence.room:runtime:1.1.1"
     kapt "android.arch.persistence.room:compiler:1.1.1"
+    implementation "androidx.room:room-ktx:2.2.5"
     //implementation 'com.microsoft.signalr:signalr:1.0.0'
     implementation 'com.smartarmenia:dotnetcoresignalrclientjava:1.14'
     //Exoplayer

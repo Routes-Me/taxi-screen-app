@@ -49,10 +49,6 @@ class SideMenuFragment : Fragment() {
     }
 
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-    }
-
     override fun onStart() {
         EventBus.getDefault().register(this)
         super.onStart()
@@ -65,7 +61,7 @@ class SideMenuFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        presentJob?.cancel()
+        presentJob.cancel()
     }
 
     private fun setupRecyclerView() {

@@ -12,7 +12,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-open class DisplayManager() {
+open class DisplayManager {
     private lateinit var alarmManager: AlarmManager
     private lateinit var morningAlarm: PendingIntent
     private lateinit var eveningAlarm: PendingIntent
