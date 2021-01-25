@@ -1,6 +1,7 @@
 package com.routesme.taxi.Class
 
 import android.annotation.SuppressLint
+import android.util.Log
 import com.routesme.taxi.utils.Period
 import java.text.SimpleDateFormat
 import java.util.*
@@ -25,6 +26,7 @@ class DateHelper {
 
     fun checkDate(from_date:Long) : Boolean{
         val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
+        Log.d("Diff","${diff}")
         return diff > 0
     }
 

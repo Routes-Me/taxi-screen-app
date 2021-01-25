@@ -21,6 +21,8 @@ interface DatabaseHelper {
 
     suspend fun getList(timeStamp: Long):List<AdvertisementTracking>
 
+    suspend fun getAllList():List<AdvertisementTracking>
+
     suspend fun deleteTable(timeStamp: Long):Int
 
     suspend fun deleteAllTable():Int

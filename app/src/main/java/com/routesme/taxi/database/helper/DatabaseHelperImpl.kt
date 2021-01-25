@@ -23,6 +23,8 @@ class DatabaseHelperImpl (private val advertismentDatabase: AdvertisementDatabas
 
     override suspend fun getList(timeStamp:Long):List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getList(timeStamp)
 
+    override suspend fun getAllList():List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getAllList()
+
     override suspend fun deleteTable(timeStamp:Long):Int = advertismentDatabase.advertisementTracking().deleteTable(timeStamp)
 
     override suspend fun deleteAllTable():Int = advertismentDatabase.advertisementTracking().deleteAllTable()

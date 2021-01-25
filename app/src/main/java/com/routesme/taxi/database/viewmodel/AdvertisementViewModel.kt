@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.entity.AdvertisementTracking
 import com.routesme.taxi.database.helper.DatabaseHelper
@@ -15,6 +14,7 @@ import kotlinx.coroutines.launch
 public class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     private val MIN = 100000000
     private val analyticsListLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
+    private val analyticsListAllLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val deleteTableLiveData = MutableLiveData<ResponseBody<Int>>()
     private val deleteAllTableLiveData = MutableLiveData<ResponseBody<Int>>()
     fun insertLog(id:String, timeStamp:Long, period: Period, type:String) {
@@ -72,11 +72,21 @@ public class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel(
         return analyticsListLiveData
     }
 
+    fun getAllList():LiveData<ResponseBody<List<AdvertisementTracking>>>{
+
+        viewModelScope.launch {
+            val getAllList =dbHelper.getAllList()
+            analyticsListAllLiveData.postValue(ResponseBody.success(getAllList))
+
+        }
+        return analyticsListAllLiveData
+    }
+
     fun deleteTable(currentDate: Long):LiveData<ResponseBody<Int>>{
 
         viewModelScope.launch {
 
-            val deleteData = dbHelper.deleteTable(currentDate)
+            val deleteData = dbHelper.deleteTable(currentDate/MIN)
             deleteTableLiveData.postValue(ResponseBody.success(deleteData))
         }
         return deleteTableLiveData
@@ -93,9 +103,6 @@ public class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel(
         return deleteAllTableLiveData
 
     }
-
-
-
 
 
 }

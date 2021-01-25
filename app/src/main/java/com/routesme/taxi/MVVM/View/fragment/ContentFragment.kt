@@ -4,8 +4,8 @@ import android.animation.ObjectAnimator
 import android.app.Activity
 import android.content.*
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,7 +13,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.annotation.Nullable
 import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
@@ -21,7 +20,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.google.android.exoplayer2.*
@@ -33,12 +31,10 @@ import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
-import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.database.AdvertisementDatabase
 import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
@@ -72,7 +68,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     private lateinit var animatorVideo:ObjectAnimator
     private lateinit var animatorImage:ObjectAnimator
     private var player : SimpleExoPlayer?=null
-    val advertisementDataLayer = AdvertisementDataLayer()
     private lateinit var viewModel: RoomDBViewModel
 
     override fun onAttach(context: Context) {
@@ -95,7 +90,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         fetchContent()
     }
-
     private fun fetchContent(){
         val contentViewModel: ContentViewModel by viewModels()
 
@@ -127,10 +121,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                                     setUpMediaPlayer(videos)
                                     videoProgressbarRunnable()
                                 }
-                                /* if (!images.isNullOrEmpty()) AdvertisementsHelper.instance.displayImages(mContext, images, mView.advertisementsImageView, mView.advertisementsImageView2, displayImageJob)*/
-                                /*videoProgressJob?.let { coroutineProgressJob->
-                                    AdvertisementsHelper.instance.configuringMediaPlayer(mContext, videos, mView.playerView, mView.videoRingProgressBar,mView.Advertisement_Video_CardView,mView.bgImage,coroutineProgressJob)
-                                }*/
                             }
 
                         } else {
@@ -213,7 +203,7 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.let {
                         viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
-                        //AdvertisementService.instance.log(it,Type.IMAGE.media_type)
+
 
                     }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(advertisementsImageView2)
@@ -250,14 +240,11 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-
                     setAnimation(Advertisement_Video_CardView,bgImage)
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
                         videos[it].contentId?.let {
-                            //addLog()
-                           // AdvertisementService.instance.log(it,Type.VIDEO.media_type)
-                            viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
+                            viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
 
                         }
                     }

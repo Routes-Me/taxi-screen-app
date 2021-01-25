@@ -12,6 +12,7 @@ import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.MediaItem
@@ -29,8 +30,6 @@ import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
-import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
-import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
@@ -43,11 +42,11 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.database.AdvertisementDatabase
+import com.routesme.taxi.database.entity.AdvertisementTracking
 import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.service.AdvertisementService
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -65,8 +64,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
-    private val advertisementTracking = AdvertisementDataLayer()
-    private var advertisementService: AdvertisementService? = null
     private lateinit var viewModel: RoomDBViewModel
     private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,7 +76,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
             setTheme(R.style.FullScreen_Dark_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
-        setSystemUiVisibility()
+
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
@@ -94,42 +91,18 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
-        startAdvertisementService()
-        observeAnalytics()
-    }
-
-    private fun observeAnalytics(){
-
-        viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(this, Observer {
-
-            when(it.status){
-
-                ResponseBody.Status.SUCCESS -> {
-
-
-                    //it.data?.let { users -> renderList(users) }
-
-                }
-                ResponseBody.Status.LOADING -> {
-
-                }
-                ResponseBody.Status.ERROR -> {
-                    //Handle Error
-
-                }
-            }
-        })
-
-
+        setSystemUiVisibility()
     }
 
     private fun setSystemUiVisibility() {
+
         window.decorView.systemUiVisibility = (View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                 or View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
+
 
     }
 
@@ -190,26 +163,51 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private fun checkDateAndUploadResult(){
         from_date?.let {from_date->
             if(DateHelper.instance.checkDate(from_date.toLong())){
-                val postReportViewModel: ContentViewModel by viewModels()
-                getJsonArray().let { list->
-                    deviceId?.let {deviceId->
-                        postReportViewModel.postReport(this,list,deviceId).observe(this , Observer<ReportResponse> {
-                            if(it.isSuccess){
-                                advertisementTracking.deleteData(DateHelper.instance.getCurrentDate())
-                                editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                                editor?.commit()
-                            }
-                        })
-                    }
-                }
+                observeAnalytics()
             }
         }
     }
 
-    private fun getJsonArray(): JsonArray {
-        getList =  advertisementTracking.getList(DateHelper.instance.getCurrentDate())
+    private fun observeAnalytics(){
+
+        viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(this, Observer {
+
+            when(it.status){
+
+                ResponseBody.Status.SUCCESS -> {
+                    it.data?.let {list->
+
+                        val postReportViewModel: ContentViewModel by viewModels()
+                        deviceId?.let {deviceId->
+                            postReportViewModel.postReport(this,getJsonArray(list),deviceId).observe(this , Observer<ReportResponse> {
+                                if(it.isSuccess){
+                                    observeDeleteTable()
+                                }
+                            })
+                        }
+                    }
+                }
+                ResponseBody.Status.ERROR -> {}
+            }
+        })
+    }
+
+    private fun observeDeleteTable(){
+
+        viewModel.deleteTable(DateHelper.instance.getCurrentDate()).observe(this, Observer {
+            when(it.status){
+                ResponseBody.Status.SUCCESS ->{
+                    editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                    editor?.commit()}
+                ResponseBody.Status.ERROR ->{}
+            }
+        })
+    }
+
+    private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
-        getList?.forEach {
+        list?.forEach {
+            Log.d("Item","${it.date},${it.morning},${it.noon},${it.evening},${it.night},${it.advertisementId},${it.media_type},${it.time_in_day}")
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
                 addProperty("advertisementId",it.advertisementId)
@@ -345,25 +343,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         Log.d("Services","Services Connected")
 
     }
-    private  fun startAdvertisementService(){
-
-        startService(Intent(this, AdvertisementService::class.java))
-
-    }
-
-    private fun stopAdvertisementService(){
-
-        stopService(Intent(this@HomeActivity, AdvertisementService::class.java))
-
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         player?.release()
         turnOffHotspot()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         cancel()
-        stopAdvertisementService()
     }
 
     override fun onStart() {

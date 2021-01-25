@@ -101,9 +101,7 @@ class SideMenuFragment : Fragment() {
 
     @Subscribe()
     fun onEvent(data: Data){
-
         when(data.type){
-
             ContentType.Image.value -> changeBannerQRCode(data)
             else -> changeVideoQRCode(data)
         }
@@ -114,7 +112,7 @@ class SideMenuFragment : Fragment() {
         val position = 0
         sideFragmentCells[position] = if (promotion != null && promotion.isExist) VideoDiscountCell(data) else EmptyVideoDiscountCell()
         sideFragmentAdapter.apply {
-            notifyItemChanged(position)
+            //notifyItemChanged(position)
             notifyItemRemoved(position)
             notifyItemInserted(position)
         }
@@ -126,7 +124,7 @@ class SideMenuFragment : Fragment() {
         val position = 4
         sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(data) else WifiCell()
         sideFragmentAdapter.apply {
-            notifyItemChanged(position)
+            //notifyItemChanged(position)
             notifyItemRemoved(position)
             notifyItemInserted(position)
         }

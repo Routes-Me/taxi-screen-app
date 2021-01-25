@@ -10,7 +10,9 @@ import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
@@ -19,14 +21,18 @@ import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleLists
 import com.routesme.taxi.AdminConsolePanel.Class.MasterItemsAdapter
 import com.routesme.taxi.AdminConsolePanel.Model.LogOff
 import com.routesme.taxi.Class.DateHelper
-import com.routesme.taxi.LocationTrackingService.Class.AdvertisementDataLayer
-import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.UnlinkResponse
 import com.routesme.taxi.MVVM.View.activity.HomeActivity
 import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.R
+import com.routesme.taxi.database.ResponseBody
+import com.routesme.taxi.database.database.AdvertisementDatabase
+import com.routesme.taxi.database.entity.AdvertisementTracking
+import com.routesme.taxi.database.factory.ViewModelFactory
+import com.routesme.taxi.database.helper.DatabaseHelperImpl
+import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.admin_console_panel.*
@@ -43,11 +49,13 @@ class AdminConsolePanel : AppCompatActivity() {
     private var sharedPreferences :SharedPreferences?=null
     private var dialog: AlertDialog? = null
     val contentViewModel : ContentViewModel by viewModels()
-    private val advertisementTracking = AdvertisementDataLayer()
-    private var getList:List<AdvertisementTracking>?=null
+    private lateinit var viewModel: RoomDBViewModel
+    //private val advertisementTracking = AdvertisementDataLayer()
+    //private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.admin_console_panel)
+        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))).get(RoomDBViewModel::class.java)
         initialize()
     }
     private fun initialize(){
@@ -100,20 +108,9 @@ class AdminConsolePanel : AppCompatActivity() {
                 adminConsoleHelper?.deviceId()?.let {deviceID ->
 
                     adminConsoleHelper?.vehicleId()?.let {vehicleId ->
-                        //Log.d("Report","${getJsonArray()}")
-                        contentViewModel.postReport(this,getJsonArray(),deviceID).observe(this , Observer<ReportResponse> {
 
-                            if(it.isSuccess){
+                        observeAnalytics(deviceID,vehicleId)
 
-                                val records_deleted = advertisementTracking.deleteAllData()
-                                //Log.d("Report","${records_deleted}")
-                                unlinkDeviceFromServer(deviceID,vehicleId)
-
-                            }else{
-
-                                dialog?.hide()
-                            }
-                        })
                     }
                 }
             } catch (e: ClassNotFoundException) {
@@ -125,7 +122,6 @@ class AdminConsolePanel : AppCompatActivity() {
             }
         }
     }
-
     private fun unlinkDeviceFromServer(deviceId:String,vehicleId:String){
 
                 contentViewModel.unlinkDevice(vehicleId, deviceId,this).observe(this, Observer<UnlinkResponse> {
@@ -139,12 +135,44 @@ class AdminConsolePanel : AppCompatActivity() {
                     }
                 })
     }
+    private fun observeAnalytics(deviceId: String,vehicleId: String){
 
-    private fun getJsonArray(): JsonArray {
-        getList =  advertisementTracking.getAllList()
-        //val jsonObject = JSONObject()
+        viewModel.getAllList().observe(this, Observer {
+
+            when(it.status){
+
+                ResponseBody.Status.SUCCESS -> {
+
+                    it.data?.let {list->
+                        contentViewModel.postReport(this,getJsonArray(list),deviceId).observe(this , Observer<ReportResponse> {
+                            if(it.isSuccess){
+                                observeDeleteTable(deviceId,vehicleId)
+                            }else{
+                                dialog?.hide()
+                            }
+                        })
+                    }
+                }
+                ResponseBody.Status.ERROR -> {dialog?.hide()}
+            }
+        })
+    }
+
+    private fun observeDeleteTable(deviceId: String,vehicleId: String){
+
+        viewModel.deleteAllData().observe(this, Observer {
+            when (it.status) {
+                ResponseBody.Status.SUCCESS -> {
+                    unlinkDeviceFromServer(deviceId, vehicleId)
+                }
+                ResponseBody.Status.ERROR -> { dialog?.hide()}
+            }
+        })
+    }
+
+    private fun getJsonArray(list:List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
-        getList?.forEach {
+        list?.forEach {
 
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
@@ -183,3 +211,4 @@ class AdminConsolePanel : AppCompatActivity() {
 
     }
 }
+

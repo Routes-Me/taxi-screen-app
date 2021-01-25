@@ -25,7 +25,6 @@ import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
-import com.routesme.taxi.service.AdvertisementService
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
