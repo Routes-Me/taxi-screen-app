@@ -6,9 +6,11 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.routesme.taxi.LocationTrackingService.Model.AdvertisementTracking
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
-@Database(entities = [LocationFeed::class], version = 6 ,exportSchema = false)
-public abstract class TrackingDatabase  : RoomDatabase(){
+@Database(entities = [LocationFeed::class], version = 7 ,exportSchema = false)
+abstract class TrackingDatabase  : RoomDatabase(){
     abstract fun locationFeedsDao(): LocationFeedsDao
+
+    /*
 companion object {
         @Volatile private var instance: TrackingDatabase? = null
         private val LOCK = Any()
@@ -17,4 +19,5 @@ companion object {
 
         private fun buildDatabase(context: Context) = Room.databaseBuilder(context, TrackingDatabase::class.java, "tracking.db").allowMainThreadQueries().build()
     }
+  */
 }

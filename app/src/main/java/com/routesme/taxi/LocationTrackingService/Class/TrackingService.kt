@@ -51,7 +51,8 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.d("Test-location-service","onStartCommand")
-        startForeground(1, getNotification())
+        Log.d("Service-Thread","onConnected... ${Thread.currentThread().name}")
+        //startForeground(1, getNotification())
         startTracking()
         return START_STICKY
     }
@@ -63,7 +64,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
      private fun startTracking() {
-       //insertTestFeeds()
+      // insertTestFeeds()
          hubConnection = getHubConnection()
          Log.d("Test-location-service","hubConnection: $hubConnection")
          sendSavedLocationFeedsTimer(hubConnection)

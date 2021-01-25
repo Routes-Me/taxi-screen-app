@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.StrictMode
 import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
