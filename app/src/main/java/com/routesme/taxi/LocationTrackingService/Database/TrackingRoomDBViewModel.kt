@@ -1,5 +1,6 @@
 package com.routesme.taxi.LocationTrackingService.Database
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,23 +12,31 @@ class TrackingRoomDBViewModel(private val dbHelper: TrackingDatabaseHelper): Vie
 
     private val locationFeeds = MutableLiveData<List<LocationFeed>>()
 
-    init {
-        fetchUsers()
-    }
-
-    private fun fetchUsers() {
+    fun insertLocation(locationFeed: LocationFeed) {
         viewModelScope.launch {
-            locationFeeds.postValue(null)
             try {
-                val usersFromDb = dbHelper.getFeeds()
-                    locationFeeds.postValue(usersFromDb)
+                dbHelper.insertLocation(locationFeed)
             } catch (e: Exception) {
-                locationFeeds.postValue(null)
+                Log.d("TrackingDatabaseOperations", "Insert Exception: ${e.message}")
             }
         }
     }
 
-    fun getFeeds(): LiveData<List<LocationFeed>> {
+    fun getLocationFeeds(): LiveData<List<LocationFeed>> {
+        viewModelScope.launch {
+            val feeds = dbHelper.getFeeds()
+            locationFeeds.postValue(feeds)
+        }
         return locationFeeds
+    }
+
+    fun deleteFeed(id1: Int, id2: Int) {
+        viewModelScope.launch {
+            try {
+                dbHelper.deleteFeeds(id1, id2)
+            } catch (e: Exception) {
+                Log.d("TrackingDatabaseOperations", "Insert Exception: ${e.message}")
+            }
+        }
     }
 }
