@@ -10,6 +10,7 @@ import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
 import kotlinx.coroutines.GlobalScope
@@ -25,40 +26,35 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private var locationReceiver: LocationReceiver? = null
     private val helper = TrackingServiceHelper.instance
     private var SendSavedLocationFeedsTimer: Timer? = null
-
     private val db = TrackingDatabase(App.instance)
     private val locationFeedsDao = db.locationFeedsDao()
 
-    companion object {
-        @get:Synchronized
-        var instance: TrackingService = TrackingService()
-        class LocationServiceBinder : Binder() {
-            val service: TrackingService
-                get() = instance
-        }
-    }
-
     override fun onCreate() {
         super.onCreate()
+        hubConnection = prepareHubConnection()
     }
+
+    override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
         super.onDestroy()
         locationReceiver?.destroyLocationReceiver()
         SendSavedLocationFeedsTimer?.cancel()
-        hubConnection?.disconnect()
-    }
-
-    override fun onBind(intent: Intent): IBinder {
-        return LocationServiceBinder()
+       // hubConnection.apply { if (isConnected) disconnect() }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.d("Test-location-service","onStartCommand")
-        Log.d("Service-Thread","onConnected... ${Thread.currentThread().name}")
+        Log.d("Test-location-service", "onStartCommand")
+        Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
         //startForeground(1, getNotification())
-        startTracking()
+        locationReceiver = LocationReceiver().apply {
+            if (isProviderEnabled()) {
+                initializeLocationManager()
+                connectSignalRHub()
+            }
+            sendSavedLocationFeedsTimer()
+        }
         return START_STICKY
     }
 
@@ -68,108 +64,70 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         return Notification.Builder(this, "channel_1").setAutoCancel(true).build()
     }
 
-     private fun startTracking() {
-       //insertTestFeeds()
-         hubConnection = getHubConnection()
-         Log.d("Test-location-service","hubConnection: $hubConnection")
-         sendSavedLocationFeedsTimer(hubConnection)
-        locationReceiver = LocationReceiver().apply {
-            if (isProviderEnabled()) {
-                initializeLocationManager()
-                connectSignalRHub()
+    private fun insertTestFeeds() {
+        for (i in 1..100000) {
+            // val locationFeed = LocationFeed(i,28.313749,48.0342295,1611477557)
+            val location = Location("test-feed").apply {
+                latitude = 28.313749
+                longitude = 48.0342295
             }
+            //   dataLayer.insertFeed(location)
         }
     }
 
-    private fun insertTestFeeds() {
-       for (i in 1..100000){
-          // val locationFeed = LocationFeed(i,28.313749,48.0342295,1611477557)
-           val location = Location("test-feed").apply {
-               latitude = 28.313749
-               longitude = 48.0342295
-           }
-        //   dataLayer.insertFeed(location)
-       }
-    }
-
-    private fun sendSavedLocationFeedsTimer(hubConnection: HubConnection?) {
+    private fun sendSavedLocationFeedsTimer() {
         SendSavedLocationFeedsTimer = Timer("SendSavedLocationFeeds", true).apply {
-            schedule(TimeUnit.SECONDS.toMillis(1), TimeUnit.SECONDS.toMillis(5)) {
-                hubConnection?.let { hub ->
-                        try {
-                            Log.d("Test-location-service","sendSavedLocationFeedsTimer")
-                            if (hub.isConnected){
-                                Log.d("Test-location-service","sendSavedLocationFeedsTimer-CheckHubConnection")
-                                sendSavedLocationFeeds(hub)
-                            }
-                        }catch (e: Exception){
+            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(5)) {
+                hubConnection?.let {
+                        Log.d("Test-location-service", "sendSavedLocationFeedsTimer")
+                        if (it.isConnected) {
+                            Log.d("Test-location-service", "sendSavedLocationFeedsTimer-CheckHubConnection")
+                            sendSavedLocationFeeds()
                         }
                 }
             }
         }
     }
 
-    private fun sendSavedLocationFeeds(hub: HubConnection) {
+    private fun sendSavedLocationFeeds() {
         GlobalScope.launch {
-                    locationFeedsDao.getFeeds().let { feeds ->
-                if (!feeds.isNullOrEmpty()){
+            locationFeedsDao.getFeeds().let { feeds ->
+                if (!feeds.isNullOrEmpty()) {
                     helper.getMessage(helper.getFeedsJsonArray(feeds).toString())?.let { message ->
-                        try {
-                            Log.d("Test-location-service","All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
-                            hub.invoke("SendLocation", message)
-                            Log.d("Test-location-service","Sent message: $message")
+                            Log.d("Test-location-service", "All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
+                            hubConnection?.invoke("SendLocation", message)
+                            Log.d("Test-location-service", "Sent message: $message")
                             locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
-                            Log.d("Test-location-service","All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
-                        } catch (e: Exception) {
-                            Log.d("Exception", e.message.toString())
-                        }
+                            Log.d("Test-location-service", "All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
                     }
                 }
             }
         }
     }
 
-    private fun getHubConnection() = createHubConnection().apply {
+
+    private fun prepareHubConnection() = createHubConnection().apply {
         addListener(this@TrackingService)
         subscribeToEvent("SendLocation", this@TrackingService)
     }
 
-    private fun createHubConnection(): HubConnection {
-        val url = getTrackingUrl().toString()
-        Log.d("Test-location-service","Hub url: $url")
-        return WebSocketHubConnectionP2(url, getToken())
-    }
+    private fun createHubConnection(): HubConnection = WebSocketHubConnectionP2(getTrackingUrl().toString(), Account().accessToken)
 
     private fun getTrackingUrl(): Uri {
-        val deviceData = getDeviceData()
-
+        val trackingAuthorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
+        val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
+        val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)
+        val deviceId = sharedPref.getString(SharedPreferencesHelper.device_id, null)
         return Uri.Builder().apply {
             scheme("http")
-            encodedAuthority(getAuthorityUrl())
+            encodedAuthority(trackingAuthorityUrl)
             appendPath("trackServiceHub")
-            appendQueryParameter("vehicleId", deviceData.vehicle_id)
-            appendQueryParameter("institutionId", deviceData.institution_id)
-            appendQueryParameter("deviceId", deviceData.device_id)
+            appendQueryParameter("vehicleId", vehicleId)
+            appendQueryParameter("institutionId", institutionId)
+            appendQueryParameter("deviceId", deviceId)
         }.build()
     }
-
-    private fun getDeviceData(): DeviceData {
-        val preferences = sharedPref()
-        return DeviceData(preferences.getString(SharedPreferencesHelper.vehicle_id, null), preferences.getString(SharedPreferencesHelper.institution_id, null), preferences.getString(SharedPreferencesHelper.device_id, null))
-    }
-
-    data class DeviceData(val vehicle_id: String?, val institution_id: String?, val device_id: String?)
-
-    private fun getAuthorityUrl() = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
-
-    private fun getToken(): String? {
-        sharedPref().getString(SharedPreferencesHelper.token, null)?.let {
-            return "Bearer $it"
-        }
-        return null
-    }
-
-    private fun sharedPref() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onConnected() {
         Log.d("SignalR-Thread","onConnected... ${Thread.currentThread().name}")

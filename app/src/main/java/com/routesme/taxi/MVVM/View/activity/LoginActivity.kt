@@ -30,6 +30,7 @@ import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.uplevels.App
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
@@ -117,8 +118,7 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
-                    //Log.d("Token","${token}")
-                    saveDataIntoSharedPreference(token)
+                    Account().apply { accessToken = token }
                     openRegistrationActivity()
 
                 } else {
@@ -147,16 +147,6 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
-
-    private fun saveDataIntoSharedPreference(access_token: String) {
-        val editor = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).edit()
-        editor.apply{
-            putString(SharedPreferencesHelper.token, access_token)
-        }.apply()
-
-    }
-
-
 
     private fun openRegistrationActivity() {
         startActivity(Intent(this, RegistrationActivity::class.java))

@@ -8,9 +8,6 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
-import android.os.StrictMode
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
@@ -29,7 +26,6 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
-    private var trackingService: TrackingService? = null
 
     companion object {
         @get:Synchronized
@@ -76,25 +72,6 @@ class App : Application() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
-/*
-    private val serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val name = className.className
-            if (name.endsWith("TrackingService")) {
-                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service.apply {
-                    //startTrackingService()
-                }
-            }
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            if (className.className == "TrackingService") {
-                trackingService = null
-                Log.i("trackingWebSocket:", "onServiceDisconnected")
-            }
-        }
-    }
-*/
     private fun isLocationPermissionsGranted(): Boolean {
         val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
