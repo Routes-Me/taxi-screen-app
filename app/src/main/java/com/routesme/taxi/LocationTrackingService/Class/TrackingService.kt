@@ -7,10 +7,13 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import com.routesme.taxi.Class.Helper
+import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.App
 import com.smartarmenia.dotnetcoresignalrclientjava.*
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -22,7 +25,9 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     private var locationReceiver: LocationReceiver? = null
     private val helper = TrackingServiceHelper.instance
     private var SendSavedLocationFeedsTimer: Timer? = null
-    private var dataLayer = TrackingDataLayer()
+
+    private val db = TrackingDatabase(App.instance)
+    private val locationFeedsDao = db.locationFeedsDao()
 
     companion object {
         @get:Synchronized
@@ -64,7 +69,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
      private fun startTracking() {
-      // insertTestFeeds()
+       //insertTestFeeds()
          hubConnection = getHubConnection()
          Log.d("Test-location-service","hubConnection: $hubConnection")
          sendSavedLocationFeedsTimer(hubConnection)
@@ -77,13 +82,13 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     private fun insertTestFeeds() {
-       for (i in 1..10000){
+       for (i in 1..100000){
           // val locationFeed = LocationFeed(i,28.313749,48.0342295,1611477557)
            val location = Location("test-feed").apply {
                latitude = 28.313749
                longitude = 48.0342295
            }
-           dataLayer.insertLocation(location)
+        //   dataLayer.insertFeed(location)
        }
     }
 
@@ -105,17 +110,19 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
     }
 
     private fun sendSavedLocationFeeds(hub: HubConnection) {
-       dataLayer.getFeeds().let { feeds ->
-            if (!feeds.isNullOrEmpty()){
-                helper.getMessage(helper.getFeedsJsonArray(feeds).toString())?.let { message ->
-                    try {
-                        Log.d("Test-location-service","All feeds count before sending: ${dataLayer.getAllFeeds().size}")
-                        hub.invoke("SendLocation", message)
-                        Log.d("Test-location-service","Sent message: $message")
-                        dataLayer.deleteFeeds(feeds.first().id, feeds.last().id)
-                        Log.d("Test-location-service","All feeds count after sent: ${dataLayer.getAllFeeds().size}")
-                    } catch (e: Exception) {
-                        Log.d("Exception", e.message)
+        GlobalScope.launch {
+                    locationFeedsDao.getFeeds().let { feeds ->
+                if (!feeds.isNullOrEmpty()){
+                    helper.getMessage(helper.getFeedsJsonArray(feeds).toString())?.let { message ->
+                        try {
+                            Log.d("Test-location-service","All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
+                            hub.invoke("SendLocation", message)
+                            Log.d("Test-location-service","Sent message: $message")
+                            locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
+                            Log.d("Test-location-service","All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
+                        } catch (e: Exception) {
+                            Log.d("Exception", e.message.toString())
+                        }
                     }
                 }
             }
@@ -172,7 +179,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
             hubConnection?.invoke("SendLocation", it)
                 Log.d("Test-location-service","Sent last known message: $it")
         } catch (e: Exception) {
-            Log.d("Exception", e.message)
+            Log.d("Exception", e.message.toString())
         }
        }
     }
@@ -207,7 +214,7 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
             Log.d("Test-location-service","Try to connect the hub")
             hubConnection?.connect()
         }catch (e: Exception){
-            Log.d("Exception",e.message)
+            Log.d("Exception",e.message.toString())
         }
     }
 }

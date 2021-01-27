@@ -51,14 +51,15 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
                 detailsList = when (item.type) {
                     MasterItemType.Account -> adminConsoleLists.accountCells
                     MasterItemType.Settings -> adminConsoleLists.settingsCells
-                    MasterItemType.Info -> adminConsoleLists.infoCells
-                    else -> getSavedLocations()
+                    else -> adminConsoleLists.infoCells
+                   // else -> getSavedLocations()
                 }
             }
         }
     }
-
+/*
     private fun getSavedLocations(): MutableList<DetailCell> {
+        /*
         val savedLocationFeeds = locationFeedsDao.getFeeds()
         val liveTrackingCells = mutableListOf<DetailCell>().apply {
             add(DetailCell("Latitude, Longitude", "Time", true))
@@ -67,8 +68,9 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
             }
         }
         return liveTrackingCells
+        */
     }
-
+*/
     @SuppressLint("SimpleDateFormat")
     private fun getTime(seconds: Long): String? {
         val d = Date(seconds * 1000L)

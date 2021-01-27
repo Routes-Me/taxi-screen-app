@@ -11,17 +11,22 @@ import android.os.HandlerThread
 import android.util.Log
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi.LocationTrackingService.Model.LocationJsonObject
 import com.routesme.taxi.uplevels.App
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.json.JSONException
 
 class LocationReceiver() : LocationListener{
     private var locationManagerThread: HandlerThread? = null
-    private var dataLayer = TrackingDataLayer()
+   // private var dataLayer = TrackingDataLayer.instance
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private val minTime = 5000L
     private val minDistance = 27F
+    private val db = TrackingDatabase(App.instance)
+    private val locationFeedsDao = db.locationFeedsDao()
     fun initializeLocationManager() {
         try {
             locationManagerThread = HandlerThread("LocationManagerThread").apply {
@@ -66,11 +71,14 @@ class LocationReceiver() : LocationListener{
 
     override fun onLocationChanged(location: Location?) {
         Log.d("LocationReceiverThread","onLocationChanged... ${Thread.currentThread().name}")
-        location?.let { location ->
-            dataLayer.insertLocation(location)
-            Log.d("Test-location-service","Inserted location: $location")
+        location?.let {
+            GlobalScope.launch {
+                locationFeedsDao.insertLocation(getLocationFeed(location))
+            }
+            Log.d("Test-location-service","Inserted location: $it")
         }
     }
+    private fun getLocationFeed(location: Location) = LocationFeed(latitude = location.latitude, longitude = location.longitude, timestamp = System.currentTimeMillis() / 1000)
 
     override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
       //  Log.d("LocationReceiverThread","onStatusChanged... ${Thread.currentThread().name}")
