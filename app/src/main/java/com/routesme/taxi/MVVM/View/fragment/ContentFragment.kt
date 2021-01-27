@@ -65,8 +65,10 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     private var count = 0
     private var isPlayingDemoVideo = false
     private lateinit var  callApiJob : Job
-    private lateinit var animatorVideo:ObjectAnimator
-    private lateinit var animatorImage:ObjectAnimator
+    private lateinit  var animatorVideo:ObjectAnimator
+    private lateinit  var animatorImage:ObjectAnimator
+    private lateinit var zoomIn:Animation
+    private lateinit var zoomOut:Animation
     private var player : SimpleExoPlayer?=null
     private lateinit var viewModel: RoomDBViewModel
 
@@ -86,8 +88,9 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         editor= sharedPreferences?.edit()
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
-        player = SimpleExoPlayer.Builder(mContext).build()
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
+        zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
+        zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         fetchContent()
     }
     private fun fetchContent(){
@@ -115,6 +118,7 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                                     pivotX = 0.0f
                                     pivotY = Advertisement_Video_CardView.height / 0.7f
                                 }
+                                //setImageAnimation(advertisementsImageView,advertisementsImageView2)
                                 if (!images.isNullOrEmpty())setUpImage(images)
                                 launch {
 
@@ -175,7 +179,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         if (data.type ==  ContentType.Video.value){
             changeVideoCardColor(data.tintColor)
         }
-
     }
 
     private fun changeVideoCardColor(tintColor: Int?) {
@@ -192,6 +195,11 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         var currentImageIndex = 0
         var firstTime = false
         val glide = Glide.with(mContext)
+        animatorImage = ObjectAnimator.ofFloat(advertisementsImageView, "rotationY", 0f, 90f)
+        animatorImage?.apply {
+            duration = 1000
+            AccelerateDecelerateInterpolator()
+        }
         launch {
             while(isActive) {
                 if (currentImageIndex < images.size) {
@@ -203,14 +211,15 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.let {
                         viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
-
-
                     }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
-                        setImageAnimation(advertisementsImageView,advertisementsImageView2)
+                        animatorImage?.start()
+                        //setImageAnimation(advertisementsImageView,advertisementsImageView2)
                         EventBus.getDefault().post(images[currentImageIndex])
+                        advertisementsImageView2.startAnimation(zoomIn)
+                        advertisementsImageView.bringToFront()
                     }
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
@@ -224,10 +233,14 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
 
     }
 
-
-
     private suspend fun setUpMediaPlayer(videos: List<Data>){
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
+        animatorVideo = ObjectAnimator.ofFloat(Advertisement_Video_CardView, "rotationX", -180f, 0f)
+        animatorVideo?.apply {
+            duration = 1000
+            animatorVideo?.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            AccelerateDecelerateInterpolator()
+        }
         player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).build().apply {
             playerView.player = this
             setMediaItems(mediaItems)
@@ -240,10 +253,14 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    setAnimation(Advertisement_Video_CardView,bgImage)
+                    animatorVideo.start()
+                    bgImage.startAnimation(zoomOut)
+                    Advertisement_Video_CardView.bringToFront()
+                    //setAnimation(Advertisement_Video_CardView,bgImage)
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
                         videos[it].contentId?.let {
+
                             viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
 
                         }
@@ -305,7 +322,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                 }
             })
         }
-
     }
 
     private suspend fun videoProgressbarRunnable() {
@@ -327,14 +343,8 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
 
     }
 
-    fun setImageAnimation(imageView: ImageView,imageView2: ImageView){
+    /*fun setImageAnimation(imageView: ImageView,imageView2: ImageView){
 
-        animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
-        animatorImage.apply {
-            duration = 1000
-            AccelerateDecelerateInterpolator()
-            start()
-        }
         val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         imageView2.startAnimation(zoomIn)
         imageView.bringToFront()
@@ -342,17 +352,17 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     }
 
     private fun setAnimation(playerView: RelativeLayout,bgImageView: RelativeLayout){
-        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        animatorVideo.apply {
+        val animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        animatorVideo?.apply {
             duration = 1000
-            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            animatorVideo?.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
             start()
         }
         val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         bgImageView.startAnimation(zoomout)
         playerView.bringToFront()
-    }
+    }*/
 
     override fun onDestroy() {
         super.onDestroy()

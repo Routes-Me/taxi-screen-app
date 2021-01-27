@@ -41,7 +41,7 @@ class App : Application() {
 
     override fun onCreate() {
         super.onCreate()
-        StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
+        /*StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
                 .detectDiskReads()
                 .detectDiskWrites()
                 .detectNetwork()
@@ -54,12 +54,12 @@ class App : Application() {
                 .detectLeakedRegistrationObjects()
                 .penaltyLog()
                 //.penaltyDeath()
-                .build())
+                .build())*/
         instance = this
         signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-        startTrackingService()
+        //startTrackingService()
     }
 
     fun startTrackingService(){
@@ -130,5 +130,7 @@ class App : Application() {
         }
         return true
     }
+
+
     private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
 }

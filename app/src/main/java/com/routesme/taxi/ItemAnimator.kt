@@ -12,7 +12,9 @@ import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter.Companion.TYPE_WIFI
 
 class ItemAnimator(var context: Context) : SimpleItemAnimator() {
-    var objectAnimator: ObjectAnimator?=null
+    lateinit var objectAnimator: ObjectAnimator
+    val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
+    val set2 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_left_out)
     override fun animateAdd(holder: RecyclerView.ViewHolder?): Boolean {
         animation(null,holder)
         return true
@@ -60,7 +62,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
                 newHolder.itemView.pivotY = -newHolder.itemView.height / 0.7f
                 newHolder.itemView.cameraDistance = 12000f
                 objectAnimator = ObjectAnimator.ofFloat(newHolder.itemView, "rotationX", 180f, 0f)
-                objectAnimator!!.apply {
+                objectAnimator?.apply {
                     duration = 1000
                     AccelerateInterpolator()
                     start()
@@ -68,7 +70,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
 
             }else if(newHolder.itemViewType == TYPE_WIFI || newHolder.itemViewType == TYPE_BANNER_DISCOUNT){
 
-                val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
+
                 newHolder.itemView.startAnimation(zoomIn)
 
             }
@@ -76,8 +78,6 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
 
         if(oldHolder!= null){
             if(oldHolder.itemViewType == TYPE_VIDEO_DISCOUNT || oldHolder.itemViewType == TYPE_EMPTY_VIDEO_DISCOUNT){
-
-                val set2 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_left_out)
                 set2.interpolator = AccelerateInterpolator()
                 set2.setTarget(oldHolder.itemView)
                 set2.start()
@@ -88,13 +88,12 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
                 oldHolder.itemView.pivotX =180f
                 oldHolder.itemView.pivotY = 0f
                 objectAnimator = ObjectAnimator.ofFloat(oldHolder.itemView, "rotationY", 0f, 180f)
-                objectAnimator!!.apply {
+                objectAnimator?.apply {
+
                     duration = 1000
                     AccelerateDecelerateInterpolator()
                     start()
                 }
-
-
             }
 
         }

@@ -48,6 +48,7 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
         locationReceiver?.removeLocationUpdates()
         instance.hubConnection?.disconnect()
 
+
     }
 
     override fun onBind(intent: Intent): IBinder {
@@ -118,6 +119,7 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
             try{
 
                 instance.hubConnection?.invoke("SendLocation", it)
+                Log.d("send-location-testing-sending",it)
 
             }catch (e:RuntimeException){
 
@@ -136,7 +138,7 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
 
     override fun onEventMessage(message: HubMessage) {
 
-        Log.d("SignalR-message","${message}")
+        Log.d("onEventMessage","${message}")
     }
 
     override fun onDisconnected() {
