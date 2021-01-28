@@ -21,17 +21,18 @@ import org.json.JSONException
 
 class LocationReceiver() : LocationListener{
     private var locationManagerThread: HandlerThread? = null
-   // private var dataLayer = TrackingDataLayer.instance
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
+    private var isLocationUpdatesRequested = false
     private val minTime = 5000L
     private val minDistance = 27F
     private val db = TrackingDatabase(App.instance)
     private val locationFeedsDao = db.locationFeedsDao()
-    fun initializeLocationManager() {
+    fun startLocationUpdatesListener() {
         try {
             locationManagerThread = HandlerThread("LocationManagerThread").apply {
                 start()
                 locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this@LocationReceiver,this.looper)
+                isLocationUpdatesRequested = true
             }
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
@@ -42,8 +43,11 @@ class LocationReceiver() : LocationListener{
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
 
-    fun destroyLocationReceiver() {
-        locationManager.removeUpdates(this@LocationReceiver)
+    fun stopLocationUpdatesListener() {
+        if (isLocationUpdatesRequested) {
+            locationManager.removeUpdates(this@LocationReceiver)
+            isLocationUpdatesRequested = false
+        }
         if (locationManagerThread != null) {
             locationManagerThread!!.quitSafely()
             locationManagerThread = null

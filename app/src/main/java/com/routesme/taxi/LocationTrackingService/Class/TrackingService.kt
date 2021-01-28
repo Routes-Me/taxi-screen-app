@@ -6,13 +6,18 @@ import android.location.Location
 import android.net.Uri
 import android.os.*
 import android.util.Log
+import androidx.annotation.NonNull
+import com.microsoft.signalr.HubConnection
+import com.microsoft.signalr.HubConnectionBuilder
+import com.microsoft.signalr.HubConnectionState
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.uplevels.App
-import com.smartarmenia.dotnetcoresignalrclientjava.*
+import io.reactivex.CompletableObserver
+import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.net.URI
@@ -20,27 +25,28 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
-class TrackingService() : Service(), HubConnectionListener, HubEventListener {
+class TrackingService() : Service() {
 
-    private var hubConnection: HubConnection? = null
-    private var locationReceiver: LocationReceiver? = null
+    private lateinit var hubConnection: HubConnection
+    private lateinit var locationReceiver: LocationReceiver
     private val helper = TrackingServiceHelper.instance
-    private var SendSavedLocationFeedsTimer: Timer? = null
+    private var sendFeedsTimer: Timer? = null
     private val db = TrackingDatabase(App.instance)
     private val locationFeedsDao = db.locationFeedsDao()
 
     override fun onCreate() {
         super.onCreate()
         hubConnection = prepareHubConnection()
+        locationReceiver = LocationReceiver()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
 
     override fun onDestroy() {
         super.onDestroy()
-        locationReceiver?.destroyLocationReceiver()
-        SendSavedLocationFeedsTimer?.cancel()
-       // hubConnection.apply { if (isConnected) disconnect() }
+        locationReceiver.stopLocationUpdatesListener()
+        sendFeedsTimer?.cancel()
+        hubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -48,12 +54,12 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         Log.d("Test-location-service", "onStartCommand")
         Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
         //startForeground(1, getNotification())
-        locationReceiver = LocationReceiver().apply {
+        locationReceiver.apply {
             if (isProviderEnabled()) {
-                initializeLocationManager()
-                connectSignalRHub()
+                startLocationUpdatesListener()
+                startHubConnection()
             }
-            sendSavedLocationFeedsTimer()
+            scheduleLocationFeeds()
         }
         return START_STICKY
     }
@@ -75,27 +81,25 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         }
     }
 
-    private fun sendSavedLocationFeedsTimer() {
-        SendSavedLocationFeedsTimer = Timer("SendSavedLocationFeeds", true).apply {
+    private fun scheduleLocationFeeds() {
+        sendFeedsTimer = Timer("SendFeedsTimer", true).apply {
             schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(5)) {
-                hubConnection?.let {
-                        Log.d("Test-location-service", "sendSavedLocationFeedsTimer")
-                        if (it.isConnected) {
-                            Log.d("Test-location-service", "sendSavedLocationFeedsTimer-CheckHubConnection")
-                            sendSavedLocationFeeds()
+                hubConnection.let {
+                        if (it.connectionState == HubConnectionState.CONNECTED) {
+                            sendFeeds()
                         }
                 }
             }
         }
     }
 
-    private fun sendSavedLocationFeeds() {
+    private fun sendFeeds() {
         GlobalScope.launch {
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
                     helper.getMessage(helper.getFeedsJsonArray(feeds).toString())?.let { message ->
                             Log.d("Test-location-service", "All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
-                            hubConnection?.invoke("SendLocation", message)
+                            hubConnection.send("SendLocation", message)
                             Log.d("Test-location-service", "Sent message: $message")
                             locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
                             Log.d("Test-location-service", "All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
@@ -105,13 +109,22 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         }
     }
 
+    private fun prepareHubConnection(): HubConnection {
+        return HubConnectionBuilder
+                .create(getTrackingUrl().toString())
+                .withHeader("Authorization", Account().accessToken)
+                .build().apply {
+                    serverTimeout = TimeUnit.MINUTES.toMillis(6)
+                    onClosed {
+                        Log.d("SocketSrv", "onClosed, Exception: $it")
+                        startHubConnection()
+                    }
+                    on("CommonMessage", { message: String ->
+                        Log.d("SocketSrv", "onSendLocation .. Message: $message")
+                    }, String::class.java)
 
-    private fun prepareHubConnection() = createHubConnection().apply {
-        addListener(this@TrackingService)
-        subscribeToEvent("SendLocation", this@TrackingService)
+                }
     }
-
-    private fun createHubConnection(): HubConnection = WebSocketHubConnectionP2(getTrackingUrl().toString(), Account().accessToken)
 
     private fun getTrackingUrl(): Uri {
         val trackingAuthorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
@@ -129,50 +142,24 @@ class TrackingService() : Service(), HubConnectionListener, HubEventListener {
         }.build()
     }
 
-    override fun onConnected() {
-        Log.d("SignalR-Thread","onConnected... ${Thread.currentThread().name}")
-        Log.d("Test-location-service","Hub connected")
-        locationReceiver?.getLastKnownLocationMessage()?.let {
-            try {
-            hubConnection?.invoke("SendLocation", it)
-                Log.d("Test-location-service","Sent last known message: $it")
-        } catch (e: Exception) {
-            Log.d("Exception", e.message.toString())
-        }
-       }
-    }
-
-    override fun onMessage(message: HubMessage) {
-        Log.d("SignalR-Thread","onMessage... ${Thread.currentThread().name}")
-    }
-
-    override fun onEventMessage(message: HubMessage) {
-        Log.d("SignalR-Thread","onEventMessage... ${Thread.currentThread().name}")
-    }
-
-    override fun onDisconnected() {
-        Log.d("SignalR-Thread","onDisconnected... ${Thread.currentThread().name}")
-        Log.d("Test-location-service","Hub disconnected")
-        connectSignalRHub()
-    }
-
-    override fun onError(exception: Exception) {
-        Log.d("SignalR-Thread","onError... ${Thread.currentThread().name}")
-        Log.d("Test-location-service","Hub error")
-        Timer("signalRReconnection", true).apply {
-            schedule(TimeUnit.MINUTES.toMillis(1)) {
-                Log.d("Test-location-service","Hub error")
-                connectSignalRHub()
-            }
-        }
-    }
-
-    private fun connectSignalRHub(){
-        try{
-            Log.d("Test-location-service","Try to connect the hub")
-            hubConnection?.connect()
-        }catch (e: Exception){
-            Log.d("Exception",e.message.toString())
-        }
+    private fun startHubConnection() {
+        hubConnection.start()
+                .subscribe(object : CompletableObserver {
+                    override fun onSubscribe(@NonNull d: Disposable) {}
+                    override fun onError(@NonNull e: Throwable) {
+                        Log.d("SocketSrv", "onError, Throwable: $e")
+                        Timer("signalRReconnection", true).apply {
+                            schedule(TimeUnit.MINUTES.toMillis(1)) {
+                                startHubConnection()
+                            }
+                        }
+                    }
+                    override fun onComplete() {
+                        Log.d("SocketSrv", "onComplete")
+                        locationReceiver.getLastKnownLocationMessage()?.let {
+                            hubConnection.send("SendLocation", it)
+                        }
+                    }
+                })
     }
 }
