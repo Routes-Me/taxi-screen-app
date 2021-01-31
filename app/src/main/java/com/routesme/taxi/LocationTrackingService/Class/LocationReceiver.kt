@@ -61,10 +61,14 @@ class LocationReceiver() : LocationListener{
         locationManager.getLastKnownLocation(bestProvider)?.let {
             try {
                 val feed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+                val feeds = mutableListOf<LocationFeed>().apply { add(feed) }
+                return LocationFeedsMessage(feeds).message.toString()
+                /*
                 val locationJsonArray = JsonArray()
                 val locationJsonObject: JsonObject = LocationJsonObject(feed).toJSON()
                 locationJsonArray.add(locationJsonObject)
                 return TrackingServiceHelper.instance.getMessage(locationJsonArray.toString())
+                */
             } catch (e: JSONException) {
                 e.printStackTrace()
             }

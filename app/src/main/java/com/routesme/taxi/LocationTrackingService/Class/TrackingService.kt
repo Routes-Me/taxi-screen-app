@@ -32,7 +32,7 @@ class TrackingService() : Service() {
     private lateinit var locationReceiver: LocationReceiver
     private lateinit var db : TrackingDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
-    private val helper = TrackingServiceHelper.instance
+  //  private val helper = TrackingServiceHelper.instance
     private var sendFeedsTimer: Timer? = null
 
     override fun onCreate() {
@@ -101,7 +101,8 @@ class TrackingService() : Service() {
         GlobalScope.launch {
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
-                    helper.getMessage(helper.getFeedsJsonArray(feeds).toString())?.let { message ->
+                    LocationFeedsMessage(feeds).message.let { message ->
+                        Log.d("LocationFeedsMessage","message: $message")
                             Log.d("Test-location-service", "All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
                             hubConnection.send("SendLocation", message)
                             Log.d("Test-location-service", "Sent message: $message")
@@ -161,6 +162,7 @@ class TrackingService() : Service() {
                     override fun onComplete() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
+                            Log.d("LocationFeedsMessage","message: $it")
                             hubConnection.send("SendLocation", it)
                         }
                     }
