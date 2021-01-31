@@ -30,9 +30,10 @@ import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
+import java.io.File
 
 class AdvertisementsHelper {
-
+    val file = File(App.instance.cacheDir, "routes_video")
     companion object {
         @get:Synchronized
         val instance = AdvertisementsHelper()
@@ -46,7 +47,12 @@ class AdvertisementsHelper {
             val exoPlayerCacheSize: Long = free / 5
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
-            return SimpleCache(App.instance.cacheDir, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
+            return SimpleCache(instance.file, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
         }
+    }
+
+    fun deleteCache(){
+
+        file.delete()
     }
 }

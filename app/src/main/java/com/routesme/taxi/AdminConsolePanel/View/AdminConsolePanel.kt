@@ -39,6 +39,7 @@ import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import org.json.JSONArray
 import org.json.JSONObject
 import java.net.HttpURLConnection
@@ -100,7 +101,7 @@ class AdminConsolePanel : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    @Subscribe()
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(isLogOff: LogOff){
         if(isLogOff.isLogOff){
             try {

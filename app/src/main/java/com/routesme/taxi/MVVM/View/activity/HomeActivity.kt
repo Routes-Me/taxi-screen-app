@@ -15,6 +15,7 @@ import androidx.activity.viewModels
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -22,6 +23,7 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
@@ -51,8 +53,9 @@ import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
-class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(),ServiceConnection{
+class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(){
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
@@ -76,15 +79,14 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
             setTheme(R.style.FullScreen_Dark_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
-
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
-        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))).get(RoomDBViewModel::class.java)
+        //viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
-        checkDateAndUploadResult()
+        //checkDateAndUploadResult()
         launch {initializePlayer()}
         sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
@@ -298,7 +300,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         }
     }
 
-    @Subscribe()
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(demoVideo: DemoVideo){
         try {
             this@HomeActivity.runOnUiThread(java.lang.Runnable {
@@ -331,18 +333,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
 
     }
 
-    override fun onServiceDisconnected(p0: ComponentName?) {
-
-        Log.d("Services","Services DisConnected")
-
-    }
-
-    override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-
-
-        Log.d("Services","Services Connected")
-
-    }
     override fun onDestroy() {
         super.onDestroy()
         player?.release()
@@ -372,5 +362,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         player?.pause()
 
     }
+
 
 }

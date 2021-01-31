@@ -59,7 +59,7 @@ class App : Application() {
         signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-        //startTrackingService()
+        startTrackingService()
     }
 
     fun startTrackingService(){
