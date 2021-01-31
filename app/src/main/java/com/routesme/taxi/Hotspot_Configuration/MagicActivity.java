@@ -51,5 +51,17 @@ public class MagicActivity extends PermissionsActivity {
         finish();
     }
 
+    private void carryOfWithHotSpotting(){
 
+        Intent intent = getIntent();
+        HotSpotIntentService.stop(this, intent);
+        finish();
+
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        carryOfWithHotSpotting();
+    }
 }

@@ -58,6 +58,13 @@ public class HotSpotIntentService extends IntentService {
         context.startService(i);
     }
 
+    public static void stop(Context context, Intent intent) {
+        Intent i = new Intent(context, HotSpotIntentService.class);
+        i.setAction(intent.getAction());
+        i.setData(intent.getData());
+        context.stopService(i);
+    }
+
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -209,6 +216,11 @@ public class HotSpotIntentService extends IntentService {
         }
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mMyOreoWifiManager = null;
+    }
 }
 
 

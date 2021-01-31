@@ -2,9 +2,9 @@ package com.routesme.taxi.MVVM.View.fragment
 
 import android.animation.ObjectAnimator
 import android.app.Activity
-import android.content.*
+import android.content.Context
+import android.content.SharedPreferences
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,7 +13,6 @@ import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
-import android.widget.ImageView
 import androidx.annotation.Nullable
 import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
@@ -21,18 +20,23 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
+import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
+import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.ContentResponse
+import com.routesme.taxi.MVVM.Model.ContentType
+import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
@@ -51,8 +55,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 
-
-class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventListener{
+class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     private lateinit var mContext: Context
     private lateinit var mView: View
@@ -67,12 +70,12 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     private var count = 0
     private var isPlayingDemoVideo = false
     private lateinit var  callApiJob : Job
-    private lateinit var animatorVideo:ObjectAnimator
-    private lateinit var animatorImage:ObjectAnimator
-    private var player : SimpleExoPlayer?=null
-    private lateinit var viewModel: RoomDBViewModel
+    private lateinit  var animatorVideo:ObjectAnimator
+    private lateinit  var animatorImage:ObjectAnimator
     private lateinit var zoomIn:Animation
     private lateinit var zoomOut:Animation
+    private var player : SimpleExoPlayer?=null
+    private lateinit var viewModel: RoomDBViewModel
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -90,17 +93,16 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         editor= sharedPreferences?.edit()
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
-        player = SimpleExoPlayer.Builder(mContext).build()
-        zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        viewModel =  ViewModelProviders.of(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
+        player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).setLoadControl(getExoPlayerCustomeControl()).build()
         zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
-        viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
+        zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         fetchContent()
     }
     private fun fetchContent(){
         val contentViewModel: ContentViewModel by viewModels()
 
                 contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
-
                     dialog?.dismiss()
                     if (it != null) {
                         if (it.isSuccess) {
@@ -121,8 +123,7 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                                     pivotX = 0.0f
                                     pivotY = Advertisement_Video_CardView.height / 0.7f
                                 }
-                                animatorImage = ObjectAnimator.ofFloat(advertisementsImageView, "rotationY", 0f, 90f)
-
+                                //setImageAnimation(advertisementsImageView,advertisementsImageView2)
                                 if (!images.isNullOrEmpty())setUpImage(images)
                                 launch {
 
@@ -178,7 +179,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         if (data.type ==  ContentType.Video.value){
             changeVideoCardColor(data.tintColor)
         }
-
     }
 
     private fun changeVideoCardColor(tintColor: Int?) {
@@ -191,35 +191,35 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         }
     }
 
-    fun setUpImage(images: List<Data>){
+    fun setUpImage(images: List<Data>){  //Done No more memory leakage
         var currentImageIndex = 0
         var firstTime = false
         val glide = Glide.with(mContext)
-        animatorImage.apply {
+        animatorImage = ObjectAnimator.ofFloat(advertisementsImageView, "rotationY", 0f, 90f)
+        animatorImage?.apply {
             duration = 1000
             AccelerateDecelerateInterpolator()
-            //start()
         }
-        launch {
+        launch{
             while(isActive) {
                 if (currentImageIndex < images.size) {
                     if (currentImageIndex > 0){
                         val previousImageIndex = currentImageIndex - 1
                         val previousUri = Uri.parse(images[previousImageIndex].url)
-                        glide.load(previousUri).error(R.drawable.empty_promotion).into(advertisementsImageView)
+                        glide.load(previousUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.NONE).into(advertisementsImageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.let {
                         viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
                     }
-                    glide.load(newUri).error(R.drawable.empty_promotion).into(advertisementsImageView2)
+                    glide.load(newUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.NONE).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
-                        animatorImage.start()
-                        advertisementsImageView2.startAnimation(zoomIn)
-                        advertisementsImageView.bringToFront()
+                        animatorImage?.start()
                         //setImageAnimation(advertisementsImageView,advertisementsImageView2)
                         EventBus.getDefault().post(images[currentImageIndex])
+                        advertisementsImageView2.startAnimation(zoomIn)
+                        advertisementsImageView.bringToFront()
                     }
                     currentImageIndex++
                     if (currentImageIndex >= images.size) {
@@ -234,16 +234,15 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     }
 
     private suspend fun setUpMediaPlayer(videos: List<Data>){
-        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        //animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        animatorVideo.apply {
-            duration = 1000
-            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
-            AccelerateDecelerateInterpolator()
-            //start()
-        }
+        var currentMediaItemId = 0
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
-        player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).build().apply {
+        animatorVideo = ObjectAnimator.ofFloat(Advertisement_Video_CardView, "rotationX", -180f, 0f)
+        animatorVideo?.apply {
+            duration = 1000
+            animatorVideo?.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            AccelerateDecelerateInterpolator()
+        }
+        player?.apply {
             playerView.player = this
             setMediaItems(mediaItems)
             repeatMode = Player.REPEAT_MODE_ALL
@@ -253,15 +252,15 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
             volume = 0f
             addListener(object : Player.EventListener {
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
-                    var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                    currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
-                    animatorVideo.start()
                     bgImage.startAnimation(zoomOut)
                     Advertisement_Video_CardView.bringToFront()
-                    setAnimation(Advertisement_Video_CardView,bgImage)
+                    animatorVideo.start()
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
                         videos[it].contentId?.let {
+
                             viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
 
                         }
@@ -272,6 +271,7 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                         Player.STATE_IDLE -> {
 
                             player?.prepare()
+                            player?.playbackState
 
                         }
                         Player.STATE_BUFFERING -> {
@@ -293,10 +293,10 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                             val currentMediaItem = playerView.player?.currentMediaItem
                             val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == videos.indexOf(videos.first())){
+
                                 EventBus.getDefault().post(videos[currentMediaItemId])
 
                             }
-
                         }
                         Player.STATE_ENDED -> {
 
@@ -323,12 +323,25 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                 }
             })
         }
+    }
 
+    fun getExoPlayerCustomeControl():LoadControl{
+        val loadControl = DefaultLoadControl.Builder()
+                .setAllocator(DefaultAllocator(true, 16))
+                .setBufferDurationsMs(2000,
+                        5000,
+                        1500,
+                        2000)
+                .setTargetBufferBytes(-1)
+                .setPrioritizeTimeOverSizeThresholds(true).createDefaultLoadControl()
+
+        return loadControl
     }
 
     private suspend fun videoProgressbarRunnable() {
-        launch {
+        launch(newSingleThreadContext("ProgressBar")) {
             while (isActive){
+                Log.d("Thread","ProgressBar")
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
                 videoRingProgressBar?.progress = progress
@@ -337,59 +350,61 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         }
     }
 
-    private suspend fun getMediaSourceFactory():DefaultMediaSourceFactory{
+    /*private suspend fun getMediaSourceFactory():DefaultMediaSourceFactory{
         return withContext(Dispatchers.Default){
             val cacheDataSourceFactory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(mContext,getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
             return@withContext DefaultMediaSourceFactory(cacheDataSourceFactory)
         }
 
+    }*/
+
+    private fun getMediaSourceFactory():DefaultMediaSourceFactory{
+        val cacheDataSourceFactory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(mContext,getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        return   DefaultMediaSourceFactory(cacheDataSourceFactory)
     }
 
-    fun setImageAnimation(imageView: ImageView,imageView2: ImageView){
+    /*fun setImageAnimation(imageView: ImageView,imageView2: ImageView){
 
-        animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
-        animatorImage.apply {
-            duration = 1000
-            AccelerateDecelerateInterpolator()
-            start()
-        }
         val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         imageView2.startAnimation(zoomIn)
         imageView.bringToFront()
 
-    }
+    }*/
 
-    private fun setAnimation(playerView: RelativeLayout,bgImageView: RelativeLayout){
-        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
-        animatorVideo.apply {
+    /*private fun setAnimation(playerView: RelativeLayout,bgImageView: RelativeLayout){
+        val animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        animatorVideo?.apply {
             duration = 1000
-            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            animatorVideo?.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
             start()
         }
         val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         bgImageView.startAnimation(zoomout)
         playerView.bringToFront()
-    }
+    }*/
 
     override fun onDestroy() {
         super.onDestroy()
         cancel()
         player?.release()
         callApiJob.cancel()
-
+        AdvertisementsHelper.instance.deleteCache()
     }
 
     override fun onStart() {
         super.onStart()
+
         EventBus.getDefault().register(this)
 
     }
 
     override fun onStop() {
         super.onStop()
+
         EventBus.getDefault().unregister(this)
 
     }
+
 
 }

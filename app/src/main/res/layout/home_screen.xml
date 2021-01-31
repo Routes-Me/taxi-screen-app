@@ -95,7 +95,7 @@
         app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
         app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
-        app:layout_constraintDimensionRatio="H,5 : 31"/>
+        app:layout_constraintDimensionRatio="H,41 : 155"/>
 
     <ImageView
         android:layout_width="0dp"
@@ -121,6 +121,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/_12sdp"
+        android:visibility="gone"
         app:layout_constraintDimensionRatio="H,26 : 28.2"/>
 
 s

@@ -24,7 +24,7 @@ import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.uplevels.App
 import net.codecision.glidebarcode.model.Barcode
 val glide = Glide.with(App.instance)
-val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(true)
+val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
 
 fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: FragmentActivity?) {
     holder as ViewHolderEmptyVideoDiscount
@@ -111,7 +111,7 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
             it.link?.let {link ->
                 val color = ThemeColor(tintColor).getColor()
                 generateQrCode(link,color).let {qrCode ->
-                    glide.load(qrCode).into(qrCodeImage)
+                    glide.load(qrCode).apply(imageOptions).into(qrCodeImage)
                 }
             }
         }

@@ -14,7 +14,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,53 : 55"
+        app:layout_constraintDimensionRatio="H,53 : 53"
         android:background="?homeScreenBackground_color">
 
         <carbon.widget.RelativeLayout
@@ -85,9 +85,9 @@
                     android:singleLine="false"
                     android:text="Wednesday Oct 28"
                     android:textColor="?text_color"
-                    android:textSize="@dimen/_9sdp"
+                    android:textSize="@dimen/_10sdp"
                     android:textStyle="normal"
-                    app:layout_constraintBottom_toTopOf="@+id/guidelineBottom"
+                   android:layout_marginTop="@dimen/_2sdp"
                     app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                     app:layout_constraintStart_toStartOf="@id/guidelineStart"
                     app:layout_constraintTop_toBottomOf="@+id/clockTv" />

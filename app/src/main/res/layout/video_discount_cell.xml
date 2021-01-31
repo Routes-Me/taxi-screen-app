@@ -7,7 +7,7 @@
 
     <carbon.widget.RelativeLayout
         android:id="@+id/videoPromotionCard"
-        android:layout_width="@dimen/_262sdp"
+        android:layout_width="0dp"
         android:layout_height="match_parent"
         app:carbon_cornerRadius="@dimen/_4sdp"
         android:layout_gravity="center"
@@ -15,7 +15,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,159 : 887"
+        app:layout_constraintDimensionRatio="H,163 : 900"
+
         android:background="?homeScreenBackground_color">
 
         <carbon.widget.RelativeLayout
@@ -164,7 +165,6 @@
                     android:id="@+id/videoQrCodeImage"
                     android:layout_width="@dimen/_56sdp"
                     android:layout_height="@dimen/_56sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
                     app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
                     app:layout_constraintDimensionRatio="H,1: 1"
                     app:layout_constraintEnd_toEndOf="@id/guidelineEnd"

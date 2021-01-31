@@ -74,7 +74,7 @@ class LocationReceiver(private val hubConnection: HubConnection?) : LocationList
                     try {
                         hubConnection?.invoke("SendLocation", it1)
                         val messageSend = "Send locations from DB: $it1"
-                        Log.d("send-location-testing",messageSend)
+                        Log.d("send-location-testing-sending",messageSend)
                         dataLayer.deleteFeeds(it.first().id, it.last().id)
                     }catch (e:RuntimeException){
 
