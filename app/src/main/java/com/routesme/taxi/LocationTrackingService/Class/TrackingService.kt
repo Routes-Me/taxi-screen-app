@@ -11,6 +11,7 @@ import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import com.routesme.taxi.Class.Helper
+import com.routesme.taxi.LocationTrackingService.Database.LocationFeedsDao
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
@@ -29,15 +30,17 @@ class TrackingService() : Service() {
 
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
+    private lateinit var db : TrackingDatabase
+    private lateinit var locationFeedsDao: LocationFeedsDao
     private val helper = TrackingServiceHelper.instance
     private var sendFeedsTimer: Timer? = null
-    private val db = TrackingDatabase(App.instance)
-    private val locationFeedsDao = db.locationFeedsDao()
 
     override fun onCreate() {
         super.onCreate()
         hubConnection = prepareHubConnection()
         locationReceiver = LocationReceiver()
+        db = TrackingDatabase(App.instance)
+        locationFeedsDao = db.locationFeedsDao()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -46,6 +49,7 @@ class TrackingService() : Service() {
         super.onDestroy()
         locationReceiver.stopLocationUpdatesListener()
         sendFeedsTimer?.cancel()
+        db.apply { if (isOpen) close() }
         hubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
     }
 

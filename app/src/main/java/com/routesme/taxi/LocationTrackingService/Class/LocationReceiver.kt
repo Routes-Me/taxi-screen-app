@@ -48,8 +48,9 @@ class LocationReceiver() : LocationListener{
             locationManager.removeUpdates(this@LocationReceiver)
             isLocationUpdatesRequested = false
         }
+
         if (locationManagerThread != null) {
-            locationManagerThread!!.quitSafely()
+            if (locationManagerThread!!.isAlive) locationManagerThread!!.quitSafely()
             locationManagerThread = null
         }
     }
