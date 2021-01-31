@@ -6,6 +6,7 @@ import android.content.*
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -47,6 +48,7 @@ import kotlinx.android.synthetic.main.content_fragment.view.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 
 
@@ -69,6 +71,8 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
     private lateinit var animatorImage:ObjectAnimator
     private var player : SimpleExoPlayer?=null
     private lateinit var viewModel: RoomDBViewModel
+    private lateinit var zoomIn:Animation
+    private lateinit var zoomOut:Animation
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -87,6 +91,8 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
         player = SimpleExoPlayer.Builder(mContext).build()
+        zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
+        zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         fetchContent()
     }
@@ -115,6 +121,8 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                                     pivotX = 0.0f
                                     pivotY = Advertisement_Video_CardView.height / 0.7f
                                 }
+                                animatorImage = ObjectAnimator.ofFloat(advertisementsImageView, "rotationY", 0f, 90f)
+
                                 if (!images.isNullOrEmpty())setUpImage(images)
                                 launch {
 
@@ -149,11 +157,6 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                 })
     }
 
-    /*private fun displayErrors(errors: List<Error>) {
-        for (error in errors) {
-            Operations.instance.displayAlertDialog(mContext, getString(R.string.content_error_title), "Error message: ${error.detail}")
-        }
-    }*/
     private fun startThread(errorMessage:String){
         isAlive = true
         EventBus.getDefault().post(DemoVideo(true,errorMessage))
@@ -170,7 +173,7 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         EventBus.getDefault().post(DemoVideo(false,""))
     }
 
-    @Subscribe()
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){
             changeVideoCardColor(data.tintColor)
@@ -192,6 +195,11 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         var currentImageIndex = 0
         var firstTime = false
         val glide = Glide.with(mContext)
+        animatorImage.apply {
+            duration = 1000
+            AccelerateDecelerateInterpolator()
+            //start()
+        }
         launch {
             while(isActive) {
                 if (currentImageIndex < images.size) {
@@ -203,13 +211,14 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.let {
                         viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
-
-
                     }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
-                        setImageAnimation(advertisementsImageView,advertisementsImageView2)
+                        animatorImage.start()
+                        advertisementsImageView2.startAnimation(zoomIn)
+                        advertisementsImageView.bringToFront()
+                        //setImageAnimation(advertisementsImageView,advertisementsImageView2)
                         EventBus.getDefault().post(images[currentImageIndex])
                     }
                     currentImageIndex++
@@ -224,9 +233,15 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
 
     }
 
-
-
     private suspend fun setUpMediaPlayer(videos: List<Data>){
+        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        //animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+        animatorVideo.apply {
+            duration = 1000
+            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
+            AccelerateDecelerateInterpolator()
+            //start()
+        }
         val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
         player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).build().apply {
             playerView.player = this
@@ -240,6 +255,9 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
+                    animatorVideo.start()
+                    bgImage.startAnimation(zoomOut)
+                    Advertisement_Video_CardView.bringToFront()
                     setAnimation(Advertisement_Video_CardView,bgImage)
                     if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
@@ -359,6 +377,7 @@ class ContentFragment : Fragment(),CoroutineScope by MainScope(),Player.EventLis
         cancel()
         player?.release()
         callApiJob.cancel()
+
     }
 
     override fun onStart() {

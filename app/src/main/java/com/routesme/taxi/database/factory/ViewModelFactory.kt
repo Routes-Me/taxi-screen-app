@@ -7,8 +7,7 @@ import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.database.helper.DatabaseHelper
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 
-class ViewModelFactory(private val dbHelper: DatabaseHelper) :
-        ViewModelProvider.Factory {
+class ViewModelFactory(private val dbHelper: DatabaseHelper) : ViewModelProvider.Factory {
 
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(RoomDBViewModel::class.java)) {

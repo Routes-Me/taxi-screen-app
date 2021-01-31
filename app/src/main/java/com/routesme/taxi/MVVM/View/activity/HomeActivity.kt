@@ -2,16 +2,14 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ComponentName
-import android.content.Intent
-import android.content.ServiceConnection
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.core.content.ContextCompat
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -30,6 +28,7 @@ import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
+import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
@@ -47,25 +46,25 @@ import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 
-class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(),ServiceConnection{
+class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(){
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
     private var isHotspotAlive = false
     private var pressedTime: Long = 0
-    private lateinit var mView: View
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
     private lateinit var viewModel: RoomDBViewModel
-    private var getList:List<AdvertisementTracking>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -207,7 +206,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
         list?.forEach {
-            Log.d("Item","${it.date},${it.morning},${it.noon},${it.evening},${it.night},${it.advertisementId},${it.media_type},${it.time_in_day}")
+            //Log.d("Item","${it.date},${it.morning},${it.noon},${it.evening},${it.night},${it.advertisementId},${it.media_type},${it.time_in_day}")
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
                 addProperty("advertisementId",it.advertisementId)
@@ -256,8 +255,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
         val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
-        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
-        sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
+        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
+        sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
     }
     override fun onPermissionsOkay() {}
 
@@ -298,56 +297,40 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         }
     }
 
-    @Subscribe()
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(demoVideo: DemoVideo){
         try {
-            this@HomeActivity.runOnUiThread(java.lang.Runnable {
+            if(demoVideo.isPlay){
+                textViewError.visibility = View.VISIBLE
+                textViewError.text = demoVideo.errorMessage
+                activityVideoCover.visibility = View.VISIBLE
+                demoVideoPlayer.visibility = View.VISIBLE
+                playVideo()
+            }else{
+                if(activityVideoCover.visibility == View.VISIBLE){
+                    textViewError.visibility = View.GONE
+                    activityVideoCover.visibility = View.GONE
+                    demoVideoPlayer.visibility = View.GONE
+                    stopVideo()
 
-                if(demoVideo.isPlay){
-                    textViewError.visibility = View.VISIBLE
-                    textViewError.text = demoVideo.errorMessage
-                    activityVideoCover.visibility = View.VISIBLE
-                    demoVideoPlayer.visibility = View.VISIBLE
-                    playVideo()
                 }else{
-                    if(activityVideoCover.visibility == View.VISIBLE){
-                        textViewError.visibility = View.GONE
-                        activityVideoCover.visibility = View.GONE
-                        demoVideoPlayer.visibility = View.GONE
-                        stopVideo()
-
-                    }else{
-                        textViewError.visibility = View.GONE
-                        activityVideoCover.visibility = View.GONE
-                        demoVideoPlayer.visibility = View.GONE
-                    }
-
+                    textViewError.visibility = View.GONE
+                    activityVideoCover.visibility = View.GONE
+                    demoVideoPlayer.visibility = View.GONE
                 }
 
-            })
+            }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
-
-    }
-
-    override fun onServiceDisconnected(p0: ComponentName?) {
-
-        Log.d("Services","Services DisConnected")
-
-    }
-
-    override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-
-
-        Log.d("Services","Services Connected")
 
     }
     override fun onDestroy() {
         super.onDestroy()
         player?.release()
         turnOffHotspot()
-        if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
+        removeFragments()
+        DisplayManager.instance.unregisterActivity(this)
         cancel()
     }
 
@@ -361,12 +344,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         super.onStop()
     }
 
+
     fun playVideo(){
 
         player?.play()
 
     }
-
     fun stopVideo(){
 
         player?.pause()

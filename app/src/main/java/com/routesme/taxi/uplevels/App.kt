@@ -45,6 +45,7 @@ class App : Application() {
                 .detectDiskReads()
                 .detectDiskWrites()
                 .detectNetwork()
+                .detectAll()
                 .penaltyLog()
                 .build())
         StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()

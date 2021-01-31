@@ -59,6 +59,14 @@ public class HotSpotIntentService extends IntentService {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        Intent i = new Intent(this, HotSpotIntentService.class);
+        stopService(i);
+
+    }
+
+    @Override
     protected void onHandleIntent(@Nullable Intent intent) {
         ACTION_TURNON = getString(R.string.intent_action_turnon);
         ACTION_TURNOFF = getString(R.string.intent_action_turnoff);

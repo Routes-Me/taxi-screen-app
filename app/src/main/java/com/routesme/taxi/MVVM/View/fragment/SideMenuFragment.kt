@@ -18,6 +18,7 @@ import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.lang.Runnable
 import java.util.*
 
@@ -84,7 +85,6 @@ class SideMenuFragment : Fragment() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-        //presentJob?.let {
             CoroutineScope(Dispatchers.Main + presentJob).launch {
                 while (isActive){
                     val date = Date()
@@ -94,12 +94,9 @@ class SideMenuFragment : Fragment() {
                 }
 
             }
-
-       // }
-
     }
 
-    @Subscribe()
+    @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(data: Data){
         when(data.type){
             ContentType.Image.value -> changeBannerQRCode(data)

@@ -47,7 +47,6 @@ class TrackingService : Service(), HubConnectionListener, HubEventListener {
         //mHandler?.removeCallbacks(reconnection)
         locationReceiver?.removeLocationUpdates()
         instance.hubConnection?.disconnect()
-
     }
 
     override fun onBind(intent: Intent): IBinder {
