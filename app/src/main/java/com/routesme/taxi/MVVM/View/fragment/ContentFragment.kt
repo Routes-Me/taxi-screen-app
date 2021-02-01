@@ -93,7 +93,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         editor= sharedPreferences?.edit()
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
-        viewModel =  ViewModelProviders.of(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
+        viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).setLoadControl(getExoPlayerCustomeControl()).build()
         zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
@@ -109,6 +109,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                             val images = it.imageList.toList()
                             val videos = it.videoList.toList()
                             if (images.isNullOrEmpty() && videos.isNullOrEmpty()){
+
                                 startThread(getString(R.string.no_data_found))
                                 return@Observer
                             }else{
@@ -143,15 +144,18 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                             } else if (it.mThrowable != null) {
 
                                 if (it.mThrowable is IOException) {
+
                                     startThread(getString(R.string.network_Issue))
 
                                 } else {
+
                                     startThread(getString(R.string.conversion_Issue))
 
                                 }
                             }
                         }
                     } else {
+
                         startThread(getString(R.string.unknown_error))
 
                     }
@@ -339,9 +343,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private suspend fun videoProgressbarRunnable() {
-        launch(newSingleThreadContext("ProgressBar")) {
+        launch {
             while (isActive){
-                Log.d("Thread","ProgressBar")
                 val current = (player?.currentPosition)!!.toInt()
                 val progress = current * 100 / (player?.duration)!!.toInt()
                 videoRingProgressBar?.progress = progress
