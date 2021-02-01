@@ -7,12 +7,14 @@ import android.net.Uri
 import android.os.*
 import android.util.Log
 import androidx.annotation.NonNull
+import com.google.gson.Gson
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.LocationTrackingService.Database.LocationFeedsDao
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
+import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
 import com.routesme.taxi.uplevels.Account
@@ -32,7 +34,6 @@ class TrackingService() : Service() {
     private lateinit var locationReceiver: LocationReceiver
     private lateinit var db : TrackingDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
-  //  private val helper = TrackingServiceHelper.instance
     private var sendFeedsTimer: Timer? = null
 
     override fun onCreate() {
@@ -101,14 +102,14 @@ class TrackingService() : Service() {
         GlobalScope.launch {
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
-                    LocationFeedsMessage(feeds).message.let { message ->
-                        Log.d("LocationFeedsMessage","message: $message")
+                    getFeedsJsonArray(feeds).let { feedsJsonArray ->
                             Log.d("Test-location-service", "All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
-                            hubConnection.send("SendLocation", message)
-                            Log.d("Test-location-service", "Sent message: $message")
+                            hubConnection.send("SendLocation", feedsJsonArray)
+                        Log.d("LocationFeedsMessage","message-SavedFeeds: $feedsJsonArray")
                             locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
                             Log.d("Test-location-service", "All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
                     }
+
                 }
             }
         }
@@ -162,10 +163,13 @@ class TrackingService() : Service() {
                     override fun onComplete() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
-                            Log.d("LocationFeedsMessage","message: $it")
-                            hubConnection.send("SendLocation", it)
+                            val feedsJsonArray = getFeedsJsonArray(mutableListOf<LocationFeed>().apply { add(it) })
+                            Log.d("LocationFeedsMessage","message-LastKnown: $feedsJsonArray")
+                            hubConnection.send("SendLocation", feedsJsonArray)
                         }
                     }
                 })
     }
+
+    private fun getFeedsJsonArray(feeds: List<LocationFeed>) = Gson().toJson(feeds.map { it.coordinate })
 }
