@@ -84,9 +84,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
-        //viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))).get(RoomDBViewModel::class.java)
+        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(applicationContext)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
-        //checkDateAndUploadResult()
+        checkDateAndUploadResult()
         launch {initializePlayer()}
         sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
@@ -209,7 +209,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
         list?.forEach {
-            Log.d("Item","${it.date},${it.morning},${it.noon},${it.evening},${it.night},${it.advertisementId},${it.media_type},${it.time_in_day}")
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
                 addProperty("advertisementId",it.advertisementId)
@@ -243,7 +242,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
             jsonObject.addProperty("value",night)
         }
         jsonArray.add(jsonObject)
-
         return jsonArray
 
     }
@@ -303,30 +301,26 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(demoVideo: DemoVideo){
         try {
-            this@HomeActivity.runOnUiThread(java.lang.Runnable {
-
                 if(demoVideo.isPlay){
                     textViewError.visibility = View.VISIBLE
                     textViewError.text = demoVideo.errorMessage
                     activityVideoCover.visibility = View.VISIBLE
                     demoVideoPlayer.visibility = View.VISIBLE
                     playVideo()
-                }else{
-                    if(activityVideoCover.visibility == View.VISIBLE){
+                }else {
+                    if (activityVideoCover.visibility == View.VISIBLE) {
                         textViewError.visibility = View.GONE
                         activityVideoCover.visibility = View.GONE
                         demoVideoPlayer.visibility = View.GONE
                         stopVideo()
 
-                    }else{
+                    } else {
                         textViewError.visibility = View.GONE
                         activityVideoCover.visibility = View.GONE
                         demoVideoPlayer.visibility = View.GONE
                     }
 
                 }
-
-            })
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
@@ -337,6 +331,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         super.onDestroy()
         player?.release()
         turnOffHotspot()
+        removeFragments()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         cancel()
     }
