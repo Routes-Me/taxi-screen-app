@@ -12,6 +12,7 @@ import android.util.Log
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 import com.routesme.taxi.uplevels.App
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -64,7 +65,8 @@ class LocationReceiver() : LocationListener{
     override fun onLocationChanged(location: Location?) {
         Log.d("LocationReceiverThread","onLocationChanged... ${Thread.currentThread().name}")
         location?.let {
-            GlobalScope.launch {
+            GlobalScope.launch(Dispatchers.IO) {
+              //  Log.d("GlobalScope-Thread","Insert: ${Thread.currentThread().name}")
                 val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
                 locationFeedsDao.insertLocation(locationFeed)
             }

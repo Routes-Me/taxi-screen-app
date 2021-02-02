@@ -21,6 +21,7 @@ import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.uplevels.App
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.net.URI
@@ -99,7 +100,8 @@ class TrackingService() : Service() {
     }
 
     private fun sendFeeds() {
-        GlobalScope.launch {
+        GlobalScope.launch(Dispatchers.IO) {
+            //Log.d("GlobalScope-Thread","Get/Delete: ${Thread.currentThread().name}")
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
                     getFeedsJsonArray(feeds).let { feedsJsonArray ->
