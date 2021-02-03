@@ -101,12 +101,12 @@ class TrackingService() : Service() {
 
     private fun sendFeeds() {
         GlobalScope.launch(Dispatchers.IO) {
-            //Log.d("GlobalScope-Thread","Get/Delete: ${Thread.currentThread().name}")
+            Log.d("GlobalScope-Thread","Get/Delete: ${Thread.currentThread().name}")
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
                     getFeedsJsonArray(feeds).let { feedsJsonArray ->
                             Log.d("Test-location-service", "All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
-                            hubConnection.send("SendLocation", feedsJsonArray)
+                           // hubConnection.send("SendLocation", feedsJsonArray)
                         Log.d("LocationFeedsMessage","message-SavedFeeds: $feedsJsonArray")
                             locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
                             Log.d("Test-location-service", "All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
@@ -167,7 +167,7 @@ class TrackingService() : Service() {
                         locationReceiver.getLastKnownLocationMessage()?.let {
                             val feedsJsonArray = getFeedsJsonArray(mutableListOf<LocationFeed>().apply { add(it) })
                             Log.d("LocationFeedsMessage","message-LastKnown: $feedsJsonArray")
-                            hubConnection.send("SendLocation", feedsJsonArray)
+                          //  hubConnection.send("SendLocation", feedsJsonArray)
                         }
                     }
                 })

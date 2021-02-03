@@ -28,6 +28,7 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
@@ -96,9 +97,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
-        player = SimpleExoPlayer.Builder(mContext).setMediaSourceFactory(getMediaSourceFactory()).setTrackSelector(DefaultTrackSelector(mContext)).build()
+        player = SimpleExoPlayer.Builder(playerView.context).setLoadControl(getLoadControl()).setMediaSourceFactory(getMediaSourceFactory()).build()
         fetchContent()
     }
+
     private fun fetchContent(){
 
         val contentViewModel: ContentViewModel by viewModels()
@@ -210,7 +212,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                     glide.load(newUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.NONE).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
-                        setImageAnimation(advertisementsImageView,advertisementsImageView2)
+                            setImageAnimation(advertisementsImageView,advertisementsImageView2)
                         EventBus.getDefault().post(images[currentImageIndex])
                     }
                     currentImageIndex++
@@ -275,12 +277,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                             }
                             count = 0
                             val currentMediaItem = playerView.player?.currentMediaItem
-                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                            if (currentMediaItemId == videos.indexOf(videos.first())){
-
-                                EventBus.getDefault().post(videos[currentMediaItemId])
-
-                            }
                         }
                         Player.STATE_ENDED -> {
 
@@ -297,6 +293,12 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
                         }
                         ExoPlaybackException.TYPE_RENDERER ->{
+                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                            if (currentMediaItemId == videos.indexOf(videos.first())){
+
+                                EventBus.getDefault().post(videos[currentMediaItemId])
+
+                            }
 
 
                         }
@@ -309,6 +311,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
+
     private suspend fun videoProgressbarRunnable() {
         launch{
             while (isActive){
@@ -319,9 +322,29 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
             }
         }
     }
+
+    private fun getLoadControl():DefaultLoadControl{
+
+        val loadControl = DefaultLoadControl.Builder()
+                .setAllocator(DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
+                .setBufferDurationsMs(
+                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,  // this is it!
+                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
+                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
+                )
+                .setTargetBufferBytes(DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES)
+                .setPrioritizeTimeOverSizeThresholds(DefaultLoadControl.DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS)
+                .createDefaultLoadControl()
+
+        return loadControl
+    }
+
     private fun getMediaSourceFactory():DefaultMediaSourceFactory{
+
         val cacheDataSourceFactory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(mContext,getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         return   DefaultMediaSourceFactory(cacheDataSourceFactory)
+
     }
 
     private fun setAnimation(playerView: RelativeLayout,bgImageView: RelativeLayout){
@@ -336,7 +359,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         bgImageView.startAnimation(zoomout)
         playerView.bringToFront()
     }
-
 
     fun setImageAnimation(imageView: ImageView, imageView2: ImageView){
 
@@ -355,7 +377,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     override fun onDestroy() {
         super.onDestroy()
         cancel()
-        player?.release()
+        if(player!=null){
+            player?.release()
+            player = null
+        }
         callApiJob.cancel()
         AdvertisementsHelper.instance.deleteCache()
     }

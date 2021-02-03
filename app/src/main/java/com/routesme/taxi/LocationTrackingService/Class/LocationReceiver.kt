@@ -66,7 +66,7 @@ class LocationReceiver() : LocationListener{
         Log.d("LocationReceiverThread","onLocationChanged... ${Thread.currentThread().name}")
         location?.let {
             GlobalScope.launch(Dispatchers.IO) {
-              //  Log.d("GlobalScope-Thread","Insert: ${Thread.currentThread().name}")
+                Log.d("GlobalScope-Thread","Insert: ${Thread.currentThread().name}")
                 val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
                 locationFeedsDao.insertLocation(locationFeed)
             }

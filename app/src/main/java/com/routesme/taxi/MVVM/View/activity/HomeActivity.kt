@@ -2,20 +2,18 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.content.ComponentName
+import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
-import androidx.core.view.WindowCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -23,7 +21,6 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
@@ -137,7 +134,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     }
 
     private suspend fun initializePlayer() {
-        player = SimpleExoPlayer.Builder(this).build()
+        player = SimpleExoPlayer.Builder(demoVideoPlayer.context).build()
         demoVideoPlayer.player = player
         val mediaSource = buildRawMediaSource()
         withContext(Dispatchers.Main){
@@ -329,7 +326,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
 
     override fun onDestroy() {
         super.onDestroy()
-        player?.release()
+        if(player !=null){
+            player?.release()
+            player = null
+        }
         turnOffHotspot()
         removeFragments()
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)

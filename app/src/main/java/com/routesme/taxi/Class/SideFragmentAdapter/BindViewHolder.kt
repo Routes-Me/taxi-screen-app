@@ -66,9 +66,6 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay?.getMetrics(metrics)
         val screenWidth = (metrics.widthPixels * 69) / 100
-        Log.d("Width", screenWidth.toString())
-        Log.d("Height", metrics.heightPixels.toString())
-        Log.d("Width", metrics.widthPixels.toString())
         card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
     }
 }

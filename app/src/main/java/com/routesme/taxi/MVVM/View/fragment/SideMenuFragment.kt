@@ -116,6 +116,7 @@ class SideMenuFragment : Fragment() {
             //notifyItemChanged(position)
             notifyItemRemoved(position)
             notifyItemInserted(position)
+
         }
     }
 
