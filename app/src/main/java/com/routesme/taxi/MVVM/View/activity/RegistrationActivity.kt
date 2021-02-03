@@ -12,7 +12,6 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -23,7 +22,6 @@ import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.DateOperations
-import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.MVVM.Model.Authorization
@@ -33,10 +31,10 @@ import com.routesme.taxi.MVVM.Model.RegistrationResponse
 import com.routesme.taxi.MVVM.Model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.taxi.MVVM.ViewModel.RegistrationViewModel
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.Account
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
-import java.text.SimpleDateFormat
 import java.util.*
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
@@ -195,7 +193,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register(){
-        if (token() != null && allDataExist()) {
+        if (Account().accessToken != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
@@ -236,11 +234,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         for (error in errors) {
                 operations.displayAlertDialog(this, getString(R.string.registration_error_title), "Error message: ${error.detail}")
         }
-    }
-
-    private fun token(): String? {
-        val savedToken = sharedPreferences.getString(SharedPreferencesHelper.token, null)
-        return if (!savedToken.isNullOrEmpty()) "Bearer $savedToken" else null
     }
 
     private fun allDataExist() = institutionIdExist() && vehicleIdExist() && tabletInformationExist()
