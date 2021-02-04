@@ -72,7 +72,7 @@ public class HotSpotIntentService extends IntentService {
         DATAURI_TURNON = getString(R.string.intent_data_host_turnon);
         DATAURI_TURNOFF = getString(R.string.intent_data_host_turnoff);
 
-        Log.i(TAG,"Received start intent");
+        Log.d("Process",Thread.currentThread().getName());
         mStartIntent = intent;
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {

@@ -8,16 +8,12 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
-import android.os.StrictMode
-import android.util.Log
 import androidx.core.content.ContextCompat
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.SignInCredentials
-import kotlinx.coroutines.Job
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -30,45 +26,28 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
-    private var trackingService: TrackingService? = null
-    private lateinit  var signalRReconnectionJob: Job
 
     companion object {
         @get:Synchronized
         var instance = App()
-
     }
 
     override fun onCreate() {
         super.onCreate()
-        /*StrictMode.setThreadPolicy(StrictMode.ThreadPolicy.Builder()
-                .detectDiskReads()
-                .detectDiskWrites()
-                .detectNetwork()
-                .detectAll()
-                .penaltyLog()
-                .build())
-        StrictMode.setVmPolicy(StrictMode.VmPolicy.Builder()
-                .detectLeakedSqlLiteObjects()
-                .detectLeakedClosableObjects()
-                .detectActivityLeaks()
-                .detectLeakedRegistrationObjects()
-                .penaltyLog()
-                //.penaltyDeath()
-                .build())*/
         instance = this
-        signalRReconnectionJob = Job()
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
-        startTrackingService()
+        //Log.d("Process","${getProcessName()}")
+        //startTrackingService()
     }
 
     fun startTrackingService(){
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
-            ContextCompat.startForegroundService(instance,intent)
-            this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
+            startService(intent)
+            //ContextCompat.startForegroundService(instance,intent)
+           // this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 
@@ -94,32 +73,6 @@ class App : Application() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
-
-    private val serviceConnection: ServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(className: ComponentName, service: IBinder) {
-            val name = className.className
-
-            if (name.endsWith("TrackingService")) {
-
-                trackingService = (service as TrackingService.Companion.LocationServiceBinder).service.apply {
-                    setSignalRReconnectionJob(signalRReconnectionJob)
-                    startTrackingService()
-                }
-            }
-        }
-
-        override fun onServiceDisconnected(className: ComponentName) {
-            if (className.className == "TrackingService") {
-                trackingService = null
-                signalRReconnectionJob.apply {
-                    if (isActive) cancel()
-                    Log.d("signalRReconnectionJob-Status","$isActive")
-                }
-                Log.i("trackingWebSocket:", "onServiceDisconnected")
-            }
-        }
-    }
-
     private fun isLocationPermissionsGranted(): Boolean {
         val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -131,7 +84,5 @@ class App : Application() {
         }
         return true
     }
-
-
     private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
 }

@@ -6,6 +6,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import carbon.widget.RelativeLayout
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.App
 
 class ViewHolderEmptyVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val image: ImageView = itemView.findViewById(R.id.image)
@@ -13,6 +14,7 @@ class ViewHolderEmptyVideoDiscount(itemView: View) : RecyclerView.ViewHolder(ite
 }
 
 class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
     val videoLogoImage: ImageView = itemView.findViewById(R.id.videoLogoImage)
     val title: TextView = itemView.findViewById(R.id.titleTv)
     val subTitle: TextView = itemView.findViewById(R.id.subTitleTv)
