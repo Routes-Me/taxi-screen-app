@@ -9,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import carbon.widget.ExpandableRecyclerView
+import carbon.widget.RecyclerView
 import com.routesme.taxi.Class.DateOperations
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.ItemAnimator
@@ -30,6 +32,7 @@ class SideMenuFragment : Fragment() {
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
     private lateinit var presentJob : Job
+    //private lateinit var recyclerView: RecyclerView
     override fun onAttach(context: Context) {
         mContext = context
         super.onAttach(context)
@@ -39,6 +42,7 @@ class SideMenuFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mView = view
+       // recyclerView = view.recyclerView as RecyclerView
         super.onViewCreated(view, savedInstanceState)
 
     }
@@ -46,6 +50,7 @@ class SideMenuFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         presentJob = Job()
+
         setupRecyclerView()
     }
 
@@ -63,6 +68,9 @@ class SideMenuFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         presentJob.cancel()
+       // sideFragmentAdapter = null
+        mView.recyclerView.adapter = null
+
     }
 
     private fun setupRecyclerView() {
@@ -75,7 +83,7 @@ class SideMenuFragment : Fragment() {
             add(WifiCell())
         }
 
-        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells,activity)
+        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
         mView.recyclerView.apply {
             adapter = sideFragmentAdapter
             itemAnimator = ItemAnimator(mContext)

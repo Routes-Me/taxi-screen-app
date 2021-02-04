@@ -26,19 +26,21 @@ import net.codecision.glidebarcode.model.Barcode
 val glide = Glide.with(App.instance)
 val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
 
-fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder, activity: FragmentActivity?) {
+fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder) {
     holder as ViewHolderEmptyVideoDiscount
     holder.apply {
+       /*
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay?.getMetrics(metrics)
         val screenWidth = (metrics.widthPixels * 69) / 100
         empty_cardview.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
+    */
     }
 }
 
 @SuppressLint("SetTextI18n")
-fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell, activity: FragmentActivity?) {
+fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {
     holder as ViewHolderVideoDiscount
     cell as VideoDiscountCell
     holder.apply {
@@ -62,11 +64,13 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
                 }
             }
         }
+        /*
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay?.getMetrics(metrics)
         val screenWidth = (metrics.widthPixels * 69) / 100
         card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
+        */
     }
 }
 

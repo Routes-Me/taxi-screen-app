@@ -38,7 +38,7 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         //Log.d("Process","${getProcessName()}")
-        startTrackingService()
+        //startTrackingService()
     }
 
     fun startTrackingService(){
