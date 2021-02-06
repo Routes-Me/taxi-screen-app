@@ -4,16 +4,12 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.text.SpannedString
-import android.util.DisplayMetrics
-import android.util.Log
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import android.view.WindowManager
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
 import androidx.core.text.color
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -24,18 +20,14 @@ import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.uplevels.App
 import net.codecision.glidebarcode.model.Barcode
 val glide = Glide.with(App.instance)
-val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE).skipMemoryCache(true)
+val imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(false)
 
-fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder) {
+fun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder,cell: ISideFragmentCell) {
     holder as ViewHolderEmptyVideoDiscount
+    cell as EmptyVideoDiscountCell
     holder.apply {
-       /*
-        val metrics = DisplayMetrics()
-        val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager.defaultDisplay?.getMetrics(metrics)
-        val screenWidth = (metrics.widthPixels * 69) / 100
-        empty_cardview.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
-    */
+        empty_cardview.layoutParams = ConstraintLayout.LayoutParams(cell.screenWidth, MATCH_PARENT)
+
     }
 }
 
@@ -54,22 +46,23 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
                 cardShadow.setElevationShadowColor(color)
 
                 promotion.logoUrl?.let { logoUrl ->
-                    glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
+                    Glide.with(videoLogoImage.context).load(logoUrl).apply(imageOptions).into(videoLogoImage)
                     videoLogoImage.visibility = View.VISIBLE
                 }
                 if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
                 subTitle.text = getSubtitle(promotion.subtitle, promotion.code, color)
                 generateQrCode(link,color).let {qrCode ->
-                    glide.load(qrCode).into(qrCodeImage)
+                    Glide.with(qrCodeImage.context).load(qrCode).into(qrCodeImage)
                 }
             }
         }
+        card.layoutParams = ConstraintLayout.LayoutParams(cell.screenWidth, MATCH_PARENT)
         /*
         val metrics = DisplayMetrics()
         val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.defaultDisplay?.getMetrics(metrics)
         val screenWidth = (metrics.widthPixels * 69) / 100
-        card.layoutParams = ConstraintLayout.LayoutParams(screenWidth, MATCH_PARENT)
+
         */
     }
 }
@@ -107,12 +100,11 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
         val data = cell.data
         val promotion = cell.data.promotion
         val tintColor = data.tintColor
-
         promotion?.let {
             it.link?.let {link ->
                 val color = ThemeColor(tintColor).getColor()
                 generateQrCode(link,color).let {qrCode ->
-                    glide.load(qrCode).apply(imageOptions).into(qrCodeImage)
+                    Glide.with(qrCodeImage.context).load(qrCode).apply(imageOptions).into(qrCodeImage)
                 }
             }
         }

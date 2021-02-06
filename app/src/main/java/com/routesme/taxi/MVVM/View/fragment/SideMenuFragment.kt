@@ -4,10 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
+import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.view.WindowManager
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import carbon.widget.ExpandableRecyclerView
 import carbon.widget.RecyclerView
@@ -16,22 +20,25 @@ import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.ItemAnimator
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
+import kotlinx.android.synthetic.main.side_menu_fragment.*
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.lang.Exception
 import java.lang.Runnable
 import java.util.*
 
 
-class SideMenuFragment : Fragment() {
+class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
     private lateinit var mView: View
     private lateinit var mContext: Context
     private val dateOperations = DateOperations.instance
     private lateinit var sideFragmentAdapter: SideFragmentAdapter
     private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
     private lateinit var presentJob : Job
+    private var screenWidth:Int?=null
     //private lateinit var recyclerView: RecyclerView
     override fun onAttach(context: Context) {
         mContext = context
@@ -50,7 +57,10 @@ class SideMenuFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         presentJob = Job()
-
+        val metrics = DisplayMetrics()
+        val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager.defaultDisplay?.getMetrics(metrics)
+        screenWidth = (metrics.widthPixels * 69) / 100
         setupRecyclerView()
     }
 
@@ -68,15 +78,15 @@ class SideMenuFragment : Fragment() {
     override fun onDestroy() {
         super.onDestroy()
         presentJob.cancel()
-       // sideFragmentAdapter = null
-        mView.recyclerView.adapter = null
+        //sideFragmentAdapter = null
+        recyclerView.adapter = null
 
     }
 
     private fun setupRecyclerView() {
         val date = Date()
         sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
-            add(EmptyVideoDiscountCell())
+            add(EmptyVideoDiscountCell(screenWidth!!))
             add(LargeEmptyCell())
             add(DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date)))
             add(SmallEmptyCell())
@@ -84,7 +94,7 @@ class SideMenuFragment : Fragment() {
         }
 
         sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
-        mView.recyclerView.apply {
+        recyclerView.apply {
             adapter = sideFragmentAdapter
             itemAnimator = ItemAnimator(mContext)
         }
@@ -106,33 +116,39 @@ class SideMenuFragment : Fragment() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(data: Data){
-        when(data.type){
-            ContentType.Image.value -> changeBannerQRCode(data)
-            else -> changeVideoQRCode(data)
+        try{
+            when(data.type){
+
+                ContentType.Image.value -> changeBannerQRCode(data)
+                else -> changeVideoQRCode(data)
+            }
+        } catch (e:Exception){
+
         }
     }
 
     private fun changeVideoQRCode(data: Data) {
+        Log.d("Data","${data}")
         val promotion = data.promotion
         val position = 0
-        sideFragmentCells[position] = if (promotion != null && promotion.isExist) VideoDiscountCell(data) else EmptyVideoDiscountCell()
+        if (promotion != null && promotion.isExist) sideFragmentCells[position] = VideoDiscountCell(data,screenWidth!!) else sideFragmentCells[position] = EmptyVideoDiscountCell(screenWidth!!)
         sideFragmentAdapter.apply {
-            //notifyItemChanged(position)
-            notifyItemRemoved(position)
             notifyItemInserted(position)
-
+            notifyItemRemoved(position)
+            //notifyItemChanged(position)
         }
     }
 
     private fun changeBannerQRCode(data: Data) {
-
         val promotion = data.promotion
         val position = 4
-        sideFragmentCells[position] = if (promotion != null && promotion.isExist) BannerDiscountCell(data) else WifiCell()
+        if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())
         sideFragmentAdapter.apply {
+
             //notifyItemChanged(position)
-            notifyItemRemoved(position)
             notifyItemInserted(position)
+            notifyItemRemoved(position)
+
         }
     }
 }

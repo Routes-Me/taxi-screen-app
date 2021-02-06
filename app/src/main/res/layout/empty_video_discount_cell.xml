@@ -12,8 +12,9 @@
         app:carbon_cornerRadius="@dimen/_4sdp"
         android:layout_gravity="center"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintDimensionRatio="H,163 : 900"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintDimensionRatio="6: 1.4">
+        >
 
         <carbon.widget.RelativeLayout
             android:layout_width="match_parent"

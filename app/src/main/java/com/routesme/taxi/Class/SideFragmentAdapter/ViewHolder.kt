@@ -21,6 +21,7 @@ class ViewHolderVideoDiscount(itemView: View) : RecyclerView.ViewHolder(itemView
     val qrCodeImage: ImageView = itemView.findViewById(R.id.videoQrCodeImage)
     val card = itemView.findViewById(R.id.videoPromotionCard) as RelativeLayout
     val cardShadow = itemView.findViewById(R.id.videoPromotionShadow) as RelativeLayout
+
 }
 
 class ViewHolderLargeEmpty(itemView: View) : RecyclerView.ViewHolder(itemView)

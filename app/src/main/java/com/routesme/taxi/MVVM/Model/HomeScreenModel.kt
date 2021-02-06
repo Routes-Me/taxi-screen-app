@@ -5,8 +5,8 @@ interface IModeChanging {
 }
 
 interface ISideFragmentCell
-class EmptyVideoDiscountCell : ISideFragmentCell
-class VideoDiscountCell(val data: Data) : ISideFragmentCell
+class EmptyVideoDiscountCell(val screenWidth: Int) : ISideFragmentCell
+class VideoDiscountCell(val data: Data,val screenWidth:Int) : ISideFragmentCell
 class LargeEmptyCell : ISideFragmentCell
 class DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell
 class SmallEmptyCell : ISideFragmentCell

@@ -16,7 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="H,163 : 900"
-
         android:background="?homeScreenBackground_color">
 
         <carbon.widget.RelativeLayout

@@ -102,6 +102,11 @@
             android:enabled="true"
             android:exported="true" />
 
+        <service
+            android:name="com.routesme.taxi.MVVM.service.VideoService"
+            android:enabled="true"
+            android:exported="true" />
+
         <receiver
             android:name="com.routesme.taxi.Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
             android:enabled="true"

@@ -3,12 +3,10 @@ package com.routesme.taxi.MVVM.View.activity
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.ActivityManager
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.SharedPreferences
+import android.content.*
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
@@ -38,6 +36,7 @@ import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.service.VideoService
 import com.routesme.taxi.R
 import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.database.AdvertisementDatabase
@@ -46,6 +45,7 @@ import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -65,7 +65,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private  var from_date:String?=null
     private  var deviceId:String?=null
     private lateinit var viewModel: RoomDBViewModel
-    private var getList:List<AdvertisementTracking>?=null
+    //private var getList:List<AdvertisementTracking>?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -242,14 +243,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         return jsonArray
 
     }
-
-
     private fun addFragments() {
 
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
         if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
 
     }
+
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
         val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
@@ -335,7 +335,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         cancel()
     }
-
     override fun onStart() {
         EventBus.getDefault().register(this)
         super.onStart()

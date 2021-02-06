@@ -5,115 +5,146 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <carbon.widget.RelativeLayout
-        android:id="@+id/bgImage"
+   <!-- <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.865"
-        android:layout_marginEnd="@dimen/_2sdp"
-        android:padding="@dimen/_5sdp"
-        app:carbon_cornerRadius="@dimen/_4sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
-        app:layout_constraintHorizontal_chainStyle="spread_inside">
-        <com.google.android.material.imageview.ShapeableImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-            android:background="@color/black"
-            />
-    </carbon.widget.RelativeLayout>
-    <carbon.widget.RelativeLayout
-        android:id="@+id/Advertisement_Video_CardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintWidth_percent="0.865"
-        android:layout_marginEnd="@dimen/_2sdp"
-        app:carbon_cornerRadius="@dimen/_4sdp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
-        app:layout_constraintHorizontal_chainStyle="spread_inside">
-
-
+        android:layout_height="0dp"
+        app:layout_constraintHeight_percent="0.772"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toTopOf="parent">-->
 
         <carbon.widget.RelativeLayout
-            android:id="@+id/videoShadow"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/_1sdp"
-            app:carbon_elevation="@dimen/_8sdp"
-            app:carbon_cornerRadius="@dimen/_4sdp">
+            android:id="@+id/bgImage"
+            android:layout_width="0dp"
 
-            <com.google.android.exoplayer2.ui.StyledPlayerView
-                android:id="@+id/playerView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_alignParentStart="true"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentBottom="true"
-                android:layout_gravity="center"
-                android:adjustViewBounds="true"
-                app:resize_mode="fill"
-                app:use_controller="true"
-                app:surface_type="texture_view"/>
-
-            <io.netopen.hotbitmapgg.library.view.RingProgressBar
-                android:id="@+id/videoRingProgressBar"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:layout_marginTop="6dp"
-                android:layout_marginEnd="6dp"
-                app:max="100"
-                app:ringColor="@color/white"
-                app:ringWidth="@dimen/_1sdp"
-                app:ringProgressColor="@color/red"
-                app:style="FILL" />
-
-        </carbon.widget.RelativeLayout>
-
-    </carbon.widget.RelativeLayout>
-
-    <carbon.widget.RelativeLayout
-        android:id="@+id/Advertisement_Banner_CardView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:carbon_cornerRadius="@dimen/_4sdp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/Advertisement_Video_CardView"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <carbon.widget.RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="@dimen/_1sdp"
-            app:carbon_elevation="@dimen/_8sdp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_2sdp"
+            android:padding="@dimen/_5sdp"
             app:carbon_cornerRadius="@dimen/_4sdp"
-            app:carbon_elevationShadowColor="@color/card_shadow">
-            <androidx.appcompat.widget.AppCompatImageView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:scaleType="centerCrop"
-                android:id="@+id/advertisementsImageView2"
-                />
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.865">
 
-            <androidx.appcompat.widget.AppCompatImageView
-                android:id="@+id/advertisementsImageView"
+            <com.google.android.material.imageview.ShapeableImageView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:background="@color/black"
                 android:scaleType="centerCrop"
-                android:adjustViewBounds="true" />
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
+        </carbon.widget.RelativeLayout>
+
+        <carbon.widget.RelativeLayout
+            android:id="@+id/Advertisement_Video_CardView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/_2sdp"
+            app:carbon_cornerRadius="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/Advertisement_Banner_CardView"
+            app:layout_constraintHorizontal_chainStyle="spread_inside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.865">
+
+
+            <carbon.widget.RelativeLayout
+                android:id="@+id/videoShadow"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_1sdp"
+                app:carbon_cornerRadius="@dimen/_4sdp"
+                app:carbon_elevation="@dimen/_8sdp">
+
+                <com.google.android.exoplayer2.ui.StyledPlayerView
+                    android:id="@+id/playerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_alignParentStart="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_alignParentBottom="true"
+                    android:layout_gravity="center"
+                    android:adjustViewBounds="true"
+                    app:resize_mode="fill"
+                    app:surface_type="texture_view"
+                    app:use_controller="true" />
+
+                <io.netopen.hotbitmapgg.library.view.RingProgressBar
+                    android:id="@+id/videoRingProgressBar"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentEnd="true"
+                    android:layout_marginTop="6dp"
+                    android:layout_marginEnd="6dp"
+                    app:max="100"
+                    app:ringColor="@color/white"
+                    app:ringProgressColor="@color/red"
+                    app:ringWidth="@dimen/_1sdp"
+                    app:style="FILL" />
+
+            </carbon.widget.RelativeLayout>
 
         </carbon.widget.RelativeLayout>
 
-    </carbon.widget.RelativeLayout>
+        <carbon.widget.RelativeLayout
+            android:id="@+id/Advertisement_Banner_CardView"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            app:carbon_cornerRadius="@dimen/_4sdp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/Advertisement_Video_CardView"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <carbon.widget.RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/_1sdp"
+                app:carbon_cornerRadius="@dimen/_4sdp"
+                app:carbon_elevation="@dimen/_8sdp"
+                app:carbon_elevationShadowColor="@color/card_shadow">
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/advertisementsImageView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:scaleType="centerCrop" />
+
+                <androidx.appcompat.widget.AppCompatImageView
+                    android:id="@+id/advertisementsImageView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:adjustViewBounds="true"
+                    android:scaleType="centerCrop" />
+
+            </carbon.widget.RelativeLayout>
+
+        </carbon.widget.RelativeLayout>
+    <!--</androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <!--<androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        card_view:layout_constraintBottom_toBottomOf="parent"
+        card_view:layout_constraintEnd_toEndOf="parent"
+        card_view:layout_constraintStart_toStartOf="parent"
+        card_view:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+
+        <include
+            android:id="@+id/sideMenuLayout"
+            layout="@layout/side_menu_fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

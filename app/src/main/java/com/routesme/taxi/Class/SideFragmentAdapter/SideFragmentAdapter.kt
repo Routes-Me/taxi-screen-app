@@ -2,12 +2,13 @@ package com.routesme.taxi.Class.SideFragmentAdapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.fragment.app.FragmentActivity
+import androidx.annotation.NonNull
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.R
 
 class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>()  {
+    private val mItems: ArrayList<ISideFragmentCell> = ArrayList()
     companion object {
         const val TYPE_EMPTY_VIDEO_DISCOUNT =0
         const val TYPE_VIDEO_DISCOUNT = 1
@@ -29,7 +30,7 @@ class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerV
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) = when (holder.itemViewType) {
-        TYPE_EMPTY_VIDEO_DISCOUNT -> onBindEmptyVideoDiscount(holder)
+        TYPE_EMPTY_VIDEO_DISCOUNT -> onBindEmptyVideoDiscount(holder,list[position])
         TYPE_VIDEO_DISCOUNT ->  onBindVideoDiscount(holder, list[position])
         TYPE_LARGE_EMPTY -> onBindLargeEmpty()
         TYPE_DATE -> onBindDate(holder, list[position])
@@ -55,4 +56,6 @@ class SideFragmentAdapter(private val list: List<ISideFragmentCell>) : RecyclerV
         }
         return this
     }
+
+
 }

@@ -1,11 +1,12 @@
 package com.routesme.taxi.MVVM.View.fragment
 
 import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.Context
-import android.content.SharedPreferences
+import android.content.*
 import android.net.Uri
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +15,6 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import androidx.annotation.Nullable
 import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
@@ -25,23 +25,14 @@ import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.exoplayer2.*
-import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory
-import com.google.android.exoplayer2.source.*
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultAllocator
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.util.Util
-import com.routesme.taxi.Class.AdvertisementsHelper
-import com.routesme.taxi.Class.DateHelper
-import com.routesme.taxi.Class.ThemeColor
-import com.routesme.taxi.MVVM.Model.ContentResponse
-import com.routesme.taxi.MVVM.Model.ContentType
-import com.routesme.taxi.MVVM.Model.Data
+import com.routesme.taxi.Class.*
+import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
+import com.routesme.taxi.ItemAnimator
+import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
+import com.routesme.taxi.MVVM.events.AnimateVideo
 import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.service.VideoService
 import com.routesme.taxi.R
 import com.routesme.taxi.database.database.AdvertisementDatabase
 import com.routesme.taxi.database.factory.ViewModelFactory
@@ -52,13 +43,17 @@ import com.routesme.taxi.utils.Type
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.content_fragment.view.*
+import kotlinx.android.synthetic.main.side_menu_fragment.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
+import java.lang.Exception
+import java.util.*
+import kotlin.collections.ArrayList
 
-class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventListener{
+class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventListener {
 
     private lateinit var mContext: Context
     private lateinit var mView: View
@@ -75,13 +70,17 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     private lateinit var  callApiJob : Job
     private lateinit  var animatorVideo:ObjectAnimator
     private lateinit  var animatorImage:ObjectAnimator
-    private var player : SimpleExoPlayer?=null
+    //private var player : SimpleExoPlayer?=null
     private lateinit var viewModel: RoomDBViewModel
     private lateinit var zoomOut:Animation
     private lateinit var zoomIn:Animation
     var currentMediaItemId = 0
-    //private var mediaSource = MutableList<MediaSource>()
+    private var mVideoList:List<Data>?=null
+    private val dateOperations = DateOperations.instance
+    private lateinit var sideFragmentAdapter: SideFragmentAdapter
+    private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
 
+    private var screenWidth:Int?=null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -92,6 +91,29 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         return view
     }
 
+    private val connection = object : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+        }
+
+        /**
+         * Called after a successful bind with our VideoService.
+         */
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            //We expect the service binder to be the video services binder.
+            //As such we cast.
+            if (service is VideoService.VideoServiceBinder) {
+                Log.d("Service","Connected")
+                //Then we simply set the exoplayer instance on this view.
+                //Notice we are only getting information.
+                playerView.player = service.getExoPlayerInstance()
+                //fetchContent()
+
+            }
+        }
+
+    }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
@@ -99,10 +121,46 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
         callApiJob = Job()
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
-        //player = SimpleExoPlayer.Builder(playerView.context).setLoadControl(getLoadControl()).setMediaSourceFactory(getMediaSourceFactory()).build()
         zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
+        screenWidth = DisplayManager.instance.getDisplayWidth(mContext)
         fetchContent()
+        //setUpRecylerView()
+
+    }
+    private fun setUpRecylerView(){
+
+        val date = Date()
+        sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
+            add(EmptyVideoDiscountCell(screenWidth!!))
+            add(LargeEmptyCell())
+            add(DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date)))
+            add(SmallEmptyCell())
+            add(WifiCell())
+        }
+        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
+        recyclerView.apply {
+            adapter = sideFragmentAdapter
+            itemAnimator = ItemAnimator(recyclerView.context)
+        }
+        launch {
+
+            setTime()
+
+        }
+
+    }
+
+    @SuppressLint("SetTextI18n")
+    private suspend fun setTime() {
+        launch {
+            while (isActive){
+                val date = Date()
+                sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
+                sideFragmentAdapter.notifyDataSetChanged()
+                delay(60 * 1000)
+            }
+        }
     }
 
     private fun fetchContent(){
@@ -134,8 +192,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
                                 launch {
                                     setImageAnimation(advertisementsImageView,advertisementsImageView2)
                                     setAnimation(Advertisement_Video_CardView,bgImage)
-                                    setUpMediaPlayer(videos)
-                                    videoProgressbarRunnable()
+                                    mVideoList = videos
+                                    startVideoService(videos)
                                 }
                             }
 
@@ -188,6 +246,29 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(data: String){
+        launch {
+            videoProgressbarRunnable()
+            playerView.player?.addListener(this@ContentFragment)
+        }
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(animateVideo: AnimateVideo){
+
+        try {
+            animatorVideo.start()
+            bgImage.startAnimation(zoomOut)
+            Advertisement_Video_CardView.bringToFront()
+        }catch (e:Exception){
+
+        }
+
+
+    }
+
     private fun changeVideoCardColor(tintColor: Int?) {
         val color = ThemeColor(tintColor).getColor()
         val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
@@ -228,199 +309,55 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
                         currentImageIndex = 0
                     }
                     EventBus.getDefault().post(images[currentImageIndex])
+                    //changeBannerQRCode(images[currentImageIndex])
                 }
 
                 delay(15 * 1000)
             }
         }
-
-
     }
+    private fun changeBannerQRCode(data:Data){
+        val promotion = data.promotion
+        val position = 4
+        if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())
+        sideFragmentAdapter.apply {
 
-    private suspend fun setUpMediaPlayer(videos: List<Data>){
-        var currentMediaItemId = 0
-        //val mediaItems = videos.map { MediaItem.Builder().setUri(it.url.toString().trim()).setMediaId("${videos.indexOf(it)}").build() }
-        player = SimpleExoPlayer.Builder(playerView.context).setLoadControl(getLoadControl()).build()
-        player?.apply {
-            playerView.player = this
-            //setMediaItems(mediaItems)
-            setMediaSources(getMediaSource(videos))
-            repeatMode = Player.REPEAT_MODE_ALL
-            playWhenReady = true
-            prepare()
-            play()
-            volume = 0f
-            addListener(object : Player.EventListener {
-                override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
-                    currentMediaItemId = player?.currentPeriodIndex!!
-                    //setAnimation(Advertisement_Video_CardView,bgImage)
-                    if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
-                    currentMediaItemId.let {
-                        videos[it].contentId?.let {
+            //notifyItemChanged(position)
+            notifyItemRemoved(position)
+            notifyItemInserted(position)
 
-                            viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
-
-                        }
-                    }
-                    animatorVideo.start()
-                    bgImage.startAnimation(zoomOut)
-                    Advertisement_Video_CardView.bringToFront()
-
-                }
-                override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
-                    super.onTracksChanged(trackGroups, trackSelections)
-                    Log.d("Track","onTracksChanged")
-                    EventBus.getDefault().post(videos[player?.currentPeriodIndex!!])
-                }
-                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
-                    when (playbackState) {
-                        Player.STATE_IDLE -> {
-
-                            player?.prepare()
-                            player?.playbackState
-
-                        }
-                        Player.STATE_BUFFERING -> {
-
-                            count++
-                            if(count >= 5 ){
-                                count = 0
-                                EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
-                                isPlayingDemoVideo = true
-                            }
-
-                        }
-                        Player.STATE_READY -> {
-                            if(isPlayingDemoVideo) {
-                                EventBus.getDefault().post(DemoVideo(false,""))
-                                isPlayingDemoVideo = false
-                            }
-                            count = 0
-                            val currentMediaItem = playerView.player?.currentMediaItem
-                        }
-                        Player.STATE_ENDED -> {
-
-                        }
-                    }
-                }
-                override fun onPlayerError(error: ExoPlaybackException) {
-                    when (error.type) {
-                        ExoPlaybackException.TYPE_SOURCE ->{
-                            if(error.sourceException.message == "Response code: 404"){
-                                player?.seekTo(player!!.nextWindowIndex, 0)
-
-                            }
-
-                        }
-                        ExoPlaybackException.TYPE_RENDERER ->{
-                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
-                            if (currentMediaItemId == videos.indexOf(videos.first())){
-
-                                EventBus.getDefault().post(videos[currentMediaItemId])
-
-                            }
-
-
-                        }
-                        ExoPlaybackException.TYPE_UNEXPECTED ->{
-
-                        }
-                    }
-                }
-            })
         }
     }
 
-    /*override fun onPlaybackStateChanged(state: Int) {
-        super.onPlaybackStateChanged(state)
-        when (state) {
-            Player.STATE_IDLE -> {
+    private fun changeVideoQRCode(data:Data){
 
-                player?.prepare()
-                player?.playbackState
+        val promotion = data.promotion
+        val position = 0
+        if (promotion != null && promotion.isExist) sideFragmentCells.set(position,VideoDiscountCell(data,screenWidth!!)) else sideFragmentCells.set(position,EmptyVideoDiscountCell(screenWidth!!))
+        sideFragmentAdapter.apply {
 
-            }
-            Player.STATE_BUFFERING -> {
+            //notifyItemChanged(position)
+            notifyItemRemoved(position)
+            notifyItemInserted(position)
 
-                count++
-                if(count >= 5 ){
-                    count = 0
-                    EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
-                    isPlayingDemoVideo = true
-                }
-
-            }
-            Player.STATE_READY -> {
-                if(isPlayingDemoVideo) {
-                    EventBus.getDefault().post(DemoVideo(false,""))
-                    isPlayingDemoVideo = false
-                }
-                count = 0
-                //val currentMediaItem = playerView.player?.currentMediaItem
-            }
-            Player.STATE_ENDED -> {
-
-
-            }
         }
 
-    }*/
-
+    }
     private suspend fun videoProgressbarRunnable() {
         launch{
             while (isActive){
-                val current = (player?.currentPosition)!!.toInt()
-                val progress = current * 100 / (player?.duration)!!.toInt()
+                val current = (playerView.player?.currentPosition)!!.toInt()
+                val progress = current * 100 / (playerView.player?.duration)!!.toInt()
                 videoRingProgressBar?.progress = progress
                 delay(1000)
             }
         }
     }
-
-    private fun getMediaSource(videos: List<Data>) : MutableList<MediaSource> {
-        var mediaSource = ArrayList<MediaSource>()
-        val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(mContext,getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-        videos?.let {videos->
-            for (video in videos) {
-
-                val  mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))
-                mediaSource.add(mediaSourceItem)
-                Log.d("Video","${mediaSourceItem}")
-            }
-            return mediaSource
-        }
-    }
-    private fun getLoadControl():DefaultLoadControl{
-
-        val loadControl = DefaultLoadControl.Builder()
-                .setAllocator(DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))
-                .setBufferDurationsMs(
-                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,  // this is it!
-                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,
-                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,
-                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS
-                )
-                .setTargetBufferBytes(DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES)
-                .setPrioritizeTimeOverSizeThresholds(DefaultLoadControl.DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS)
-                .createDefaultLoadControl()
-
-        return loadControl
-    }
-
-    private fun getMediaSourceFactory():DefaultMediaSourceFactory{
-
-        val cacheDataSourceFactory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(mContext,getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-        return   DefaultMediaSourceFactory(cacheDataSourceFactory)
-
-    }
-
     private fun setAnimation(playerView: RelativeLayout, bgImageView: RelativeLayout){
         animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
         animatorVideo.apply {
             setDuration(1500)
-            animatorVideo.addListener(onStart = {player?.pause()},onEnd = {player?.play()})
             AccelerateDecelerateInterpolator()
-            //start()
         }
         /*val zoomout: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         bgImageView.startAnimation(zoomout)
@@ -441,13 +378,16 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
 
     }
 
+    fun startVideoService(list:List<Data>){
+        val intent = Intent(mContext, VideoService::class.java)
+        intent.putExtra("array", list as ArrayList<Data>)
+        mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         cancel()
-        if(player!=null){
-            player?.release()
-            player = null
-        }
         callApiJob.cancel()
         AdvertisementsHelper.instance.deleteCache()
     }
@@ -462,5 +402,59 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         EventBus.getDefault().unregister(this)
     }
 
+    override fun onPlaybackStateChanged(state: Int) {
+        super.onPlaybackStateChanged(state)
+        when (state) {
+            Player.STATE_IDLE -> {
+                Log.d("Media","STATE_IDLE")
+                playerView.player?.prepare()
+                playerView.player?.playbackState
 
+            }
+            Player.STATE_BUFFERING -> {
+                Log.d("Media","STATE_BUFFERING")
+                count++
+                if(count >= 5 ){
+                    count = 0
+                    EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
+                    isPlayingDemoVideo = true
+                }
+
+            }
+            Player.STATE_READY -> {
+                Log.d("Media","STATE_READY")
+                if(isPlayingDemoVideo) {
+                    EventBus.getDefault().post(DemoVideo(false,""))
+                    isPlayingDemoVideo = false
+                }
+                count = 0
+                //val currentMediaItem = playerView.player?.currentMediaItem
+            }
+            Player.STATE_ENDED -> {
+
+                Log.d("Media","STATE_ENDED")
+
+
+            }
+        }
+
+    }
+    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
+        super.onMediaItemTransition(mediaItem, reason)
+        currentMediaItemId = playerView.player?.currentPeriodIndex!!
+        Log.d("Media","onMediaItemTransition")
+        //setAnimation(Advertisement_Video_CardView,bgImage)
+        if(currentMediaItemId == 0) currentMediaItemId = mVideoList!!.size-1 else currentMediaItemId = currentMediaItemId-1
+        currentMediaItemId.let {
+            mVideoList!![it].contentId?.let {
+
+                viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
+
+            }
+        }
+        animatorVideo.start()
+        bgImage.startAnimation(zoomOut)
+        Advertisement_Video_CardView.bringToFront()
+
+    }
 }

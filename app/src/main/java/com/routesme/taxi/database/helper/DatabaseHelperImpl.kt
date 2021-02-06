@@ -17,10 +17,15 @@ class DatabaseHelperImpl (private val advertismentDatabase: AdvertisementDatabas
         advertismentDatabase.advertisementTracking().updateSlotMorning(id)
     }
 
-    override suspend fun updateSlotNoon(id: Int) = advertismentDatabase.advertisementTracking().updateSlotNoon(id)
+    override suspend fun updateSlotNoon(id: Int) {
+
+        Log.d("Thread Helper","${Thread.currentThread().name}, ${Thread.currentThread().id}")
+        advertismentDatabase.advertisementTracking().updateSlotNoon(id)
+
+    }
 
     override suspend fun updateSlotEvening(id: Int) {
-        Log.d("Thread Helper","${Thread.currentThread().name}, ${Thread.currentThread().id}")
+
         advertismentDatabase.advertisementTracking().updateSlotEvening(id)
     }
 

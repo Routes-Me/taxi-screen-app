@@ -7,6 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
+import android.util.DisplayMetrics
+import android.view.WindowManager
 import com.routesme.taxi.MVVM.Model.IModeChanging
 import java.text.SimpleDateFormat
 import java.util.*
@@ -74,5 +76,13 @@ open class DisplayManager {
         for (activity in registeredActivities) {
             (activity as IModeChanging).onModeChange()
         }
+    }
+
+    fun getDisplayWidth(context: Context):Int{
+
+        val metrics = DisplayMetrics()
+        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        windowManager.defaultDisplay?.getMetrics(metrics)
+        return (metrics.widthPixels * 69) / 100
     }
 }

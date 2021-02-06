@@ -10,6 +10,7 @@ import com.routesme.taxi.database.entity.AdvertisementTracking
 import com.routesme.taxi.database.helper.DatabaseHelper
 import com.routesme.taxi.utils.Period
 import io.reactivex.disposables.CompositeDisposable
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
@@ -20,7 +21,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     private val deleteAllTableLiveData = MutableLiveData<ResponseBody<Int>>()
     private val compositeDisposable = CompositeDisposable()
     fun insertLog(id:String, timeStamp:Long, period: Period, type:String) {
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             try {
                 var analysisRecord = dbHelper.getItem(id,timeStamp/MIN)
                 Log.d("Thread ViewModel","${Thread.currentThread().name}, ${Thread.currentThread().id}")
@@ -57,7 +58,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     }
     fun getReport(currentDate:Long): LiveData<ResponseBody<List<AdvertisementTracking>>> {
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
 
             val getReport =dbHelper.getList(currentDate/MIN)
             analyticsListLiveData.postValue(ResponseBody.success(getReport))
@@ -67,7 +68,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
 
     fun getAllList():LiveData<ResponseBody<List<AdvertisementTracking>>>{
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val getAllList =dbHelper.getAllList()
             analyticsListAllLiveData.postValue(ResponseBody.success(getAllList))
         }
@@ -76,7 +77,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
 
     fun deleteTable(currentDate: Long):LiveData<ResponseBody<Int>>{
 
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
 
             val deleteData = dbHelper.deleteTable(currentDate/MIN)
             deleteTableLiveData.postValue(ResponseBody.success(deleteData))
@@ -85,7 +86,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     }
 
     fun deleteAllData():LiveData<ResponseBody<Int>>{
-        viewModelScope.launch {
+        viewModelScope.launch(Dispatchers.IO) {
             val deleteData = dbHelper.deleteAllTable()
             deleteAllTableLiveData.postValue(ResponseBody.success(deleteData))
         }
