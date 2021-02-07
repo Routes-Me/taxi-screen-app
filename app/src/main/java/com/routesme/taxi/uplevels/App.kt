@@ -4,18 +4,23 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Application
-import android.content.*
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DisplayManager
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.LocationTrackingService.Class.TrackingService
 import com.routesme.taxi.MVVM.Model.SignInCredentials
+import com.routesme.taxi.MVVM.task.TaskManager
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class App : Application() {
     val account = Account()
@@ -30,6 +35,8 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
+        val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 0, TimeUnit.MINUTES).setConstraints(constraint).build()
     }
 
     override fun onCreate() {
@@ -38,7 +45,7 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         //Log.d("Process","${getProcessName()}")
-        //startTrackingService()
+        startTrackingService()
     }
 
     fun startTrackingService(){

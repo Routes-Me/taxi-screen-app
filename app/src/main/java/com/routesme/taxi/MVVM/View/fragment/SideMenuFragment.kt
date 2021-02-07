@@ -19,6 +19,7 @@ import com.routesme.taxi.Class.DateOperations
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.ItemAnimator
 import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.events.PromotionEvent
 import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.side_menu_fragment.*
 import kotlinx.android.synthetic.main.side_menu_fragment.view.*
@@ -115,12 +116,12 @@ class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(data: Data){
+    fun onEvent(promotionData:PromotionEvent){
         try{
-            when(data.type){
+            when(promotionData.data.type){
 
-                ContentType.Image.value -> changeBannerQRCode(data)
-                else -> changeVideoQRCode(data)
+                ContentType.Image.value -> changeBannerQRCode(promotionData.data)
+                else -> changeVideoQRCode(promotionData.data)
             }
         } catch (e:Exception){
 
@@ -128,26 +129,27 @@ class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
     }
 
     private fun changeVideoQRCode(data: Data) {
-        Log.d("Data","${data}")
+
         val promotion = data.promotion
         val position = 0
         if (promotion != null && promotion.isExist) sideFragmentCells[position] = VideoDiscountCell(data,screenWidth!!) else sideFragmentCells[position] = EmptyVideoDiscountCell(screenWidth!!)
         sideFragmentAdapter.apply {
-            notifyItemInserted(position)
             notifyItemRemoved(position)
+            notifyItemInserted(position)
             //notifyItemChanged(position)
         }
     }
 
     private fun changeBannerQRCode(data: Data) {
+        Log.d("Data","${data}")
         val promotion = data.promotion
         val position = 4
         if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())
         sideFragmentAdapter.apply {
 
             //notifyItemChanged(position)
-            notifyItemInserted(position)
             notifyItemRemoved(position)
+            notifyItemInserted(position)
 
         }
     }

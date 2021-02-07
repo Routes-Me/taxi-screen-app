@@ -84,7 +84,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(applicationContext)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
-        checkDateAndUploadResult()
+        //checkDateAndUploadResult()
         launch {initializePlayer()}
         sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
@@ -160,15 +160,15 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
             return@withContext mediaSource
         }
     }
-    private fun checkDateAndUploadResult(){
+    /*private fun checkDateAndUploadResult(){
         from_date?.let {from_date->
             if(DateHelper.instance.checkDate(from_date.toLong())){
                 observeAnalytics()
             }
         }
-    }
+    }*/
 
-    private fun observeAnalytics(){
+    /*private fun observeAnalytics(){
 
         viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(this, Observer {
 
@@ -242,7 +242,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         jsonArray.add(jsonObject)
         return jsonArray
 
-    }
+    }*/
     private fun addFragments() {
 
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()

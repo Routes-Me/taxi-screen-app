@@ -15,16 +15,20 @@ import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
+import androidx.activity.viewModels
 import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.work.WorkManager
 import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.google.android.exoplayer2.*
+import com.google.gson.JsonArray
+import com.google.gson.JsonObject
 import com.routesme.taxi.Class.*
 import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
 import com.routesme.taxi.ItemAnimator
@@ -32,13 +36,17 @@ import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.AnimateVideo
 import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.events.PromotionEvent
 import com.routesme.taxi.MVVM.service.VideoService
 import com.routesme.taxi.R
+import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.database.AdvertisementDatabase
+import com.routesme.taxi.database.entity.AdvertisementTracking
 import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.utils.Type
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.*
@@ -59,7 +67,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     private lateinit var mView: View
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
-    private var device_id : Int = 0
+    private var device_id : String = ""
     private val SEC:Long = 300
     private val MIL:Long = 1000
     private var dialog: SpotsDialog? = null
@@ -95,20 +103,9 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         override fun onServiceDisconnected(name: ComponentName?) {
 
         }
-
-        /**
-         * Called after a successful bind with our VideoService.
-         */
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            //We expect the service binder to be the video services binder.
-            //As such we cast.
             if (service is VideoService.VideoServiceBinder) {
-                Log.d("Service","Connected")
-                //Then we simply set the exoplayer instance on this view.
-                //Notice we are only getting information.
                 playerView.player = service.getExoPlayerInstance()
-                //fetchContent()
-
             }
         }
 
@@ -118,49 +115,116 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         super.onActivityCreated(savedInstanceState)
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!.toInt()
+        device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         callApiJob = Job()
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         screenWidth = DisplayManager.instance.getDisplayWidth(mContext)
+        WorkManager.getInstance().enqueue(App.periodicWorkRequest);
+        observeTaskManager()
         fetchContent()
-        //setUpRecylerView()
-
-    }
-    private fun setUpRecylerView(){
-
-        val date = Date()
-        sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {
-            add(EmptyVideoDiscountCell(screenWidth!!))
-            add(LargeEmptyCell())
-            add(DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date)))
-            add(SmallEmptyCell())
-            add(WifiCell())
-        }
-        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)
-        recyclerView.apply {
-            adapter = sideFragmentAdapter
-            itemAnimator = ItemAnimator(recyclerView.context)
-        }
-        launch {
-
-            setTime()
-
-        }
-
     }
 
-    @SuppressLint("SetTextI18n")
-    private suspend fun setTime() {
-        launch {
-            while (isActive){
-                val date = Date()
-                sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
-                sideFragmentAdapter.notifyDataSetChanged()
-                delay(60 * 1000)
+    private fun observeTaskManager(){
+
+        WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
+                .observe(viewLifecycleOwner, Observer { workInfo ->
+                    val status = workInfo.state.name
+                    if(status == "RUNNING"){
+
+                        observeAnalytics()
+
+                    }
+
+                })
+    }
+
+    private fun observeAnalytics(){
+
+        viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(viewLifecycleOwner, Observer {
+
+            when(it.status){
+
+                ResponseBody.Status.SUCCESS -> {
+
+                    it.data?.let {list->
+                        val postReportViewModel: ContentViewModel by viewModels()
+                        device_id?.let {deviceId->
+
+                            postReportViewModel.postReport(mContext,getJsonArray(list),deviceId).observe(viewLifecycleOwner , Observer<ReportResponse> {
+                                if(it.isSuccess){
+                                    observeDeleteTable()
+                                }
+                            })
+
+                        }
+
+                    }
+                }
+                ResponseBody.Status.ERROR -> {
+
+                    Log.d("TaskManagerPeriodic","No Data Found")
+                }
             }
+        })
+    }
+
+    private fun observeDeleteTable(){
+
+        viewModel.deleteTable(DateHelper.instance.getCurrentDate()).observe(viewLifecycleOwner, Observer {
+            when(it.status){
+                ResponseBody.Status.SUCCESS ->{
+                    Log.d("TaskManagerPeriodic","Delete ${ResponseBody.Status.SUCCESS}")
+                    editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                    editor?.commit()}
+                ResponseBody.Status.ERROR ->{
+
+                    Log.d("TaskManagerPeriodic","Data Not Delete")
+
+                }
+            }
+        })
+    }
+
+    private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
+        val jsonArray = JsonArray()
+        list?.forEach {
+            val jsonObject = JsonObject().apply{
+                addProperty("date",it.date/1000)
+                addProperty("advertisementId",it.advertisementId)
+                addProperty("mediaType",it.media_type)
+                add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+            }
+            jsonArray.add(jsonObject)
         }
+
+        return jsonArray
+
+    }
+
+    private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int): JsonArray {
+        val jsonObject = JsonObject()
+        val jsonArray = JsonArray()
+        if(morning != 0){
+            jsonObject.addProperty("period","mo")
+            jsonObject.addProperty("value",morning)
+        }
+        if(noon != 0){
+            jsonObject.addProperty("period","no")
+            jsonObject.addProperty("value",noon)
+        }
+        if(evening != 0){
+            jsonObject.addProperty("period","ev")
+            jsonObject.addProperty("value",evening)
+        }
+        if(night != 0){
+            jsonObject.addProperty("period","ni")
+            jsonObject.addProperty("value",night)
+        }
+        jsonArray.add(jsonObject)
+        return jsonArray
+
     }
 
     private fun fetchContent(){
@@ -250,9 +314,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     fun onEvent(data: String){
         launch {
             videoProgressbarRunnable()
-            playerView.player?.addListener(this@ContentFragment)
         }
-
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -265,9 +327,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         }catch (e:Exception){
 
         }
-
-
     }
+
 
     private fun changeVideoCardColor(tintColor: Int?) {
         val color = ThemeColor(tintColor).getColor()
@@ -278,6 +339,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
             it.ringProgressColor = color
         }
     }
+
 
     fun setUpImage(images: List<Data>){  //Done No more memory leakage
         var currentImageIndex = 0
@@ -308,7 +370,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
                     if (currentImageIndex >= images.size) {
                         currentImageIndex = 0
                     }
-                    EventBus.getDefault().post(images[currentImageIndex])
+                    EventBus.getDefault().post(PromotionEvent(images[currentImageIndex]))
                     //changeBannerQRCode(images[currentImageIndex])
                 }
 
@@ -316,33 +378,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
             }
         }
     }
-    private fun changeBannerQRCode(data:Data){
-        val promotion = data.promotion
-        val position = 4
-        if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())
-        sideFragmentAdapter.apply {
 
-            //notifyItemChanged(position)
-            notifyItemRemoved(position)
-            notifyItemInserted(position)
 
-        }
-    }
-
-    private fun changeVideoQRCode(data:Data){
-
-        val promotion = data.promotion
-        val position = 0
-        if (promotion != null && promotion.isExist) sideFragmentCells.set(position,VideoDiscountCell(data,screenWidth!!)) else sideFragmentCells.set(position,EmptyVideoDiscountCell(screenWidth!!))
-        sideFragmentAdapter.apply {
-
-            //notifyItemChanged(position)
-            notifyItemRemoved(position)
-            notifyItemInserted(position)
-
-        }
-
-    }
     private suspend fun videoProgressbarRunnable() {
         launch{
             while (isActive){
@@ -353,6 +390,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
             }
         }
     }
+
+
     private fun setAnimation(playerView: RelativeLayout, bgImageView: RelativeLayout){
         animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
         animatorVideo.apply {
@@ -363,6 +402,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         bgImageView.startAnimation(zoomout)
         playerView.bringToFront()*/
     }
+
 
     fun setImageAnimation(imageView: ImageView, imageView2: ImageView){
 

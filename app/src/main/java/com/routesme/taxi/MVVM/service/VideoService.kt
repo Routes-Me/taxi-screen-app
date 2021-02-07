@@ -23,6 +23,7 @@ import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.events.AnimateVideo
 import com.routesme.taxi.MVVM.events.DemoVideo
+import com.routesme.taxi.MVVM.events.PromotionEvent
 import com.routesme.taxi.R
 import com.routesme.taxi.database.database.AdvertisementDatabase
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
@@ -127,7 +128,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                 }
                 override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
                     super.onTracksChanged(trackGroups, trackSelections)
-                    EventBus.getDefault().post(list[exoPlayer?.currentPeriodIndex!!])
+                    EventBus.getDefault().post(PromotionEvent(list[exoPlayer?.currentPeriodIndex!!]))
                 }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
