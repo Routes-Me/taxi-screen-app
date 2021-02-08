@@ -4,8 +4,10 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
 import android.text.SpannedString
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
+import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
@@ -103,8 +105,9 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
         promotion?.let {
             it.link?.let {link ->
                 val color = ThemeColor(tintColor).getColor()
-                generateQrCode(link,color).let {qrCode ->
-                    Glide.with(qrCodeImage.context).load(qrCode).apply(imageOptions).into(qrCodeImage)
+                generateQrCode("link",color).let {qrCode ->
+                    Glide.with(qrCodeImage.context).load(qrCode).into(qrCodeImage)
+
                 }
             }
         }

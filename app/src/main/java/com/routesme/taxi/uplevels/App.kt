@@ -36,7 +36,7 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 0, TimeUnit.MINUTES).setConstraints(constraint).build()
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 24, TimeUnit.HOURS).setConstraints(constraint).build()
     }
 
     override fun onCreate() {
@@ -45,7 +45,7 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         //Log.d("Process","${getProcessName()}")
-        startTrackingService()
+      //  startTrackingService()
     }
 
     fun startTrackingService(){

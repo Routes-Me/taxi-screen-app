@@ -80,7 +80,7 @@ class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
         super.onDestroy()
         presentJob.cancel()
         //sideFragmentAdapter = null
-        recyclerView.adapter = null
+        //recyclerView.adapter = null
 
     }
 
@@ -134,20 +134,18 @@ class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
         val position = 0
         if (promotion != null && promotion.isExist) sideFragmentCells[position] = VideoDiscountCell(data,screenWidth!!) else sideFragmentCells[position] = EmptyVideoDiscountCell(screenWidth!!)
         sideFragmentAdapter.apply {
+
             notifyItemRemoved(position)
             notifyItemInserted(position)
-            //notifyItemChanged(position)
         }
     }
 
     private fun changeBannerQRCode(data: Data) {
-        Log.d("Data","${data}")
         val promotion = data.promotion
         val position = 4
         if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())
         sideFragmentAdapter.apply {
 
-            //notifyItemChanged(position)
             notifyItemRemoved(position)
             notifyItemInserted(position)
 

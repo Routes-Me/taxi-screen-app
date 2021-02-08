@@ -37,11 +37,7 @@ import kotlin.collections.ArrayList
 
 
 class VideoService: Service(),CoroutineScope by MainScope(){
-    companion object {
-        //const val VIDEO_FILE_ID = "VideoFileID"
-        //const val PLAY_PAUSE_ACTION = "playPauseAction"
-        //const val NOTIFICAITON_ID = 0
-    }
+
     private lateinit var exoPlayer: SimpleExoPlayer
     private lateinit var ringProgressBar:RingProgressBar
     var currentMediaItemId = 0
@@ -67,21 +63,13 @@ class VideoService: Service(),CoroutineScope by MainScope(){
     }
 
     inner class VideoServiceBinder : Binder() {
-
-        /**
-         * This method should be used only for setting the exoplayer instance.
-         * If exoplayer's internal are altered or accessed we can not guarantee
-         * things will work correctly.
-         */
         fun getExoPlayerInstance() = exoPlayer
-        fun getProgressBarInstance() = ringProgressBar
     }
 
     override fun onCreate() {
         super.onCreate()
         exoPlayer = SimpleExoPlayer.Builder(this).setLoadControl(getLoadControl()).build()
         viewModel = RoomDBViewModel(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))
-        //ringProgressBar = ringProgressBar
 
     }
 
@@ -102,7 +90,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
         return loadControl
     }
 
-    fun setMediaPlayer(list: List<Data>) {
+    private fun setMediaPlayer(list: List<Data>) {
 
         exoPlayer?.apply {
             setMediaSources(getMediaSource(list))
@@ -115,7 +103,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
                     currentMediaItemId = exoPlayer?.currentPeriodIndex!!
-                    //setAnimation(Advertisement_Video_CardView,bgImage)
                     if(currentMediaItemId == 0) currentMediaItemId = list.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
                         list[it].contentId?.let {
@@ -154,7 +141,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                                 isPlayingDemoVideo = false
                             }
                             count = 0
-                            //val currentMediaItem = exoPlayer.currentMediaItem
                         }
                         Player.STATE_ENDED -> {
 
@@ -204,11 +190,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
             }
         }
 
-        fun getMediaSource(videos: String): MediaSource {
-            val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(videos))
-            return mediaSourceItem
-        }
 
         fun stopPlayer() {
 
@@ -218,13 +199,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
         fun playPlayer() {
 
             exoPlayer.play()
-        }
-
-
-        fun getCurrentPeriod(): Int {
-            val current = (exoPlayer?.currentPosition)!!.toInt()
-            val progress = current * 100 / (exoPlayer?.duration)!!.toInt()
-            return progress
         }
 
         override fun onDestroy() {

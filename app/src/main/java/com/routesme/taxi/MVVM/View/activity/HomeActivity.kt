@@ -2,12 +2,9 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityManager
 import android.content.*
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
@@ -19,33 +16,24 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.IModeChanging
-import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
-import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
-import com.routesme.taxi.MVVM.service.VideoService
 import com.routesme.taxi.R
-import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.database.AdvertisementDatabase
-import com.routesme.taxi.database.entity.AdvertisementTracking
 import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -58,7 +46,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private val helper = HomeScreenHelper(this)
     private var isHotspotAlive = false
     private var pressedTime: Long = 0
-    private lateinit var mView: View
     private var clickTimes = 0
     private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
@@ -66,6 +53,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private  var deviceId:String?=null
     private lateinit var viewModel: RoomDBViewModel
     //private var getList:List<AdvertisementTracking>?=null
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,7 +126,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         player = SimpleExoPlayer.Builder(demoVideoPlayer.context).build()
         demoVideoPlayer.player = player
         val mediaSource = buildRawMediaSource()
-        withContext(Dispatchers.Main){
             mediaSource?.let {
                 player?.apply {
                     setMediaSource(it)
@@ -147,17 +134,15 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
                     playWhenReady = true
                 }
             }
-        }
     }
 
     private suspend fun buildRawMediaSource(): MediaSource? {
-        return withContext(Dispatchers.Default){
+        return withContext(Dispatchers.IO){
             val rawDataSource = RawResourceDataSource(this@HomeActivity)
             rawDataSource.open(DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.offline_video)))
             val mediaItem = MediaItem.fromUri(rawDataSource.uri!!)
             rawDataSource.close()
-            val mediaSource = ProgressiveMediaSource.Factory { rawDataSource }.createMediaSource(mediaItem)
-            return@withContext mediaSource
+            return@withContext ProgressiveMediaSource.Factory { rawDataSource }.createMediaSource(mediaItem)
         }
     }
     /*private fun checkDateAndUploadResult(){
@@ -345,13 +330,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         super.onStop()
     }
 
-    fun playVideo(){
+    private fun playVideo(){
 
         player?.play()
 
     }
 
-    fun stopVideo(){
+    private fun stopVideo(){
 
         player?.pause()
 
