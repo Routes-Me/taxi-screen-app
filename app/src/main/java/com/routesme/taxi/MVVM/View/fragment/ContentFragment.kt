@@ -61,10 +61,9 @@ import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
-class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventListener {
+class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     private lateinit var mContext: Context
-    private lateinit var mView: View
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private var device_id : String = ""
@@ -73,21 +72,13 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     private var dialog: SpotsDialog? = null
     private var isAlive = false
     private var videoShadow: RelativeLayout? = null
-    private var count = 0
-    private var isPlayingDemoVideo = false
     private lateinit var  callApiJob : Job
     private lateinit  var animatorVideo:ObjectAnimator
     private lateinit  var animatorImage:ObjectAnimator
-    //private var player : SimpleExoPlayer?=null
     private lateinit var viewModel: RoomDBViewModel
     private lateinit var zoomOut:Animation
     private lateinit var zoomIn:Animation
-    var currentMediaItemId = 0
     private var mVideoList:List<Data>?=null
-    private val dateOperations = DateOperations.instance
-    private lateinit var sideFragmentAdapter: SideFragmentAdapter
-    private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>
-
     private var screenWidth:Int?=null
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -155,6 +146,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
                             postReportViewModel.postReport(mContext,getJsonArray(list),deviceId).observe(viewLifecycleOwner , Observer<ReportResponse> {
                                 if(it.isSuccess){
                                     observeDeleteTable()
+
                                 }
                             })
 
@@ -175,12 +167,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         viewModel.deleteTable(DateHelper.instance.getCurrentDate()).observe(viewLifecycleOwner, Observer {
             when(it.status){
                 ResponseBody.Status.SUCCESS ->{
-                    Log.d("TaskManagerPeriodic","Delete ${ResponseBody.Status.SUCCESS}")
+
                     editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                     editor?.commit()}
                 ResponseBody.Status.ERROR ->{
-
-                    Log.d("TaskManagerPeriodic","Data Not Delete")
 
                 }
             }
@@ -306,7 +296,9 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(data: Data){
         if (data.type ==  ContentType.Video.value){
-            changeVideoCardColor(data.tintColor)
+            launch {
+                changeVideoCardColor(data.tintColor)
+            }
         }
     }
 
@@ -319,18 +311,20 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(animateVideo: AnimateVideo){
-
         try {
-            animatorVideo.start()
-            bgImage.startAnimation(zoomOut)
-            Advertisement_Video_CardView.bringToFront()
+            launch {
+                animatorVideo.start()
+                bgImage.startAnimation(zoomOut)
+                Advertisement_Video_CardView.bringToFront()
+            }
+
         }catch (e:Exception){
 
         }
     }
 
 
-    private fun changeVideoCardColor(tintColor: Int?) {
+    private suspend fun changeVideoCardColor(tintColor: Int?) {
         val color = ThemeColor(tintColor).getColor()
         val lowOpacityColor = ColorUtils.setAlphaComponent(color,33)
         videoShadow?.setElevationShadowColor(color)
@@ -341,7 +335,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     }
 
 
-    fun setUpImage(images: List<Data>){  //Done No more memory leakage
+    fun setUpImage(images: List<Data>){
         var currentImageIndex = 0
         var firstTime = false
         val glide = Glide.with(mContext)
@@ -360,10 +354,13 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
                     glide.load(newUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.NONE).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
-                        advertisementsImageView2.startAnimation(zoomIn)
-                        advertisementsImageView.bringToFront()
-                        animatorImage.start()
-                        //setImageAnimation(advertisementsImageView,advertisementsImageView2)
+                        launch {
+
+                            advertisementsImageView2.startAnimation(zoomIn)
+                            advertisementsImageView.bringToFront()
+                            animatorImage.start()
+
+                        }
 
                     }
                     currentImageIndex++
@@ -371,7 +368,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
                         currentImageIndex = 0
                     }
                     EventBus.getDefault().post(PromotionEvent(images[currentImageIndex]))
-                    //changeBannerQRCode(images[currentImageIndex])
                 }
 
                 delay(15 * 1000)
@@ -404,7 +400,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
     }
 
 
-    fun setImageAnimation(imageView: ImageView, imageView2: ImageView){
+    private fun setImageAnimation(imageView: ImageView, imageView2: ImageView){
 
         animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
         animatorImage.apply {
@@ -418,7 +414,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
 
     }
 
-    fun startVideoService(list:List<Data>){
+    private fun startVideoService(list:List<Data>){
         val intent = Intent(mContext, VideoService::class.java)
         intent.putExtra("array", list as ArrayList<Data>)
         mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
@@ -442,59 +438,4 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(),Player.EventList
         EventBus.getDefault().unregister(this)
     }
 
-    override fun onPlaybackStateChanged(state: Int) {
-        super.onPlaybackStateChanged(state)
-        when (state) {
-            Player.STATE_IDLE -> {
-                Log.d("Media","STATE_IDLE")
-                playerView.player?.prepare()
-                playerView.player?.playbackState
-
-            }
-            Player.STATE_BUFFERING -> {
-                Log.d("Media","STATE_BUFFERING")
-                count++
-                if(count >= 5 ){
-                    count = 0
-                    EventBus.getDefault().post(DemoVideo(true,"NO VIDEO CACHE"))
-                    isPlayingDemoVideo = true
-                }
-
-            }
-            Player.STATE_READY -> {
-                Log.d("Media","STATE_READY")
-                if(isPlayingDemoVideo) {
-                    EventBus.getDefault().post(DemoVideo(false,""))
-                    isPlayingDemoVideo = false
-                }
-                count = 0
-                //val currentMediaItem = playerView.player?.currentMediaItem
-            }
-            Player.STATE_ENDED -> {
-
-                Log.d("Media","STATE_ENDED")
-
-
-            }
-        }
-
-    }
-    override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-        super.onMediaItemTransition(mediaItem, reason)
-        currentMediaItemId = playerView.player?.currentPeriodIndex!!
-        Log.d("Media","onMediaItemTransition")
-        //setAnimation(Advertisement_Video_CardView,bgImage)
-        if(currentMediaItemId == 0) currentMediaItemId = mVideoList!!.size-1 else currentMediaItemId = currentMediaItemId-1
-        currentMediaItemId.let {
-            mVideoList!![it].contentId?.let {
-
-                viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
-
-            }
-        }
-        animatorVideo.start()
-        bgImage.startAnimation(zoomOut)
-        Advertisement_Video_CardView.bringToFront()
-
-    }
 }
