@@ -17,7 +17,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
     val set2 = AnimatorInflater.loadAnimator(context, R.animator.card_flip_left_out)
     override fun animateAdd(holder: RecyclerView.ViewHolder?): Boolean {
-        animationUpdateNewLayout(holder)
+       // animationUpdateNewLayout(holder)
         return true
     }
 
@@ -30,6 +30,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     override fun animateChange(oldHolder: RecyclerView.ViewHolder?, newHolder: RecyclerView.ViewHolder?, fromLeft: Int, fromTop: Int, toLeft: Int, toTop: Int): Boolean {
+
         return true
     }
 
@@ -42,7 +43,7 @@ class ItemAnimator(var context: Context) : SimpleItemAnimator() {
     }
 
     override fun animateRemove(holder: RecyclerView.ViewHolder?): Boolean {
-        animationUpdateOldLayout(holder)
+       // animationUpdateOldLayout(holder)
         return true
     }
 

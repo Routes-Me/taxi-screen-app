@@ -246,15 +246,15 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private fun addFragments() {
 
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
-        if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
+        //if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
 
     }
 
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
-        val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
+        //val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
         contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
-        sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
+        //sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
     }
     override fun onPermissionsOkay() {}
 

@@ -159,7 +159,6 @@
                     app:layout_constraintBottom_toBottomOf="@id/videoLogoImage"
                     app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"/>
 
-
                 <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/videoQrCodeImage"
                     android:layout_width="@dimen/_56sdp"

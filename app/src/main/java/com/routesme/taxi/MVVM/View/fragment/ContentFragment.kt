@@ -406,7 +406,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         animatorImage.apply {
             setDuration(1500)
             AccelerateDecelerateInterpolator()
-            start()
+
         }
         /*val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         imageView2.startAnimation(zoomIn)
