@@ -4,6 +4,14 @@ interface IModeChanging {
     fun onModeChange()
 }
 
+interface OnMediaTrackChanged{
+
+    fun onTrackChange()
+
+}
+
+interface on
+
 interface ISideFragmentCell
 class EmptyVideoDiscountCell(val screenWidth: Int) : ISideFragmentCell
 class VideoDiscountCell(val data: Data,val screenWidth:Int) : ISideFragmentCell

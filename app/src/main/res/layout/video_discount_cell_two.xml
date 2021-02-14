@@ -6,7 +6,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <carbon.widget.RelativeLayout
-        android:id="@+id/videoPromotionCard"
+        android:id="@+id/videoPromotionCard_two"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:carbon_cornerRadius="@dimen/_4sdp"
@@ -18,7 +18,7 @@
         android:background="?homeScreenBackground_color">
 
         <carbon.widget.RelativeLayout
-            android:id="@+id/videoPromotionShadow"
+            android:id="@+id/videoPromotionShadow_two"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/_1sdp"
@@ -112,19 +112,19 @@
 
                 <com.google.android.material.imageview.ShapeableImageView
                     app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-                    android:id="@+id/videoLogoImage"
+                    android:id="@+id/videoLogoImage_two"
                     android:layout_width="@dimen/_28sdp"
                     android:layout_height="@dimen/_28sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
                     app:layout_constraintDimensionRatio="H,1: 1"
-                    app:layout_constraintEnd_toStartOf="@id/titleTv"
+                    app:layout_constraintEnd_toStartOf="@id/titleTv_two"
                     app:layout_constraintTop_toTopOf="@id/guidelineTop"
                     app:layout_constraintStart_toStartOf="@id/guidelineStart"
                     android:visibility="gone" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/titleTv"
+                    android:id="@+id/titleTv_two"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif-medium"
@@ -134,14 +134,14 @@
                     android:textColor="?text_color"
                     android:textSize="@dimen/_12sdp"
                     android:textStyle="normal"
-                    app:layout_constraintBottom_toTopOf="@+id/subTitleTv"
-                    app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"
-                    app:layout_constraintStart_toEndOf="@id/videoLogoImage"
-                    app:layout_constraintTop_toTopOf="@+id/videoLogoImage"
+                    app:layout_constraintBottom_toTopOf="@+id/subTitleTv_two"
+                    app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage_two"
+                    app:layout_constraintStart_toEndOf="@id/videoLogoImage_two"
+                    app:layout_constraintTop_toTopOf="@+id/videoLogoImage_two"
                     app:layout_constraintVertical_chainStyle="spread_inside" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/subTitleTv"
+                    android:id="@+id/subTitleTv_two"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:fontFamily="sans-serif"
@@ -153,13 +153,13 @@
                     android:textColor="?text_color"
                     android:textStyle="normal"
                     app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@id/titleTv"
-                    app:layout_constraintTop_toBottomOf="@id/titleTv"
-                    app:layout_constraintBottom_toBottomOf="@id/videoLogoImage"
-                    app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"/>
+                    app:layout_constraintStart_toStartOf="@id/titleTv_two"
+                    app:layout_constraintTop_toBottomOf="@id/titleTv_two"
+                    app:layout_constraintBottom_toBottomOf="@id/videoLogoImage_two"
+                    app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage_two"/>
 
                 <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/videoQrCodeImage"
+                    android:id="@+id/videoQrCodeImage_two"
                     android:layout_width="@dimen/_56sdp"
                     android:layout_height="@dimen/_56sdp"
                     app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"

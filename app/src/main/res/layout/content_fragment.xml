@@ -3,7 +3,8 @@
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools">
 
    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -125,191 +126,135 @@
         </carbon.widget.RelativeLayout>
    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="0dp"
+     <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
+         android:id="@+id/constraintLayoutBottom"
         card_view:layout_constraintBottom_toBottomOf="parent"
-        card_view:layout_constraintEnd_toEndOf="parent"
         card_view:layout_constraintStart_toStartOf="parent"
         card_view:layout_constraintTop_toBottomOf="@+id/constraintLayout">
 
+         <androidx.constraintlayout.widget.ConstraintLayout
+             android:id="@+id/commonConstraintLayout"
+             android:layout_width="0dp"
+             android:layout_height="0dp"
+             android:layout_marginTop="@dimen/_2sdp"
+             android:layout_marginEnd="@dimen/_20sdp"
+             android:layout_marginBottom="@dimen/_4sdp"
+             app:layout_constraintWidth_percent="0.690"
+             card_view:layout_constraintBottom_toBottomOf="parent"
+             card_view:layout_constraintStart_toStartOf="parent"
+             card_view:layout_constraintTop_toTopOf="parent" >
+            <include
+                layout="@layout/video_discount_cell_two"
+                />
+         </androidx.constraintlayout.widget.ConstraintLayout>
         <include
-            layout="@layout/bottom_bar_advertisement"
+            android:id="@+id/layoutLeftBottom_one"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:visibility="gone"
+            layout="@layout/empty_video_discount_cell"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            app:layout_constraintWidth_percent="0.690"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintStart_toStartOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent" >
+
+        </include>
+
+        <include
+            android:id="@+id/layoutLeftBottom_two"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_4sdp"
             android:layout_marginEnd="@dimen/_20sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            layout="@layout/video_discount_cell"
+            android:visibility="gone"
+            app:layout_constraintWidth_percent="0.690"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintWidth_percent="0.690"
             card_view:layout_constraintTop_toTopOf="parent" />
 
-        <carbon.widget.RelativeLayout
+        <include
             android:id="@+id/constraintLayout2"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_percent="0.130"
-            android:layout_marginEnd="@dimen/_3sdp"
             android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginEnd="@dimen/_3sdp"
             android:layout_marginBottom="@dimen/_4sdp"
-            app:carbon_cornerRadius="@dimen/_4sdp"
+            layout="@layout/date_cell"
+            app:layout_constraintWidth_percent="0.130"
             card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintEnd_toStartOf="@+id/constraintLayout3"
-            app:cardBackgroundColor="?cardViewBackground_color"
-            app:cardElevation="@dimen/_10sdp"
-            app:carbon_elevationShadowColor="@color/card_shadow"
+            card_view:layout_constraintEnd_toStartOf="@+id/layoutRightBottom_one"
             card_view:layout_constraintTop_toTopOf="parent">
 
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:background="?cardViewBackground_color"
-                    android:layout_height="match_parent">
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textViewTime"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:textColor="?text_color"
-                        android:textSize="@dimen/_14sdp"
-                        android:textStyle="normal"
-                        android:layout_marginTop="@dimen/_4sdp"
-                        card_view:layout_constraintEnd_toEndOf="parent"
-                        card_view:layout_constraintStart_toStartOf="parent"
-                        card_view:layout_constraintTop_toTopOf="parent" />
-
-                    <androidx.appcompat.widget.AppCompatTextView
-                        android:id="@+id/textViewDayAndMonth"
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_marginStart="@dimen/_5sdp"
-                        android:layout_marginTop="@dimen/_1sdp"
-
-                        android:layout_marginEnd="@dimen/_5sdp"
-                        android:fontFamily="sans-serif"
-                        android:gravity="center"
-                        android:maxLines="2"
-                        android:textColor="?text_color"
-                        android:textSize="@dimen/_10sdp"
-                        android:textStyle="normal"
-                        card_view:layout_constraintEnd_toEndOf="parent"
-                        card_view:layout_constraintStart_toStartOf="parent"
-                        card_view:layout_constraintTop_toBottomOf="@+id/textViewTime" />
-
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-        </carbon.widget.RelativeLayout>
-
-        <carbon.widget.RelativeLayout
-            android:id="@+id/constraintLayout3"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            card_view:layout_constraintBottom_toBottomOf="parent"
-            card_view:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_percent="0.130"
-            android:layout_marginTop="@dimen/_2sdp"
-            android:layout_marginBottom="@dimen/_4sdp"
-            card_view:layout_constraintTop_toTopOf="parent"
-            app:cardBackgroundColor="?cardViewBackground_color"
-            app:cardElevation="@dimen/_10sdp"
-            app:carbon_elevationShadowColor="@color/card_shadow"
-            app:carbon_cornerRadius="@dimen/_4sdp"
-            >
-            <androidx.constraintlayout.widget.ConstraintLayout
+            <!--<androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="gone"
-                android:id="@+id/imageViewarCode"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                android:background="?cardViewBackground_color"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent">
+                android:background="?cardViewBackground_color">
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/imageviewWifi"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:background="?cardViewBackground_color"
-                card_view:layout_constraintBottom_toBottomOf="parent"
-                card_view:layout_constraintEnd_toEndOf="parent"
-                card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toTopOf="parent"
-                >
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/wifiIcon"
-                    android:layout_width="wrap_content"
-                    android:layout_height="0dp"
-                    android:src="?wifi_icon"
-                    android:layout_marginTop="@dimen/_5sdp"
-                    app:layout_constraintDimensionRatio="H,1: 0.7"
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textViewTime"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/_4sdp"
+                    android:fontFamily="sans-serif"
+                    android:gravity="center"
+                    android:textColor="?text_color"
+                    android:textSize="@dimen/_14sdp"
+                    android:textStyle="normal"
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintStart_toStartOf="parent"
                     card_view:layout_constraintTop_toTopOf="parent" />
 
                 <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/freeWifiTv"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/free_wifi_background"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="center"
-                    android:text="@string/free_wifi"
-                    android:textColor="?text_color"
-                    android:textSize="@dimen/_5sdp"
-                    android:textStyle="normal"
-                    app:layout_constraintTop_toBottomOf="@+id/wifiIcon"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintStart_toStartOf="parent" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/nameTv"
+                    android:id="@+id/textViewDayAndMonth"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/_5sdp"
+                    android:layout_marginTop="@dimen/_1sdp"
+                    android:layout_marginEnd="@dimen/_5sdp"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
-                    android:text="@string/wifi_name"
+                    android:maxLines="2"
                     android:textColor="?text_color"
-                    android:textSize="@dimen/_8sdp"
+                    android:textSize="@dimen/_10sdp"
                     android:textStyle="normal"
-                    android:layout_marginTop="@dimen/_2sdp"
                     card_view:layout_constraintEnd_toEndOf="parent"
                     card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toBottomOf="@+id/freeWifiTv" />
+                    card_view:layout_constraintTop_toBottomOf="@+id/textViewTime" />
 
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:src="?key_icon"
-                    android:layout_marginStart="@dimen/_4sdp"
-                    card_view:layout_constraintStart_toStartOf="parent"
-                    card_view:layout_constraintTop_toTopOf="@+id/passwordTv" />
 
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/passwordTv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:fontFamily="sans-serif"
-                    android:gravity="center"
-                    android:includeFontPadding="false"
-                    android:text="@string/wifi_password"
-                    android:textColor="?text_color"
-                    android:textSize="@dimen/_8sdp"
-                    android:textStyle="normal"
-                    app:layout_constraintTop_toBottomOf="@+id/nameTv"
-                    card_view:layout_constraintEnd_toEndOf="parent"
-                    card_view:layout_constraintStart_toStartOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>-->
+        </include>
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </carbon.widget.RelativeLayout>
+        <include
+            android:id="@+id/layoutRightBottom_one"
+            layout="@layout/wifi_cell"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            app:layout_constraintWidth_percent="0.130"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"></include>
+        <include
+            android:id="@+id/layoutRightBottom_two"
+            layout="@layout/wifi_cell"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_2sdp"
+            android:layout_marginBottom="@dimen/_4sdp"
+            app:layout_constraintWidth_percent="0.130"
+            card_view:layout_constraintBottom_toBottomOf="parent"
+            card_view:layout_constraintEnd_toEndOf="parent"
+            card_view:layout_constraintTop_toTopOf="parent"></include>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

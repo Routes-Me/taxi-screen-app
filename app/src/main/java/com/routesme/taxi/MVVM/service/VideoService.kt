@@ -21,6 +21,7 @@ import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.Class.AdvertisementsHelper
 import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.MVVM.Model.Data
+import com.routesme.taxi.MVVM.Model.OnMediaTrackChanged
 import com.routesme.taxi.MVVM.events.AnimateVideo
 import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.MVVM.events.PromotionEvent
@@ -46,6 +47,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
     private lateinit var ringProgressBar:RingProgressBar
     var currentMediaItemId = 0
     private var count = 0
+    private lateinit var onMediaTrackChanged:OnMediaTrackChanged
     private var isPlayingDemoVideo = false
     private lateinit var viewModel: RoomDBViewModel
     override fun onBind(intent: Intent?): IBinder? {
@@ -128,7 +130,8 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                 }
                 override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
                     super.onTracksChanged(trackGroups, trackSelections)
-                    EventBus.getDefault().post(PromotionEvent(list[exoPlayer?.currentPeriodIndex!!]))
+                    //Log.d("onTracksChanged","onTracksChanged")
+                   EventBus.getDefault().post(PromotionEvent(exoPlayer?.currentPeriodIndex!!))
                 }
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
@@ -171,12 +174,15 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
                         }
                         ExoPlaybackException.TYPE_RENDERER ->{
-                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+
+                            prepare()
+                            playWhenReady = true
+                            /*val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                             if (currentMediaItemId == list.indexOf(list.first())){
 
                                 EventBus.getDefault().post(list[currentMediaItemId])
 
-                            }
+                            }*/
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED ->{
 

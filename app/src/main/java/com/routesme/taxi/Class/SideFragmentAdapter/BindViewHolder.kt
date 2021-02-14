@@ -52,7 +52,7 @@ fun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell
                 if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
                 subTitle.text = getSubtitle(promotion.subtitle, promotion.code, color)
                 generateQrCode(link,color).let {qrCode ->
-                    Glide.with(qrCodeImage.context).load(qrCode).into(qrCodeImage)
+                    Glide.with(qrCodeImage.context).load(qrCode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE)).into(qrCodeImage)
                 }
             }
         }
@@ -111,6 +111,6 @@ fun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCel
     }
 }
 
-private fun generateQrCode(promotionLink: String, color: Int): Barcode {
+public fun generateQrCode(promotionLink: String, color: Int): Barcode {
     return Barcode(promotionLink, BarcodeFormat.QR_CODE,color,Color.TRANSPARENT)
 }

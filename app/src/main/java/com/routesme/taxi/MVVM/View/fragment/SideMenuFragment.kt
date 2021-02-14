@@ -115,7 +115,7 @@ class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
             }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+   /* @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(promotionData:PromotionEvent){
         try{
             when(promotionData.data.type){
@@ -126,7 +126,7 @@ class SideMenuFragment : Fragment(),CoroutineScope by MainScope() {
         } catch (e:Exception){
 
         }
-    }
+    }*/
 
     private fun changeVideoQRCode(data: Data) {
 

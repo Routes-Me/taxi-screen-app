@@ -1,9 +1,10 @@
 package com.routesme.taxi.MVVM.events
 
 import com.routesme.taxi.MVVM.Model.Data
+import java.text.FieldPosition
 
-class PromotionEvent (data: Data) {
+class PromotionEvent (position: Int) {
 
-    val data: Data = data
+    val position : Int = position
 
 }

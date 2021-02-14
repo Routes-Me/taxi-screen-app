@@ -12,10 +12,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AccelerateDecelerateInterpolator
+import android.view.animation.AccelerateInterpolator
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.ImageView
-import androidx.activity.viewModels
 import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
 import androidx.fragment.app.Fragment
@@ -26,12 +26,13 @@ import androidx.work.WorkManager
 import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
-import com.google.android.exoplayer2.*
+import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.Class.*
-import com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter
-import com.routesme.taxi.ItemAnimator
+import com.routesme.taxi.Class.SideFragmentAdapter.generateQrCode
+import com.routesme.taxi.Class.SideFragmentAdapter.getSubtitle
+import com.routesme.taxi.Class.SideFragmentAdapter.imageOptions
 import com.routesme.taxi.MVVM.Model.*
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.AnimateVideo
@@ -51,15 +52,17 @@ import com.routesme.taxi.utils.Type
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.content_fragment.view.*
-import kotlinx.android.synthetic.main.side_menu_fragment.*
+import kotlinx.android.synthetic.main.date_cell.*
+import kotlinx.android.synthetic.main.video_discount_cell.*
+import kotlinx.android.synthetic.main.video_discount_cell.subTitleTv
+import kotlinx.android.synthetic.main.video_discount_cell.videoQrCodeImage
+import kotlinx.android.synthetic.main.video_discount_cell_two.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
-import java.lang.Exception
 import java.util.*
-import kotlin.collections.ArrayList
 
 class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
@@ -68,16 +71,21 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var editor: SharedPreferences.Editor? = null
     private var device_id : String = ""
     private val SEC:Long = 300
+    private var position = 0
     private val MIL:Long = 1000
     private var dialog: SpotsDialog? = null
     private var isAlive = false
     private var videoShadow: RelativeLayout? = null
+    private val dateOperations = DateOperations.instance
     private lateinit var  callApiJob : Job
     private lateinit  var animatorVideo:ObjectAnimator
     private lateinit  var animatorImage:ObjectAnimator
+    private lateinit var animatorBottomPromotion_one:ObjectAnimator
+    private lateinit var animatorBottomPromotion_two:ObjectAnimator
     private lateinit var viewModel: RoomDBViewModel
     private lateinit var zoomOut:Animation
     private lateinit var zoomIn:Animation
+    private var date = Date()
     private var mVideoList:List<Data>?=null
     private var screenWidth:Int?=null
     override fun onAttach(context: Context) {
@@ -114,9 +122,21 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         screenWidth = DisplayManager.instance.getDisplayWidth(mContext)
         WorkManager.getInstance().enqueue(App.periodicWorkRequest);
         observeTaskManager()
+        setTime()
         fetchContent()
     }
 
+    @SuppressLint("SetTextI18n")
+    private fun setTime() {
+        launch {
+            while (isActive){
+                date = Date()
+                clockTv.text = dateOperations.timeClock(date)
+                dayTv.text = "${dateOperations.dayOfWeek(date)} \n ${dateOperations.date(date)}"
+                delay(60 * 1000)
+            }
+        }
+    }
     private fun observeTaskManager(){
 
         WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
@@ -242,12 +262,26 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                                     pivotX = 0.0f
                                     pivotY = Advertisement_Video_CardView.height / 0.7f
                                 }
+                                layoutLeftBottom_two.apply {
+                                    cameraDistance = 12000f
+                                    pivotX = 0.0f
+                                    pivotY = 0.0f
+
+                                }
+                                layoutLeftBottom_one.apply {
+                                    cameraDistance = 12000f
+                                    pivotX = 0.0f
+                                    pivotY = 0.0f
+
+                                }
                                 if (!images.isNullOrEmpty())setUpImage(images)
                                 launch {
                                     setImageAnimation(advertisementsImageView,advertisementsImageView2)
                                     setAnimation(Advertisement_Video_CardView,bgImage)
+                                    setBottomLeftAnimation()
                                     mVideoList = videos
                                     startVideoService(videos)
+                                    //setUpPromotion(videos)
                                 }
                             }
 
@@ -275,6 +309,20 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
                     }
                 })
+    }
+
+    private fun setUpPromotion(list: List<Data>){
+
+        /*videoBannerAdapter = VideoBannerAdapter(mContext,list)
+        linearlayoutManagerPromotion = LinearLayoutManager(mContext,LinearLayoutManager.VERTICAL,true)
+        recyclerViewPromotion?.apply {
+            adapter = videoBannerAdapter
+            layoutManager = linearlayoutManagerPromotion
+            itemAnimator = ItemAnimator(mContext)
+            addItemDecoration(ItemDecorator(-80))
+            //isLayoutFrozen = true
+        }*/
+
     }
 
     private fun startThread(errorMessage:String){
@@ -313,6 +361,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     fun onEvent(animateVideo: AnimateVideo){
         try {
             launch {
+
                 animatorVideo.start()
                 bgImage.startAnimation(zoomOut)
                 Advertisement_Video_CardView.bringToFront()
@@ -323,6 +372,46 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
+
+
+    fun setLayout(layout:Int,data: Data){
+
+        val inflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layout: View = inflater.inflate(R.layout.video_discount_cell_two, null)
+        //commonConstraintLayout.removeAllViews()
+        //commonConstraintLayout.addView(layout)
+        val promotion = data.promotion
+        val tintColor = data.tintColor
+        promotion?.let {
+
+            val link = it.link
+            if (!link.isNullOrEmpty()) {
+                Log.d("Promotion","I Called ${data}")
+                val color = ThemeColor(tintColor).getColor()
+                videoPromotionCard_two.setElevationShadowColor(color)
+                promotion.logoUrl?.let { logoUrl ->
+                    Glide.with(videoLogoImage_two.context).load(logoUrl).apply(imageOptions).into(videoLogoImage_two)
+                    videoLogoImage_two.visibility = View.VISIBLE
+                }
+                if (!promotion.title.isNullOrEmpty()) titleTv_two.text = promotion.title
+                subTitleTv_two.text = getSubtitle(promotion.subtitle, promotion.code, color)
+                generateQrCode(link, color).let { qrCode ->
+                    Glide.with(videoQrCodeImage_two.context).load(qrCode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE)).into(videoQrCodeImage_two)
+                }
+            }
+        }
+
+    }
+
+    fun setLayout(layout:Int){
+
+        val inflater = context?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val layout: View = inflater.inflate(layout, null)
+        commonConstraintLayout.apply {
+            removeAllViews()
+            addView(layout)
+        }
+    }
 
     private suspend fun changeVideoCardColor(tintColor: Int?) {
         val color = ThemeColor(tintColor).getColor()
@@ -351,6 +440,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                     images[currentImageIndex].contentId?.let {
                         viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
                     }
+
                     glide.load(newUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.NONE).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
@@ -367,9 +457,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                     if (currentImageIndex >= images.size) {
                         currentImageIndex = 0
                     }
-                    EventBus.getDefault().post(PromotionEvent(images[currentImageIndex]))
-                }
 
+                }
                 delay(15 * 1000)
             }
         }
@@ -399,6 +488,35 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         playerView.bringToFront()*/
     }
 
+    private fun setBottomLeftAnimation(){
+        animatorBottomPromotion_two = ObjectAnimator.ofFloat(layoutLeftBottom_two,"rotationX",180f,0f)
+        animatorBottomPromotion_two.apply {
+            duration = 1000
+            addListener(onStart = {
+                layoutLeftBottom_two.visibility = View.VISIBLE
+                layoutLeftBottom_two.bringToFront()
+
+            },onEnd = {
+                layoutLeftBottom_one.visibility = View.GONE
+                setLayout(R.layout.video_discount_cell_two,mVideoList!![position])
+            })
+            AccelerateInterpolator()
+        }
+
+        animatorBottomPromotion_one = ObjectAnimator.ofFloat(layoutLeftBottom_one,"rotationX",180f, 0f)
+        animatorBottomPromotion_one?.apply {
+            duration = 1000
+            addListener(onStart = {
+                layoutLeftBottom_one.visibility = View.VISIBLE
+                layoutLeftBottom_one.bringToFront()
+            },onEnd = {
+                layoutLeftBottom_two.visibility = View.GONE
+                setLayout(R.layout.empty_video_discount_cell,mVideoList!![position])
+            })
+            AccelerateInterpolator()
+        }
+    }
+
 
     private fun setImageAnimation(imageView: ImageView, imageView2: ImageView){
 
@@ -411,6 +529,52 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         /*val zoomIn: Animation = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         imageView2.startAnimation(zoomIn)
         imageView.bringToFront()*/
+
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(promotionEvent: PromotionEvent){
+        try {
+            position = promotionEvent.position
+            mVideoList?.let {list->
+                if(list[position].promotion !=null){
+                    animatorBottomPromotion_two.start()
+                    changeVideoQRCode(list[promotionEvent.position])
+
+                }else{
+
+                    animatorBottomPromotion_one.start()
+
+                }
+
+            }
+
+        }catch (e:Exception){
+
+
+        }
+
+    }
+
+    private fun changeVideoQRCode(data: Data) {
+        val promotion = data.promotion
+        val tintColor = data.tintColor
+            promotion?.let {
+                val link = it.link
+                if (!link.isNullOrEmpty()) {
+                    val color = ThemeColor(tintColor).getColor()
+                    videoPromotionCard.setElevationShadowColor(color)
+                    promotion.logoUrl?.let { logoUrl ->
+                        Glide.with(videoLogoImage.context).load(logoUrl).apply(imageOptions).into(videoLogoImage)
+                        videoLogoImage.visibility = View.VISIBLE
+                    }
+                    if (!promotion.title.isNullOrEmpty()) titleTv.text = promotion.title
+                    subTitleTv.text = getSubtitle(promotion.subtitle, promotion.code, color)
+                    generateQrCode(link, color).let { qrCode ->
+                        Glide.with(videoQrCodeImage.context).load(qrCode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE)).into(videoQrCodeImage)
+                    }
+                }
+            }
 
     }
 
