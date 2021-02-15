@@ -16,36 +16,33 @@ import kotlin.collections.ArrayList
 
 open class DisplayManager {
     private lateinit var alarmManager: AlarmManager
-    private lateinit var morningAlarm: PendingIntent
-    private lateinit var eveningAlarm: PendingIntent
-    private val registeredActivities = ArrayList<Activity>()
+    private lateinit var morningAlarmIntent: PendingIntent
+    private lateinit var eveningAlarmIntent: PendingIntent
+    private var registeredActivities = ArrayList<Activity>()
 
     companion object {
         val instance = DisplayManager()
     }
 
     fun setAlarm(context: Context) {
-        val cal1 = Calendar.getInstance()
-        cal1[Calendar.HOUR_OF_DAY] = 5
-        cal1[Calendar.MINUTE] = 1
-        cal1[Calendar.SECOND] = 0
-
-        val cal2 = Calendar.getInstance()
-        cal2[Calendar.HOUR_OF_DAY] = 17
-        cal2[Calendar.MINUTE] = 1
-        cal2[Calendar.SECOND] = 0
-
-        val now = Calendar.getInstance()
-        if (now.after(cal1)) cal1.add(Calendar.HOUR_OF_DAY, 24)
-        if (now.after(cal2)) cal2.add(Calendar.HOUR_OF_DAY, 24)
-
+        registeredActivities = ArrayList()
+        val morningCalendar = Calendar.getInstance()
+        morningCalendar[Calendar.HOUR_OF_DAY] = 5
+        morningCalendar[Calendar.MINUTE] = 1
+        morningCalendar[Calendar.SECOND] = 0
+        val eveningCalendar = Calendar.getInstance()
+        eveningCalendar[Calendar.HOUR_OF_DAY] = 17
+        eveningCalendar[Calendar.MINUTE] = 1
+        eveningCalendar[Calendar.SECOND] = 0
+        val currentTime = Calendar.getInstance()
+        if (currentTime.after(morningCalendar)) morningCalendar.add(Calendar.HOUR_OF_DAY, 24)
+        if (currentTime.after(eveningCalendar)) eveningCalendar.add(Calendar.HOUR_OF_DAY, 24)
         val intent = Intent(context, ModeChangesReceiver::class.java)
-        morningAlarm = PendingIntent.getBroadcast(context, 0, intent, 0)
-        eveningAlarm = PendingIntent.getBroadcast(context, 1, intent, 0)
-
+        morningAlarmIntent = PendingIntent.getBroadcast(context, 0, intent, 0)
+        eveningAlarmIntent = PendingIntent.getBroadcast(context, 1, intent, 0)
         alarmManager = context.getSystemService(ALARM_SERVICE) as AlarmManager
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal1.timeInMillis, morningAlarm)
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal2.timeInMillis, eveningAlarm)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, morningCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, morningAlarmIntent)
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, eveningCalendar.timeInMillis, AlarmManager.INTERVAL_DAY, eveningAlarmIntent)
     }
 
     fun isAnteMeridiem() = currentDate().after(parseDate("05:00")) && currentDate().before(parseDate("17:00"))

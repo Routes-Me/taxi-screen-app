@@ -16,7 +16,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         android:background="?homeScreenBackground_color">
-
         <carbon.widget.RelativeLayout
             android:id="@+id/videoPromotionShadow"
             android:layout_width="match_parent"

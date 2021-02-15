@@ -60,7 +60,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private var pressedTime: Long = 0
     private lateinit var mView: View
     private var clickTimes = 0
-    private var sideMenuFragment: SideMenuFragment? = null
+   // private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
@@ -86,7 +86,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         submitApplicationVersion()
         //checkDateAndUploadResult()
         launch {initializePlayer()}
-        sideMenuFragment = SideMenuFragment()
+     //   sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
