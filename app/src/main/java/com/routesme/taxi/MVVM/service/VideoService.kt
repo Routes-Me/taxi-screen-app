@@ -43,6 +43,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
         //const val PLAY_PAUSE_ACTION = "playPauseAction"
         //const val NOTIFICAITON_ID = 0
     }
+    var onStartMedia = true
     private lateinit var exoPlayer: SimpleExoPlayer
     private lateinit var ringProgressBar:RingProgressBar
     var currentMediaItemId = 0
@@ -126,13 +127,30 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
                         }
                     }
-                    EventBus.getDefault().post(AnimateVideo(true))
+                    EventBus.getDefault().post(AnimateVideo(true,exoPlayer?.currentPeriodIndex!!))
                 }
                 override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
                     super.onTracksChanged(trackGroups, trackSelections)
-                    //Log.d("onTracksChanged","onTracksChanged")
-                   EventBus.getDefault().post(PromotionEvent(exoPlayer?.currentPeriodIndex!!))
+                    if(onStartMedia){
+                        onStartMedia = false
+                        EventBus.getDefault().post(AnimateVideo(true,exoPlayer?.currentPeriodIndex!!))
+                    }
+                    Log.d("Exoplayer","onTracksChanged")
+                   //EventBus.getDefault().post(PromotionEvent(exoPlayer?.currentPeriodIndex!!))
                 }
+
+                override fun onTimelineChanged(timeline: Timeline, reason: Int) {
+                    super.onTimelineChanged(timeline, reason)
+                    Log.d("Exoplayer","onTimelineChanged")
+
+                }
+
+                override fun onIsPlayingChanged(isPlaying: Boolean) {
+                    super.onIsPlayingChanged(isPlaying)
+                    Log.d("Exoplayer","onIsPlayingChanged")
+
+                }
+
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
@@ -157,7 +175,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                                 isPlayingDemoVideo = false
                             }
                             count = 0
-                            //val currentMediaItem = exoPlayer.currentMediaItem
+
                         }
                         Player.STATE_ENDED -> {
 
@@ -193,7 +211,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
             })
         }
 
-        EventBus.getDefault().post("Run ProgressBar")
+        //EventBus.getDefault().post("Run ProgressBar")
     }
 
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {

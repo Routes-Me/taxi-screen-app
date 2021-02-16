@@ -32,7 +32,6 @@ import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
-import com.routesme.taxi.MVVM.View.fragment.SideMenuFragment
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
@@ -86,7 +85,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         submitApplicationVersion()
         //checkDateAndUploadResult()
         launch {initializePlayer()}
-     //   sideMenuFragment = SideMenuFragment()
+        //sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()

@@ -95,6 +95,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var mVideoList:List<Data>?=null
     private var screenWidth:Int?=null
     private lateinit var glide:RequestManager
+    private lateinit var imageOptions: RequestOptions
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -105,23 +106,27 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         return view
     }
 
-    private val connection = object : ServiceConnection {
+    /*private val connection = object : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName?) {
+
+            Log.d("Service","Service is Disconnected")
 
         }
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             if (service is VideoService.VideoServiceBinder) {
                 playerView.player = service.getExoPlayerInstance()
+                Log.d("Service","Service is Connected")
             }
         }
 
-    }
+    }*/
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        glide = Glide.with(mContext)
+        glide = Glide.with(App.instance)
+        imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).skipMemoryCache(false)
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         callApiJob = Job()
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
@@ -337,14 +342,14 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                     if (currentImageIndex > 0){
                         val previousImageIndex = currentImageIndex - 1
                         val previousUri = Uri.parse(images[previousImageIndex].url)
-                        glide.load(previousUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(advertisementsImageView)
+                        glide.load(previousUri).error(R.drawable.empty_promotion).apply(imageOptions).into(advertisementsImageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
                     images[currentImageIndex].contentId?.let {
                         viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
                     }
 
-                    glide.load(newUri).error(R.drawable.empty_promotion).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(advertisementsImageView2)
+                    glide.load(newUri).error(R.drawable.empty_promotion).apply(imageOptions).into(advertisementsImageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
                         launch {
@@ -389,12 +394,12 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+   /* @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(data: String){
         launch {
             videoProgressbarRunnable()
         }
-    }
+  }*/
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(animateVideo: AnimateVideo){
@@ -404,6 +409,17 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 animatorVideo.start()
                 bgImage.startAnimation(zoomOut)
                 Advertisement_Video_CardView.bringToFront()
+                position = animateVideo.position
+                mVideoList?.let {list->
+                    if(list[position].promotion !=null){
+                        animatorBottomPromotion_two.start()
+                        changeVideoQRCode(list[animateVideo.position])
+                    }else{
+
+                        animatorBottomPromotion_one.start()
+
+                    }
+                }
             }
 
         }catch (e:Exception){
@@ -411,16 +427,16 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-    @Subscribe(threadMode = ThreadMode.MAIN)
+    /*@Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(promotionEvent: PromotionEvent){
         try {
-
             launch {
+                Log.d("Promotion","Promotion Animation")
                 position = promotionEvent.position
                 mVideoList?.let {list->
                     if(list[position].promotion !=null){
                         animatorBottomPromotion_two.start()
-                        changeVideoQRCode(list[promotionEvent.position])
+                       // changeVideoQRCode(list[promotionEvent.position])
                     }else{
 
                         animatorBottomPromotion_one.start()
@@ -430,7 +446,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
             }
 
         }catch (e:Exception){ }
-    }
+    }*/
 
     fun setLayout(data: Data){
         val promotion = data.promotion
@@ -443,13 +459,13 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 videoPromotionCard_two.setElevationShadowColor(color)
                 promotion.logoUrl?.let { logoUrl ->
 
-                    glide.load(logoUrl).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(videoLogoImage_two)
+                    glide.load(logoUrl).apply(imageOptions).into(videoLogoImage_two)
                     videoLogoImage_two.visibility = View.VISIBLE
                 }
                 if (!promotion.title.isNullOrEmpty()) titleTv_two.text = promotion.title
                 subTitleTv_two.text = getSubtitle(promotion.subtitle, promotion.code, color)
                 generateQrCode(link, color).let { qrCode ->
-                    glide.load(qrCode).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(videoQrCodeImage_two)
+                    glide.load(qrCode).apply(imageOptions).into(videoQrCodeImage_two)
                 }
             }
         }
@@ -473,8 +489,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 it.link?.let {link ->
                     val color = ThemeColor(tintColor).getColor()
                     generateQrCode(link,color).let {qrCode ->
-                        glide.load(qrCode).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(bannerQrCodeImage)
-                        glide.load(qrCode).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(bannerQrCodeImage_two)
+                        glide.load(qrCode).apply(imageOptions).into(bannerQrCodeImage)
+                        glide.load(qrCode).apply(imageOptions).into(bannerQrCodeImage_two)
 
                     }
                 }
@@ -483,7 +499,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-    private suspend fun videoProgressbarRunnable() {
+    private fun videoProgressbarRunnable() {
         launch{
             while (isActive){
                 val current = (playerView.player?.currentPosition)!!.toInt()
@@ -494,10 +510,15 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-    private fun setAnimation(playerView: RelativeLayout, bgImageView: RelativeLayout){
-        animatorVideo = ObjectAnimator.ofFloat(playerView, "rotationX", -180f, 0f)
+    private fun setAnimation(playerView_layout: RelativeLayout, bgImageView: RelativeLayout){
+        animatorVideo = ObjectAnimator.ofFloat(playerView_layout, "rotationX", -180f, 0f)
         animatorVideo.apply {
-            setDuration(1500)
+            setDuration(2000)
+            addListener(onStart = {
+                //playerView.player?.play()
+            },onEnd = {
+               // playerView.player?.stop()
+            })
             AccelerateDecelerateInterpolator()
         }
     }
@@ -505,7 +526,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private fun setBottomLeftAnimation(){
         animatorBottomPromotion_two = ObjectAnimator.ofFloat(layoutLeftBottom_two,"rotationX",180f,0f)
         animatorBottomPromotion_two.apply {
-            duration = 1000
+            duration = 1500
             addListener(onStart = {
                 if(layoutLeftBottom_two.visibility == View.INVISIBLE) {
                     layoutLeftBottom_two.visibility = View.VISIBLE
@@ -554,7 +575,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 if(qrCode_cell_two.visibility == View.INVISIBLE) qrCode_cell_two.visibility = View.VISIBLE
                 if(wifi_cell_two.visibility == View.VISIBLE) wifi_cell_two.visibility = View.INVISIBLE
                 if(layoutRightBottom_two.visibility == View.VISIBLE) layoutRightBottom_two.visibility = View.INVISIBLE
-                //setQRCode()
+
             })
             AccelerateInterpolator()
         }
@@ -597,13 +618,13 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                     val color = ThemeColor(tintColor).getColor()
                     videoPromotionCard.setElevationShadowColor(color)
                     promotion.logoUrl?.let { logoUrl ->
-                        glide.load(logoUrl).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(videoLogoImage)
+                        glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
                         videoLogoImage.visibility = View.VISIBLE
                     }
                     if (!promotion.title.isNullOrEmpty()) titleTv.text = promotion.title
                     subTitleTv.text = getSubtitle(promotion.subtitle, promotion.code, color)
                     generateQrCode(link, color).let { qrCode ->
-                        glide.load(qrCode).diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).into(videoQrCodeImage)
+                        glide.load(qrCode).apply(imageOptions).into(videoQrCodeImage)
                     }
                 }
             }
@@ -642,6 +663,22 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+    }
+
+    private val connection = object : ServiceConnection {
+        override fun onServiceDisconnected(name: ComponentName?) {
+
+            Log.d("Service","Service is Disconnected")
+
+        }
+        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
+            if (service is VideoService.VideoServiceBinder) {
+                playerView.player = service.getExoPlayerInstance()
+                videoProgressbarRunnable()
+                Log.d("Service","Service is Connected")
+            }
+        }
+
     }
 
 }
