@@ -1,6 +1,9 @@
 package com.routesme.taxi.LocationTrackingService.Database
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.Query
+import androidx.room.Transaction
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
 
 @Dao

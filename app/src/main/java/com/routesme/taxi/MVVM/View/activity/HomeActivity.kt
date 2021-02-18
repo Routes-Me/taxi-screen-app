@@ -2,12 +2,11 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.ActivityManager
-import android.content.*
+import android.content.ComponentName
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
@@ -19,32 +18,24 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.Class.DisplayManager
 import com.routesme.taxi.Class.HomeScreenHelper
+import com.routesme.taxi.Class.Mode
 import com.routesme.taxi.Class.ScreenBrightness
 import com.routesme.taxi.Hotspot_Configuration.PermissionsActivity
 import com.routesme.taxi.MVVM.Model.IModeChanging
-import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionResponse
 import com.routesme.taxi.MVVM.View.fragment.ContentFragment
-import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.ViewModel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.MVVM.events.DemoVideo
-import com.routesme.taxi.MVVM.service.VideoService
 import com.routesme.taxi.R
-import com.routesme.taxi.database.ResponseBody
 import com.routesme.taxi.database.database.AdvertisementDatabase
-import com.routesme.taxi.database.entity.AdvertisementTracking
 import com.routesme.taxi.database.factory.ViewModelFactory
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -59,20 +50,20 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
     private var pressedTime: Long = 0
     private lateinit var mView: View
     private var clickTimes = 0
-   // private var sideMenuFragment: SideMenuFragment? = null
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
     private lateinit var viewModel: RoomDBViewModel
-    //private var getList:List<AdvertisementTracking>?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
         if (DisplayManager.instance.isAnteMeridiem()) {
+            DisplayManager.instance.currentMode = Mode.Light
             setTheme(R.style.FullScreen_Light_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 80)
         } else {
+            DisplayManager.instance.currentMode = Mode.Dark
             setTheme(R.style.FullScreen_Dark_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
@@ -83,9 +74,7 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(applicationContext)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
-        //checkDateAndUploadResult()
         launch {initializePlayer()}
-        //sideMenuFragment = SideMenuFragment()
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
@@ -101,8 +90,6 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
                 or View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 or View.SYSTEM_UI_FLAG_FULLSCREEN
                 or View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY)
-
-
     }
 
     @SuppressLint("CommitPrefEdits")
@@ -160,17 +147,12 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
         }
     }
     private fun addFragments() {
-
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
-        //if (sideMenuFragment != null) supportFragmentManager.beginTransaction().replace(R.id.sideMenuFragment_container, sideMenuFragment!!, "SideMenu_Fragment").commit()
-
     }
 
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
-        //val sideMenuFragment = supportFragmentManager.findFragmentByTag("SideMenu_Fragment")
         contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
-        //sideMenuFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
     }
     override fun onPermissionsOkay() {}
 
@@ -221,17 +203,13 @@ class HomeActivity : PermissionsActivity(), IModeChanging,CoroutineScope by Main
                     demoVideoPlayer.visibility = View.VISIBLE
                     playVideo()
                 }else {
-                    if (activityVideoCover.visibility == View.VISIBLE) {
-                        textViewError.visibility = View.GONE
-                        activityVideoCover.visibility = View.GONE
-                        demoVideoPlayer.visibility = View.GONE
-                        stopVideo()
+                    textViewError.visibility = View.GONE
+                    activityVideoCover.visibility = View.GONE
+                    demoVideoPlayer.visibility = View.GONE
+                    if(player?.isPlaying!!) stopVideo()
 
-                    } else {
-                        textViewError.visibility = View.GONE
-                        activityVideoCover.visibility = View.GONE
-                        demoVideoPlayer.visibility = View.GONE
-                    }
+
+
 
                 }
         } catch (e: IllegalArgumentException) {

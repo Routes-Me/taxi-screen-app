@@ -2,13 +2,10 @@ package com.routesme.taxi.MVVM.View.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.content.Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi.MVVM.Model.Authorization
-import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.App
 
 class ModelPresenter : AppCompatActivity() {
     private var bundle:Bundle?=null

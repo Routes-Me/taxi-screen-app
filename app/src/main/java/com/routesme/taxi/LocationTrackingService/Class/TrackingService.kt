@@ -2,9 +2,8 @@ package com.routesme.taxi.LocationTrackingService.Class
 
 import android.app.*
 import android.content.Intent
-import android.location.Location
 import android.net.Uri
-import android.os.*
+import android.os.IBinder
 import android.util.Log
 import androidx.annotation.NonNull
 import com.google.gson.Gson
@@ -15,8 +14,8 @@ import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.LocationTrackingService.Database.LocationFeedsDao
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
 import com.routesme.taxi.LocationTrackingService.Model.LocationFeed
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.R
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.uplevels.App
 import io.reactivex.CompletableObserver
@@ -29,7 +28,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
-class TrackingService() : Service() {
+class TrackingService : Service() {
 
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
@@ -43,6 +42,7 @@ class TrackingService() : Service() {
         locationReceiver = LocationReceiver()
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
+         insertTestFeeds()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -57,9 +57,9 @@ class TrackingService() : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.d("Test-location-service", "onStartCommand")
-        Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
-        //startForeground(1, getNotification())
+      //  Log.d("Test-location-service", "onStartCommand")
+       // Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
+        startForeground(1, getNotification())
         locationReceiver.apply {
             if (isProviderEnabled()) {
                 startLocationUpdatesListener()
@@ -77,13 +77,11 @@ class TrackingService() : Service() {
     }
 
     private fun insertTestFeeds() {
-        for (i in 1..100000) {
-            // val locationFeed = LocationFeed(i,28.313749,48.0342295,1611477557)
-            val location = Location("test-feed").apply {
-                latitude = 28.313749
-                longitude = 48.0342295
+        GlobalScope.launch(Dispatchers.IO) {
+            for (i in 1..100000) {
+                val locationFeed = LocationFeed(latitude = 28.313749, longitude = 48.0342295, timestamp = System.currentTimeMillis() / 1000)
+                locationFeedsDao.insertLocation(locationFeed)
             }
-            //   dataLayer.insertFeed(location)
         }
     }
 
@@ -101,25 +99,20 @@ class TrackingService() : Service() {
 
     private fun sendFeeds() {
         GlobalScope.launch(Dispatchers.IO) {
-            Log.d("GlobalScope-Thread","Get/Delete: ${Thread.currentThread().name}")
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
-                    getFeedsJsonArray(feeds).let { feedsJsonArray ->
-                            Log.d("Test-location-service", "All feeds count before sending: ${locationFeedsDao.getAllFeeds().size}")
-                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedsJsonArray) }
-                        Log.d("LocationFeedsMessage","message-SavedFeeds: $feedsJsonArray")
-                            locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
-                            Log.d("Test-location-service", "All feeds count after sent: ${locationFeedsDao.getAllFeeds().size}")
-                    }
-
+                    val feedCoordinates = feeds.map { it.coordinate }
+                    hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                    locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
                 }
             }
         }
     }
 
     private fun prepareHubConnection(): HubConnection {
+        val trackingUrl = getTrackingUrl().toString()
         return HubConnectionBuilder
-                .create(getTrackingUrl().toString())
+                .create(trackingUrl)
                 .withHeader("Authorization", Account().accessToken)
                 .build().apply {
                     serverTimeout = TimeUnit.MINUTES.toMillis(6)
@@ -127,10 +120,11 @@ class TrackingService() : Service() {
                         Log.d("SocketSrv", "onClosed, Exception: $it")
                         startHubConnection()
                     }
-                    on("CommonMessage", { message: String ->
-                        Log.d("SocketSrv", "onSendLocation .. Message: $message")
+                    on("CommonMessage", { message: String? ->
+                        message?.let {
+                            Log.d("SocketSrv", "CommonMessage .. Message: $it")
+                        }
                     }, String::class.java)
-
                 }
     }
 
@@ -165,13 +159,11 @@ class TrackingService() : Service() {
                     override fun onComplete() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
-                            val feedsJsonArray = getFeedsJsonArray(mutableListOf<LocationFeed>().apply { add(it) })
-                            Log.d("LocationFeedsMessage","message-LastKnown: $feedsJsonArray")
-                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedsJsonArray) }
+                            val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
+                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
                         }
                     }
                 })
     }
 
-    private fun getFeedsJsonArray(feeds: List<LocationFeed>) = Gson().toJson(feeds.map { it.coordinate })
 }

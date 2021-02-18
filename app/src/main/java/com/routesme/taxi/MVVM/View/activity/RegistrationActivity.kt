@@ -20,10 +20,8 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.taxi.Class.DateHelper
-import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.DateOperations
 import com.routesme.taxi.Class.Operations
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.MVVM.Model.Authorization
 import com.routesme.taxi.MVVM.Model.Error
 import com.routesme.taxi.MVVM.Model.RegistrationCredentials
@@ -31,7 +29,9 @@ import com.routesme.taxi.MVVM.Model.RegistrationResponse
 import com.routesme.taxi.MVVM.Model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.taxi.MVVM.ViewModel.RegistrationViewModel
 import com.routesme.taxi.R
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.Account
+import com.routesme.taxi.uplevels.App
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException

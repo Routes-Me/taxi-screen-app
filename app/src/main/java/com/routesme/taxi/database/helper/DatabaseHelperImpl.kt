@@ -3,7 +3,6 @@ package com.routesme.taxi.database.helper
 import android.util.Log
 import com.routesme.taxi.database.database.AdvertisementDatabase
 import com.routesme.taxi.database.entity.AdvertisementTracking
-import java.sql.Timestamp
 
 
 class DatabaseHelperImpl (private val advertismentDatabase: AdvertisementDatabase):DatabaseHelper{

@@ -19,6 +19,7 @@ open class DisplayManager {
     private lateinit var morningAlarmIntent: PendingIntent
     private lateinit var eveningAlarmIntent: PendingIntent
     private var registeredActivities = ArrayList<Activity>()
+    var currentMode: Mode = Mode.Light
 
     companion object {
         val instance = DisplayManager()
@@ -54,8 +55,6 @@ open class DisplayManager {
         return parseDate("$hour:$minute")
     }
 
-
-
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
 
@@ -83,3 +82,4 @@ open class DisplayManager {
         return (metrics.widthPixels * 69) / 100
     }
 }
+enum class Mode{Light,Dark}

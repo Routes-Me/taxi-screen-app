@@ -6,8 +6,6 @@ import com.google.gson.JsonArray
 import com.routesme.taxi.MVVM.Repository.ContentRepository
 import com.routesme.taxi.MVVM.Repository.ReportRepository
 import com.routesme.taxi.MVVM.Repository.UnlinkRepository
-import org.json.JSONArray
-import org.json.JSONObject
 
 class ContentViewModel : ViewModel() {
 

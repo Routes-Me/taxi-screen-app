@@ -11,12 +11,11 @@ data class ThemeColor(val tintColor: Int?) {
 
     fun getColor(): Int {
         val color: Int
-        val isAnteMeridiem = DisplayManager.instance.isAnteMeridiem()
+        //val isAnteMeridiem = DisplayManager.instance.isAnteMeridiem()
 
-        color = if (isAnteMeridiem){
-            tintColor ?: ThemeTintColor
-        }else{
-            ThemeInvertedTintColor
+        color = when (DisplayManager.instance.currentMode) {
+            Mode.Light -> tintColor ?: ThemeTintColor
+            else -> ThemeInvertedTintColor
         }
         return getRgbColor(color)
     }

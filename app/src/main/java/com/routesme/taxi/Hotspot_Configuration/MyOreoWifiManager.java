@@ -7,8 +7,11 @@ import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Handler;
 import android.util.Log;
+
 import androidx.annotation.RequiresApi;
+
 import com.android.dx.stock.ProxyBuilder;
+
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -24,7 +27,7 @@ public class MyOreoWifiManager {
     public MyOreoWifiManager(Context c) {
         mContext = c;
         mWifiManager = (WifiManager) mContext.getSystemService(Context.WIFI_SERVICE);
-        mConnectivityManager = (ConnectivityManager) mContext.getSystemService(ConnectivityManager.class);
+        mConnectivityManager = mContext.getSystemService(ConnectivityManager.class);
     }
 
 

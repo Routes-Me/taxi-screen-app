@@ -16,7 +16,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class LocationReceiver() : LocationListener{
+class LocationReceiver : LocationListener{
     private var locationManagerThread: HandlerThread? = null
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isLocationUpdatesRequested = false

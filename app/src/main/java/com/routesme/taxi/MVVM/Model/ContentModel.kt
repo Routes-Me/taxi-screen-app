@@ -2,7 +2,6 @@ package com.routesme.taxi.MVVM.Model
 
 import android.os.Parcel
 import android.os.Parcelable
-import java.io.Serializable
 
 data class Content ( val pagination: Pagination? = null, val data: List<Data>? = null, val message: String? = null, val status: Boolean? = null, val statusCode: Int? = null)
 
@@ -12,8 +11,7 @@ data class Data(val contentId: String? = null, val type: String? = null, val url
             parcel.readString(),
             parcel.readString(),
             parcel.readValue(Int::class.java.classLoader) as? Int,
-            parcel.readParcelable(Promotion::class.java.classLoader)) {
-    }
+            parcel.readParcelable(Promotion::class.java.classLoader))
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(contentId)
@@ -49,8 +47,7 @@ data class Promotion (val title: String? = null, val subtitle: String? = null, v
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
-            parcel.readString()) {
-    }
+            parcel.readString())
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(title)

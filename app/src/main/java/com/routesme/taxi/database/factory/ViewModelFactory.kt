@@ -1,9 +1,7 @@
 package com.routesme.taxi.database.factory
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.routesme.taxi.MVVM.View.fragment.ContentFragment
 import com.routesme.taxi.database.helper.DatabaseHelper
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 

@@ -5,7 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi.MVVM.API.RestApiService
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.Content
+import com.routesme.taxi.MVVM.Model.ContentResponse
+import com.routesme.taxi.MVVM.Model.Error
+import com.routesme.taxi.MVVM.Model.ResponseErrors
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

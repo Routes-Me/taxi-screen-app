@@ -1,0 +1,184 @@
+Index: app/src/main/java/com/routesme/taxi/MVVM/Model/HomeScreenModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.taxi.MVVM.Model\r\n\r\ninterface IModeChanging {\r\n    fun onModeChange()\r\n}\r\n\r\ninterface ISideFragmentCell\r\nclass EmptyVideoDiscountCell(val screenWidth: Int) : ISideFragmentCell\r\nclass VideoDiscountCell(val data: Data,val screenWidth:Int) : ISideFragmentCell\r\nclass LargeEmptyCell : ISideFragmentCell\r\nclass DateCell(val clock: String, val weekDay: String, val monthDay: String) : ISideFragmentCell\r\nclass SmallEmptyCell : ISideFragmentCell\r\nclass WifiCell : ISideFragmentCell\r\nclass BannerDiscountCell(val data: Data) : ISideFragmentCell
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/taxi/MVVM/Model/HomeScreenModel.kt	(revision b68edafc328f49eb2eaa89f0b02fad01f3b2b566)
++++ app/src/main/java/com/routesme/taxi/MVVM/Model/HomeScreenModel.kt	(date 1613027677618)
+@@ -4,6 +4,14 @@
+     fun onModeChange()
+ }
+ 
++interface OnMediaTrackChanged{
++
++    fun onTrackChange()
++
++}
++
++interface on
++
+ interface ISideFragmentCell
+ class EmptyVideoDiscountCell(val screenWidth: Int) : ISideFragmentCell
+ class VideoDiscountCell(val data: Data,val screenWidth:Int) : ISideFragmentCell
+Index: app/src/main/java/com/routesme/taxi/MVVM/service/VideoService.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.taxi.MVVM.service\r\n\r\nimport android.app.Service\r\nimport android.content.Context\r\nimport android.content.Intent\r\nimport android.os.Binder\r\nimport android.os.Bundle\r\nimport android.os.IBinder\r\nimport android.util.Log\r\nimport androidx.annotation.Nullable\r\nimport com.google.android.exoplayer2.*\r\nimport com.google.android.exoplayer2.source.MediaSource\r\nimport com.google.android.exoplayer2.source.ProgressiveMediaSource\r\nimport com.google.android.exoplayer2.source.TrackGroupArray\r\nimport com.google.android.exoplayer2.trackselection.TrackSelectionArray\r\nimport com.google.android.exoplayer2.upstream.DataSource\r\nimport com.google.android.exoplayer2.upstream.DefaultAllocator\r\nimport com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory\r\nimport com.google.android.exoplayer2.upstream.cache.CacheDataSource\r\nimport com.google.android.exoplayer2.util.Util\r\nimport com.routesme.taxi.Class.AdvertisementsHelper\r\nimport com.routesme.taxi.Class.DateHelper\r\nimport com.routesme.taxi.MVVM.Model.Data\r\nimport com.routesme.taxi.MVVM.events.AnimateVideo\r\nimport com.routesme.taxi.MVVM.events.DemoVideo\r\nimport com.routesme.taxi.MVVM.events.PromotionEvent\r\nimport com.routesme.taxi.R\r\nimport com.routesme.taxi.database.database.AdvertisementDatabase\r\nimport com.routesme.taxi.database.helper.DatabaseHelperImpl\r\nimport com.routesme.taxi.database.viewmodel.RoomDBViewModel\r\nimport com.routesme.taxi.utils.Type\r\nimport io.netopen.hotbitmapgg.library.view.RingProgressBar\r\nimport kotlinx.android.synthetic.main.content_fragment.*\r\nimport kotlinx.coroutines.*\r\nimport org.greenrobot.eventbus.EventBus\r\nimport kotlin.collections.ArrayList\r\n\r\n\r\nclass VideoService: Service(),CoroutineScope by MainScope(){\r\n\r\n    private lateinit var exoPlayer: SimpleExoPlayer\r\n    private lateinit var ringProgressBar:RingProgressBar\r\n    var currentMediaItemId = 0\r\n    private var count = 0\r\n    private var isPlayingDemoVideo = false\r\n    private lateinit var viewModel: RoomDBViewModel\r\n    override fun onBind(intent: Intent?): IBinder? {\r\n\r\n        exoPlayer.playWhenReady = true\r\n        setMediaPlayer(intent?.getSerializableExtra(\"array\") as List<Data>)\r\n        return VideoServiceBinder()\r\n\r\n    }\r\n\r\n    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {\r\n        /*intent?.let {\r\n            val action = it.getIntExtra(PLAY_PAUSE_ACTION, -1)\r\n            when (action) {\r\n                0 -> exoPlayer.playWhenReady = false\r\n            }\r\n        }*/\r\n        return super.onStartCommand(intent, flags, startId)\r\n    }\r\n\r\n    inner class VideoServiceBinder : Binder() {\r\n        fun getExoPlayerInstance() = exoPlayer\r\n    }\r\n\r\n    override fun onCreate() {\r\n        super.onCreate()\r\n        exoPlayer = SimpleExoPlayer.Builder(this).setLoadControl(getLoadControl()).build()\r\n        viewModel = RoomDBViewModel(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))\r\n\r\n    }\r\n\r\n    private fun getLoadControl(): DefaultLoadControl {\r\n\r\n        val loadControl = DefaultLoadControl.Builder()\r\n                .setAllocator(DefaultAllocator(true, C.DEFAULT_BUFFER_SEGMENT_SIZE))\r\n                .setBufferDurationsMs(\r\n                        DefaultLoadControl.DEFAULT_MIN_BUFFER_MS,  // this is it!\r\n                        DefaultLoadControl.DEFAULT_MAX_BUFFER_MS,\r\n                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_MS,\r\n                        DefaultLoadControl.DEFAULT_BUFFER_FOR_PLAYBACK_AFTER_REBUFFER_MS\r\n                )\r\n                .setTargetBufferBytes(DefaultLoadControl.DEFAULT_TARGET_BUFFER_BYTES)\r\n                .setPrioritizeTimeOverSizeThresholds(DefaultLoadControl.DEFAULT_PRIORITIZE_TIME_OVER_SIZE_THRESHOLDS)\r\n                .createDefaultLoadControl()\r\n\r\n        return loadControl\r\n    }\r\n\r\n    private fun setMediaPlayer(list: List<Data>) {\r\n\r\n        exoPlayer?.apply {\r\n            setMediaSources(getMediaSource(list))\r\n            repeatMode = Player.REPEAT_MODE_ALL\r\n            playWhenReady = true\r\n            prepare()\r\n            play()\r\n            volume = 0f\r\n            addListener(object : Player.EventListener{\r\n\r\n                override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {\r\n                    currentMediaItemId = exoPlayer?.currentPeriodIndex!!\r\n                    if(currentMediaItemId == 0) currentMediaItemId = list.size-1 else currentMediaItemId = currentMediaItemId-1\r\n                    currentMediaItemId.let {\r\n                        list[it].contentId?.let {\r\n\r\n                            viewModel.insertLog(it,DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)\r\n\r\n                        }\r\n                    }\r\n                    EventBus.getDefault().post(AnimateVideo(true))\r\n                }\r\n                override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {\r\n                    super.onTracksChanged(trackGroups, trackSelections)\r\n                    EventBus.getDefault().post(PromotionEvent(list[exoPlayer?.currentPeriodIndex!!]))\r\n                }\r\n                override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {\r\n                    when (playbackState) {\r\n                        Player.STATE_IDLE -> {\r\n\r\n                            exoPlayer?.prepare()\r\n                            exoPlayer?.playbackState\r\n\r\n                        }\r\n                        Player.STATE_BUFFERING -> {\r\n\r\n                            count++\r\n                            if(count >= 5 ){\r\n                                count = 0\r\n                                EventBus.getDefault().post(DemoVideo(true,\"NO VIDEO CACHE\"))\r\n                                isPlayingDemoVideo = true\r\n                            }\r\n\r\n                        }\r\n                        Player.STATE_READY -> {\r\n                            if(isPlayingDemoVideo) {\r\n                                EventBus.getDefault().post(DemoVideo(false,\"\"))\r\n                                isPlayingDemoVideo = false\r\n                            }\r\n                            count = 0\r\n                        }\r\n                        Player.STATE_ENDED -> {\r\n\r\n                        }\r\n                    }\r\n                }\r\n                override fun onPlayerError(error: ExoPlaybackException) {\r\n                    when (error.type) {\r\n                        ExoPlaybackException.TYPE_SOURCE ->{\r\n                            if(error.sourceException.message == \"Response code: 404\"){\r\n                                exoPlayer?.seekTo(exoPlayer!!.nextWindowIndex, 0)\r\n\r\n                            }\r\n\r\n                        }\r\n                        ExoPlaybackException.TYPE_RENDERER ->{\r\n                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()\r\n                            if (currentMediaItemId == list.indexOf(list.first())){\r\n\r\n                                EventBus.getDefault().post(list[currentMediaItemId])\r\n\r\n                            }\r\n                        }\r\n                        ExoPlaybackException.TYPE_UNEXPECTED ->{\r\n\r\n                        }\r\n                    }\r\n                }\r\n\r\n            })\r\n        }\r\n\r\n        EventBus.getDefault().post(\"Run ProgressBar\")\r\n    }\r\n\r\n    fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {\r\n        var mediaSource = ArrayList<MediaSource>()\r\n            val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)\r\n            videos?.let { videos ->\r\n                for (video in videos) {\r\n\r\n                    val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))\r\n                    mediaSource.add(mediaSourceItem)\r\n                    Log.d(\"Video\", \"${mediaSourceItem}\")\r\n                }\r\n                return mediaSource\r\n            }\r\n        }\r\n\r\n\r\n        fun stopPlayer() {\r\n\r\n            exoPlayer.stop()\r\n        }\r\n\r\n        fun playPlayer() {\r\n\r\n            exoPlayer.play()\r\n        }\r\n\r\n        override fun onDestroy() {\r\n            super.onDestroy()\r\n            if (exoPlayer != null) {\r\n                exoPlayer?.release()\r\n            }\r\n        }\r\n\r\n\r\n}\r\n\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/taxi/MVVM/service/VideoService.kt	(revision b68edafc328f49eb2eaa89f0b02fad01f3b2b566)
++++ app/src/main/java/com/routesme/taxi/MVVM/service/VideoService.kt	(date 1613035303676)
+@@ -21,6 +21,7 @@
+ import com.routesme.taxi.Class.AdvertisementsHelper
+ import com.routesme.taxi.Class.DateHelper
+ import com.routesme.taxi.MVVM.Model.Data
++import com.routesme.taxi.MVVM.Model.OnMediaTrackChanged
+ import com.routesme.taxi.MVVM.events.AnimateVideo
+ import com.routesme.taxi.MVVM.events.DemoVideo
+ import com.routesme.taxi.MVVM.events.PromotionEvent
+@@ -42,6 +43,7 @@
+     private lateinit var ringProgressBar:RingProgressBar
+     var currentMediaItemId = 0
+     private var count = 0
++    private lateinit var onMediaTrackChanged:OnMediaTrackChanged
+     private var isPlayingDemoVideo = false
+     private lateinit var viewModel: RoomDBViewModel
+     override fun onBind(intent: Intent?): IBinder? {
+@@ -113,10 +115,11 @@
+                     }
+                     EventBus.getDefault().post(AnimateVideo(true))
+                 }
+-                override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
++                /*override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
+                     super.onTracksChanged(trackGroups, trackSelections)
+-                    EventBus.getDefault().post(PromotionEvent(list[exoPlayer?.currentPeriodIndex!!]))
+-                }
++                    //Log.d("onTracksChanged","onTracksChanged")
++                   // EventBus.getDefault().post(PromotionEvent(list[exoPlayer?.currentPeriodIndex!!]))
++                }*/
+                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
+                     when (playbackState) {
+                         Player.STATE_IDLE -> {
+@@ -157,12 +160,15 @@
+ 
+                         }
+                         ExoPlaybackException.TYPE_RENDERER ->{
+-                            val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
++
++                            prepare()
++                            playWhenReady = true
++                            /*val currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
+                             if (currentMediaItemId == list.indexOf(list.first())){
+ 
+                                 EventBus.getDefault().post(list[currentMediaItemId])
+ 
+-                            }
++                            }*/
+                         }
+                         ExoPlaybackException.TYPE_UNEXPECTED ->{
+ 
+Index: app/src/main/java/com/routesme/taxi/MVVM/View/fragment/SideMenuFragment.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.taxi.MVVM.View.fragment\r\n\r\nimport android.annotation.SuppressLint\r\nimport android.content.Context\r\nimport android.os.Bundle\r\nimport android.os.Handler\r\nimport android.util.DisplayMetrics\r\nimport android.util.Log\r\nimport android.view.LayoutInflater\r\nimport android.view.View\r\nimport android.view.ViewGroup\r\nimport android.view.ViewGroup.LayoutParams.MATCH_PARENT\r\nimport android.view.WindowManager\r\nimport androidx.constraintlayout.widget.ConstraintLayout\r\nimport androidx.fragment.app.Fragment\r\nimport carbon.widget.ExpandableRecyclerView\r\nimport carbon.widget.RecyclerView\r\nimport com.routesme.taxi.Class.DateOperations\r\nimport com.routesme.taxi.Class.SideFragmentAdapter.SideFragmentAdapter\r\nimport com.routesme.taxi.ItemAnimator\r\nimport com.routesme.taxi.MVVM.Model.*\r\nimport com.routesme.taxi.MVVM.events.PromotionEvent\r\nimport com.routesme.taxi.R\r\nimport kotlinx.android.synthetic.main.side_menu_fragment.*\r\nimport kotlinx.android.synthetic.main.side_menu_fragment.view.*\r\nimport kotlinx.coroutines.*\r\nimport org.greenrobot.eventbus.EventBus\r\nimport org.greenrobot.eventbus.Subscribe\r\nimport org.greenrobot.eventbus.ThreadMode\r\nimport java.lang.Exception\r\nimport java.lang.Runnable\r\nimport java.util.*\r\n\r\n\r\nclass SideMenuFragment : Fragment(),CoroutineScope by MainScope() {\r\n    private lateinit var mView: View\r\n    private lateinit var mContext: Context\r\n    private val dateOperations = DateOperations.instance\r\n    private lateinit var sideFragmentAdapter: SideFragmentAdapter\r\n    private lateinit var sideFragmentCells: MutableList<ISideFragmentCell>\r\n    private lateinit var presentJob : Job\r\n    private var screenWidth:Int?=null\r\n    //private lateinit var recyclerView: RecyclerView\r\n    override fun onAttach(context: Context) {\r\n        mContext = context\r\n        super.onAttach(context)\r\n    }\r\n\r\n    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View = inflater.inflate(R.layout.side_menu_fragment, container, false)\r\n\r\n    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {\r\n        mView = view\r\n       // recyclerView = view.recyclerView as RecyclerView\r\n        super.onViewCreated(view, savedInstanceState)\r\n\r\n    }\r\n\r\n    override fun onActivityCreated(savedInstanceState: Bundle?) {\r\n        super.onActivityCreated(savedInstanceState)\r\n        presentJob = Job()\r\n        val metrics = DisplayMetrics()\r\n        val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager\r\n        windowManager.defaultDisplay?.getMetrics(metrics)\r\n        screenWidth = (metrics.widthPixels * 69) / 100\r\n        setupRecyclerView()\r\n    }\r\n\r\n\r\n    override fun onStart() {\r\n        EventBus.getDefault().register(this)\r\n        super.onStart()\r\n    }\r\n\r\n    override fun onStop() {\r\n        EventBus.getDefault().unregister(this)\r\n        super.onStop()\r\n    }\r\n\r\n    override fun onDestroy() {\r\n        super.onDestroy()\r\n        presentJob.cancel()\r\n        //sideFragmentAdapter = null\r\n        //recyclerView.adapter = null\r\n\r\n    }\r\n\r\n    private fun setupRecyclerView() {\r\n        val date = Date()\r\n        sideFragmentCells = mutableListOf<ISideFragmentCell>().apply {\r\n            add(EmptyVideoDiscountCell(screenWidth!!))\r\n            add(LargeEmptyCell())\r\n            add(DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date)))\r\n            add(SmallEmptyCell())\r\n            add(WifiCell())\r\n        }\r\n\r\n        sideFragmentAdapter = SideFragmentAdapter(sideFragmentCells)\r\n        recyclerView.apply {\r\n            adapter = sideFragmentAdapter\r\n            itemAnimator = ItemAnimator(mContext)\r\n        }\r\n        setTime()\r\n    }\r\n\r\n    @SuppressLint(\"SetTextI18n\")\r\n    private fun setTime() {\r\n            CoroutineScope(Dispatchers.Main + presentJob).launch {\r\n                while (isActive){\r\n                    val date = Date()\r\n                    sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))\r\n                    sideFragmentAdapter.notifyDataSetChanged()\r\n                    delay(60 * 1000)\r\n                }\r\n\r\n            }\r\n    }\r\n\r\n    @Subscribe(threadMode = ThreadMode.MAIN)\r\n    fun onEvent(promotionData:PromotionEvent){\r\n        try{\r\n            when(promotionData.data.type){\r\n\r\n                ContentType.Image.value -> changeBannerQRCode(promotionData.data)\r\n                else -> changeVideoQRCode(promotionData.data)\r\n            }\r\n        } catch (e:Exception){\r\n\r\n        }\r\n    }\r\n\r\n    private fun changeVideoQRCode(data: Data) {\r\n\r\n        val promotion = data.promotion\r\n        val position = 0\r\n        if (promotion != null && promotion.isExist) sideFragmentCells[position] = VideoDiscountCell(data,screenWidth!!) else sideFragmentCells[position] = EmptyVideoDiscountCell(screenWidth!!)\r\n        sideFragmentAdapter.apply {\r\n\r\n            notifyItemRemoved(position)\r\n            notifyItemInserted(position)\r\n        }\r\n    }\r\n\r\n    private fun changeBannerQRCode(data: Data) {\r\n        val promotion = data.promotion\r\n        val position = 4\r\n        if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())\r\n        sideFragmentAdapter.apply {\r\n\r\n            notifyItemRemoved(position)\r\n            notifyItemInserted(position)\r\n\r\n        }\r\n    }\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/taxi/MVVM/View/fragment/SideMenuFragment.kt	(revision b68edafc328f49eb2eaa89f0b02fad01f3b2b566)
++++ app/src/main/java/com/routesme/taxi/MVVM/View/fragment/SideMenuFragment.kt	(date 1613028404613)
+@@ -62,7 +62,7 @@
+         val windowManager = context?.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+         windowManager.defaultDisplay?.getMetrics(metrics)
+         screenWidth = (metrics.widthPixels * 69) / 100
+-        setupRecyclerView()
++        //setupRecyclerView()
+     }
+ 
+ 
+@@ -108,7 +108,7 @@
+                 while (isActive){
+                     val date = Date()
+                     sideFragmentCells[2] = DateCell(dateOperations.timeClock(date), dateOperations.dayOfWeek(date), dateOperations.date(date))
+-                    sideFragmentAdapter.notifyDataSetChanged()
++                    sideFragmentAdapter.notifyItemChanged(2)
+                     delay(60 * 1000)
+                 }
+ 
+@@ -132,23 +132,24 @@
+ 
+         val promotion = data.promotion
+         val position = 0
++
++        //sideFragmentCells.removeAt(position)
+         if (promotion != null && promotion.isExist) sideFragmentCells[position] = VideoDiscountCell(data,screenWidth!!) else sideFragmentCells[position] = EmptyVideoDiscountCell(screenWidth!!)
+         sideFragmentAdapter.apply {
+-
+             notifyItemRemoved(position)
+             notifyItemInserted(position)
++
+         }
+     }
+ 
+     private fun changeBannerQRCode(data: Data) {
+         val promotion = data.promotion
+         val position = 4
++        //sideFragmentCells.removeAt(position)
+         if (promotion != null && promotion.isExist) sideFragmentCells.set(position,BannerDiscountCell(data)) else sideFragmentCells.set(position,WifiCell())
+         sideFragmentAdapter.apply {
+-
+             notifyItemRemoved(position)
+             notifyItemInserted(position)
+-
+         }
+     }
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/routesme/taxi/MVVM/Model/RegistrationModel.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.taxi.MVVM.Model\r\n\r\ndata class RegistrationCredentials(var serialNumber: String? = null, var `SimSerialNumber`: String? = null, var VehicleId: String? = null)\r\ndata class RegistrationSuccessResponse(val deviceId: String? = null, val status: Boolean = false, val message: String? = null, val statusCode: Int = -999)\r\nclass RegistrationResponse(deviceId: String? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {\r\n\r\n    var deviceId: String? = null\r\n    init {\r\n       this.deviceId = deviceId\r\n       //this.deviceId = \"989\"\r\n\r\n    }\r\n\r\n    val isSuccess: Boolean\r\n        get() = (mResponseErrors == null && mThrowable == null)\r\n        //get() = true\r\n\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/taxi/MVVM/Model/RegistrationModel.kt	(revision b68edafc328f49eb2eaa89f0b02fad01f3b2b566)
++++ app/src/main/java/com/routesme/taxi/MVVM/Model/RegistrationModel.kt	(date 1612952281242)
+@@ -6,13 +6,13 @@
+ 
+     var deviceId: String? = null
+     init {
+-       this.deviceId = deviceId
+-       //this.deviceId = "989"
++       //this.deviceId = deviceId
++       this.deviceId = "989"
+ 
+     }
+ 
+     val isSuccess: Boolean
+-        get() = (mResponseErrors == null && mThrowable == null)
+-        //get() = true
++        //get() = (mResponseErrors == null && mThrowable == null)
++        get() = true
+ 
+ }
+\ No newline at end of file
+Index: app/src/main/java/com/routesme/taxi/Class/SideFragmentAdapter/BindViewHolder.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.taxi.Class.SideFragmentAdapter\r\n\r\nimport android.annotation.SuppressLint\r\nimport android.content.Context\r\nimport android.graphics.Color\r\nimport android.text.SpannedString\r\nimport android.util.Log\r\nimport android.view.View\r\nimport android.view.ViewGroup.LayoutParams.MATCH_PARENT\r\nimport android.widget.Toast\r\nimport androidx.constraintlayout.widget.ConstraintLayout\r\nimport androidx.core.text.bold\r\nimport androidx.core.text.buildSpannedString\r\nimport androidx.core.text.color\r\nimport androidx.recyclerview.widget.RecyclerView\r\nimport com.bumptech.glide.Glide\r\nimport com.bumptech.glide.load.engine.DiskCacheStrategy\r\nimport com.bumptech.glide.request.RequestOptions\r\nimport com.google.zxing.BarcodeFormat\r\nimport com.routesme.taxi.Class.ThemeColor\r\nimport com.routesme.taxi.MVVM.Model.*\r\nimport com.routesme.taxi.uplevels.App\r\nimport net.codecision.glidebarcode.model.Barcode\r\nval glide = Glide.with(App.instance)\r\nval imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.DATA).skipMemoryCache(false)\r\n\r\nfun onBindEmptyVideoDiscount(holder: RecyclerView.ViewHolder,cell: ISideFragmentCell) {\r\n    holder as ViewHolderEmptyVideoDiscount\r\n    cell as EmptyVideoDiscountCell\r\n    holder.apply {\r\n        empty_cardview.layoutParams = ConstraintLayout.LayoutParams(cell.screenWidth, MATCH_PARENT)\r\n\r\n    }\r\n}\r\n\r\n@SuppressLint(\"SetTextI18n\")\r\nfun onBindVideoDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {\r\n    holder as ViewHolderVideoDiscount\r\n    cell as VideoDiscountCell\r\n    holder.apply {\r\n        val data = cell.data\r\n        val promotion = data.promotion\r\n        val tintColor = data.tintColor\r\n        promotion?.let {\r\n            val link = it.link\r\n            if (!link.isNullOrEmpty()){\r\n                val color = ThemeColor(tintColor).getColor()\r\n                cardShadow.setElevationShadowColor(color)\r\n\r\n                promotion.logoUrl?.let { logoUrl ->\r\n                    Glide.with(videoLogoImage.context).load(logoUrl).apply(imageOptions).into(videoLogoImage)\r\n                    videoLogoImage.visibility = View.VISIBLE\r\n                }\r\n                if (!promotion.title.isNullOrEmpty()) title.text = promotion.title\r\n                subTitle.text = getSubtitle(promotion.subtitle, promotion.code, color)\r\n                generateQrCode(link,color).let {qrCode ->\r\n                    Glide.with(qrCodeImage.context).load(qrCode).into(qrCodeImage)\r\n                }\r\n            }\r\n        }\r\n        card.layoutParams = ConstraintLayout.LayoutParams(cell.screenWidth, MATCH_PARENT)\r\n        /*\r\n        val metrics = DisplayMetrics()\r\n        val windowManager = activity!!.getSystemService(Context.WINDOW_SERVICE) as WindowManager\r\n        windowManager.defaultDisplay?.getMetrics(metrics)\r\n        val screenWidth = (metrics.widthPixels * 69) / 100\r\n\r\n        */\r\n    }\r\n}\r\n\r\nfun getSubtitle(subtitle: String?, code: String?, color: Int): SpannedString {\r\n    return buildSpannedString {\r\n        if (!subtitle.isNullOrBlank()){\r\n            append(subtitle)\r\n        }\r\n        if (!code.isNullOrEmpty()){\r\n            if (!subtitle.isNullOrEmpty()) append(\", \")\r\n            bold { color(color) { append(\"Use code \") } }\r\n            append(code)\r\n        }\r\n    }\r\n}\r\n\r\nfun onBindLargeEmpty() {}\r\n\r\n@SuppressLint(\"SetTextI18n\")\r\nfun onBindDate(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {\r\n    holder as ViewHolderDate\r\n    cell as DateCell\r\n    holder.apply { clockTv.text = cell.clock; dayTv.text = \"${cell.weekDay}\\n ${cell.monthDay}\" }\r\n}\r\n\r\nfun onBindSmallEmpty() {}\r\n\r\nfun onBindWifi() {}\r\n\r\nfun onBindBannerDiscount(holder: RecyclerView.ViewHolder, cell: ISideFragmentCell) {\r\n    holder as ViewHolderBannerDiscount\r\n    cell as BannerDiscountCell\r\n    holder.apply {\r\n        val data = cell.data\r\n        val promotion = cell.data.promotion\r\n        val tintColor = data.tintColor\r\n        promotion?.let {\r\n            it.link?.let {link ->\r\n                val color = ThemeColor(tintColor).getColor()\r\n                generateQrCode(\"link\",color).let {qrCode ->\r\n                    Glide.with(qrCodeImage.context).load(qrCode).into(qrCodeImage)\r\n\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n\r\nprivate fun generateQrCode(promotionLink: String, color: Int): Barcode {\r\n    return Barcode(promotionLink, BarcodeFormat.QR_CODE,color,Color.TRANSPARENT)\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/taxi/Class/SideFragmentAdapter/BindViewHolder.kt	(revision b68edafc328f49eb2eaa89f0b02fad01f3b2b566)
++++ app/src/main/java/com/routesme/taxi/Class/SideFragmentAdapter/BindViewHolder.kt	(date 1612954649398)
+@@ -54,7 +54,7 @@
+                 if (!promotion.title.isNullOrEmpty()) title.text = promotion.title
+                 subTitle.text = getSubtitle(promotion.subtitle, promotion.code, color)
+                 generateQrCode(link,color).let {qrCode ->
+-                    Glide.with(qrCodeImage.context).load(qrCode).into(qrCodeImage)
++                    Glide.with(qrCodeImage.context).load(qrCode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.NONE)).into(qrCodeImage)
+                 }
+             }
+         }

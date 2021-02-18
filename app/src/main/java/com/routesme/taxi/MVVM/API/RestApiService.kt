@@ -9,8 +9,6 @@ import com.routesme.taxi.MVVM.Model.RegistrationCredentials
 import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.Model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.R
-import org.json.JSONArray
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*

@@ -2,15 +2,12 @@ package com.routesme.taxi.AdminConsolePanel.View
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.RecyclerView
@@ -20,11 +17,8 @@ import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleHelper
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleLists
 import com.routesme.taxi.AdminConsolePanel.Class.MasterItemsAdapter
 import com.routesme.taxi.AdminConsolePanel.Model.LogOff
-import com.routesme.taxi.Class.DateHelper
 import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.Model.UnlinkResponse
-import com.routesme.taxi.MVVM.View.activity.HomeActivity
-import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.R
 import com.routesme.taxi.database.ResponseBody
@@ -40,9 +34,6 @@ import kotlinx.android.synthetic.main.item_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
-import org.json.JSONArray
-import org.json.JSONObject
-import java.net.HttpURLConnection
 import java.sql.SQLException
 
 class AdminConsolePanel : AppCompatActivity() {
@@ -173,7 +164,7 @@ class AdminConsolePanel : AppCompatActivity() {
 
     private fun getJsonArray(list:List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
-        list?.forEach {
+        list.forEach {
 
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)

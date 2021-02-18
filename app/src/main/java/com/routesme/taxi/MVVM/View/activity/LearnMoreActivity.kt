@@ -6,9 +6,9 @@ import android.os.Bundle
 import android.view.MenuItem
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.App
 import kotlinx.android.synthetic.main.learn_more_screen.*
 
 class LearnMoreActivity : AppCompatActivity() {

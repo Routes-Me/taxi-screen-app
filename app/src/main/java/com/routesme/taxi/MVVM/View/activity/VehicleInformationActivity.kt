@@ -7,13 +7,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.Class.VehicleInformationAdapter
 import com.routesme.taxi.MVVM.Model.Error
 import com.routesme.taxi.MVVM.Model.VehicleInformationModel.*
 import com.routesme.taxi.MVVM.ViewModel.VehicleInformationViewModel
 import com.routesme.taxi.R
+import com.routesme.taxi.uplevels.App
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_vehicle_information.*
 import java.io.IOException

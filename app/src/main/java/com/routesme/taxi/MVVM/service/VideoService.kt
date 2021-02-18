@@ -1,10 +1,8 @@
 package com.routesme.taxi.MVVM.service
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
-import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.Nullable
@@ -24,17 +22,15 @@ import com.routesme.taxi.MVVM.Model.Data
 import com.routesme.taxi.MVVM.Model.OnMediaTrackChanged
 import com.routesme.taxi.MVVM.events.AnimateVideo
 import com.routesme.taxi.MVVM.events.DemoVideo
-import com.routesme.taxi.MVVM.events.PromotionEvent
 import com.routesme.taxi.R
 import com.routesme.taxi.database.database.AdvertisementDatabase
 import com.routesme.taxi.database.helper.DatabaseHelperImpl
 import com.routesme.taxi.database.viewmodel.RoomDBViewModel
 import com.routesme.taxi.utils.Type
 import io.netopen.hotbitmapgg.library.view.RingProgressBar
-import kotlinx.android.synthetic.main.content_fragment.*
-import kotlinx.coroutines.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
 import org.greenrobot.eventbus.EventBus
-import kotlin.collections.ArrayList
 
 
 class VideoService: Service(),CoroutineScope by MainScope(){
@@ -57,16 +53,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
         setMediaPlayer(intent?.getSerializableExtra("array") as List<Data>)
         return VideoServiceBinder()
 
-    }
-
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        /*intent?.let {
-            val action = it.getIntExtra(PLAY_PAUSE_ACTION, -1)
-            when (action) {
-                0 -> exoPlayer.playWhenReady = false
-            }
-        }*/
-        return super.onStartCommand(intent, flags, startId)
     }
 
     inner class VideoServiceBinder : Binder() {
@@ -107,7 +93,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
     fun setMediaPlayer(list: List<Data>) {
 
-        exoPlayer?.apply {
+        exoPlayer.apply {
             setMediaSources(getMediaSource(list))
             repeatMode = Player.REPEAT_MODE_ALL
             playWhenReady = true
@@ -117,7 +103,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
             addListener(object : Player.EventListener{
 
                 override fun onMediaItemTransition(@Nullable mediaItem: MediaItem?, @Player.MediaItemTransitionReason reason: Int) {
-                    currentMediaItemId = exoPlayer?.currentPeriodIndex!!
+                    currentMediaItemId = exoPlayer.currentPeriodIndex
                     //setAnimation(Advertisement_Video_CardView,bgImage)
                     if(currentMediaItemId == 0) currentMediaItemId = list.size-1 else currentMediaItemId = currentMediaItemId-1
                     currentMediaItemId.let {
@@ -127,13 +113,13 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
                         }
                     }
-                    EventBus.getDefault().post(AnimateVideo(true,exoPlayer?.currentPeriodIndex!!))
+                    EventBus.getDefault().post(AnimateVideo(true,exoPlayer.currentPeriodIndex))
                 }
                 override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
                     super.onTracksChanged(trackGroups, trackSelections)
                     if(onStartMedia){
                         onStartMedia = false
-                        EventBus.getDefault().post(AnimateVideo(true,exoPlayer?.currentPeriodIndex!!))
+                        EventBus.getDefault().post(AnimateVideo(true,exoPlayer.currentPeriodIndex))
                     }
                     Log.d("Exoplayer","onTracksChanged")
                    //EventBus.getDefault().post(PromotionEvent(exoPlayer?.currentPeriodIndex!!))
@@ -155,8 +141,8 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                     when (playbackState) {
                         Player.STATE_IDLE -> {
 
-                            exoPlayer?.prepare()
-                            exoPlayer?.playbackState
+                            exoPlayer.prepare()
+                            exoPlayer.playbackState
 
                         }
                         Player.STATE_BUFFERING -> {
@@ -186,7 +172,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE ->{
                             if(error.sourceException.message == "Response code: 404"){
-                                exoPlayer?.seekTo(exoPlayer!!.nextWindowIndex, 0)
+                                exoPlayer.seekTo(exoPlayer.nextWindowIndex, 0)
 
                             }
 
@@ -217,7 +203,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {
         var mediaSource = ArrayList<MediaSource>()
             val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            videos?.let { videos ->
+            videos.let { videos ->
                 for (video in videos) {
 
                     val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))
@@ -246,16 +232,14 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
 
         fun getCurrentPeriod(): Int {
-            val current = (exoPlayer?.currentPosition)!!.toInt()
-            val progress = current * 100 / (exoPlayer?.duration)!!.toInt()
+            val current = (exoPlayer.currentPosition).toInt()
+            val progress = current * 100 / (exoPlayer.duration).toInt()
             return progress
         }
 
         override fun onDestroy() {
             super.onDestroy()
-            if (exoPlayer != null) {
-                exoPlayer?.release()
-            }
+            exoPlayer.release()
         }
 
 

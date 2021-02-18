@@ -1,7 +1,6 @@
 package com.routesme.taxi.MVVM.View.activity
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
@@ -10,7 +9,6 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -20,8 +18,6 @@ import androidx.lifecycle.Observer
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
-import com.auth0.android.jwt.Claim
-import com.auth0.android.jwt.JWT
 import com.routesme.taxi.Class.Helper
 import com.routesme.taxi.Class.Operations
 import com.routesme.taxi.MVVM.Model.Error
@@ -29,7 +25,6 @@ import com.routesme.taxi.MVVM.Model.LoginResponse
 import com.routesme.taxi.MVVM.Model.SignInCredentials
 import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.R
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.uplevels.App
 import dmax.dialog.SpotsDialog

@@ -1,15 +1,15 @@
 package com.routesme.taxi.MVVM.Repository
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.routesme.taxi.MVVM.API.RestApiService
-import com.routesme.taxi.MVVM.Model.*
-import org.json.JSONArray
-import org.json.JSONObject
+import com.routesme.taxi.MVVM.Model.Error
+import com.routesme.taxi.MVVM.Model.Report
+import com.routesme.taxi.MVVM.Model.ReportResponse
+import com.routesme.taxi.MVVM.Model.ResponseErrors
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

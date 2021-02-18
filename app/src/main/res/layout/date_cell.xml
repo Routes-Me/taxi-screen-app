@@ -37,7 +37,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.05" />
+                    app:layout_constraintGuide_percent="0.1" />
 
                 <androidx.constraintlayout.widget.Guideline
                     android:id="@+id/guidelineBottom"
@@ -85,7 +85,7 @@
                     android:singleLine="false"
                     android:text="Wednesday Oct 28"
                     android:textColor="?text_color"
-                    android:textSize="@dimen/_10sdp"
+                    android:textSize="@dimen/_9sdp"
                     android:textStyle="normal"
                    android:layout_marginTop="@dimen/_2sdp"
                     app:layout_constraintEnd_toEndOf="@id/guidelineEnd"

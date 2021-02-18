@@ -45,15 +45,15 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         //Log.d("Process","${getProcessName()}")
-        //startTrackingService()
+        startTrackingService()
     }
 
     fun startTrackingService(){
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
-            startService(intent)
-            //ContextCompat.startForegroundService(instance,intent)
+            //startService(intent)
+            ContextCompat.startForegroundService(instance,intent)
            // this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }

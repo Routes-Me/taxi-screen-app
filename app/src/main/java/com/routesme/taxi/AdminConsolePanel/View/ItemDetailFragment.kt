@@ -11,15 +11,8 @@ import androidx.fragment.app.Fragment
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleDetailsListAdapter
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleHelper
 import com.routesme.taxi.AdminConsolePanel.Class.AdminConsoleLists
-import com.routesme.taxi.AdminConsolePanel.Model.DetailCell
-import com.routesme.taxi.AdminConsolePanel.Model.LogOff
 import com.routesme.taxi.AdminConsolePanel.Model.MasterItemType
 import com.routesme.taxi.LocationTrackingService.Database.TrackingDatabase
-import com.routesme.taxi.MVVM.Model.ContentResponse
-import com.routesme.taxi.MVVM.Model.UnlinkResponse
-import com.routesme.taxi.MVVM.View.activity.LoginActivity
-import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
-import com.routesme.taxi.MVVM.ViewModel.LoginViewModel
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App

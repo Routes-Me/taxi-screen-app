@@ -10,15 +10,13 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
-import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.routesme.taxi.AdminConsolePanel.Model.DetailActionStatus
 import com.routesme.taxi.AdminConsolePanel.Model.LogOff
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.MVVM.View.activity.LoginActivity
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import org.greenrobot.eventbus.EventBus
-import kotlin.collections.ArrayList
 
 class AdminConsoleHelper(val activity: Activity) {
     private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)

@@ -1,0 +1,106 @@
+{
+  "project_info": {
+    "project_number": "599108135088",
+    "firebase_url": "https://taxi-screen.firebaseio.com",
+    "project_id": "taxi-screen",
+    "storage_bucket": "taxi-screen.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:f24c8f7f6b791f655ff375",
+        "android_client_info": {
+          "package_name": "com.routesme.screen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:64c8b46e284d5bfc5ff375",
+        "android_client_info": {
+          "package_name": "com.routesme.taxi"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:599108135088:android:4840eab010b43a465ff375",
+        "android_client_info": {
+          "package_name": "com.routesme.taxi_screen"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "599108135088-ta87ebv37l18jr5afn273i70b216fjn9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.routesme.taxi_screen",
+            "certificate_hash": "205650018b43beb132d4434c4f05495d5a24768c"
+          }
+        },
+        {
+          "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyARDcci-huk2IEkJMSQQA0Q83ifQQ-4VC0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "599108135088-6u5uhmket6kgqsvrvn6c8ttd9iueit3k.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

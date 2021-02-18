@@ -4,9 +4,11 @@ import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
+import android.text.SpannedString
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -18,6 +20,9 @@ import android.view.animation.AnimationUtils
 import android.widget.ImageView
 import androidx.core.animation.addListener
 import androidx.core.graphics.ColorUtils
+import androidx.core.text.bold
+import androidx.core.text.buildSpannedString
+import androidx.core.text.color
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -30,15 +35,15 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.google.zxing.BarcodeFormat
 import com.routesme.taxi.Class.*
-import com.routesme.taxi.Class.SideFragmentAdapter.generateQrCode
-import com.routesme.taxi.Class.SideFragmentAdapter.getSubtitle
-import com.routesme.taxi.Class.SideFragmentAdapter.imageOptions
-import com.routesme.taxi.MVVM.Model.*
+import com.routesme.taxi.MVVM.Model.ContentResponse
+import com.routesme.taxi.MVVM.Model.ContentType
+import com.routesme.taxi.MVVM.Model.Data
+import com.routesme.taxi.MVVM.Model.ReportResponse
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.MVVM.events.AnimateVideo
 import com.routesme.taxi.MVVM.events.DemoVideo
-import com.routesme.taxi.MVVM.events.PromotionEvent
 import com.routesme.taxi.MVVM.service.VideoService
 import com.routesme.taxi.R
 import com.routesme.taxi.database.ResponseBody
@@ -52,16 +57,13 @@ import com.routesme.taxi.uplevels.App
 import com.routesme.taxi.utils.Type
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.banner_discount_cell.*
-import kotlinx.android.synthetic.main.banner_discount_cell.bannerQrCodeImage
 import kotlinx.android.synthetic.main.common_wifi_qrcode.*
 import kotlinx.android.synthetic.main.content_fragment.*
-import kotlinx.android.synthetic.main.content_fragment.view.*
 import kotlinx.android.synthetic.main.date_cell.*
 import kotlinx.android.synthetic.main.video_discount_cell.*
-import kotlinx.android.synthetic.main.video_discount_cell.subTitleTv
-import kotlinx.android.synthetic.main.video_discount_cell.videoQrCodeImage
 import kotlinx.android.synthetic.main.video_discount_cell_two.*
 import kotlinx.coroutines.*
+import net.codecision.glidebarcode.model.Barcode
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -105,35 +107,19 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
         return view
     }
-
-    /*private val connection = object : ServiceConnection {
-        override fun onServiceDisconnected(name: ComponentName?) {
-
-            Log.d("Service","Service is Disconnected")
-
-        }
-        override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
-            if (service is VideoService.VideoServiceBinder) {
-                playerView.player = service.getExoPlayerInstance()
-                Log.d("Service","Service is Connected")
-            }
-        }
-
-    }*/
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         glide = Glide.with(App.instance)
-        imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC).skipMemoryCache(false)
+        imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         callApiJob = Job()
         viewModel =  ViewModelProvider(this,ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         zoomOut = AnimationUtils.loadAnimation(context, R.anim.background_zoom_out)
         zoomIn = AnimationUtils.loadAnimation(context, R.anim.background_zoom_in)
         screenWidth = DisplayManager.instance.getDisplayWidth(mContext)
-        WorkManager.getInstance().enqueue(App.periodicWorkRequest);
+        WorkManager.getInstance().enqueue(App.periodicWorkRequest)
         observeTaskManager()
         setTime()
         fetchContent()
@@ -174,7 +160,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
                     it.data?.let {list->
                         val postReportViewModel: ContentViewModel by viewModels()
-                        device_id?.let {deviceId->
+                        device_id.let { deviceId->
 
                             postReportViewModel.postReport(mContext,getJsonArray(list),deviceId).observe(viewLifecycleOwner , Observer<ReportResponse> {
                                 if(it.isSuccess){
@@ -212,7 +198,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
-        list?.forEach {
+        list.forEach {
             val jsonObject = JsonObject().apply{
                 addProperty("date",it.date/1000)
                 addProperty("advertisementId",it.advertisementId)
@@ -394,13 +380,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-   /* @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(data: String){
-        launch {
-            videoProgressbarRunnable()
-        }
-  }*/
-
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(animateVideo: AnimateVideo){
         try {
@@ -427,28 +406,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-    /*@Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(promotionEvent: PromotionEvent){
-        try {
-            launch {
-                Log.d("Promotion","Promotion Animation")
-                position = promotionEvent.position
-                mVideoList?.let {list->
-                    if(list[position].promotion !=null){
-                        animatorBottomPromotion_two.start()
-                       // changeVideoQRCode(list[promotionEvent.position])
-                    }else{
-
-                        animatorBottomPromotion_one.start()
-
-                    }
-                }
-            }
-
-        }catch (e:Exception){ }
-    }*/
-
-    fun setLayout(data: Data){
+    private fun setLayout(data: Data){
         val promotion = data.promotion
         val tintColor = data.tintColor
         promotion?.let {
@@ -457,16 +415,17 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 Log.d("Promotion","I Called ${data}")
                 val color = ThemeColor(tintColor).getColor()
                 videoPromotionCard_two.setElevationShadowColor(color)
-                promotion.logoUrl?.let { logoUrl ->
-
-                    glide.load(logoUrl).apply(imageOptions).into(videoLogoImage_two)
+                if(promotion.logoUrl !=null){
+                    glide.load(promotion.logoUrl).apply(imageOptions).into(videoLogoImage_two)
                     videoLogoImage_two.visibility = View.VISIBLE
-                }
+                }else videoLogoImage_two.visibility = View.GONE
                 if (!promotion.title.isNullOrEmpty()) titleTv_two.text = promotion.title
                 subTitleTv_two.text = getSubtitle(promotion.subtitle, promotion.code, color)
-                generateQrCode(link, color).let { qrCode ->
-                    glide.load(qrCode).apply(imageOptions).into(videoQrCodeImage_two)
+
+                generateQrCode(link, color).let {
+                    glide.load(it).apply(imageOptions).into(videoQrCodeImage_two)
                 }
+
             }
         }
     }
@@ -485,12 +444,12 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         if (promotion != null && promotion.isExist) {
             val promotion = data.promotion
             val tintColor = data.tintColor
-            promotion?.let {
+            promotion.let {
                 it.link?.let {link ->
                     val color = ThemeColor(tintColor).getColor()
-                    generateQrCode(link,color).let {qrCode ->
-                        glide.load(qrCode).apply(imageOptions).into(bannerQrCodeImage)
-                        glide.load(qrCode).apply(imageOptions).into(bannerQrCodeImage_two)
+                    generateQrCode(link,color).let {
+                        glide.load(it).apply(imageOptions).into(bannerQrCodeImage)
+                        glide.load(it).apply(imageOptions).into(bannerQrCodeImage_two)
 
                     }
                 }
@@ -513,14 +472,26 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private fun setAnimation(playerView_layout: RelativeLayout, bgImageView: RelativeLayout){
         animatorVideo = ObjectAnimator.ofFloat(playerView_layout, "rotationX", -180f, 0f)
         animatorVideo.apply {
-            setDuration(2000)
-            addListener(onStart = {
-                //playerView.player?.play()
-            },onEnd = {
-               // playerView.player?.stop()
-            })
+            duration = 2000
             AccelerateDecelerateInterpolator()
         }
+    }
+
+    private fun getSubtitle(subtitle: String?, code: String?, color: Int): SpannedString {
+        return buildSpannedString {
+            if (!subtitle.isNullOrBlank()){
+                append(subtitle)
+            }
+            if (!code.isNullOrEmpty()){
+                if (!subtitle.isNullOrEmpty()) append(", ")
+                bold { color(color) { append("Use code ") } }
+                append(code)
+            }
+        }
+    }
+
+    private fun generateQrCode(promotionLink: String, color: Int): Barcode {
+        return Barcode(promotionLink, BarcodeFormat.QR_CODE,color, Color.TRANSPARENT)
     }
 
     private fun setBottomLeftAnimation(){
@@ -538,14 +509,16 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 if(layoutLeftBottom_one.visibility == View.VISIBLE ) layoutLeftBottom_one.visibility = View.INVISIBLE
                 if(emptyCardView_two.visibility == View.VISIBLE) emptyCardView_two.visibility = View.INVISIBLE
                 if(videoPromotionCard_two.visibility == View.INVISIBLE) videoPromotionCard_two.visibility = View.VISIBLE
-                if(mVideoList!![position].promotion!=null) setLayout(mVideoList!![position])
-
+                launch {
+                    delay(5000)
+                    if(mVideoList!![position].promotion!=null) setLayout(mVideoList!![position])
+                }
             })
             AccelerateInterpolator()
         }
 
         animatorBottomPromotion_one = ObjectAnimator.ofFloat(layoutLeftBottom_one,"rotationX",180f, 0f)
-        animatorBottomPromotion_one?.apply {
+        animatorBottomPromotion_one.apply {
             duration = 1500
             addListener(onStart = {
                 if(layoutLeftBottom_one.visibility == View.INVISIBLE){
@@ -581,7 +554,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
 
         animatorBottomRight_two = ObjectAnimator.ofFloat(layoutRightBottom_two,"rotationY", 0f, 90f)
-        animatorBottomRight_two?.apply {
+        animatorBottomRight_two.apply {
             duration = 1500
             addListener(onStart = {
                 if(layoutRightBottom_two.visibility == View.INVISIBLE)layoutRightBottom_two.visibility = View.VISIBLE
@@ -602,7 +575,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
         animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
         animatorImage.apply {
-            setDuration(1500)
+            duration = 1500
             AccelerateDecelerateInterpolator()
 
         }
@@ -617,10 +590,11 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 if (!link.isNullOrEmpty()) {
                     val color = ThemeColor(tintColor).getColor()
                     videoPromotionCard.setElevationShadowColor(color)
-                    promotion.logoUrl?.let { logoUrl ->
-                        glide.load(logoUrl).apply(imageOptions).into(videoLogoImage)
+                    if(promotion.logoUrl !=null){
+                        glide.load(promotion.logoUrl).apply(imageOptions).into(videoLogoImage)
                         videoLogoImage.visibility = View.VISIBLE
-                    }
+                    }else videoLogoImage.visibility = View.GONE
+
                     if (!promotion.title.isNullOrEmpty()) titleTv.text = promotion.title
                     subTitleTv.text = getSubtitle(promotion.subtitle, promotion.code, color)
                     generateQrCode(link, color).let { qrCode ->
@@ -648,10 +622,13 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     }
 
+
+
     override fun onDestroy() {
         super.onDestroy()
         cancel()
         callApiJob.cancel()
+        mContext.unbindService(connection)
         AdvertisementsHelper.instance.deleteCache()
     }
 
@@ -668,14 +645,13 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private val connection = object : ServiceConnection {
         override fun onServiceDisconnected(name: ComponentName?) {
 
-            Log.d("Service","Service is Disconnected")
-
+            Log.d("Service","UnBind Service")
         }
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             if (service is VideoService.VideoServiceBinder) {
                 playerView.player = service.getExoPlayerInstance()
                 videoProgressbarRunnable()
-                Log.d("Service","Service is Connected")
+
             }
         }
 
