@@ -84,7 +84,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var videoShadow: RelativeLayout? = null
     private val dateOperations = DateOperations.instance
     private lateinit var  callApiJob : Job
-    private lateinit  var animatorVideo:ObjectAnimator
+    private var animatorVideo:ObjectAnimator?=null
     private lateinit  var animatorImage:ObjectAnimator
     private lateinit var animatorBottomPromotion_one:ObjectAnimator
     private lateinit var animatorBottomPromotion_two:ObjectAnimator
@@ -356,8 +356,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
                         animatorBottomRight_two.start()
                     }
-
-
                 }
                 delay(15 * 1000)
             }
@@ -385,7 +383,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         try {
             launch {
 
-                animatorVideo.start()
+                animatorVideo?.start()
                 bgImage.startAnimation(zoomOut)
                 Advertisement_Video_CardView.bringToFront()
                 position = animateVideo.position
@@ -412,7 +410,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         promotion?.let {
             val link = it.link
             if (!link.isNullOrEmpty()) {
-                Log.d("Promotion","I Called ${data}")
                 val color = ThemeColor(tintColor).getColor()
                 videoPromotionCard_two.setElevationShadowColor(color)
                 if(promotion.logoUrl !=null){
@@ -471,7 +468,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     private fun setAnimation(playerView_layout: RelativeLayout, bgImageView: RelativeLayout){
         animatorVideo = ObjectAnimator.ofFloat(playerView_layout, "rotationX", -180f, 0f)
-        animatorVideo.apply {
+        animatorVideo?.apply {
             duration = 2000
             AccelerateDecelerateInterpolator()
         }
@@ -535,7 +532,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-
     private fun setBottomRightAnimation(){
         animatorBottomRight_one = ObjectAnimator.ofFloat(layoutRightBottom_one,"rotationY", 0f, 90f)
         animatorBottomRight_one.apply {
@@ -561,7 +557,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 layoutRightBottom_two.bringToFront()
                 wifi_cell_two.startAnimation(zoomIn)
             },onEnd = {
-                if(layoutLeftBottom_one.visibility == View.VISIBLE) layoutLeftBottom_one.visibility = View.INVISIBLE
+                if(layoutRightBottom_two.visibility == View.VISIBLE) layoutLeftBottom_one.visibility = View.INVISIBLE
                 if(qrCode_cell_two.visibility == View.VISIBLE) qrCode_cell_two.visibility = View.INVISIBLE
                 if(wifi_cell_two.visibility == View.INVISIBLE) wifi_cell_two.visibility = View.VISIBLE
 
@@ -572,14 +568,11 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private fun setImageAnimation(imageView: ImageView, imageView2: ImageView){
-
         animatorImage = ObjectAnimator.ofFloat(imageView, "rotationY", 0f, 90f)
         animatorImage.apply {
             duration = 1500
             AccelerateDecelerateInterpolator()
-
         }
-
     }
 
     private fun changeVideoQRCode(data: Data) {
@@ -614,15 +607,12 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-
     private fun startVideoService(list:List<Data>){
         val intent = Intent(mContext, VideoService::class.java)
         intent.putExtra("array", list as ArrayList<Data>)
         mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
 
     }
-
-
 
     override fun onDestroy() {
         super.onDestroy()
@@ -640,6 +630,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     override fun onStop() {
         super.onStop()
         EventBus.getDefault().unregister(this)
+        animatorBottomPromotion_one.cancel()
+        animatorBottomPromotion_two.cancel()
     }
 
     private val connection = object : ServiceConnection {
