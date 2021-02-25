@@ -1,6 +1,7 @@
 package com.routesme.taxi.uplevels
 
 import android.content.Context
+import com.routesme.taxi.App
 import com.routesme.taxi.helper.SharedPreferencesHelper
 
 class Vehicle {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.routesme.taxi.MVVM.View.activity.HomeActivity"
+    tools:context=".view.activity.HomeActivity"
     android:background="?homeScreenBackground_color">
 
     <androidx.constraintlayout.widget.Guideline
@@ -121,8 +121,6 @@
         android:layout_marginTop="@dimen/_12sdp"
         android:visibility="gone"
         app:layout_constraintDimensionRatio="H,26 : 28.2"/>
-
-s
     <ImageView
         android:id="@+id/openPatternBtn"
         android:layout_width="60dp"
@@ -136,22 +134,10 @@ s
         app:layout_constraintHeight_percent="0.06"
         app:layout_constraintWidth_percent="0.06"/>
     <androidx.constraintlayout.widget.ConstraintLayout
-       android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/activityCover"
-        android:visibility="gone">
-        <androidx.appcompat.widget.AppCompatImageView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@drawable/routes_background"
-            />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:id="@+id/activityVideoCover"
         android:layout_height="match_parent"
         android:visibility="gone"
-
         >
         <com.google.android.exoplayer2.ui.StyledPlayerView
             android:layout_width="match_parent"
@@ -176,11 +162,4 @@ s
         android:background="@drawable/bg_rounded_corner"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
-    <!--<ImageView
-
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@drawable/routes_background"
-        android:visibility="visible"/>-->
-
 </androidx.constraintlayout.widget.ConstraintLayout>
