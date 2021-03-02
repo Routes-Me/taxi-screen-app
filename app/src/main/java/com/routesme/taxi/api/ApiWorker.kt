@@ -28,7 +28,8 @@ class ApiWorker(val context: Context) {
                      writeTimeout(15, TimeUnit.SECONDS)
                      addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                      addInterceptor(BasicAuthInterceptor(context as Activity))
-                     if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
+                     authenticator(TokenRefreshAuthenticator(context))
+                  //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
                  }.build()
             }
             return mClient!!

@@ -6,5 +6,5 @@ import com.routesme.taxi.data.repository.TokenRepository
 
 class TokenViewModel :ViewModel(){
 
-    fun refreshToken(context: Context) = TokenRepository(context).refreshToken()
+   // fun refreshToken(context: Context) = TokenRepository(context).fetchFreshAccessToken()
 }

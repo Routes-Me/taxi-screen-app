@@ -16,6 +16,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
+        buildConfigField "int", "OAUTH_RE_AUTH_RETRY_LIMIT", '1'
 
         javaCompileOptions {
             annotationProcessorOptions {

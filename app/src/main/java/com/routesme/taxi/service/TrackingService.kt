@@ -111,6 +111,7 @@ class TrackingService : Service() {
 
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
+        Log.d("SocketSrv", "trackingUrl: $trackingUrl")
         return HubConnectionBuilder
                 .create(trackingUrl)
                 .withHeader("Authorization", Account().accessToken)
