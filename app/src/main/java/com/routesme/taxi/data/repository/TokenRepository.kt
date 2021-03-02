@@ -8,11 +8,9 @@ import com.google.gson.JsonElement
 import com.routesme.taxi.api.RestApiService
 import com.routesme.taxi.data.model.*
 import com.routesme.taxi.uplevels.Account
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.HttpURLConnection
 
 class TokenRepository(val context: Context) {
     private val refreshTokenResponse = MutableLiveData<RefreshTokenResponse>()
@@ -29,10 +27,10 @@ class TokenRepository(val context: Context) {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
 
                 if (response.isSuccessful && response.body() != null) {
-                    val refreshTokenSuccessResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
+                    val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
 
                    // refreshTokenResponse.value = RefreshTokenResponse(accessToken = refreshTokenSuccessResponse.accessToken, refreshToken = refreshTokenSuccessResponse.refreshToken)
-                    refreshTokenResponse.value = RefreshTokenResponse(accessToken = refreshTokenSuccessResponse.accessToken, refreshToken = refreshTokenSuccessResponse.refreshToken)
+                    refreshTokenResponse.value = RefreshTokenResponse(accessToken = successResponse.accessToken, refreshToken = successResponse.refreshToken)
                 }
                 /*
                 else{
