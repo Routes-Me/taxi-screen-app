@@ -28,5 +28,6 @@ class AdvertisementsHelper {
     fun deleteCache(){
 
         file.delete()
+
     }
 }

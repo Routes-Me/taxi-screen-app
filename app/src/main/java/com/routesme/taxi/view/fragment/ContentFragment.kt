@@ -140,6 +140,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
                 .observe(viewLifecycleOwner, Observer { workInfo ->
                     val status = workInfo.state.name
+                    Log.d("WORKER","${status}")
                     if((workInfo != null) && (workInfo.state == WorkInfo.State.RUNNING)){
 
                         observeAnalytics()
@@ -186,7 +187,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
             when(it.status){
                 ResponseBody.Status.SUCCESS ->{
                     editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                    editor?.commit()}
+                    editor?.commit()
+                }
                 ResponseBody.Status.ERROR ->{
 
                 }

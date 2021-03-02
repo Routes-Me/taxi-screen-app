@@ -147,7 +147,9 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         }
     }
     private fun addFragments() {
+
         supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
+
     }
 
     private fun removeFragments() {

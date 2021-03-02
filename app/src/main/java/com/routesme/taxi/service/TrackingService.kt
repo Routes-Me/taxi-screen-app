@@ -42,7 +42,7 @@ class TrackingService : Service() {
         locationReceiver = LocationReceiver()
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
-         insertTestFeeds()
+         //insertTestFeeds()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -111,6 +111,7 @@ class TrackingService : Service() {
 
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
+        Log.d("URL","${trackingUrl}")
         return HubConnectionBuilder
                 .create(trackingUrl)
                 .withHeader("Authorization", Account().accessToken)
@@ -160,7 +161,11 @@ class TrackingService : Service() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
                             val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
-                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED)
+                            {
+                                Log.d("Location","${feedCoordinates}")
+                                it.send("SendLocations", feedCoordinates)
+                            } }
                         }
                     }
                 })

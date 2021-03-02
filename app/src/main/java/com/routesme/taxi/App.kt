@@ -35,7 +35,8 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 1, TimeUnit.DAYS).setConstraints(constraint).build()
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 12, TimeUnit.HOURS).setConstraints(constraint).build()
+
     }
 
     override fun onCreate() {
@@ -44,17 +45,13 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         startTrackingService()
-
-
     }
 
     fun startTrackingService(){
         val isRegistered = !getDeviceId().isNullOrEmpty()
         if (isLocationPermissionsGranted() && isRegistered){
             val intent = Intent(instance, TrackingService::class.java)
-            //startService(intent)
             ContextCompat.startForegroundService(instance,intent)
-           // this.bindService(intent, serviceConnection, Context.BIND_AUTO_CREATE)
         }
     }
 

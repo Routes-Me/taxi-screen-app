@@ -12,9 +12,11 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheKeyFactory
 import com.google.android.exoplayer2.util.Util
 import com.routesme.taxi.helper.AdvertisementsHelper
 import com.routesme.taxi.helper.DateHelper
@@ -111,16 +113,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
                 }
 
-                override fun onTimelineChanged(timeline: Timeline, reason: Int) {
-                    super.onTimelineChanged(timeline, reason)
-
-                }
-
-                override fun onIsPlayingChanged(isPlaying: Boolean) {
-                    super.onIsPlayingChanged(isPlaying)
-
-                }
-
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
@@ -155,6 +147,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                 override fun onPlayerError(error: ExoPlaybackException) {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE ->{
+                            Log.e("ExoPlayer","TYPE_SOURCE")
                             if(error.sourceException.message == "Response code: 404"){
                                 exoPlayer.seekTo(exoPlayer.nextWindowIndex, 0)
 
@@ -165,10 +158,10 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                         }
                         ExoPlaybackException.TYPE_RENDERER ->{
                             prepare()
-
+                            Log.e("ExoPlayer","TYPE_RENDERER")
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED ->{
-
+                            Log.e("ExoPlayer","TYPE_UNEXPECTED")
                         }
                     }
                 }
@@ -180,7 +173,7 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {
         var mediaSource = ArrayList<MediaSource>()
-            val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+            val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
             videos.let { videos ->
                 for (video in videos) {
 
@@ -218,7 +211,9 @@ class VideoService: Service(),CoroutineScope by MainScope(){
         override fun onDestroy() {
             super.onDestroy()
             exoPlayer.release()
+            stopSelf()
         }
+
 }
 
 
