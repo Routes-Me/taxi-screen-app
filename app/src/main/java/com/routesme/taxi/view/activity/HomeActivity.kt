@@ -74,13 +74,12 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(applicationContext)))).get(RoomDBViewModel::class.java)
-
+        submitApplicationVersion()
         launch {initializePlayer()}
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
-        submitApplicationVersion()
         setSystemUiVisibility()
     }
 

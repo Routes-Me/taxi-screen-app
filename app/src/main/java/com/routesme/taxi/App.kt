@@ -48,8 +48,6 @@ class App : Application() {
         logApplicationStartingPeriod(currentPeriod())
         displayManager.setAlarm(this)
         startTrackingService()
-
-   //  applicationContext
     }
 
     fun startTrackingService(){
@@ -96,10 +94,4 @@ class App : Application() {
         return true
     }
     private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
-
-    //var currentActivity: Activity = (applicationContext as App).getCurrentActivity()
-
-   // fun getCurrentForegroundActivity(): Activity = applicationContext.
-
-    //val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
 }
