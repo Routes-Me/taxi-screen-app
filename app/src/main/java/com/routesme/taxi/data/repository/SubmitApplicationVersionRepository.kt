@@ -1,6 +1,7 @@
 package com.routesme.taxi.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.routesme.taxi.api.RestApiService
@@ -21,6 +22,7 @@ class SubmitApplicationVersionRepository(val context: Context) {
 
     fun submitApplicationVersion(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials): MutableLiveData<SubmitApplicationVersionResponse> {
         val call = thisApiCorService.submitApplicationVersion(deviceId, submitApplicationVersionCredentials)
+        Log.d("RefreshToken", "SubmitApplicationVersionRepository..Call: $call")
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful) {

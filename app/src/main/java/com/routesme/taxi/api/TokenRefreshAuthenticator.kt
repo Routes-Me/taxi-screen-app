@@ -15,10 +15,20 @@ import java.net.HttpURLConnection
 class TokenRefreshAuthenticator(private val context: Context): Authenticator{
     private val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
     override fun authenticate(route: Route?, response: Response): Request? = when {
+
+/*
+        response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications/renewals" && response.code() == HttpURLConnection.HTTP_NOT_FOUND -> {
+            Log.d("RefreshToken", "Renewals request .. response code: ${response.code()}")
+            null
+        }
+
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications/renewals" && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE -> {
            // logOutAuthenticator()
             null
         }
+        */
+
+        response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications/renewals" -> null
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
         retryCount(response.request()) == 1 -> null
         else -> response.createSignedRequest()

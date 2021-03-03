@@ -1,6 +1,7 @@
 package com.routesme.taxi.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -22,6 +23,7 @@ class ContentRepository(val context: Context) {
     }
     fun getContent(offset: Int, limit: Int): MutableLiveData<ContentResponse> {
         val call = thisApiCorService.getContent(offset,limit)
+        Log.d("RefreshToken", "ContentRepository..Call: $call")
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {

@@ -2,12 +2,19 @@ package com.routesme.taxi.api
 
 import android.annotation.TargetApi
 import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.os.Build
+import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
-import com.routesme.taxi.helper.AdminConsoleHelper
+import com.routesme.taxi.App
 import com.routesme.taxi.BuildConfig
+import com.routesme.taxi.R
+import com.routesme.taxi.helper.AdminConsoleHelper
+import com.routesme.taxi.helper.Helper
 import com.routesme.taxi.uplevels.Account
+import com.routesme.taxi.view.activity.LoginActivity
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -47,6 +54,22 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     }
 }
 
-enum class Header {
-    Authorization, CountryCode, AppVersion,application
+internal class NotAcceptableRefreshTokenInterceptor(val context: Context) : Interceptor {
+    @Throws(IOException::class)
+    override fun intercept(@NonNull chain: Interceptor.Chain): Response {
+        val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
+        val response: Response = chain.proceed(chain.request())
+        val request = response.request()
+        if (response.code() == HttpURLConnection.HTTP_NOT_FOUND && request.url().toString() == baseUrl + "authentications/renewals") {
+            Log.d("RefreshToken", "${request.url()} not found !")
+
+          //  val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
+
+             context.startActivity(Intent(context, LoginActivity::class.java))
+             (context as Activity).finish()
+        }
+        return response
+    }
 }
+
+enum class Header { Authorization, CountryCode, AppVersion, application }

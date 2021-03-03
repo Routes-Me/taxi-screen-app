@@ -3,23 +3,27 @@ package com.routesme.taxi
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.app.ActivityManager
 import android.app.Application
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
-import androidx.work.*
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi.helper.DisplayManager
-import com.routesme.taxi.service.TrackingService
 import com.routesme.taxi.data.model.SignInCredentials
-import com.routesme.taxi.worker.TaskManager
+import com.routesme.taxi.helper.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.service.TrackingService
 import com.routesme.taxi.uplevels.Account
+import com.routesme.taxi.worker.TaskManager
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class App : Application() {
     val account = Account()
@@ -45,7 +49,7 @@ class App : Application() {
         displayManager.setAlarm(this)
         startTrackingService()
 
-
+   //  applicationContext
     }
 
     fun startTrackingService(){
@@ -92,4 +96,10 @@ class App : Application() {
         return true
     }
     private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
+
+    //var currentActivity: Activity = (applicationContext as App).getCurrentActivity()
+
+   // fun getCurrentForegroundActivity(): Activity = applicationContext.
+
+    //val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
 }

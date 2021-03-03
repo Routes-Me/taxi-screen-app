@@ -1,6 +1,8 @@
 package com.routesme.taxi.data.repository
 
+import android.app.Activity
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
@@ -8,9 +10,11 @@ import com.google.gson.JsonElement
 import com.routesme.taxi.api.RestApiService
 import com.routesme.taxi.data.model.*
 import com.routesme.taxi.uplevels.Account
+import com.routesme.taxi.view.activity.LoginActivity
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.HttpURLConnection
 
 class TokenRepository(val context: Context) {
     private val refreshTokenResponse = MutableLiveData<RefreshTokenResponse>()
@@ -20,7 +24,7 @@ class TokenRepository(val context: Context) {
     }
 
     fun refreshToken(): MutableLiveData<RefreshTokenResponse> {
-        Log.d("Retry-Count", "Hit Refresh Token")
+        Log.d("RefreshToken", "Hit Refresh Token")
         val refreshTokenCredentials = RefreshTokenCredentials(Account().refreshToken.toString())
         val call = thisApiCorService.refreshToken(refreshTokenCredentials)
         call.enqueue(object : Callback<JsonElement> {
@@ -32,6 +36,14 @@ class TokenRepository(val context: Context) {
                    // refreshTokenResponse.value = RefreshTokenResponse(accessToken = refreshTokenSuccessResponse.accessToken, refreshToken = refreshTokenSuccessResponse.refreshToken)
                     refreshTokenResponse.value = RefreshTokenResponse(accessToken = successResponse.accessToken, refreshToken = successResponse.refreshToken)
                 }
+                        /*
+                else {
+
+                    //if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
+                   // context.startActivity(Intent(context, LoginActivity::class.java))
+                    //(context as Activity).finish()
+                }
+                */
                 /*
                 else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
