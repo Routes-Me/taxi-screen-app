@@ -286,10 +286,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                                     it.visibility = View.VISIBLE
                                 }
                                 launch {
-                                    setBottomRightAnimation()
-                                    setImageAnimation(advertisementsImageView,advertisementsImageView2)
-                                    setAnimation(Advertisement_Video_CardView,bgImage)
-                                    setBottomLeftAnimation()
+                                    //setBottomRightAnimation()
+                                    //setImageAnimation(advertisementsImageView,advertisementsImageView2)
+                                    //setAnimation(Advertisement_Video_CardView,bgImage)
+                                    //setBottomLeftAnimation()
                                     setTime()
                                     if (!images.isNullOrEmpty())setUpImage(images)
                                     mVideoList = videos
@@ -345,7 +345,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                         launch {
                             advertisementsImageView2.startAnimation(zoomIn)
                             advertisementsImageView.bringToFront()
-                            animatorImage.start()
+                            //animatorImage.start()
                         }
                     }
                     currentImageIndex++
@@ -353,12 +353,12 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                         currentImageIndex = 0
                     }
                     if(images[currentImageIndex].promotion !=null) {
-                        animatorBottomRight_one.start()
+                        //animatorBottomRight_one.start()
                         changeBannerQRCode(images[currentImageIndex])
 
                     }else{
 
-                        animatorBottomRight_two.start()
+                       // animatorBottomRight_two.start()
                     }
                 }
                 delay(15 * 1000)
@@ -384,7 +384,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(animateVideo: AnimateVideo){
-        try {
+       /* try {
             launch {
                 animatorVideo?.start()
                 bgImage.startAnimation(zoomOut)
@@ -404,7 +404,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
         }catch (e:Exception){
 
-        }
+        }*/
     }
 
     private fun setLayout(data: Data){
