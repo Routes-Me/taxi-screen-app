@@ -24,7 +24,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-
 class App : Application() {
     val account = Account()
     private val displayManager = DisplayManager.instance
@@ -34,6 +33,7 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
+    var isRefreshActivityAlive: Boolean = false
 
     companion object {
         @get:Synchronized
