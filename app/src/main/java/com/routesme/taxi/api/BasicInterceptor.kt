@@ -20,7 +20,7 @@ import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
 
-internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
+internal class BasicAuthInterceptor(val context: Context) : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -34,7 +34,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun countryCode() = activity.resources.configuration.locales.get(0).country
+    private fun countryCode() = context.resources.configuration.locales.get(0).country
 
     private fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
 }

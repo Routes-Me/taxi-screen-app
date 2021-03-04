@@ -14,10 +14,16 @@ class RefreshTokenActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_refresh_token)
+        instance = this
 
         Log.d("RefreshToken", "isRefreshActivityAlive ${App.instance.isRefreshActivityAlive}")
 
         startRefreshTokenService()
+    }
+
+    companion object{
+        @get:Synchronized
+        var instance = RefreshTokenActivity()
     }
 
     private fun startRefreshTokenService() {
@@ -28,6 +34,6 @@ class RefreshTokenActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         App.instance.isRefreshActivityAlive = false
-        Log.d("RefreshToken", "isRefreshActivityAlive ${App.instance.isRefreshActivityAlive}")
+        Log.d("RefreshToken", "isRefreshActivityAlive ${App.instance.isRefreshActivityAlive}, onDestroy")
     }
 }

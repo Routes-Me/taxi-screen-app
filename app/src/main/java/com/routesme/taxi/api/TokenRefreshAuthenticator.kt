@@ -5,9 +5,7 @@ import android.content.Context
 import android.content.Intent
 import com.routesme.taxi.App
 import com.routesme.taxi.R
-import com.routesme.taxi.data.repository.TokenRepository
 import com.routesme.taxi.helper.Helper
-import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.view.activity.RefreshTokenActivity
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -43,12 +41,13 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
     }
 
     private fun openRefreshTokenActivity() {
+
         context.startActivity(Intent(context, RefreshTokenActivity::class.java))
         (context as Activity).finish()
     }
 
     private fun retryCount(request: Request?)= request?.header(Constants.httpHeaderRetryCount)?.toInt() ?: 0
-
+/*
     private fun Response.createSignedRequest(): Request? {
         val refreshTokenResponse = TokenRepository(context).refreshToken()
         val accessToken = refreshTokenResponse.value?.accessToken
@@ -65,4 +64,5 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
             .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
             .build()
 }
+    */
 }
