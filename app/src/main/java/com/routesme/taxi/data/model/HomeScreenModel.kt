@@ -4,11 +4,6 @@ interface IModeChanging {
     fun onModeChange()
 }
 
-interface OnMediaTrackChanged{
-
-    fun onTrackChange()
-
-}
 
 interface on
 

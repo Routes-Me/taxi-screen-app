@@ -106,10 +106,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
                 }
                 override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
                     super.onTracksChanged(trackGroups, trackSelections)
-                    if(onStartMedia){
-                        onStartMedia = false
-                        EventBus.getDefault().post(AnimateVideo(true,exoPlayer.currentPeriodIndex))
-                    }
 
                 }
 
@@ -179,7 +175,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
 
                     val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))
                     mediaSource.add(mediaSourceItem)
-                    Log.d("Video", "${mediaSourceItem}")
                 }
                 return mediaSource
             }

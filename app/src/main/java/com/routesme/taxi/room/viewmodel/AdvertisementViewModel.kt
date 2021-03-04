@@ -24,7 +24,6 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 var analysisRecord = dbHelper.getItem(id,timeStamp/MIN)
-                Log.d("Thread ViewModel","${Thread.currentThread().name}, ${Thread.currentThread().id}")
                 if(analysisRecord!=null){
                     update(analysisRecord.id,period)
                 }else{
