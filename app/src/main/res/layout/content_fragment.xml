@@ -46,7 +46,7 @@
                     android:adjustViewBounds="true"
                     app:resize_mode="fill"
                     app:surface_type="texture_view"
-                    app:use_controller="true" />
+                    app:use_controller="false" />
 
                 <io.netopen.hotbitmapgg.library.view.RingProgressBar
                     android:id="@+id/videoRingProgressBar"
@@ -70,9 +70,8 @@
             android:id="@+id/viewPageSideBanner"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintHeight_percent="0.767"
+            app:layout_constraintHeight_percent="0.772"
             android:layout_marginStart="@dimen/_2sdp"
-            android:layout_marginTop="@dimen/_2sdp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/Advertisement_Video_CardView"
             app:layout_constraintTop_toTopOf="parent"
@@ -90,7 +89,9 @@
             android:layout_marginBottom="@dimen/_4sdp"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toBottomOf="@+id/Advertisement_Video_CardView"></androidx.viewpager2.widget.ViewPager2>
+            card_view:layout_constraintTop_toBottomOf="@+id/Advertisement_Video_CardView">
+
+        </androidx.viewpager2.widget.ViewPager2>
 
         <include
             android:id="@+id/constraintLayoutDateCell"
