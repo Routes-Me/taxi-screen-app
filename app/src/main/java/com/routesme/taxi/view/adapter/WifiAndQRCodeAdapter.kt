@@ -2,18 +2,11 @@ package com.routesme.taxi.view.adapter
 
 import android.content.Context
 import android.graphics.Color
-import android.text.SpannedString
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import androidx.core.text.bold
-import androidx.core.text.buildSpannedString
-import androidx.core.text.color
 import androidx.recyclerview.widget.RecyclerView
-import carbon.widget.RelativeLayout
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
@@ -26,7 +19,7 @@ import net.codecision.glidebarcode.model.Barcode
 class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val context: Context = context
     var list: List<Data> = list
-    private inner class View1ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private inner class BannerDiscountHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var bannerQrCodeImage : ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
         fun bind(position: Int) {
             val recyclerViewModel = list[position]
@@ -45,7 +38,7 @@ class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Ad
         }
     }
 
-    private inner class View2ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    private inner class WifiAndQRCodeViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         fun bind(position: Int) {
 
 
@@ -54,10 +47,7 @@ class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Ad
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
 
-        if (list[viewType].promotion != null) {
-            return View1ViewHolder(LayoutInflater.from(context).inflate(R.layout.banner_discount_cell, parent, false))
-        }
-        return View2ViewHolder(LayoutInflater.from(context).inflate(R.layout.wifi_cell, parent, false))
+        if (list[viewType].promotion != null) return BannerDiscountHolder(LayoutInflater.from(context).inflate(R.layout.banner_discount_cell, parent, false)) else return WifiAndQRCodeViewHolder(LayoutInflater.from(context).inflate(R.layout.wifi_cell, parent, false))
 
     }
 
@@ -68,9 +58,9 @@ class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Ad
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         if (list[position].promotion != null) {
-            (holder as View1ViewHolder).bind(position)
+            (holder as BannerDiscountHolder).bind(position)
         } else {
-            (holder as View2ViewHolder).bind(position)
+            (holder as WifiAndQRCodeViewHolder).bind(position)
         }
     }
 

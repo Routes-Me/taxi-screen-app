@@ -260,7 +260,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         })
     }
 
-    fun setUpWifiAndQRCodeAdapter(list:List<Data>){
+    private fun setUpWifiAndQRCodeAdapter(list:List<Data>){
 
         wifiAndQRCodeAdapter = WifiAndQRCodeAdapter(mContext,list)
         bottomRightPromotion.apply {
@@ -270,7 +270,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
     }
 
-    fun setUpAdapter(list:List<Data>){
+    private fun setUpAdapter(list:List<Data>){
         bottomBannerAdapter = BottomBannerAdapter(mContext,list)
         bottomLeftPromtion.apply {
             adapter = bottomBannerAdapter
@@ -278,7 +278,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-    fun setUpImageAdapter(images:List<Data>){
+    private fun setUpImageAdapter(images:List<Data>){
         imageBannerAdapter = ImageBannerAdapter(mContext,images)
         viewPageSideBanner.apply {
             adapter = imageBannerAdapter
