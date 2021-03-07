@@ -4,14 +4,13 @@ import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.IBinder
 import android.util.Log
-import androidx.work.impl.Schedulers.schedule
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.taxi.App
+import com.routesme.taxi.api.APIHelper
 import com.routesme.taxi.api.RestApiService
 import com.routesme.taxi.data.model.RefreshTokenCredentials
 import com.routesme.taxi.data.model.RefreshTokenSuccessResponse
@@ -26,9 +25,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.net.HttpURLConnection
-import java.util.*
-import java.util.concurrent.TimeUnit
-import kotlin.concurrent.schedule
 
 class RefreshTokenService: Service() {
 
@@ -48,13 +44,15 @@ class RefreshTokenService: Service() {
          super.onStartCommand(intent, flags, startId)
          startForeground(2, getNotification())
 
-       // refreshToken()
+       refreshToken()
 
+/*
         Timer("SendFeedsTimer", true).apply {
             schedule(TimeUnit.SECONDS.toMillis(10)) {
                 refreshToken()
             }
         }
+        */
 
          return START_STICKY
     }
@@ -68,39 +66,59 @@ class RefreshTokenService: Service() {
             Log.d("RefreshToken", "Hit Refresh Token")
             val refreshTokenCredentials = RefreshTokenCredentials(Account().refreshToken.toString())
             val call = thisApiCoreService.refreshToken(refreshTokenCredentials)
+            APIHelper.enqueueWithRetry(call ,5,object :Callback<JsonElement> {
+              @Override
+              override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                  if (response.isSuccessful && response.body() != null){
+                      val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
+                      Log.d("RefreshToken","successResponse: $successResponse")
+                      successResponse?.let {
+                          saveTokens(it)
+                          openHomeActivity()
+                          stopRefreshTokenService()
+                      }
+                  } else{
+                      if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
+                          /*
+                           val objError = JSONObject(response.errorBody()!!.string())
+                           val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
+                           Log.d("RefreshToken","errors: $errors")
+*/
+                          openLoginActivity()
+                          stopRefreshTokenService()
+                      }else{
+                          val error = Error(detail = response.message(), statusCode = response.code())
+                          val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                          val responseErrors = ResponseErrors(errors)
+                          Log.d("RefreshToken","responseErrors: $responseErrors")
+                      }
+                  }
+              }
+              @Override
+              override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                  Log.d("RefreshToken","throwable: $t")
+              }
+        })
+        /*
             call.enqueue(object : Callback<JsonElement> {
                 override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                     if (response.isSuccessful && response.body() != null) {
                         val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
                         Log.d("RefreshToken","successResponse: $successResponse")
                         successResponse?.let {
-                            Account().apply {
-                                accessToken = it.accessToken
-                                refreshToken = it.refreshToken
-                            }
-                            if (App.instance.isRefreshActivityAlive) {
-                                startActivity(Intent(applicationContext, HomeActivity::class.java))
-                                //Should finish the Refresh Token Activity here
-                                RefreshTokenActivity.instance.finish()
-                            }
-
-                            stopForeground(true)
-                            stopSelf()
+                            saveTokens(it)
+                            openHomeActivity()
+                            stopRefreshTokenService()
                         }
                     } else{
                         if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
+                           /*
                             val objError = JSONObject(response.errorBody()!!.string())
                             val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                             Log.d("RefreshToken","errors: $errors")
-
-                            if (App.instance.isRefreshActivityAlive) {
-                                startActivity(Intent(applicationContext, LoginActivity::class.java))
-                                //Should finish the Refresh Token Activity here
-                                RefreshTokenActivity.instance.finish()
-                            }
-
-                            stopForeground(true)
-                            stopSelf()
+*/
+                            openLoginActivity()
+                            stopRefreshTokenService()
                         }else{
                             val error = Error(detail = response.message(), statusCode = response.code())
                             val errors = mutableListOf<Error>().apply { add(error)  }.toList()
@@ -113,6 +131,33 @@ class RefreshTokenService: Service() {
                     Log.d("RefreshToken","throwable: $throwable")
                 }
             })
+                    */
+    }
+
+    private fun saveTokens(refreshTokenSuccessResponse: RefreshTokenSuccessResponse) {
+        Account().apply {
+            accessToken = refreshTokenSuccessResponse.accessToken
+            refreshToken = refreshTokenSuccessResponse.refreshToken
+        }
+    }
+
+    private fun openHomeActivity() {
+        if (App.instance.isRefreshActivityAlive) {
+            startActivity(Intent(applicationContext, HomeActivity::class.java))
+            RefreshTokenActivity.instance.finish()
+        }
+    }
+
+    private fun openLoginActivity() {
+        if (App.instance.isRefreshActivityAlive) {
+            startActivity(Intent(applicationContext, LoginActivity::class.java))
+            RefreshTokenActivity.instance.finish()
+        }
+    }
+
+    private fun stopRefreshTokenService() {
+        stopForeground(true)
+        stopSelf()
     }
 
     private fun getNotification(): Notification {
