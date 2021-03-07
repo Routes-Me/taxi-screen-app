@@ -50,13 +50,11 @@ class RefreshTokenService: Service() {
 
        // refreshToken()
 
-
         Timer("SendFeedsTimer", true).apply {
             schedule(TimeUnit.SECONDS.toMillis(10)) {
                 refreshToken()
             }
         }
-
 
          return START_STICKY
     }
@@ -108,16 +106,6 @@ class RefreshTokenService: Service() {
                             val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                             val responseErrors = ResponseErrors(errors)
                             Log.d("RefreshToken","responseErrors: $responseErrors")
-/*
-                            if (App.instance.isRefreshActivityAlive) {
-                                startActivity(Intent(applicationContext, LoginActivity::class.java))
-                                //Should finish the Refresh Token Activity here
-                                RefreshTokenActivity.instance.finish()
-                            }
-
-                            stopForeground(true)
-                            stopSelf()
-                            */
                         }
                     }
                 }

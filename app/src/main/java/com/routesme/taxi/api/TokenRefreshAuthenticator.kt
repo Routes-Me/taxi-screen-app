@@ -41,7 +41,6 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
     }
 
     private fun openRefreshTokenActivity() {
-
         context.startActivity(Intent(context, RefreshTokenActivity::class.java))
         (context as Activity).finish()
     }
