@@ -8,7 +8,7 @@ class Account {
     var accessToken: String?
         get() {
             sharedPrefs().getString(SharedPreferencesHelper.token, null)?.let{
-                return "Bearer $it dfd"
+                return "Bearer $it"
             }
             return null
         }

@@ -12,12 +12,12 @@ abstract class RetryAbleCallback<T>(private val call: Call<T>, private val repea
         if (APIHelper.isCallSuccess(response) || APIHelper.isCallNotAcceptable(response)) {
             onFinalResponse(call, response)
         } else {
-            Timer("RetryAbleCall", true).apply { schedule(TimeUnit.SECONDS.toMillis(repeatingDelay)) { retry() } }
+            Timer("RetryAbleCall", true).apply { schedule(TimeUnit.MINUTES.toMillis(repeatingDelay)) { retry() } }
         }
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        Timer("RetryAbleCall", true).apply { schedule(TimeUnit.SECONDS.toMillis(repeatingDelay)) { retry() } }
+        Timer("RetryAbleCall", true).apply { schedule(TimeUnit.MINUTES.toMillis(repeatingDelay)) { retry() } }
     }
 
     open fun onFinalResponse(call: Call<T>?, response: Response<T>?) {}
