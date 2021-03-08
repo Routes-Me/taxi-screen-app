@@ -8,7 +8,7 @@ import java.net.HttpURLConnection
 object APIHelper {
     const val DEFAULT_RETRIES = 3
     fun <T> enqueueWithRetry(call: Call<T>, retryCount: Int, callback: Callback<T>) {
-        call.enqueue(object : RetryableCallback<T>(call, retryCount) {
+        call.enqueue(object : RetryAbleCallback<T>(call, retryCount) {
             override fun onFinalResponse(call: Call<T>?, response: Response<T>?) {
                 callback.onResponse(call, response)
             }
