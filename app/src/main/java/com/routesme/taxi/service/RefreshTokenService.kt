@@ -42,24 +42,11 @@ class RefreshTokenService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
          super.onStartCommand(intent, flags, startId)
+
          startForeground(2, getNotification())
-
-       refreshToken()
-
-/*
-        Timer("SendFeedsTimer", true).apply {
-            schedule(TimeUnit.SECONDS.toMillis(10)) {
-                refreshToken()
-            }
-        }
-        */
+         refreshToken()
 
          return START_STICKY
-    }
-
-    override fun onTaskRemoved(rootIntent: Intent?) {
-        super.onTaskRemoved(rootIntent)
-        Log.d("RefreshToken", "Application killed")
     }
 
     private fun refreshToken() {
@@ -74,7 +61,7 @@ class RefreshTokenService: Service() {
                       Log.d("RefreshToken","successResponse: $successResponse")
                       successResponse?.let {
                           saveTokens(it)
-                          openHomeActivity()
+                          if (App.instance.isRefreshActivityAlive) openHomeActivity()
                           stopRefreshTokenService()
                       }
                   } else{
@@ -84,7 +71,7 @@ class RefreshTokenService: Service() {
                            val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                            Log.d("RefreshToken","errors: $errors")
 */
-                          openLoginActivity()
+                          if (App.instance.isRefreshActivityAlive) openLoginActivity()
                           stopRefreshTokenService()
                       }else{
                           val error = Error(detail = response.message(), statusCode = response.code())
@@ -142,17 +129,14 @@ class RefreshTokenService: Service() {
     }
 
     private fun openHomeActivity() {
-        if (App.instance.isRefreshActivityAlive) {
-            startActivity(Intent(applicationContext, HomeActivity::class.java))
-            RefreshTokenActivity.instance.finish()
-        }
+        startActivity(Intent(applicationContext, HomeActivity::class.java))
+        RefreshTokenActivity.instance.finish()
     }
 
     private fun openLoginActivity() {
-        if (App.instance.isRefreshActivityAlive) {
-            startActivity(Intent(applicationContext, LoginActivity::class.java))
-            RefreshTokenActivity.instance.finish()
-        }
+        startActivity(Intent(applicationContext, LoginActivity::class.java))
+        RefreshTokenActivity.instance.finish()
+
     }
 
     private fun stopRefreshTokenService() {

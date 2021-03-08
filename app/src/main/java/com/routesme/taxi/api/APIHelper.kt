@@ -6,9 +6,8 @@ import retrofit2.Response
 import java.net.HttpURLConnection
 
 object APIHelper {
-    const val DEFAULT_RETRIES = 3
-    fun <T> enqueueWithRetry(call: Call<T>, retryCount: Int, callback: Callback<T>) {
-        call.enqueue(object : RetryAbleCallback<T>(call, retryCount) {
+    fun <T> enqueueWithRetry(call: Call<T>, repeatingDelay: Long, callback: Callback<T>) {
+        call.enqueue(object : RetryAbleCallback<T>(call, repeatingDelay) {
             override fun onFinalResponse(call: Call<T>?, response: Response<T>?) {
                 callback.onResponse(call, response)
             }
@@ -19,12 +18,6 @@ object APIHelper {
         })
     }
 
-    fun <T> enqueueWithRetry(call: Call<T>, callback: Callback<T>) {
-        enqueueWithRetry(call, DEFAULT_RETRIES, callback)
-    }
-
-    fun isCallSuccess(response: Response<*>): Boolean {
-        val code = response.code()
-        return code in 200..399 || code == HttpURLConnection.HTTP_NOT_ACCEPTABLE
-    }
+    fun isCallSuccess(response: Response<*>) = response.code() in 200..399
+    fun isCallNotAcceptable(response: Response<*>) = response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE
 }
