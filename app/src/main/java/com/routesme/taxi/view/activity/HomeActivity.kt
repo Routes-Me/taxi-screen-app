@@ -232,7 +232,6 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         cancel()
     }
     override fun onStart() {
-        Log.d("LifeCycle","onStart")
         EventBus.getDefault().register(this)
         super.onStart()
     }

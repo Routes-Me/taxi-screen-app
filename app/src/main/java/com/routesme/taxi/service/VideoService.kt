@@ -180,29 +180,6 @@ class VideoService: Service(),CoroutineScope by MainScope(){
             }
         }
 
-        fun getMediaSource(videos: String): MediaSource {
-            val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
-            val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(videos))
-            return mediaSourceItem
-        }
-
-        fun stopPlayer() {
-
-            exoPlayer.stop()
-        }
-
-        fun playPlayer() {
-
-            exoPlayer.play()
-        }
-
-
-        fun getCurrentPeriod(): Int {
-            val current = (exoPlayer.currentPosition).toInt()
-            val progress = current * 100 / (exoPlayer.duration).toInt()
-            return progress
-        }
-
         override fun onDestroy() {
             super.onDestroy()
             exoPlayer.release()

@@ -1,15 +1,16 @@
 package com.routesme.taxi.view.fragment
 
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Looper.prepare
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,6 +21,18 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.exoplayer2.ExoPlaybackException
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.source.MediaSource
+import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
+import com.google.android.exoplayer2.upstream.DataSource
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.util.Util
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.routesme.taxi.data.model.ContentResponse
@@ -28,7 +41,6 @@ import com.routesme.taxi.data.model.ReportResponse
 import com.routesme.taxi.viewmodel.ContentViewModel
 import com.routesme.taxi.view.events.AnimateVideo
 import com.routesme.taxi.view.events.DemoVideo
-import com.routesme.taxi.service.VideoService
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.*
 import com.routesme.taxi.room.ResponseBody
@@ -38,6 +50,7 @@ import com.routesme.taxi.room.factory.ViewModelFactory
 import com.routesme.taxi.room.helper.DatabaseHelperImpl
 import com.routesme.taxi.room.viewmodel.RoomDBViewModel
 import com.routesme.taxi.App
+import com.routesme.taxi.service.VideoService
 import com.routesme.taxi.view.adapter.BottomBannerAdapter
 import com.routesme.taxi.view.adapter.ImageBannerAdapter
 import com.routesme.taxi.view.adapter.WifiAndQRCodeAdapter
@@ -349,6 +362,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     override fun onDestroy() {
         super.onDestroy()
         cancel()
+        mContext.unbindService(connection)
         callApiJob.cancel()
         AdvertisementsHelper.instance.deleteCache()
     }

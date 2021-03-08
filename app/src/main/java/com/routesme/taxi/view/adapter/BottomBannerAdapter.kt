@@ -47,23 +47,20 @@ class BottomBannerAdapter(context: Context,list: List<Data>) : RecyclerView.Adap
             val recyclerViewModel = list[position]
             val promotion = recyclerViewModel.promotion
             val tintColor = recyclerViewModel.tintColor
-
+            val color = ThemeColor(tintColor).getColor()
             promotion?.let {
-                val link = it.link
-                if (!link.isNullOrEmpty()) {
-                    val color = ThemeColor(tintColor).getColor()
-                    videoPromotionCard.setElevationShadowColor(color)
-                    if(promotion.logoUrl !=null){
-                        Glide.with(context).load(promotion.logoUrl).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(videoLogoImage)
-                        videoLogoImage.visibility = View.VISIBLE
-                    }else videoLogoImage.visibility = View.GONE
-
-                    if (!promotion.title.isNullOrEmpty()) titleTv.text = promotion.title
-                    subTitleTv.text = getSubtitle(promotion.subtitle, promotion.code, color)
-                    generateQrCode(link, color).let { qrCode ->
+                videoPromotionCard.setElevationShadowColor(color)
+                if (!it.link.isNullOrEmpty()) {
+                    generateQrCode(it.link, color).let { qrCode ->
                         Glide.with(context).load(qrCode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(videoQrCodeImage)
                     }
                 }
+                if(promotion.logoUrl !=null){
+                    Glide.with(context).load(promotion.logoUrl).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(videoLogoImage)
+                    videoLogoImage.visibility = View.VISIBLE
+                }else videoLogoImage.visibility = View.GONE
+                if (!promotion.title.isNullOrEmpty()) titleTv.text = promotion.title
+                if (!promotion.subtitle.isNullOrEmpty()) subTitleTv.text = getSubtitle(promotion.subtitle, promotion.code, color)
             }
         }
     }
