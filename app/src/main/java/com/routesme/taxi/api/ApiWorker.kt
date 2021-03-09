@@ -2,6 +2,9 @@ package com.routesme.taxi.api
 
 import android.content.Context
 import com.google.gson.GsonBuilder
+import com.routesme.taxi.api.interceptors.BasicAuthInterceptor
+import com.routesme.taxi.api.interceptors.ReceivedCookiesInterceptor
+import com.routesme.taxi.api.interceptors.TokenRefreshAuthenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.converter.gson.GsonConverterFactory
@@ -25,6 +28,7 @@ class ApiWorker(val context: Context) {
                      writeTimeout(15, TimeUnit.SECONDS)
                      addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                      addInterceptor(BasicAuthInterceptor(context))
+                     addInterceptor(ReceivedCookiesInterceptor(context))
                     // addInterceptor(NotAcceptableRefreshTokenInterceptor(context))
                      authenticator(TokenRefreshAuthenticator(context))
                   //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))

@@ -13,7 +13,6 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.net.HttpURLConnection
 
-
 class LoginRepository(val context: Context) {
     private val signInResponse = MutableLiveData<LoginResponse>()
 

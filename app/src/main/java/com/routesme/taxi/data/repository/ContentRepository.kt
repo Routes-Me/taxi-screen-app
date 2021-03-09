@@ -26,6 +26,7 @@ class ContentRepository(val context: Context) {
         Log.d("RefreshToken", "ContentRepository..Call: $call")
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                Log.d("GetContentApi","Url: ${response.errorBody().toString()}")
                 if (response.isSuccessful && response.body() != null) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
                     contentResponse.value = ContentResponse(data = content.data)
@@ -33,6 +34,7 @@ class ContentRepository(val context: Context) {
                     val error = Error(detail = response.message(), statusCode = response.code())
                     val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                     val responseErrors = ResponseErrors(errors)
+                    Log.d("GetContentApi","responseErrors: $responseErrors")
                     contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
                 }
             }
