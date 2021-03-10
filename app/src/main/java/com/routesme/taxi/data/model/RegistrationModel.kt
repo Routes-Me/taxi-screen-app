@@ -12,7 +12,6 @@ class RegistrationResponse(deviceId: String? = null, val mResponseErrors: Respon
 
        this.deviceId = deviceId
 
-
     }
 
     val isSuccess: Boolean

@@ -34,7 +34,7 @@ public class MagicActivity extends PermissionsActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Log.e(TAG, "onCreate");
+
     }
 
     @Override

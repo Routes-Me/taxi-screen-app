@@ -95,8 +95,6 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     override fun onCleared() {
         compositeDisposable.clear()
         super.onCleared()
-
-        Log.d("ViewModel","onCleared")
     }
 
 }
