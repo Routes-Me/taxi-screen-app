@@ -29,6 +29,7 @@ class ApiWorker(val context: Context) {
                      addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                      addInterceptor(BasicAuthInterceptor(context))
                      addInterceptor(ReceivedCookiesInterceptor(context))
+
                     // addInterceptor(NotAcceptableRefreshTokenInterceptor(context))
                      authenticator(TokenRefreshAuthenticator(context))
                   //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))

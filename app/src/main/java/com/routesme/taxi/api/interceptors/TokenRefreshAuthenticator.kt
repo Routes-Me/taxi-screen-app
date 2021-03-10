@@ -3,10 +3,11 @@ package com.routesme.taxi.api.interceptors
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.routesme.taxi.App
+import android.util.Log
 import com.routesme.taxi.R
 import com.routesme.taxi.api.Constants
 import com.routesme.taxi.helper.Helper
+import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.view.activity.RefreshTokenActivity
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -33,12 +34,20 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
         //retryCount(response.request()) == 1 -> null
         else -> {
+            //Here.. check if the request redirects or the access token expired ..
+
+            //If the request redirects, So I'll add the authorization header again to if , then execute it again
+            response.request().reAddAuthorizationHeader()
+
+            //If it's expired, So I'll handle refresh token logic
+
             if (!App.instance.isRefreshActivityAlive) {
                 App.instance.isRefreshActivityAlive = true
                 openRefreshTokenActivity()
             }
             null
-        }//response.createSignedRequest()
+
+        }
     }
 
     private fun openRefreshTokenActivity() {
@@ -56,13 +65,14 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
         refreshToken?.let { Account().refreshToken = it }
         return request().signWithToken()
     }
-    private fun Request.signWithToken(): Request {
-  //  Log.d("Retry-Count", "Request: ${this.url()}, Count times: ${retryCount(this)}")
+    */
+
+    private fun Request.reAddAuthorizationHeader(): Request {
+    Log.d("UnAuthorizationRequest","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
    return newBuilder()
-            .header(Constants.httpHeaderRetryCount, "${retryCount(this) + 1}")
-            .removeHeader(Header.Authorization.toString())
+           // .removeHeader(Header.Authorization.toString())
             .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
             .build()
 }
-    */
+
 }

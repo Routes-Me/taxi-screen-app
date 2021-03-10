@@ -23,10 +23,10 @@ class ContentRepository(val context: Context) {
     }
     fun getContent(offset: Int, limit: Int): MutableLiveData<ContentResponse> {
         val call = thisApiCoreService.getContent(offset,limit)
-        Log.d("RefreshToken", "ContentRepository..Call: $call")
+        Log.d("GetContentApi", "ContentRepository..Call: ${call.request().headers()}")
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("GetContentApi","Url: ${response.errorBody().toString()}")
+               // Log.d("GetContentApi","Url: ${response.errorBody().toString()}, Location header: ${response.headers()}")
                 if (response.isSuccessful && response.body() != null) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
                     contentResponse.value = ContentResponse(data = content.data)
