@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import carbon.widget.RelativeLayout
@@ -235,10 +236,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private  fun fetchContent(){
+        val contentViewModel = ViewModelProviders.of(this.activity!!).get(ContentViewModel::class.java)
+      //  val contentViewModel: ContentViewModel by viewModels()
 
-        val contentViewModel: ContentViewModel by viewModels()
-
-                contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
+                contentViewModel.getContent(1,100,mContext)?.observe(viewLifecycleOwner , Observer<ContentResponse> {
                     dialog?.dismiss()
                     if (it != null) {
                         if (it.isSuccess) {

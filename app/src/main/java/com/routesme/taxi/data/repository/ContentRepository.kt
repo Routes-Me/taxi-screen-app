@@ -31,11 +31,14 @@ class ContentRepository(val context: Context) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
                     contentResponse.value = ContentResponse(data = content.data)
                 } else{
+                    Log.d("GetContentApi","Response Code: ${response.code()}")
+                    /*
                     val error = Error(detail = response.message(), statusCode = response.code())
                     val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                     val responseErrors = ResponseErrors(errors)
                     Log.d("GetContentApi","responseErrors: $responseErrors")
                     contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
+                    */
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
