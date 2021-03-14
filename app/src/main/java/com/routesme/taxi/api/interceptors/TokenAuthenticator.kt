@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.routesme.taxi.App
 import com.routesme.taxi.R
 import com.routesme.taxi.api.Constants
 import com.routesme.taxi.helper.Helper
@@ -14,7 +15,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 
-class TokenRefreshAuthenticator(private val context: Context): Authenticator{
+class TokenAuthenticator(private val context: Context): Authenticator{
     private val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
     override fun authenticate(route: Route?, response: Response): Request? = when {
 
@@ -34,19 +35,23 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
         //retryCount(response.request()) == 1 -> null
         else -> {
+            Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
+          //  null
+
+            val authorizationHeader: String? = response.networkResponse()?.request()?.headers()?.get("Authorization")
+
             //Here.. check if the request redirects or the access token expired ..
-
-            //If the request redirects, So I'll add the authorization header again to if , then execute it again
-            response.request().reAddAuthorizationHeader()
-
-            //If it's expired, So I'll handle refresh token logic
-
-            if (!App.instance.isRefreshActivityAlive) {
-                App.instance.isRefreshActivityAlive = true
-                openRefreshTokenActivity()
+            if (authorizationHeader == null){
+                //If the request redirects [ If authorization header is null ], So I'll add the authorization header again to it , then execute it again
+                response.request().reAddAuthorizationHeader()
+            }else{
+                //If it's expired, So I'll handle refresh token logic
+                if (!App.instance.isRefreshActivityAlive) {
+                    App.instance.isRefreshActivityAlive = true
+                    openRefreshTokenActivity()
+                }
+                null
             }
-            null
-
         }
     }
 
@@ -68,11 +73,10 @@ class TokenRefreshAuthenticator(private val context: Context): Authenticator{
     */
 
     private fun Request.reAddAuthorizationHeader(): Request {
-    Log.d("UnAuthorizationRequest","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
+    Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
    return newBuilder()
            // .removeHeader(Header.Authorization.toString())
             .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
             .build()
 }
-
 }
