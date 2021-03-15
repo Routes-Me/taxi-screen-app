@@ -60,8 +60,9 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.routesme.taxi.view.activity.HomeActivity"
-            android:screenOrientation="landscape"
-            android:windowSoftInputMode="adjustNothing">
+
+            android:windowSoftInputMode="adjustNothing"
+            >
 
         </activity>
         <activity

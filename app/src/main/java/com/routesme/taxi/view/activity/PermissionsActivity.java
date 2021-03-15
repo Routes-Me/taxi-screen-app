@@ -25,6 +25,7 @@ public abstract class PermissionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settingPermission();
         locationsPermission();
+
         if (mLocationPermission && mSettingPermission) onPermissionsOkay();
     }
 

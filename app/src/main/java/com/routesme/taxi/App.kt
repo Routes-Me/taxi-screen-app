@@ -8,6 +8,7 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.work.*
 import com.google.firebase.analytics.FirebaseAnalytics
@@ -26,6 +27,7 @@ class App : Application() {
     private val displayManager = DisplayManager.instance
     var signInCredentials: SignInCredentials? = null
     var isNewLogin = false
+    var isNightModeCall = false
     var institutionId: String? = null
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
@@ -42,8 +44,10 @@ class App : Application() {
         super.onCreate()
         instance = this
         logApplicationStartingPeriod(currentPeriod())
+        isNightModeCall = true
         displayManager.setAlarm(this)
-        startTrackingService()
+        Log.d("onCreate0","I called")
+        //startTrackingService()
     }
 
     fun startTrackingService(){

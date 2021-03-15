@@ -71,16 +71,10 @@ open class DisplayManager {
 
     fun notifyRegisteredActivity() {
         for (activity in registeredActivities) {
-            (activity as IModeChanging).onModeChange()
+
+            if(isAnteMeridiem())(activity as IModeChanging).onModeChange() else (activity as IModeChanging).onModeChange()
+
         }
-    }
-
-    fun getDisplayWidth(context: Context):Int{
-
-        val metrics = DisplayMetrics()
-        val windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager.defaultDisplay?.getMetrics(metrics)
-        return (metrics.widthPixels * 69) / 100
     }
 }
 enum class Mode{Light,Dark}

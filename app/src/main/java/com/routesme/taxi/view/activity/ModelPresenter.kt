@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.taxi.R
 import com.routesme.taxi.App
@@ -15,6 +16,7 @@ class ModelPresenter : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.model_presenter)
+        App.instance.isNightModeCall = true
         startActivity()
     }
 

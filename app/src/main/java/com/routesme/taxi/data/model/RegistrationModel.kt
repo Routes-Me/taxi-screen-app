@@ -15,10 +15,7 @@ class RegistrationResponse(deviceId: String? = null, val mResponseErrors: Respon
     }
 
     val isSuccess: Boolean
+
         get() = (mResponseErrors == null && mThrowable == null)
-
-
-
-
 
 }

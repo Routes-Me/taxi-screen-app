@@ -1,6 +1,7 @@
 package com.routesme.taxi.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -21,23 +22,24 @@ class ContentRepository(val context: Context) {
         RestApiService.createCorService(context)
     }
     fun getContent(offset: Int, limit: Int): MutableLiveData<ContentResponse> {
-        val call = thisApiCorService.getContent(offset,limit)
-        call.enqueue(object : Callback<JsonElement> {
-            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val content = Gson().fromJson<Content>(response.body(), Content::class.java)
-                    contentResponse.value = ContentResponse(data = content.data)
-                } else{
-                    val error = Error(detail = response.message(), statusCode = response.code())
-                    val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                    val responseErrors = ResponseErrors(errors)
-                    contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
+            Log.d("Method","Calling API")
+            val call = thisApiCorService.getContent(offset,limit)
+            call.enqueue(object : Callback<JsonElement> {
+                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val content = Gson().fromJson<Content>(response.body(), Content::class.java)
+                        contentResponse.value = ContentResponse(data = content.data)
+                    } else{
+                        val error = Error(detail = response.message(), statusCode = response.code())
+                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                        val responseErrors = ResponseErrors(errors)
+                        contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
+                    }
                 }
-            }
-            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                contentResponse.value = ContentResponse(mThrowable = throwable)
-            }
-        })
-        return contentResponse
+                override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
+                    contentResponse.value = ContentResponse(mThrowable = throwable)
+                }
+            })
+            return contentResponse
     }
 }

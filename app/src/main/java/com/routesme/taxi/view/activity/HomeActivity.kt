@@ -7,11 +7,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -20,29 +22,21 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.helper.DisplayManager
-import com.routesme.taxi.helper.HomeScreenHelper
-import com.routesme.taxi.helper.Mode
-import com.routesme.taxi.helper.ScreenBrightness
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.IModeChanging
 import com.routesme.taxi.data.model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.data.model.SubmitApplicationVersionResponse
+import com.routesme.taxi.helper.*
+import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.view.fragment.ContentFragment
 import com.routesme.taxi.viewmodel.SubmitApplicationVersionViewModel
-import com.routesme.taxi.view.events.DemoVideo
-import com.routesme.taxi.R
-import com.routesme.taxi.room.AdvertisementDatabase
-import com.routesme.taxi.room.factory.ViewModelFactory
-import com.routesme.taxi.room.helper.DatabaseHelperImpl
-import com.routesme.taxi.room.viewmodel.RoomDBViewModel
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
-class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(){
+class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),CoroutineScope by MainScope(),IModeChanging{
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
@@ -53,8 +47,6 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
-    private lateinit var viewModel: RoomDBViewModel
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -72,7 +64,6 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
-        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(applicationContext)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
         launch {initializePlayer()}
         turnOnHotspot()
@@ -147,14 +138,14 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         }
     }
     private fun addFragments() {
-
-        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
-
+        supportFragmentManager.commit {
+            replace<ContentFragment>(R.id.contentFragment_container)
+        }
     }
 
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
-        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
+        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
     }
     override fun onPermissionsOkay() {}
 
@@ -166,10 +157,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         }
         pressedTime = System.currentTimeMillis()
     }
-    override fun onModeChange() {
-        removeFragments()
-        recreate()
-    }
+
 
     private fun turnOnHotspot() {
 
@@ -210,9 +198,6 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
                     demoVideoPlayer.visibility = View.GONE
                     if(player?.isPlaying!!) stopVideo()
 
-
-
-
                 }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
@@ -252,6 +237,9 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         player?.pause()
 
     }
-
+    override fun onModeChange() {
+        removeFragments()
+        recreate()
+    }
 
 }

@@ -5,61 +5,48 @@ import android.app.Activity
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
-import android.os.Looper.prepare
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.annotation.Nullable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.source.MediaSource
-import com.google.android.exoplayer2.source.ProgressiveMediaSource
-import com.google.android.exoplayer2.source.TrackGroupArray
-import com.google.android.exoplayer2.trackselection.TrackSelectionArray
-import com.google.android.exoplayer2.upstream.DataSource
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
-import com.google.android.exoplayer2.upstream.cache.CacheDataSource
-import com.google.android.exoplayer2.util.Util
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.routesme.taxi.App
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.ContentResponse
 import com.routesme.taxi.data.model.Data
 import com.routesme.taxi.data.model.ReportResponse
-import com.routesme.taxi.viewmodel.ContentViewModel
-import com.routesme.taxi.view.events.AnimateVideo
-import com.routesme.taxi.view.events.DemoVideo
-import com.routesme.taxi.R
-import com.routesme.taxi.helper.*
-import com.routesme.taxi.room.ResponseBody
+import com.routesme.taxi.helper.AdvertisementsHelper
+import com.routesme.taxi.helper.DateHelper
+import com.routesme.taxi.helper.DateOperations
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.room.AdvertisementDatabase
+import com.routesme.taxi.room.ResponseBody
 import com.routesme.taxi.room.entity.AdvertisementTracking
 import com.routesme.taxi.room.factory.ViewModelFactory
 import com.routesme.taxi.room.helper.DatabaseHelperImpl
 import com.routesme.taxi.room.viewmodel.RoomDBViewModel
-import com.routesme.taxi.App
 import com.routesme.taxi.service.VideoService
 import com.routesme.taxi.view.adapter.BottomBannerAdapter
 import com.routesme.taxi.view.adapter.ImageBannerAdapter
 import com.routesme.taxi.view.adapter.WifiAndQRCodeAdapter
+import com.routesme.taxi.view.events.AnimateVideo
+import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.view.utils.Type
+import com.routesme.taxi.viewmodel.ContentViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.*
-import kotlinx.android.synthetic.main.content_fragment.constraintLayoutDateCell
-import kotlinx.android.synthetic.main.content_fragment.playerView
-import kotlinx.android.synthetic.main.content_fragment.videoRingProgressBar
 import kotlinx.android.synthetic.main.date_cell.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -88,6 +75,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private lateinit var viewModel: RoomDBViewModel
     private var date = Date()
     private lateinit var glide:RequestManager
+    private lateinit var contentViewModel : ContentViewModel
     private lateinit var imageOptions: RequestOptions
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -97,15 +85,17 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
         return view
     }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
+        callApiJob = Job()
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         glide = Glide.with(App.instance)
         imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
-        callApiJob = Job()
         viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
+        contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
         WorkManager.getInstance().enqueue(App.periodicWorkRequest)
         observeTaskManager()
         fetchContent()
@@ -123,6 +113,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
             }
         }
     }
+
 
     private fun observeTaskManager(){
 
@@ -222,8 +213,8 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private  fun fetchContent(){
-        val contentViewModel: ContentViewModel by viewModels()
-        contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
+        //val contentViewModel: ContentViewModel by viewModels()
+        contentViewModel.getContent(1,100,mContext)?.observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
@@ -284,6 +275,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private fun setUpAdapter(list:List<Data>){
+        Log.d("onViewCreated","ImageAdapter called ${position}")
         bottomBannerAdapter = BottomBannerAdapter(mContext,list)
         bottomLeftPromtion.apply {
             adapter = bottomBannerAdapter
@@ -362,7 +354,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     override fun onDestroy() {
         super.onDestroy()
         cancel()
-        mContext.unbindService(connection)
+        //mContext.unbindService(connection)
         callApiJob.cancel()
         AdvertisementsHelper.instance.deleteCache()
     }
@@ -384,9 +376,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             if (service is VideoService.VideoServiceBinder) {
                 playerView.player = service.getExoPlayerInstance()
+                bottomLeftPromtion.setCurrentItem(playerView.player?.currentPeriodIndex!!,true)
                 videoProgressbarRunnable()
             }
         }
-
     }
+
 }
