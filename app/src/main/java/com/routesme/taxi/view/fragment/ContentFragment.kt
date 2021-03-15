@@ -213,7 +213,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private  fun fetchContent(){
-        //val contentViewModel: ContentViewModel by viewModels()
         contentViewModel.getContent(1,100,mContext)?.observe(viewLifecycleOwner , Observer<ContentResponse> {
             dialog?.dismiss()
             if (it != null) {

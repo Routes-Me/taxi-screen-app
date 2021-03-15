@@ -16,7 +16,6 @@ class ModelPresenter : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.model_presenter)
-        App.instance.isNightModeCall = true
         startActivity()
     }
 

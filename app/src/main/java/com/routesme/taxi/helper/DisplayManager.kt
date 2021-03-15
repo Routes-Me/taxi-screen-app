@@ -71,9 +71,7 @@ open class DisplayManager {
 
     fun notifyRegisteredActivity() {
         for (activity in registeredActivities) {
-
-            if(isAnteMeridiem())(activity as IModeChanging).onModeChange() else (activity as IModeChanging).onModeChange()
-
+            (activity as IModeChanging).onModeChange()
         }
     }
 }

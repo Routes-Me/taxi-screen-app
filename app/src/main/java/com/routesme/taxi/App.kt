@@ -27,7 +27,6 @@ class App : Application() {
     private val displayManager = DisplayManager.instance
     var signInCredentials: SignInCredentials? = null
     var isNewLogin = false
-    var isNightModeCall = false
     var institutionId: String? = null
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
@@ -44,10 +43,9 @@ class App : Application() {
         super.onCreate()
         instance = this
         logApplicationStartingPeriod(currentPeriod())
-        isNightModeCall = true
         displayManager.setAlarm(this)
         Log.d("onCreate0","I called")
-        //startTrackingService()
+        startTrackingService()
     }
 
     fun startTrackingService(){
