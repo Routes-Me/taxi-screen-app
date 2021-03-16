@@ -34,11 +34,12 @@ class TrackingService : Service() {
     private var sendFeedsTimer: Timer? = null
     override fun onCreate() {
         super.onCreate()
+        //Initialize Hubconnection
         hubConnection = prepareHubConnection()
         locationReceiver = LocationReceiver()
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
-        insertTestFeeds()
+        //insertTestFeeds()
     }
     override fun onBind(intent: Intent?): IBinder? = null
     override fun onDestroy() {
@@ -50,8 +51,7 @@ class TrackingService : Service() {
     }
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        //  Log.d("Test-location-service", "onStartCommand")
-        // Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
+        Log.d("Test-location-service", "onStartCommand")
         startForeground(1, getNotification())
         locationReceiver.apply {
             if (isProviderEnabled()) {
@@ -100,9 +100,9 @@ class TrackingService : Service() {
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
         Log.d("SocketSrv", "trackingUrl: $trackingUrl")
-        Log.d("SocketSrv","${Account().accessToken}")
         return HubConnectionBuilder
                 .create(trackingUrl)
+                .withHandshakeResponseTimeout(1000*5)
                 .withHeader("Authorization", Account().accessToken)
                 .build().apply {
                     serverTimeout = TimeUnit.MINUTES.toMillis(6)
@@ -148,7 +148,14 @@ class TrackingService : Service() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
                             val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
-                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                            Log.d("SocketSrv","${feedCoordinates}")
+                            hubConnection.let {
+                                Log.d("SocketSrv","${it.connectionState}")
+                                if (it.connectionState == HubConnectionState.CONNECTED) {
+                                    Log.d("SocketSrv","${feedCoordinates}")
+                                    it.send("SendLocations", feedCoordinates)
+                                }
+                            }
                         }
                     }
                 })
