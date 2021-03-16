@@ -8,6 +8,7 @@ import androidx.annotation.NonNull
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
+import com.microsoft.signalr.TransportEnum
 import com.routesme.taxi.helper.Helper
 import com.routesme.taxi.service.receiver.LocationReceiver
 import com.routesme.taxi.room.doa.LocationFeedsDao
@@ -102,7 +103,7 @@ class TrackingService : Service() {
         Log.d("SocketSrv", "trackingUrl: $trackingUrl")
         return HubConnectionBuilder
                 .create(trackingUrl)
-                .withHandshakeResponseTimeout(1000*5)
+                .withTransport(TransportEnum.WEBSOCKETS)
                 .withHeader("Authorization", Account().accessToken)
                 .build().apply {
                     serverTimeout = TimeUnit.MINUTES.toMillis(6)

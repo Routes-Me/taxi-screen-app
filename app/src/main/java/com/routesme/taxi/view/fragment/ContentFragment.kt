@@ -119,8 +119,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
 
         WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
                 .observe(viewLifecycleOwner, Observer { workInfo ->
+
                     val status = workInfo.state.name
-                    if((workInfo != null) && (workInfo.state == WorkInfo.State.RUNNING)){
+                    Log.d("Worker","${status}")
+                    if((workInfo != null) && (workInfo.state == WorkInfo.State.ENQUEUED)){
                         observeAnalytics()
                     }
                 })

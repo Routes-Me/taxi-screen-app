@@ -22,22 +22,18 @@ class ReportRepository(context:Context,data: JsonArray){
         RestApiService.createCorService(context)
     }
     fun postReport(data: JsonArray,deviceId:String): MutableLiveData<ReportResponse> {
-        //Log.d("Report","${deviceId},${data}")
         val call = thisApiCorService.postReport(data,deviceId)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                //Log.d("Report","${response.code()},${response.message()},${call.request().url()}")
-                if(response.code() == 201){
-                    val content = Gson().fromJson<Report>(response.body(), Report::class.java)
-                    reportResponse.value = ReportResponse(content.statusCode)
 
+                if(response.isSuccessful){
+                    reportResponse.value = ReportResponse()
                 }else{
                     val error = Error(detail = response.message(), statusCode = response.code())
                     val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                     val responseErrors = ResponseErrors(errors)
                     reportResponse.value = ReportResponse(mResponseErrors = responseErrors)
                 }
-
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 reportResponse.value = ReportResponse(mThrowable = throwable)

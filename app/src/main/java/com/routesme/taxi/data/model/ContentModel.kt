@@ -77,12 +77,7 @@ class Report(val status:Boolean?=null,val message:String?=null,val statusCode:In
 
 
 
-class ReportResponse(token: Int? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
-
-    var token: Int? = null
-    init {
-        this.token = token
-    }
+class ReportResponse(val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
 }
