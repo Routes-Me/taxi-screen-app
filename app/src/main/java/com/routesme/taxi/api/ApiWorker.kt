@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.GsonBuilder
 import com.routesme.taxi.api.interceptors.BasicAuthInterceptor
 import com.routesme.taxi.api.interceptors.ReceivedCookiesInterceptor
+import com.routesme.taxi.api.interceptors.RedirectInterceptor
 import com.routesme.taxi.api.interceptors.TokenAuthenticator
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -29,6 +30,7 @@ class ApiWorker(val context: Context) {
                      addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                      addInterceptor(BasicAuthInterceptor(context))
                      addInterceptor(ReceivedCookiesInterceptor(context))
+                     addInterceptor(RedirectInterceptor())
                      followSslRedirects(false)
 
                     // addInterceptor(NotAcceptableRefreshTokenInterceptor(context))
