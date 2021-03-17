@@ -15,7 +15,8 @@ class ContentViewModel : ViewModel() {
     private var contentResponse: MutableLiveData<ContentResponse>? = null
 
     fun getContent(offset: Int, limit: Int, context: Context): LiveData<ContentResponse>?{
-        if (contentResponse == null){
+        Log.d("ContentViewModel", "Fetch Content")
+        if (contentResponse?.value?.data == null){
             Log.d("ContentViewModel", "Get remote data")
             contentResponse = ContentRepository(context).getContent(offset,limit)
         }
