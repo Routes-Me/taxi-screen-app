@@ -209,7 +209,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveTabletInfoIntoSharedPreferences(deviceId)
                         App.instance.startTrackingService()
-                        `openModelPresenterScreen`()
+                        openModelPresenterScreen()
                     } else {
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }

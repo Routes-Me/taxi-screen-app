@@ -87,7 +87,7 @@ class ReportResponse(token: Int? = null, val mResponseErrors: ResponseErrors? = 
         get() = (mResponseErrors == null && mThrowable == null)
 }
 
-class ContentResponse(data: List<Data>? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
+class ContentResponse(val data: List<Data>? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
     val imageList = mutableListOf<Data>()
     val videoList = mutableListOf<Data>()

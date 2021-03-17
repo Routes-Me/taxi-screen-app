@@ -27,6 +27,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.ViewModelProviders
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import carbon.widget.RelativeLayout
@@ -97,15 +98,22 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var mVideoList:List<Data>?=null
     private lateinit var glide:RequestManager
     private lateinit var imageOptions: RequestOptions
+    private var contentViewModel: ContentViewModel? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        contentViewModel = activity?.let { ViewModelProvider(it).get(ContentViewModel::class.java) }
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
         return view
     }
+
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
@@ -237,10 +245,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private  fun fetchContent(){
-
-        val contentViewModel: ContentViewModel by viewModels()
-
-                contentViewModel.getContent(1,100,mContext).observe(viewLifecycleOwner , Observer<ContentResponse> {
+                contentViewModel?.getContent(1,100,mContext)?.observe(viewLifecycleOwner , Observer<ContentResponse> {
                     dialog?.dismiss()
                     if (it != null) {
                         if (it.isSuccess) {
@@ -323,7 +328,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 })
     }
 
-    fun setUpImage(images: List<Data>){
+    private fun setUpImage(images: List<Data>){
         var currentImageIndex = 0
         var firstTime = false
         launch{

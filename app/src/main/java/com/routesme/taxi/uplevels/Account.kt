@@ -12,9 +12,19 @@ class Account {
             }
             return null
         }
-
         set(value) {
             sharedPrefs().edit().putString(SharedPreferencesHelper.token, value).apply()
+        }
+
+    var refreshToken: String?
+        get() {
+            sharedPrefs().getString(SharedPreferencesHelper.refresh_token, null)?.let{
+                return it
+            }
+            return null
+        }
+        set(value) {
+            sharedPrefs().edit().putString(SharedPreferencesHelper.refresh_token, value).apply()
         }
 
     var vehicle = Vehicle()

@@ -68,6 +68,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
         setContentView(R.layout.home_screen)
+        Log.d("RefreshToken", "Home Activity")
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
@@ -112,9 +113,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
                 if (it.isSuccess) {
-
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
-
                 }
             }
         })
@@ -253,6 +252,4 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         player?.pause()
 
     }
-
-
 }

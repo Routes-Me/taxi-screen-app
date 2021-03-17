@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.provider.Settings
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -50,6 +51,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_screen)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+        Log.d("RefreshToken", "Login Activity")
         initialize()
     }
 
@@ -114,7 +116,8 @@ class LoginActivity : AppCompatActivity() {
                         return@Observer
                     }
                     Account().apply { accessToken = token }
-                    openRegistrationActivity()
+                    Log.d("RefreshToken", "Login Activity..Get new access token")
+                    openNextActivity()
 
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
@@ -143,8 +146,11 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-    private fun openRegistrationActivity() {
-        startActivity(Intent(this, RegistrationActivity::class.java))
+    private fun openNextActivity() {
+        Log.d("RefreshToken", "Login Activity..Check witch the next activity to open")
+        val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
+        val intent = if (isRegistered) Intent(this, ModelPresenter::class.java) else Intent(this, RegistrationActivity::class.java)
+        startActivity(intent)
         finish()
     }
 
