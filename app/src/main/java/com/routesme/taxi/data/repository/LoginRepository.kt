@@ -1,6 +1,7 @@
 package com.routesme.taxi.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -27,10 +28,11 @@ class LoginRepository(val context: Context) {
         val call = thisApiCorService.signIn(encryptedCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-
+                Log.d("authenticationsAPI", "${encryptedCredentials}")
+                Log.d("authenticationsAPI", "${response}")
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
-
+                    Log.d("authenticationsAPI", "$signInSuccessResponse")
                     signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
