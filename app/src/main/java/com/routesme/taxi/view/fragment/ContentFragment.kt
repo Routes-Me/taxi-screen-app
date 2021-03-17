@@ -61,7 +61,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private var device_id : String = ""
-    private val SEC:Long = 300
+    private val SEC:Long = 30
     private var position = 0
     private val MIL:Long = 1000
     private var count = 0
@@ -121,7 +121,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 .observe(viewLifecycleOwner, Observer { workInfo ->
 
                     val status = workInfo.state.name
-                    Log.d("Worker","${status}")
+
                     if((workInfo != null) && (workInfo.state == WorkInfo.State.ENQUEUED)){
                         observeAnalytics()
                     }
@@ -276,7 +276,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     }
 
     private fun setUpAdapter(list:List<Data>){
-        Log.d("onViewCreated","ImageAdapter called ${position}")
         bottomBannerAdapter = BottomBannerAdapter(mContext,list)
         bottomLeftPromtion.apply {
             adapter = bottomBannerAdapter
@@ -302,7 +301,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
             }
 
         }
-
     }
 
     private fun removeThread(){

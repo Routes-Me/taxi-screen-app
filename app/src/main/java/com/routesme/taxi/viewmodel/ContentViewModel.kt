@@ -15,11 +15,10 @@ class ContentViewModel : ViewModel() {
     private var contentResponse: MutableLiveData<ContentResponse>? = null
 
     fun getContent(offset: Int, limit: Int, context: Context) : LiveData<ContentResponse>? {
-        if (contentResponse == null){
+        if (contentResponse?.value?.data == null){
             contentResponse = ContentRepository(context).getContent(offset,limit)
         }
         return contentResponse
-
     }
 
     fun postReport(context: Context,data: JsonArray,deviceId: String) = ReportRepository(context, data).postReport(data,deviceId)
@@ -28,6 +27,5 @@ class ContentViewModel : ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        Log.d("ViewModel","Oncleared Called")
     }
 }
