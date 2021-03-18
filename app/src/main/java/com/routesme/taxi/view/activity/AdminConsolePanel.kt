@@ -180,26 +180,31 @@ class AdminConsolePanel : AppCompatActivity() {
 
     }
     private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int):JsonArray{
-        val jsonObject = JsonObject()
         val jsonArray = JsonArray()
         if(morning != 0){
+            val jsonObject = JsonObject()
             jsonObject.addProperty("period","mo")
             jsonObject.addProperty("value",morning)
+            jsonArray.add(jsonObject)
         }
         if(noon != 0){
+            val jsonObject = JsonObject()
             jsonObject.addProperty("period","no")
             jsonObject.addProperty("value",noon)
+            jsonArray.add(jsonObject)
         }
         if(evening != 0){
+            val jsonObject = JsonObject()
             jsonObject.addProperty("period","ev")
             jsonObject.addProperty("value",evening)
+            jsonArray.add(jsonObject)
         }
         if(night != 0){
+            val jsonObject = JsonObject()
             jsonObject.addProperty("period","ni")
             jsonObject.addProperty("value",night)
+            jsonArray.add(jsonObject)
         }
-        jsonArray.add(jsonObject)
-
         return jsonArray
 
     }
