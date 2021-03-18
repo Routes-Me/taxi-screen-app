@@ -129,12 +129,12 @@ class RefreshTokenService: Service() {
     }
 
     private fun openHomeActivity() {
-        startActivity(Intent(applicationContext, HomeActivity::class.java))
+        startActivity(Intent(applicationContext, HomeActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         RefreshTokenActivity.instance.finish()
     }
 
     private fun openLoginActivity() {
-        startActivity(Intent(applicationContext, LoginActivity::class.java))
+        startActivity(Intent(applicationContext, LoginActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         RefreshTokenActivity.instance.finish()
 
     }
