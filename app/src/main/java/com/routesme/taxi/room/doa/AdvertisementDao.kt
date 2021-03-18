@@ -42,7 +42,7 @@ interface  AdvertisementDoa {
     suspend fun getList(currentDate:Long):List<AdvertisementTracking>
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking  ORDER BY date DESC" )
+    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking  ORDER BY date ASC" )
     suspend fun getAllList():List<AdvertisementTracking>
 
     @Query("DELETE FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate")
