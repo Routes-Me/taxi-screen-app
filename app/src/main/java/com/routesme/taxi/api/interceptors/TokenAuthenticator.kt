@@ -35,7 +35,7 @@ class TokenAuthenticator(private val context: Context): Authenticator{
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
         //retryCount(response.request()) == 1 -> null
         else -> {
-            Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
+           // Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
           //  null
 
             val authorizationHeader: String? = response.networkResponse()?.request()?.headers()?.get("Authorization")
@@ -45,6 +45,7 @@ class TokenAuthenticator(private val context: Context): Authenticator{
                 //If the request redirects [ If authorization header is null ], So I'll add the authorization header again to it , then execute it again
                 response.request().reAddAuthorizationHeader()
             }else{
+                Log.d("RefreshTokenTesting", "TokenAuthenticator... Code: ${response.code()}")
                 //If it's expired, So I'll handle refresh token logic
                 if (!App.instance.isRefreshActivityAlive) {
                     App.instance.isRefreshActivityAlive = true

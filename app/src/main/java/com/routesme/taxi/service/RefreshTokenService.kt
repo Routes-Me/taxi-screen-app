@@ -42,7 +42,7 @@ class RefreshTokenService: Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
          super.onStartCommand(intent, flags, startId)
-
+         Log.d("RefreshTokenTesting", "RefreshTokenService onStartCommand()")
          startForeground(2, getNotification())
          refreshToken()
 
@@ -58,14 +58,15 @@ class RefreshTokenService: Service() {
               override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                   if (response.isSuccessful && response.body() != null){
                       val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
-                      Log.d("RefreshToken","successResponse: $successResponse")
                       successResponse?.let {
+                          Log.d("RefreshTokenTesting", "Renewals response: $response , Code: ${response.code()}")
                           saveTokens(it)
                           if (App.instance.isRefreshActivityAlive) openHomeActivity()
                           stopRefreshTokenService()
                       }
                   } else{
                       if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
+                          Log.d("RefreshTokenTesting", "Renewals response: $response , HTTP_NOT_ACCEPTABLE , Code: ${response.code()}")
                           /*
                            val objError = JSONObject(response.errorBody()!!.string())
                            val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)

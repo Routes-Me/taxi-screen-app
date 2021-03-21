@@ -15,7 +15,7 @@ class RefreshTokenActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_refresh_token)
         instance = this
-
+        Log.d("RefreshTokenTesting", "RefreshTokenActivity OnCreate()")
         Log.d("RefreshToken", "isRefreshActivityAlive ${App.instance.isRefreshActivityAlive}")
 
         startRefreshTokenService()
