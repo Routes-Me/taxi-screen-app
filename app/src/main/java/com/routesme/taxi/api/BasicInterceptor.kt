@@ -9,6 +9,7 @@ import com.routesme.taxi.helper.AdminConsoleHelper
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.uplevels.Account
 import okhttp3.Interceptor
+import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -45,7 +46,10 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     private fun openModelPresenterScreen(activity: Activity, responseCode: Int) {
         adminConsoleHelper.logOff()
     }
+
 }
+
+
 
 enum class Header {
     Authorization, CountryCode, AppVersion,application

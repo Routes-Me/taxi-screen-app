@@ -13,7 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProviders
+import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.WorkInfo
 import androidx.work.WorkManager
 import com.bumptech.glide.Glide
@@ -43,6 +43,7 @@ import com.routesme.taxi.view.adapter.ImageBannerAdapter
 import com.routesme.taxi.view.adapter.WifiAndQRCodeAdapter
 import com.routesme.taxi.view.events.AnimateVideo
 import com.routesme.taxi.view.events.DemoVideo
+import com.routesme.taxi.view.events.WorkReport
 import com.routesme.taxi.view.utils.Type
 import com.routesme.taxi.viewmodel.ContentViewModel
 import dmax.dialog.SpotsDialog
@@ -68,6 +69,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var dialog: SpotsDialog? = null
     private var isAlive = false
     private val dateOperations = DateOperations.instance
+    private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private lateinit var  callApiJob : Job
     private var bottomBannerAdapter : BottomBannerAdapter?=null
     private var wifiAndQRCodeAdapter : WifiAndQRCodeAdapter?=null
@@ -77,6 +79,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private lateinit var glide:RequestManager
     private lateinit var contentViewModel : ContentViewModel
     private lateinit var imageOptions: RequestOptions
+    private var workManager = WorkManager.getInstance()
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
@@ -96,10 +99,10 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
-        WorkManager.getInstance().enqueue(App.periodicWorkRequest)
-        observeTaskManager()
+        workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP,App.periodicWorkRequest)
         fetchContent()
     }
+
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
@@ -114,22 +117,19 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         }
     }
 
-
-    private fun observeTaskManager(){
-
-        WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
-                .observe(viewLifecycleOwner, Observer { workInfo ->
-
+    /*private fun observeTaskManager(){
+         WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
+                .observe(viewLifecycleOwner, Observer<WorkInfo> { workInfo ->
                     val status = workInfo.state.name
-
-                    if((workInfo != null) && (workInfo.state == WorkInfo.State.ENQUEUED)){
+                    Log.d("Worker","${status}")
+                    if((workInfo != null) && (workInfo.state == WorkInfo.State.RUNNING)){
                         observeAnalytics()
                     }
+
                 })
-    }
+    }*/
 
     private fun observeAnalytics(){
-
         viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(viewLifecycleOwner, Observer {
 
             when(it.status){
@@ -152,7 +152,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                     }
                 }
                 ResponseBody.Status.ERROR -> {
-
                     Log.d("TaskManagerPeriodic","No Data Found")
                 }
             }
@@ -323,6 +322,19 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
             launch {
                 position = animateVideo.position
                 bottomLeftPromtion.setCurrentItem(position, true)
+            }
+
+        }catch (e:Exception){
+
+        }
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(workReport: WorkReport){
+        try {
+
+            if(workReport.workInfo == "SUCCESS"){
+                observeAnalytics()
             }
 
         }catch (e:Exception){

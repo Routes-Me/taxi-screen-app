@@ -24,8 +24,8 @@ import java.util.concurrent.TimeUnit
 
 class App : Application() {
     val account = Account()
-    private val displayManager = DisplayManager.instance
     var signInCredentials: SignInCredentials? = null
+    private val displayManager = DisplayManager.instance
     var isNewLogin = false
     var institutionId: String? = null
     var taxiPlateNumber: String? = null
@@ -35,7 +35,7 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 12, TimeUnit.HOURS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java,1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
     }
 
     override fun onCreate() {

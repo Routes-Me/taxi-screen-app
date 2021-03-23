@@ -30,7 +30,7 @@ class DateHelper {
         return diff > 0
     }
 
-    fun checkRefreshTokenExp(from_date:Long):Boolean{
+    fun getDateDifferenceByOne(from_date:Long):Boolean{
 
         val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
         return diff > 0
