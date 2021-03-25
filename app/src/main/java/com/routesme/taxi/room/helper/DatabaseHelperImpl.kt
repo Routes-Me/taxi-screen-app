@@ -13,13 +13,12 @@ class DatabaseHelperImpl (private val advertismentDatabase: AdvertisementDatabas
     override suspend fun getItem(id: String,timestamp:Long): AdvertisementTracking = advertismentDatabase.advertisementTracking().getItem(id,timestamp)
 
     override suspend fun updateSlotMorning(id: Int){
-        Log.d("Thread Helper","${Thread.currentThread().name}, ${Thread.currentThread().id}")
+
         advertismentDatabase.advertisementTracking().updateSlotMorning(id)
     }
 
     override suspend fun updateSlotNoon(id: Int) {
 
-        Log.d("Thread Helper","${Thread.currentThread().name}, ${Thread.currentThread().id}")
         advertismentDatabase.advertisementTracking().updateSlotNoon(id)
 
     }
@@ -33,11 +32,11 @@ class DatabaseHelperImpl (private val advertismentDatabase: AdvertisementDatabas
 
     override suspend fun getLastItem(id: String,timeStamp:Long): AdvertisementTracking = advertismentDatabase.advertisementTracking().getLastItem(id,timeStamp)
 
-    override suspend fun getList(timeStamp:Long):List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getList(timeStamp)
+    override  fun getList(timeStamp:Long):List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getList(timeStamp)
 
     override suspend fun getAllList():List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getAllList()
 
-    override suspend fun deleteTable(timeStamp:Long):Int = advertismentDatabase.advertisementTracking().deleteTable(timeStamp)
+    override  fun deleteTable(timeStamp:Long):Int = advertismentDatabase.advertisementTracking().deleteTable(timeStamp)
 
     override suspend fun deleteAllTable():Int = advertismentDatabase.advertisementTracking().deleteAllTable()
 

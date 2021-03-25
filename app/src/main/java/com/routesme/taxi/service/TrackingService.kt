@@ -18,6 +18,7 @@ import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.App
+import com.routesme.taxi.room.AdvertisementDatabase
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -31,6 +32,7 @@ class TrackingService : Service() {
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
     private lateinit var db : TrackingDatabase
+    private var advertisementTrackingDB = AdvertisementDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
     private var sendFeedsTimer: Timer? = null
     override fun onCreate() {

@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
+import androidx.work.*
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -30,13 +31,20 @@ import com.routesme.taxi.helper.*
 import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.view.fragment.ContentFragment
 import com.routesme.taxi.viewmodel.SubmitApplicationVersionViewModel
+import com.routesme.taxi.worker.TaskManager
 import kotlinx.android.synthetic.main.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.util.concurrent.TimeUnit
 
 class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),CoroutineScope by MainScope(),IModeChanging{
+    companion object{
+        val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java,15, TimeUnit.MINUTES).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
+    }
+    private var workManager = WorkManager.getInstance()
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private val helper = HomeScreenHelper(this)
@@ -47,6 +55,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
+    private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -70,6 +79,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
+        workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP,periodicWorkRequest)
         setSystemUiVisibility()
     }
 

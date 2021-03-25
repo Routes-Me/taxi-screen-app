@@ -3,6 +3,7 @@ package com.routesme.taxi.room.viewmodel
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.routesme.taxi.room.ResponseBody
@@ -14,12 +15,18 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
+
+    companion object{
+
+        const val KEY = "RoomDBViewModel"
+    }
+
     private val MIN = 100000000
     private val analyticsListLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
+    private var advertisementList = ArrayList<AdvertisementTracking>()
     private val analyticsListAllLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val deleteTableLiveData = MutableLiveData<ResponseBody<Int>>()
     private val deleteAllTableLiveData = MutableLiveData<ResponseBody<Int>>()
-    private val compositeDisposable = CompositeDisposable()
     fun insertLog(id:String, timeStamp:Long, period: Period, type:String) {
         viewModelScope.launch(Dispatchers.IO) {
             try {
@@ -41,9 +48,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     fun update(id: Int,period:Period){
         viewModelScope.launch {
             try {
-
                 when(period){
-
                     Period.MORNING -> dbHelper.updateSlotMorning(id)
                     Period.NOON -> dbHelper.updateSlotNoon(id)
                     Period.EVENING -> dbHelper.updateSlotEvening(id)
@@ -55,15 +60,34 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
         }
     }
     fun getReport(currentDate:Long): LiveData<ResponseBody<List<AdvertisementTracking>>> {
-
         viewModelScope.launch(Dispatchers.IO) {
-
             val getReport =dbHelper.getList(currentDate/MIN)
-            analyticsListLiveData.postValue(ResponseBody.success(getReport))
+            Log.d("WorkerManager","DATA OUTSIDE VIEWMODEL ${getReport}")
+            if(!getReport.isNullOrEmpty()){
+                analyticsListLiveData.postValue(ResponseBody.success(getReport))
+                //analyticsListLiveData.value = null
+                Log.d("WorkerManager","DATA INSIDE VIEWMODEL is NOT NULL ${getReport}")
+            }else{
+                Log.d("WorkerManager","DATA INSIDE VIEWMODEL ${getReport}")
+                analyticsListLiveData.postValue(ResponseBody.error("No Data Found",getReport))
+            }
+
         }
         return analyticsListLiveData
     }
 
+   /* fun getReport(currentDate:Long): List<AdvertisementTracking> {
+        viewModelScope.launch(Dispatchers.IO) {
+            Log.d("WorkerManager","DATA INSIDE VIEWMODEL is NOT NULL ${dbHelper.getList(currentDate / MIN)}")
+            val list = dbHelper.getList(currentDate / MIN)
+           list.forEach {
+
+               advertisementList.a
+
+           }
+        }
+        return list
+    }*/
     fun getAllList():LiveData<ResponseBody<List<AdvertisementTracking>>>{
 
         viewModelScope.launch(Dispatchers.IO) {
@@ -74,11 +98,10 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     }
 
     fun deleteTable(currentDate: Long):LiveData<ResponseBody<Int>>{
-
         viewModelScope.launch(Dispatchers.IO) {
-
             val deleteData = dbHelper.deleteTable(currentDate/MIN)
             deleteTableLiveData.postValue(ResponseBody.success(deleteData))
+
         }
         return deleteTableLiveData
     }
@@ -92,7 +115,7 @@ class RoomDBViewModel( private val dbHelper: DatabaseHelper) : ViewModel() {
     }
 
     override fun onCleared() {
-        compositeDisposable.clear()
+
         super.onCleared()
     }
 

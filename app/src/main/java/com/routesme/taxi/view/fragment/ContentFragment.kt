@@ -13,9 +13,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.work.ExistingPeriodicWorkPolicy
-import androidx.work.WorkInfo
-import androidx.work.WorkManager
+import androidx.lifecycle.observe
+import androidx.work.*
 import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
@@ -35,6 +34,7 @@ import com.routesme.taxi.room.AdvertisementDatabase
 import com.routesme.taxi.room.ResponseBody
 import com.routesme.taxi.room.entity.AdvertisementTracking
 import com.routesme.taxi.room.factory.ViewModelFactory
+import com.routesme.taxi.room.helper.DatabaseHelper
 import com.routesme.taxi.room.helper.DatabaseHelperImpl
 import com.routesme.taxi.room.viewmodel.RoomDBViewModel
 import com.routesme.taxi.service.VideoService
@@ -46,6 +46,7 @@ import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.view.events.WorkReport
 import com.routesme.taxi.view.utils.Type
 import com.routesme.taxi.viewmodel.ContentViewModel
+import com.routesme.taxi.worker.TaskManager
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.content_fragment.*
 import kotlinx.android.synthetic.main.date_cell.*
@@ -55,9 +56,10 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class ContentFragment :Fragment(),CoroutineScope by MainScope(){
-
+    private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private lateinit var mContext: Context
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
@@ -69,7 +71,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     private var dialog: SpotsDialog? = null
     private var isAlive = false
     private val dateOperations = DateOperations.instance
-    private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private lateinit var  callApiJob : Job
     private var bottomBannerAdapter : BottomBannerAdapter?=null
     private var wifiAndQRCodeAdapter : WifiAndQRCodeAdapter?=null
@@ -97,12 +98,11 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
         glide = Glide.with(App.instance)
         imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
-        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
+        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel.KEY,RoomDBViewModel::class.java)
         contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
-        workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP,App.periodicWorkRequest)
+        workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.REPLACE,App.periodicWorkRequest)
         fetchContent()
     }
-
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
@@ -115,110 +115,6 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 delay(60 * 1000)
             }
         }
-    }
-
-    /*private fun observeTaskManager(){
-         WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
-                .observe(viewLifecycleOwner, Observer<WorkInfo> { workInfo ->
-                    val status = workInfo.state.name
-                    Log.d("Worker","${status}")
-                    if((workInfo != null) && (workInfo.state == WorkInfo.State.RUNNING)){
-                        observeAnalytics()
-                    }
-
-                })
-    }*/
-
-    private fun observeAnalytics(){
-        viewModel.getReport(DateHelper.instance.getCurrentDate()).observe(viewLifecycleOwner, Observer {
-
-            when(it.status){
-
-                ResponseBody.Status.SUCCESS -> {
-
-                    it.data?.let {list->
-                        val postReportViewModel: ContentViewModel by viewModels()
-                        device_id.let { deviceId->
-                            postReportViewModel.postReport(mContext,getJsonArray(list),deviceId).observe(viewLifecycleOwner , Observer<ReportResponse> {
-                                if(it.isSuccess){
-
-                                    observeDeleteTable()
-
-                                }
-                            })
-
-                        }
-
-                    }
-                }
-                ResponseBody.Status.ERROR -> {
-                    Log.d("TaskManagerPeriodic","No Data Found")
-                }
-            }
-        })
-    }
-
-    private fun observeDeleteTable(){
-
-        viewModel.deleteTable(DateHelper.instance.getCurrentDate()).observe(viewLifecycleOwner, Observer {
-            when(it.status){
-                ResponseBody.Status.SUCCESS ->{
-                    editor?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                    editor?.commit()
-                }
-                ResponseBody.Status.ERROR ->{
-
-                }
-            }
-        })
-    }
-
-
-    private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
-        val jsonArray = JsonArray()
-        list.forEach {
-            val jsonObject = JsonObject().apply{
-                addProperty("date",it.date/1000)
-                addProperty("advertisementId",it.advertisementId)
-                addProperty("mediaType",it.media_type)
-                add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
-            }
-            jsonArray.add(jsonObject)
-        }
-
-        return jsonArray
-
-    }
-
-    private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int): JsonArray {
-        val jsonArray = JsonArray()
-        if(morning != 0){
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("period","mo")
-            jsonObject.addProperty("value",morning)
-            jsonArray.add(jsonObject)
-        }
-        if(noon != 0){
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("period","no")
-            jsonObject.addProperty("value",noon)
-            jsonArray.add(jsonObject)
-        }
-        if(evening != 0){
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("period","ev")
-            jsonObject.addProperty("value",evening)
-            jsonArray.add(jsonObject)
-        }
-        if(night != 0){
-            val jsonObject = JsonObject()
-            jsonObject.addProperty("period","ni")
-            jsonObject.addProperty("value",night)
-            jsonArray.add(jsonObject)
-        }
-
-        return jsonArray
-
     }
 
     private  fun fetchContent(){
@@ -305,6 +201,7 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
                 bottomRightPromotion.setCurrentItem(count,true)
                 if(imageBannerAdapter?.itemCount!! - 1 === count) count = 0 else count++
                 delay(15 * 1000)
+
             }
 
         }
@@ -332,9 +229,9 @@ class ContentFragment :Fragment(),CoroutineScope by MainScope(){
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(workReport: WorkReport){
         try {
-
+            Log.d("WorkerManager","${workReport.workInfo}")
             if(workReport.workInfo == "SUCCESS"){
-                observeAnalytics()
+                //observeAnalytics()
             }
 
         }catch (e:Exception){

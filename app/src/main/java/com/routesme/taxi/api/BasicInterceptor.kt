@@ -5,6 +5,7 @@ import android.app.Activity
 import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
+import com.routesme.taxi.App
 import com.routesme.taxi.helper.AdminConsoleHelper
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.uplevels.Account
@@ -14,7 +15,7 @@ import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
 
-internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
+internal class BasicAuthInterceptor() : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -28,7 +29,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun countryCode() = activity.resources.configuration.locales.get(0).country
+    private fun countryCode() = App.instance.resources.configuration.locales.get(0).country
 
     private fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
 }
