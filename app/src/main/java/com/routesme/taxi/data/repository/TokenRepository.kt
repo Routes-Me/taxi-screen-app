@@ -14,11 +14,12 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.net.HttpURLConnection
 
-class TokenRepository(context: Context){
+class TokenRepository(context: Context) {
     private val tokenResponse = MutableLiveData<RefreshModel>()
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
+
     fun refreshToken(): MutableLiveData<RefreshModel> {
 
         val call = thisApiCorService.refreshToken()
@@ -27,21 +28,20 @@ class TokenRepository(context: Context){
                 if (response.isSuccessful) {
 
 
-
-
-                } else{
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                } else {
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         val objError = JSONObject(response.errorBody()!!.string())
                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         tokenResponse.value = RefreshModel(mResponseErrors = errors)
-                    }else{
+                    } else {
                         val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                        val errors = mutableListOf<Error>().apply { add(error) }.toList()
                         val responseErrors = ResponseErrors(errors)
                         tokenResponse.value = RefreshModel(mResponseErrors = responseErrors)
                     }
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 tokenResponse.value = RefreshModel(mThrowable = throwable)
             }

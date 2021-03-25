@@ -4,11 +4,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
+
 import com.routesme.taxi.R;
 import com.routesme.taxi.service.HotSpotIntentService;
 
 public class MagicActivity extends PermissionsActivity {
+
+    private static final String TAG = MagicActivity.class.getSimpleName();
 
     public static void useMagicActivityToTurnOn(Context c) {
         Uri uri = new Uri.Builder().scheme(c.getString(R.string.intent_data_scheme)).authority(c.getString(R.string.intent_data_host_turnon)).build();
@@ -21,15 +23,12 @@ public class MagicActivity extends PermissionsActivity {
 
     public static void useMagicActivityToTurnOff(Context c) {
         Uri uri = new Uri.Builder().scheme(c.getString(R.string.intent_data_scheme)).authority(c.getString(R.string.intent_data_host_turnoff)).build();
-       // Toast.makeText(c, "Turn off. Uri: " + uri.toString(), Toast.LENGTH_LONG).show();
+        // Toast.makeText(c, "Turn off. Uri: " + uri.toString(), Toast.LENGTH_LONG).show();
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.setData(uri);
         c.startActivity(i);
     }
-
-    private static final String TAG = MagicActivity.class.getSimpleName();
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +51,7 @@ public class MagicActivity extends PermissionsActivity {
         finish();
     }
 
-    private void carryOfWithHotSpotting(){
+    private void carryOfWithHotSpotting() {
 
         Intent intent = getIntent();
         HotSpotIntentService.stop(this, intent);

@@ -8,16 +8,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.ContextCompat
-import androidx.work.*
+import androidx.work.BackoffPolicy
+import androidx.work.Constraints
+import androidx.work.NetworkType
+import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi.helper.DisplayManager
-import com.routesme.taxi.service.TrackingService
 import com.routesme.taxi.data.model.SignInCredentials
-import com.routesme.taxi.worker.TaskManager
+import com.routesme.taxi.helper.DisplayManager
 import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.service.TrackingService
 import com.routesme.taxi.uplevels.Account
+import com.routesme.taxi.worker.TaskManager
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -31,11 +33,12 @@ class App : Application() {
     var taxiPlateNumber: String? = null
     var vehicleId: String? = null
     var institutionName: String? = null
+
     companion object {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java,1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
+        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
     }
 
     override fun onCreate() {
@@ -46,11 +49,11 @@ class App : Application() {
         startTrackingService()
     }
 
-    fun startTrackingService(){
+    fun startTrackingService() {
         val isRegistered = !getDeviceId().isNullOrEmpty()
-        if (isLocationPermissionsGranted() && isRegistered){
+        if (isLocationPermissionsGranted() && isRegistered) {
             val intent = Intent(instance, TrackingService::class.java)
-            ContextCompat.startForegroundService(instance,intent)
+            ContextCompat.startForegroundService(instance, intent)
         }
     }
 
@@ -59,6 +62,7 @@ class App : Application() {
         params.putString("TimePeriod", timePeriod.toString())
         FirebaseAnalytics.getInstance(this).logEvent("application_starting_period", params)
     }
+
     private fun currentPeriod(): TimePeriod {
         val currentDate = currentDate()
         return if (currentDate.after(parseDate("04:00")) && currentDate.before(parseDate("12:00"))) TimePeriod.Morning
@@ -66,6 +70,7 @@ class App : Application() {
         else if (currentDate.after(parseDate("17:00")) && currentDate.before(parseDate("24:00"))) TimePeriod.Evening
         else TimePeriod.Night
     }
+
     private fun currentDate(): Date {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -76,6 +81,7 @@ class App : Application() {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
     enum class TimePeriod { Morning, Noon, Evening, Night }
+
     private fun isLocationPermissionsGranted(): Boolean {
         val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -87,6 +93,7 @@ class App : Application() {
         }
         return true
     }
-    private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
+
+    private fun getDeviceId() = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id, null)
 
 }

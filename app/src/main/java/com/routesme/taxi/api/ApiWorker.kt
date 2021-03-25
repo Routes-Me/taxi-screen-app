@@ -22,17 +22,17 @@ class ApiWorker(val context: Context) {
         @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
         get() {
             if (mClient == null) {
-                 mClient = OkHttpClient.Builder().apply {
-                     connectTimeout(1, TimeUnit.MINUTES)
-                     readTimeout(30, TimeUnit.SECONDS)
-                     writeTimeout(15, TimeUnit.SECONDS)
-                     addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-                     addInterceptor(BasicAuthInterceptor())
+                mClient = OkHttpClient.Builder().apply {
+                    connectTimeout(1, TimeUnit.MINUTES)
+                    readTimeout(30, TimeUnit.SECONDS)
+                    writeTimeout(15, TimeUnit.SECONDS)
+                    addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+                    addInterceptor(BasicAuthInterceptor())
                     if (context is Activity) {
                         if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
                     }
 
-                 }.build()
+                }.build()
             }
             return mClient!!
         }

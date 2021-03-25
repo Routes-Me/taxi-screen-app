@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".view.activity.HomeActivity"
-    android:background="?homeScreenBackground_color">
+    android:background="?homeScreenBackground_color"
+    tools:context=".view.activity.HomeActivity">
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineTop"
@@ -45,8 +45,7 @@
         app:layout_constraintHeight_default="percent"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        app:layout_constraintVertical_chainStyle="spread_inside"
-        />
+        app:layout_constraintVertical_chainStyle="spread_inside" />
 
     <!--<FrameLayout
         android:id="@+id/sideMenuFragment_container"
@@ -63,16 +62,16 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.728" />
+        app:layout_constraintGuide_percent="0.728"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineDividerAccessoryBottom"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintGuide_percent="0.833" />
+        app:layout_constraintGuide_percent="0.833"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineDividerAccessoryStart"
@@ -92,76 +91,77 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:src="?video_divider"
-        app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineDividerAccessoryBottom"
+        app:layout_constraintDimensionRatio="H,41 : 155"
         app:layout_constraintStart_toStartOf="@id/guidelineDividerAccessoryStart"
-        app:layout_constraintDimensionRatio="H,41 : 155"/>
+        app:layout_constraintTop_toTopOf="@id/guidelineDividerAccessoryTop" />
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:src="?qrcode_divider"
-        app:layout_constraintTop_toBottomOf="@id/guidelineDividerAccessoryTop"
+        app:layout_constraintDimensionRatio="H,14 : 26"
 
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,14 : 26"/>
+        app:layout_constraintTop_toBottomOf="@id/guidelineDividerAccessoryTop" />
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:src="?qrcode_divider"
         app:layout_constraintBottom_toTopOf="@id/guidelineDividerAccessoryBottom"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,14 : 26"/>
+        app:layout_constraintDimensionRatio="H,14 : 26"
+        app:layout_constraintEnd_toEndOf="parent" />
 
     <ImageView
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:src="?banner_divider"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:layout_marginTop="@dimen/_12sdp"
+        android:src="?banner_divider"
         android:visibility="gone"
-        app:layout_constraintDimensionRatio="H,26 : 28.2"/>
+        app:layout_constraintDimensionRatio="H,26 : 28.2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <ImageView
         android:id="@+id/openPatternBtn"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:background="#00FFFFFF"
         android:visibility="visible"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_default="percent"
-        app:layout_constraintWidth_default="percent"
         app:layout_constraintHeight_percent="0.06"
-        app:layout_constraintWidth_percent="0.06"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintWidth_default="percent"
+        app:layout_constraintWidth_percent="0.06" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
         android:id="@+id/activityVideoCover"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
-        >
+        android:visibility="gone">
+
         <com.google.android.exoplayer2.ui.StyledPlayerView
+            android:id="@+id/demoVideoPlayer"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:id="@+id/demoVideoPlayer"
-            android:keepScreenOn="true"
             android:adjustViewBounds="true"
+            android:keepScreenOn="true"
             app:resize_mode="fill"
-            app:use_controller="false"
-            />
+            app:use_controller="false" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewError"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
-        android:id="@+id/textViewError"
-        android:textColor="#d50000"
-        android:textSize="@dimen/_8sdp"
         android:layout_marginRight="@dimen/_10sdp"
         android:layout_marginBottom="@dimen/_10sdp"
         android:background="@drawable/bg_rounded_corner"
+        android:textColor="#d50000"
+        android:textSize="@dimen/_8sdp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

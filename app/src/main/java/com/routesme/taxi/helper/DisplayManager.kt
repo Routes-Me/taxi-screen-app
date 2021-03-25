@@ -7,10 +7,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Context.ALARM_SERVICE
 import android.content.Intent
-import android.util.DisplayMetrics
-import android.view.WindowManager
-import com.routesme.taxi.service.receiver.ModeChangesReceiver
 import com.routesme.taxi.data.model.IModeChanging
+import com.routesme.taxi.service.receiver.ModeChangesReceiver
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -75,4 +73,5 @@ open class DisplayManager {
         }
     }
 }
-enum class Mode{Light,Dark}
+
+enum class Mode { Light, Dark }

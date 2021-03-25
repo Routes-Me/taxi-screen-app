@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
         android:layout_width="0dp"
@@ -69,9 +70,9 @@
             android:id="@+id/viewPageSideBanner"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintHeight_percent="0.772"
             android:layout_marginStart="@dimen/_2sdp"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHeight_percent="0.772"
             app:layout_constraintStart_toEndOf="@+id/Advertisement_Video_CardView"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintWidth_percent="0.128">
@@ -82,10 +83,10 @@
             android:id="@+id/bottomLeftPromtion"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            app:layout_constraintWidth_percent="0.710"
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginEnd="@dimen/_15sdp"
             android:layout_marginBottom="@dimen/_4sdp"
+            app:layout_constraintWidth_percent="0.710"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/Advertisement_Video_CardView">
@@ -97,10 +98,10 @@
             layout="@layout/date_cell"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:visibility="invisible"
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginEnd="@dimen/_1sdp"
             android:layout_marginBottom="@dimen/_4sdp"
+            android:visibility="invisible"
             app:layout_constraintWidth_percent="0.135"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toStartOf="@+id/bottomRightPromotion"
@@ -112,10 +113,10 @@
             android:id="@+id/bottomRightPromotion"
             android:layout_width="0dp"
             android:layout_height="0dp"
-            android:orientation="vertical"
-            app:layout_constraintWidth_percent="0.132"
             android:layout_marginTop="@dimen/_2sdp"
             android:layout_marginBottom="@dimen/_4sdp"
+            android:orientation="vertical"
+            app:layout_constraintWidth_percent="0.132"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
             card_view:layout_constraintTop_toBottomOf="@+id/viewPageSideBanner" />

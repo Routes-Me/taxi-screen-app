@@ -6,11 +6,10 @@ import android.os.Build
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
 import com.routesme.taxi.App
-import com.routesme.taxi.helper.AdminConsoleHelper
 import com.routesme.taxi.BuildConfig
+import com.routesme.taxi.helper.AdminConsoleHelper
 import com.routesme.taxi.uplevels.Account
 import okhttp3.Interceptor
-import okhttp3.Request
 import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
@@ -37,6 +36,7 @@ internal class BasicAuthInterceptor() : Interceptor {
 internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     private val AUTHORIZATION_KAY = "authorization"
     private var adminConsoleHelper = AdminConsoleHelper(activity)
+
     @Throws(IOException::class)
     override fun intercept(@NonNull chain: Interceptor.Chain): Response {
         val response: Response = chain.proceed(chain.request())
@@ -51,7 +51,6 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
 }
 
 
-
 enum class Header {
-    Authorization, CountryCode, AppVersion,application
+    Authorization, CountryCode, AppVersion, application
 }

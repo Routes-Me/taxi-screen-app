@@ -19,16 +19,17 @@ import net.codecision.glidebarcode.model.Barcode
 class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val context: Context = context
     var list: List<Data> = list
+
     private inner class BannerDiscountHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var bannerQrCodeImage : ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
+        var bannerQrCodeImage: ImageView = itemView.findViewById(R.id.bannerQrCodeImage)
         fun bind(position: Int) {
             val recyclerViewModel = list[position]
             val promotion = recyclerViewModel.promotion
             val tintColor = recyclerViewModel.tintColor
             promotion.let {
-                it?.link?.let {link ->
+                it?.link?.let { link ->
                     val color = ThemeColor(tintColor).getColor()
-                    generateQrCode(link,color).let {
+                    generateQrCode(link, color).let {
 
                         Glide.with(context).load(it).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(bannerQrCodeImage)
 
@@ -67,8 +68,9 @@ class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Ad
     override fun getItemViewType(position: Int): Int {
         return position
     }
+
     private fun generateQrCode(promotionLink: String, color: Int): Barcode {
-        return Barcode(promotionLink, BarcodeFormat.QR_CODE,color, Color.TRANSPARENT)
+        return Barcode(promotionLink, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
     }
 
 }

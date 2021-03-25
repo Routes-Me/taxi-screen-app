@@ -8,7 +8,7 @@ import com.routesme.taxi.R
 class Operations {
     lateinit var context: Context
 
-    companion object{
+    companion object {
         @get:Synchronized
         var instance = Operations()
     }
@@ -24,12 +24,12 @@ class Operations {
         }
     }
 
-    fun displayAlertDialog(context: Context, title: String, message: String){
+    fun displayAlertDialog(context: Context, title: String, message: String) {
         val builder = AlertDialog.Builder(context).apply {
             setTitle(title)
             setMessage(message)
             setIcon(android.R.drawable.ic_dialog_alert)
-            setPositiveButton("OK"){ dialogInterface, _ ->
+            setPositiveButton("OK") { dialogInterface, _ ->
                 dialogInterface.dismiss()
             }
         }

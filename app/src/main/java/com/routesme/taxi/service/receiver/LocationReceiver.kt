@@ -9,14 +9,14 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.HandlerThread
 import android.util.Log
+import com.routesme.taxi.App
 import com.routesme.taxi.room.TrackingDatabase
 import com.routesme.taxi.room.entity.LocationFeed
-import com.routesme.taxi.App
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class LocationReceiver : LocationListener{
+class LocationReceiver : LocationListener {
     private var locationManagerThread: HandlerThread? = null
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isLocationUpdatesRequested = false
@@ -28,7 +28,7 @@ class LocationReceiver : LocationListener{
         try {
             locationManagerThread = HandlerThread("LocationManagerThread").apply {
                 start()
-                locationManager.requestLocationUpdates(minTime,minDistance,createFineCriteria(),this@LocationReceiver,this.looper)
+                locationManager.requestLocationUpdates(minTime, minDistance, createFineCriteria(), this@LocationReceiver, this.looper)
                 isLocationUpdatesRequested = true
             }
         } catch (ex: SecurityException) {
@@ -55,22 +55,22 @@ class LocationReceiver : LocationListener{
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): LocationFeed? {
         locationManager.getLastKnownLocation(bestProvider)?.let {
-           return LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+            return LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
         }
         return null
     }
 
-    private val bestProvider = locationManager.getBestProvider(createFineCriteria(),true)
+    private val bestProvider = locationManager.getBestProvider(createFineCriteria(), true)
 
     override fun onLocationChanged(location: Location?) {
-        Log.d("LocationReceiverThread","onLocationChanged... ${Thread.currentThread().name}")
+        Log.d("LocationReceiverThread", "onLocationChanged... ${Thread.currentThread().name}")
         location?.let {
             GlobalScope.launch(Dispatchers.IO) {
-                Log.d("GlobalScope-Thread","Insert: ${Thread.currentThread().name}")
+                Log.d("GlobalScope-Thread", "Insert: ${Thread.currentThread().name}")
                 val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
                 locationFeedsDao.insertLocation(locationFeed)
             }
-            Log.d("Test-location-service","Inserted location: $it")
+            Log.d("Test-location-service", "Inserted location: $it")
         }
     }
 
@@ -79,13 +79,13 @@ class LocationReceiver : LocationListener{
     override fun onProviderDisabled(p0: String?) {}
 
     private fun createFineCriteria() = Criteria().apply {
-            accuracy = Criteria.ACCURACY_FINE
-            isAltitudeRequired = false
-            isBearingRequired = false
-            isSpeedRequired = true
-            isCostAllowed = true
-            powerRequirement = Criteria.POWER_HIGH
-            horizontalAccuracy = Criteria.ACCURACY_HIGH
-            verticalAccuracy = Criteria.ACCURACY_HIGH
-        }
+        accuracy = Criteria.ACCURACY_FINE
+        isAltitudeRequired = false
+        isBearingRequired = false
+        isSpeedRequired = true
+        isCostAllowed = true
+        powerRequirement = Criteria.POWER_HIGH
+        horizontalAccuracy = Criteria.ACCURACY_HIGH
+        verticalAccuracy = Criteria.ACCURACY_HIGH
+    }
 }

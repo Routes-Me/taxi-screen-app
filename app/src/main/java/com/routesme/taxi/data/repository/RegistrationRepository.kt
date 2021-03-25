@@ -28,19 +28,20 @@ class RegistrationRepository(val context: Context) {
                 if (response.isSuccessful && response.body() != null) {
                     val registrationSuccessResponse = Gson().fromJson<RegistrationSuccessResponse>(response.body(), RegistrationSuccessResponse::class.java)
                     registrationResponse.value = RegistrationResponse(deviceId = registrationSuccessResponse.deviceId)
-                } else{
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT){
+                } else {
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                         val objError = JSONObject(response.errorBody()!!.string())
                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         registrationResponse.value = RegistrationResponse(mResponseErrors = errors)
-                    }else{
+                    } else {
                         val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                        val errors = mutableListOf<Error>().apply { add(error) }.toList()
                         val responseErrors = ResponseErrors(errors)
                         registrationResponse.value = RegistrationResponse(mResponseErrors = responseErrors)
                     }
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 registrationResponse.value = RegistrationResponse(mThrowable = throwable)
             }

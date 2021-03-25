@@ -1,9 +1,7 @@
 package com.routesme.taxi.worker
 
-import android.R
 import android.app.Activity
 import android.content.Context
-import android.content.SharedPreferences
 import android.util.Log
 import androidx.work.Worker
 import androidx.work.WorkerParameters
@@ -11,62 +9,54 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.routesme.taxi.api.RestApiService
-import com.routesme.taxi.data.model.Error
-import com.routesme.taxi.data.model.ReportResponse
-import com.routesme.taxi.data.model.ResponseErrors
 import com.routesme.taxi.helper.DateHelper
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.room.AdvertisementDatabase
 import com.routesme.taxi.room.entity.AdvertisementTracking
 import com.routesme.taxi.room.helper.DatabaseHelperImpl
-import com.routesme.taxi.view.events.AnimateVideo
-import com.routesme.taxi.view.events.WorkReport
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import org.greenrobot.eventbus.EventBus
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
-    private var  dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))
+    private var dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))
     private val MIN = 100000000
     private var sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-    private  var editior = sharedPreferences?.edit()
+    private var editior = sharedPreferences?.edit()
     val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
+
     override fun doWork(): Result {
         try {
-            val  device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
-                val list  = dbHelper.getList(DateHelper.instance.getCurrentDate()/MIN)
-                device_id?.let {deviceId->
-                    if(!list.isNullOrEmpty()){
-                        val call = thisApiCorService.postReport(getJsonArray(list),device_id)
-                        call.enqueue(object : Callback<JsonElement> {
-                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                                if(response.isSuccessful){
-                                    val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate()/MIN)
-                                    editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                                    editior?.commit()
-
-                                }
-                            }
-
-                            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-
+            val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+            val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
+            device_id?.let { deviceId ->
+                if (!list.isNullOrEmpty()) {
+                    val call = thisApiCorService.postReport(getJsonArray(list), device_id)
+                    call.enqueue(object : Callback<JsonElement> {
+                        override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                            if (response.isSuccessful) {
+                                val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
+                                editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                                editior?.commit()
 
                             }
-                        })
+                        }
 
-                    }else{
+                        override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
 
-                        Log.d("WorkManager","No Data found")
-                    }
+
+                        }
+                    })
+
+                } else {
+
+                    Log.d("WorkManager", "No Data found")
                 }
+            }
             return Result.success()
-        }catch (e:Exception){
+        } catch (e: Exception) {
             return Result.failure()
         }
 
@@ -75,11 +65,11 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
     private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
         val jsonArray = JsonArray()
         list.forEach {
-            val jsonObject = JsonObject().apply{
-                addProperty("date",it.date/1000)
-                addProperty("advertisementId",it.advertisementId)
-                addProperty("mediaType",it.media_type)
-                add("slots",getJsonArrayOfSlot(it.morning,it.noon,it.evening,it.night))
+            val jsonObject = JsonObject().apply {
+                addProperty("date", it.date / 1000)
+                addProperty("advertisementId", it.advertisementId)
+                addProperty("mediaType", it.media_type)
+                add("slots", getJsonArrayOfSlot(it.morning, it.noon, it.evening, it.night))
             }
             jsonArray.add(jsonObject)
         }
@@ -88,30 +78,30 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
 
     }
 
-    private fun getJsonArrayOfSlot(morning:Int,noon:Int,evening:Int,night:Int): JsonArray {
+    private fun getJsonArrayOfSlot(morning: Int, noon: Int, evening: Int, night: Int): JsonArray {
         val jsonArray = JsonArray()
-        if(morning != 0){
+        if (morning != 0) {
             val jsonObject = JsonObject()
-            jsonObject.addProperty("period","mo")
-            jsonObject.addProperty("value",morning)
+            jsonObject.addProperty("period", "mo")
+            jsonObject.addProperty("value", morning)
             jsonArray.add(jsonObject)
         }
-        if(noon != 0){
+        if (noon != 0) {
             val jsonObject = JsonObject()
-            jsonObject.addProperty("period","no")
-            jsonObject.addProperty("value",noon)
+            jsonObject.addProperty("period", "no")
+            jsonObject.addProperty("value", noon)
             jsonArray.add(jsonObject)
         }
-        if(evening != 0){
+        if (evening != 0) {
             val jsonObject = JsonObject()
-            jsonObject.addProperty("period","ev")
-            jsonObject.addProperty("value",evening)
+            jsonObject.addProperty("period", "ev")
+            jsonObject.addProperty("value", evening)
             jsonArray.add(jsonObject)
         }
-        if(night != 0){
+        if (night != 0) {
             val jsonObject = JsonObject()
-            jsonObject.addProperty("period","ni")
-            jsonObject.addProperty("value",night)
+            jsonObject.addProperty("period", "ni")
+            jsonObject.addProperty("value", night)
             jsonArray.add(jsonObject)
         }
 

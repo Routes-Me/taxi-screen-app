@@ -1,7 +1,7 @@
 package com.routesme.taxi.data.model
 
-import com.routesme.taxi.helper.Helper
 import com.routesme.taxi.R
+import com.routesme.taxi.helper.Helper
 
 class EncryptModel {
     val iv: String = Helper.getConfigValue("iv", R.raw.encryption).toString()

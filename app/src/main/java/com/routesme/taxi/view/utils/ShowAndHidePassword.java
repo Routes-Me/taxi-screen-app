@@ -25,21 +25,18 @@ import androidx.core.graphics.drawable.DrawableCompat;
 import com.routesme.taxi.R;
 
 public class ShowAndHidePassword extends AppCompatEditText {
+    private final static String IS_SHOWING_PASSWORD_STATE_KEY = "IS_SHOWING_PASSWORD_STATE_KEY";
+    private final static String SUPER_STATE_KEY = "SUPER_STATE_KEY";
+    private final int DEFAULT_ADDITIONAL_TOUCH_TARGET_SIZE = 40;
     private boolean isShowingPassword = false;
     private Drawable drawableEnd;
     private boolean leftToRight = true;
     private int tintColor = 0;
-
-    private final int DEFAULT_ADDITIONAL_TOUCH_TARGET_SIZE = 40;
-
-
     @DrawableRes
     private int visibilityIndicatorShow;
     @DrawableRes
     private int visibilityIndicatorHide;
-
     private int additionalTouchTargetSize = DEFAULT_ADDITIONAL_TOUCH_TARGET_SIZE;
-
 
     public ShowAndHidePassword(Context context) {
         super(context);
@@ -191,7 +188,6 @@ public class ShowAndHidePassword extends AppCompatEditText {
         }
     }
 
-
     //make it visible
     private void unmaskPassword() {
         setTransformationMethod(null);
@@ -227,7 +223,6 @@ public class ShowAndHidePassword extends AppCompatEditText {
         drawableEnd = null;
         super.finalize();
     }
-
 
     public
     @DrawableRes
@@ -266,9 +261,6 @@ public class ShowAndHidePassword extends AppCompatEditText {
     public void setAdditionalTouchTargetSizePixels(int additionalTouchTargetSize) {
         this.additionalTouchTargetSize = additionalTouchTargetSize;
     }
-
-    private final static String IS_SHOWING_PASSWORD_STATE_KEY = "IS_SHOWING_PASSWORD_STATE_KEY";
-    private final static String SUPER_STATE_KEY = "SUPER_STATE_KEY";
 
     @Override
     public Parcelable onSaveInstanceState() {

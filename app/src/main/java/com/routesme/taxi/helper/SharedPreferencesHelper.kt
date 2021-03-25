@@ -1,7 +1,7 @@
 package com.routesme.taxi.helper
 
 class SharedPreferencesHelper {
-    companion object{
+    companion object {
         const val device_data = "device_data"
         const val submitted_version = "submitted_version"
         const val token = "token"

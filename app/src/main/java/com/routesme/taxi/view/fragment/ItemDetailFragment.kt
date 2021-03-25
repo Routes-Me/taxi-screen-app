@@ -8,14 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.routesme.taxi.view.adapter.AdminConsoleDetailsListAdapter
+import com.routesme.taxi.App
+import com.routesme.taxi.R
+import com.routesme.taxi.data.model.MasterItemType
 import com.routesme.taxi.helper.AdminConsoleHelper
 import com.routesme.taxi.helper.AdminConsoleLists
-import com.routesme.taxi.data.model.MasterItemType
-import com.routesme.taxi.room.TrackingDatabase
-import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.App
+import com.routesme.taxi.room.TrackingDatabase
+import com.routesme.taxi.view.adapter.AdminConsoleDetailsListAdapter
 import kotlinx.android.synthetic.main.item_detail_fragment.*
 import java.text.SimpleDateFormat
 import java.util.*
@@ -26,7 +26,8 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
         private val trackingDatabase = TrackingDatabase.invoke(App.instance)
         private val locationFeedsDao = trackingDatabase.locationFeedsDao()
     }
-    private var mContext:Context?=null
+
+    private var mContext: Context? = null
     private val adminConsoleLists = AdminConsoleLists(activity)
     private var detailsList = adminConsoleLists.infoCells
     private val adminConsoleHelper = AdminConsoleHelper(activity)
@@ -45,25 +46,26 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
                     MasterItemType.Account -> adminConsoleLists.accountCells
                     MasterItemType.Settings -> adminConsoleLists.settingsCells
                     else -> adminConsoleLists.infoCells
-                   // else -> getSavedLocations()
+                    // else -> getSavedLocations()
                 }
             }
         }
     }
-/*
-    private fun getSavedLocations(): MutableList<DetailCell> {
-        /*
-        val savedLocationFeeds = locationFeedsDao.getFeeds()
-        val liveTrackingCells = mutableListOf<DetailCell>().apply {
-            add(DetailCell("Latitude, Longitude", "Time", true))
-            for (location in savedLocationFeeds){
-                add(DetailCell("${location.latitude}, ${location.longitude}",getTime(location.timestamp).toString(),true))
+
+    /*
+        private fun getSavedLocations(): MutableList<DetailCell> {
+            /*
+            val savedLocationFeeds = locationFeedsDao.getFeeds()
+            val liveTrackingCells = mutableListOf<DetailCell>().apply {
+                add(DetailCell("Latitude, Longitude", "Time", true))
+                for (location in savedLocationFeeds){
+                    add(DetailCell("${location.latitude}, ${location.longitude}",getTime(location.timestamp).toString(),true))
+                }
             }
+            return liveTrackingCells
+            */
         }
-        return liveTrackingCells
-        */
-    }
-*/
+    */
     @SuppressLint("SimpleDateFormat")
     private fun getTime(seconds: Long): String? {
         val d = Date(seconds * 1000L)

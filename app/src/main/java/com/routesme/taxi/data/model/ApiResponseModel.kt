@@ -7,6 +7,7 @@ data class Error(val code: Int = -999, val detail: String? = null, val statusCod
 open class Response(errors: ResponseErrors?, throwable: Throwable?) {
     var responseErrors: ResponseErrors? = null
     var throwable: Throwable? = null
+
     init {
         this.responseErrors = errors
         this.throwable = throwable

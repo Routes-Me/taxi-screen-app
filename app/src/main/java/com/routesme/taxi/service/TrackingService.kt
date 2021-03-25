@@ -1,4 +1,5 @@
 package com.routesme.taxi.service
+
 import android.app.*
 import android.content.Intent
 import android.net.Uri
@@ -9,16 +10,16 @@ import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import com.microsoft.signalr.TransportEnum
-import com.routesme.taxi.helper.Helper
-import com.routesme.taxi.service.receiver.LocationReceiver
-import com.routesme.taxi.room.doa.LocationFeedsDao
-import com.routesme.taxi.room.TrackingDatabase
-import com.routesme.taxi.room.entity.LocationFeed
-import com.routesme.taxi.R
-import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.App
+import com.routesme.taxi.R
+import com.routesme.taxi.helper.Helper
+import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.room.AdvertisementDatabase
+import com.routesme.taxi.room.TrackingDatabase
+import com.routesme.taxi.room.doa.LocationFeedsDao
+import com.routesme.taxi.room.entity.LocationFeed
+import com.routesme.taxi.service.receiver.LocationReceiver
+import com.routesme.taxi.uplevels.Account
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -28,10 +29,11 @@ import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
+
 class TrackingService : Service() {
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
-    private lateinit var db : TrackingDatabase
+    private lateinit var db: TrackingDatabase
     private var advertisementTrackingDB = AdvertisementDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
     private var sendFeedsTimer: Timer? = null
@@ -44,6 +46,7 @@ class TrackingService : Service() {
         locationFeedsDao = db.locationFeedsDao()
         //insertTestFeeds()
     }
+
     override fun onBind(intent: Intent?): IBinder? = null
     override fun onDestroy() {
         super.onDestroy()
@@ -52,6 +55,7 @@ class TrackingService : Service() {
         db.apply { if (isOpen) close() }
         hubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
     }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.d("Test-location-service", "onStartCommand")
@@ -65,11 +69,13 @@ class TrackingService : Service() {
         }
         return START_STICKY
     }
+
     private fun getNotification(): Notification {
         val channel = NotificationChannel("channel_1", "Live Tracking Channel", NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
         return Notification.Builder(this, "channel_1").setAutoCancel(true).build()
     }
+
     private fun insertTestFeeds() {
         GlobalScope.launch(Dispatchers.IO) {
             for (i in 1..100000) {
@@ -78,6 +84,7 @@ class TrackingService : Service() {
             }
         }
     }
+
     private fun scheduleLocationFeeds() {
         sendFeedsTimer = Timer("SendFeedsTimer", true).apply {
             schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(5)) {
@@ -89,6 +96,7 @@ class TrackingService : Service() {
             }
         }
     }
+
     private fun sendFeeds() {
         GlobalScope.launch(Dispatchers.IO) {
             locationFeedsDao.getFeeds().let { feeds ->
@@ -100,6 +108,7 @@ class TrackingService : Service() {
             }
         }
     }
+
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
         Log.d("SocketSrv", "trackingUrl: $trackingUrl")
@@ -120,6 +129,7 @@ class TrackingService : Service() {
                     }, String::class.java)
                 }
     }
+
     private fun getTrackingUrl(): Uri {
         val trackingAuthorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
@@ -135,6 +145,7 @@ class TrackingService : Service() {
             appendQueryParameter("deviceId", deviceId)
         }.build()
     }
+
     private fun startHubConnection() {
         hubConnection.start()
                 .subscribe(object : CompletableObserver {
@@ -147,15 +158,16 @@ class TrackingService : Service() {
                             }
                         }
                     }
+
                     override fun onComplete() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
                             val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
-                            Log.d("SocketSrv","${feedCoordinates}")
+                            Log.d("SocketSrv", "${feedCoordinates}")
                             hubConnection.let {
-                                Log.d("SocketSrv","${it.connectionState}")
+                                Log.d("SocketSrv", "${it.connectionState}")
                                 if (it.connectionState == HubConnectionState.CONNECTED) {
-                                    Log.d("SocketSrv","${feedCoordinates}")
+                                    Log.d("SocketSrv", "${feedCoordinates}")
                                     it.send("SendLocations", feedCoordinates)
                                 }
                             }

@@ -4,11 +4,11 @@ import android.content.Context
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
-import com.routesme.taxi.helper.Helper
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.RegistrationCredentials
 import com.routesme.taxi.data.model.SignInCredentials
 import com.routesme.taxi.data.model.SubmitApplicationVersionCredentials
-import com.routesme.taxi.R
+import com.routesme.taxi.helper.Helper
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.http.*
@@ -40,7 +40,7 @@ interface RestApiService {
     fun refreshToken(): Call<JsonElement>
 
     @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
-    fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>
+    fun deleteVehicle(@Path("vehilceId") vehilceId: String, @Path("deviceId") deviceId: String): Call<JsonElement>
 
     companion object {
 

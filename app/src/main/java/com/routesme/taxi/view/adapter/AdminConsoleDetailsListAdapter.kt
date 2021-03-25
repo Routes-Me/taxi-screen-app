@@ -11,6 +11,7 @@ import com.routesme.taxi.view.adapter.viewholder.*
 
 class AdminConsoleDetailsListAdapter(private val activity: Activity, private val list: List<ICell>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val adminConsoleHelper = AdminConsoleHelper(activity)
+
     companion object {
         private const val TYPE_LABEL = 0
         private const val TYPE_DETAIL = 1
@@ -24,14 +25,14 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity, private val
         TYPE_ACTION -> ActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.action_cell_row, parent, false)).listen { pos, _ ->
             val actionCell = list[pos] as ActionCell
 
-            when(actionCell.action){
+            when (actionCell.action) {
 
                 Actions.LogOff.title -> adminConsoleHelper.sendLogOffRequestToActvitiy()
             }
         }
         else -> DetailActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_action_cell_row, parent, false)).listen { pos, _ ->
             val detailActionCell = list[pos] as DetailActionCell
-            when(detailActionCell.action){
+            when (detailActionCell.action) {
                 Actions.Launcher.title -> adminConsoleHelper.openDefaultLauncherSetting()
                 Actions.General.title -> adminConsoleHelper.openAppGeneralSettings()
             }
@@ -55,7 +56,7 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity, private val
 
     private fun <T : RecyclerView.ViewHolder> T.listen(event: (position: Int, type: Int) -> Unit): T {
         itemView.setOnClickListener {
-           event.invoke(adapterPosition, itemViewType)
+            event.invoke(adapterPosition, itemViewType)
         }
         return this
     }

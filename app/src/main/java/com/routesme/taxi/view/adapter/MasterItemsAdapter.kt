@@ -7,10 +7,10 @@ import android.view.ViewGroup
 import android.widget.RelativeLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.MasterItem
 import com.routesme.taxi.view.activity.AdminConsolePanel
 import com.routesme.taxi.view.fragment.ItemDetailFragment
-import com.routesme.taxi.R
 import kotlinx.android.synthetic.main.item_list_content.view.*
 
 class MasterItemsAdapter(private val parentActivity: AdminConsolePanel, private val MasterItems: List<MasterItem>) : RecyclerView.Adapter<MasterItemsAdapter.ViewHolder>() {
@@ -34,7 +34,11 @@ class MasterItemsAdapter(private val parentActivity: AdminConsolePanel, private 
         val item = MasterItems[position]
         holder.itemTitle.text = item.type.toString()
         with(holder.itemView) { tag = item; setOnClickListener(onClickListener) }
-        holder.listItem.apply { if (rowIndex == position)setBackgroundResource(R.drawable.list_item_style_selected) else{ setBackgroundResource(R.drawable.list_item_style_not_selected) }}
+        holder.listItem.apply {
+            if (rowIndex == position) setBackgroundResource(R.drawable.list_item_style_selected) else {
+                setBackgroundResource(R.drawable.list_item_style_not_selected)
+            }
+        }
     }
 
     override fun getItemCount() = MasterItems.size

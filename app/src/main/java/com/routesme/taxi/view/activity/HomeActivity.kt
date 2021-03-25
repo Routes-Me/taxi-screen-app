@@ -9,8 +9,6 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.View
 import androidx.activity.viewModels
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
@@ -39,11 +37,12 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.util.concurrent.TimeUnit
 
-class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),CoroutineScope by MainScope(),IModeChanging{
-    companion object{
+class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), CoroutineScope by MainScope(), IModeChanging {
+    companion object {
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java,15, TimeUnit.MINUTES).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
+        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 15, TimeUnit.MINUTES).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
     }
+
     private var workManager = WorkManager.getInstance()
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
@@ -52,9 +51,9 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
     private var pressedTime: Long = 0
     private lateinit var mView: View
     private var clickTimes = 0
-    private var player : SimpleExoPlayer?=null
-    private  var from_date:String?=null
-    private  var deviceId:String?=null
+    private var player: SimpleExoPlayer? = null
+    private var from_date: String? = null
+    private var deviceId: String? = null
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,16 +69,16 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         }
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        editor= sharedPreferences?.edit()
-        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
+        editor = sharedPreferences?.edit()
+        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date, null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         submitApplicationVersion()
-        launch {initializePlayer()}
+        launch { initializePlayer() }
         turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
-        workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP,periodicWorkRequest)
+        workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP, periodicWorkRequest)
         setSystemUiVisibility()
     }
 
@@ -97,8 +96,8 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
     private fun submitApplicationVersion() {
         val submittedVersion = sharedPreferences?.getString(SharedPreferencesHelper.submitted_version, null)
         val currentVersion = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
-        if (currentVersion.isNotEmpty()){
-            if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion){
+        if (currentVersion.isNotEmpty()) {
+            if (submittedVersion.isNullOrEmpty() || submittedVersion != currentVersion) {
                 val packageName = BuildConfig.APPLICATION_ID
                 deviceId?.let {
                     val submitApplicationVersionCredentials = SubmitApplicationVersionCredentials(packageName, currentVersion)
@@ -108,7 +107,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         }
     }
 
-    private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials){
+    private fun sendCurrentVersionToServer(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials) {
         val submitApplicationVersionViewModel: SubmitApplicationVersionViewModel by viewModels()
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
@@ -125,7 +124,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         player = SimpleExoPlayer.Builder(demoVideoPlayer.context).build()
         demoVideoPlayer.player = player
         val mediaSource = buildRawMediaSource()
-        withContext(Dispatchers.Main){
+        withContext(Dispatchers.Main) {
             mediaSource?.let {
                 player?.apply {
                     setMediaSource(it)
@@ -138,7 +137,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
     }
 
     private suspend fun buildRawMediaSource(): MediaSource? {
-        return withContext(Dispatchers.Default){
+        return withContext(Dispatchers.Default) {
             val rawDataSource = RawResourceDataSource(this@HomeActivity)
             rawDataSource.open(DataSpec(RawResourceDataSource.buildRawResourceUri(R.raw.offline_video)))
             val mediaItem = MediaItem.fromUri(rawDataSource.uri!!)
@@ -147,6 +146,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
             return@withContext mediaSource
         }
     }
+
     private fun addFragments() {
         supportFragmentManager.commit {
             replace<ContentFragment>(R.id.contentFragment_container)
@@ -157,6 +157,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
         contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
     }
+
     override fun onPermissionsOkay() {}
 
     private fun openPattern() {
@@ -182,6 +183,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         sendImplicitBroadcast(intent)
         isHotspotAlive = false
     }
+
     private fun sendImplicitBroadcast(i: Intent) {
         val pm: PackageManager = this.packageManager
         val matches = pm.queryBroadcastReceivers(i, 0)
@@ -194,21 +196,21 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(demoVideo: DemoVideo){
+    fun onEvent(demoVideo: DemoVideo) {
         try {
-                if(demoVideo.isPlay){
-                    textViewError.visibility = View.VISIBLE
-                    textViewError.text = demoVideo.errorMessage
-                    activityVideoCover.visibility = View.VISIBLE
-                    demoVideoPlayer.visibility = View.VISIBLE
-                    playVideo()
-                }else {
-                    textViewError.visibility = View.GONE
-                    activityVideoCover.visibility = View.GONE
-                    demoVideoPlayer.visibility = View.GONE
-                    if(player?.isPlaying!!) stopVideo()
+            if (demoVideo.isPlay) {
+                textViewError.visibility = View.VISIBLE
+                textViewError.text = demoVideo.errorMessage
+                activityVideoCover.visibility = View.VISIBLE
+                demoVideoPlayer.visibility = View.VISIBLE
+                playVideo()
+            } else {
+                textViewError.visibility = View.GONE
+                activityVideoCover.visibility = View.GONE
+                demoVideoPlayer.visibility = View.GONE
+                if (player?.isPlaying!!) stopVideo()
 
-                }
+            }
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         }
@@ -217,7 +219,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
 
     override fun onDestroy() {
         super.onDestroy()
-        if(player !=null){
+        if (player != null) {
             player?.release()
             player = null
         }
@@ -226,6 +228,7 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
         cancel()
     }
+
     override fun onStart() {
         EventBus.getDefault().register(this)
         super.onStart()
@@ -236,17 +239,18 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(),Corou
         super.onStop()
     }
 
-    fun playVideo(){
+    fun playVideo() {
 
         player?.play()
 
     }
 
-    fun stopVideo(){
+    fun stopVideo() {
 
         player?.pause()
 
     }
+
     override fun onModeChange() {
         removeFragments()
         recreate()

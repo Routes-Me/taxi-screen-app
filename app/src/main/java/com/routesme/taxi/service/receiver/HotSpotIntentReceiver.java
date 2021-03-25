@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
 import com.routesme.taxi.R;
 import com.routesme.taxi.view.activity.MagicActivity;
 
@@ -15,7 +16,7 @@ public class HotSpotIntentReceiver extends BroadcastReceiver {
     public void onReceive(Context context, Intent intent) {
         final String ACTION_TURNON = context.getString(R.string.intent_action_turnon);
         final String ACTION_TURNOFF = context.getString(R.string.intent_action_turnoff);
-        Log.i(TAG,"Received intent");
+        Log.i(TAG, "Received intent");
         if (intent != null) {
             final String action = intent.getAction();
 

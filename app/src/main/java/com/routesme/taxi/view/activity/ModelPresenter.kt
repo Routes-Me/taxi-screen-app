@@ -2,16 +2,13 @@ package com.routesme.taxi.view.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi.R
 import com.routesme.taxi.App
-import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.R
 
 class ModelPresenter : AppCompatActivity() {
-    private var bundle:Bundle?=null
+    private var bundle: Bundle? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -1,7 +1,6 @@
 package com.routesme.taxi.view.adapter
 
 import android.content.Context
-import android.media.Image
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -25,7 +24,7 @@ class ImageBannerAdapter(context: Context, data: List<Data>) : RecyclerView.Adap
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         // create view holder to hold reference
-        return ViewHolder( LayoutInflater.from(parent.context).inflate(R.layout.row_item_side_banner, parent, false))
+        return ViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.row_item_side_banner, parent, false))
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
