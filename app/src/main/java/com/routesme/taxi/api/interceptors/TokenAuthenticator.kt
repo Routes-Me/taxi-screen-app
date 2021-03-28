@@ -15,6 +15,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 
+
 class TokenAuthenticator(private val context: Context): Authenticator{
     private val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
     override fun authenticate(route: Route?, response: Response): Request? = when {
@@ -57,8 +58,11 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     }
 
     private fun openRefreshTokenActivity() {
-        context.startActivity(Intent(context, RefreshTokenActivity::class.java))
-        (context as Activity).finish()
+        if (context is Activity){
+            val activity: Activity = context
+            activity.startActivity(Intent(activity, RefreshTokenActivity::class.java))
+            activity.finish()
+        }
     }
 
     private fun retryCount(request: Request?)= request?.header(Constants.httpHeaderRetryCount)?.toInt() ?: 0
