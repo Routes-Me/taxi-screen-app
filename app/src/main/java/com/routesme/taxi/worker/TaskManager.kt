@@ -14,11 +14,14 @@ import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.room.AdvertisementDatabase
 import com.routesme.taxi.room.entity.AdvertisementTracking
 import com.routesme.taxi.room.helper.DatabaseHelperImpl
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams) {
+class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams),CoroutineScope by MainScope() {
     private var dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))
     private val MIN = 100000000
     private var sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
@@ -30,29 +33,31 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
     override fun doWork(): Result {
         try {
             val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
-            val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
-            device_id?.let { deviceId ->
-                if (!list.isNullOrEmpty()) {
-                    val call = thisApiCorService.postReport(getJsonArray(list), device_id)
-                    call.enqueue(object : Callback<JsonElement> {
-                        override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                            if (response.isSuccessful) {
-                                val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
-                                editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                                editior?.commit()
+            launch {
+                val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
+                device_id?.let { deviceId ->
+                    if (!list.isNullOrEmpty()) {
+                        val call = thisApiCorService.postReport(getJsonArray(list), device_id)
+                        call.enqueue(object : Callback<JsonElement> {
+                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                                if (response.isSuccessful) {
+                                    launch {
+                                        val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
+                                        editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                                        editior?.commit()
+                                    }
+                                }
+                            }
+                            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
+
 
                             }
-                        }
+                        })
 
-                        override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
+                    } else {
 
-
-                        }
-                    })
-
-                } else {
-
-                    Log.d("WorkManager", "No Data found")
+                        Log.d("WorkManager", "No Data found")
+                    }
                 }
             }
             return Result.success()

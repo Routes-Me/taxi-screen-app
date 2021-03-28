@@ -19,11 +19,11 @@ interface DatabaseHelper {
 
     suspend fun getLastItem(id: String, timeStamp: Long): AdvertisementTracking
 
-    fun getList(timeStamp: Long): List<AdvertisementTracking>
+    suspend fun getList(timeStamp: Long): List<AdvertisementTracking>
 
     suspend fun getAllList(): List<AdvertisementTracking>
 
-    fun deleteTable(timeStamp: Long): Int
+    suspend fun deleteTable(timeStamp: Long): Int
 
     suspend fun deleteAllTable(): Int
 
