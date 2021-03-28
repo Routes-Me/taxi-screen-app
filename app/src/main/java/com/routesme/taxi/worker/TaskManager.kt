@@ -20,6 +20,7 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import kotlin.concurrent.thread
 
 class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams),CoroutineScope by MainScope() {
     private var dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))
@@ -41,6 +42,7 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
                         call.enqueue(object : Callback<JsonElement> {
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
+                                    Log.d("Workmanager","${Thread.currentThread()}")
                                     launch {
                                         val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())

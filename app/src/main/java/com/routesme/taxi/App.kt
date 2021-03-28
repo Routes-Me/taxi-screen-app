@@ -38,7 +38,7 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
+        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 15, TimeUnit.MINUTES).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
     }
 
     override fun onCreate() {
