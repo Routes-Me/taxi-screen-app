@@ -8,5 +8,5 @@ import com.routesme.taxi.MVVM.Repository.TokenRepository
 
 class TokenViewModel():ViewModel(){
 
-    fun refreshToken(context: Context) = TokenRepository(context).refreshToken()
+    fun refreshToken(context: Context,refresh_token:String?) = TokenRepository(context,refresh_token).refreshToken(refresh_token)
 }

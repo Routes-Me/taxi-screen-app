@@ -78,6 +78,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.7.1'
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.14.4'
     //RxJave
     implementation 'io.reactivex.rxjava2:rxjava:2.2.8'
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
@@ -105,12 +106,14 @@ dependencies {
     kapt "android.arch.persistence.room:compiler:1.1.1"
     //implementation 'com.microsoft.signalr:signalr:1.0.0'
     implementation 'com.smartarmenia:dotnetcoresignalrclientjava:1.14'
+
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.12.1'
     implementation 'com.google.android.exoplayer:exoplayer-dash:2.12.1'
     implementation 'com.google.android.exoplayer:exoplayer-ui:2.12.1'
     implementation 'org.greenrobot:eventbus:3.0.0'
+
     //Runtime Permission Library
     implementation 'com.nabinbhandari.android:permissions:3.8'
 
@@ -126,10 +129,12 @@ dependencies {
 
     implementation 'com.intuit.sdp:sdp-android:1.0.5'
     implementation 'tk.zielony:carbon:0.16.0.1'
-    implementation 'com.squareup.okhttp3:logging-interceptor:3.3.1'
+
     //Coroutine Library
    // implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.6'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.6'
     implementation 'android.arch.work:work-runtime:1.0.1'
+
+    //JWT Library
     implementation 'com.auth0.android:jwtdecode:2.0.0'
 }

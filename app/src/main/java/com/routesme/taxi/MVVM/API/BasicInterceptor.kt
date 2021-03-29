@@ -13,6 +13,7 @@ import com.routesme.taxi.MVVM.View.activity.ModelPresenter
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.MVVM.View.activity.LoginActivity
+import com.routesme.taxi.utils.Session
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.io.IOException
@@ -41,7 +42,7 @@ internal class BasicAuthInterceptor(val activity: Activity) : Interceptor {
 
 internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     private val AUTHORIZATION_KAY = "authorization"
-    private var adminConsoleHelper = AdminConsoleHelper(activity)
+    private var session = Session(activity)
     @Throws(IOException::class)
     override fun intercept(@NonNull chain: Interceptor.Chain): Response {
         val response: Response = chain.proceed(chain.request())
@@ -50,7 +51,9 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
     }
 
     private fun openModelPresenterScreen(activity: Activity, responseCode: Int) {
-        adminConsoleHelper.logOff()
+
+        session.logOff()
+
     }
 }
 
