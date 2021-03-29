@@ -3,7 +3,6 @@ package com.routesme.taxi.Class
 import android.animation.ObjectAnimator
 import android.content.Context
 import android.net.Uri
-import android.os.Handler
 import android.util.Log
 import android.view.animation.AccelerateDecelerateInterpolator
 import android.view.animation.Animation
@@ -15,10 +14,7 @@ import androidx.core.animation.addListener
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.exoplayer2.ExoPlaybackException
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.DefaultMediaSourceFactory
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -61,7 +57,6 @@ class AdvertisementsHelper {
 
 
         private fun initializeVideoCaching(): SimpleCache {
-
             val maxMemory = Runtime.getRuntime().maxMemory()
             val freeMemory = Runtime.getRuntime().freeMemory()
             val totalMemory = Runtime.getRuntime().totalMemory()
@@ -94,9 +89,9 @@ class AdvertisementsHelper {
                         glide.load(previousUri).error(R.drawable.empty_promotion).into(imageView)
                     }
                     val newUri = Uri.parse(images[currentImageIndex].url)
-                        images[currentImageIndex].contentId?.toInt()?.let {
-                            advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
-                        }
+                    images[currentImageIndex].contentId?.toInt()?.let {
+                        advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.IMAGE.media_type)
+                    }
                     glide.load(newUri).error(R.drawable.empty_promotion).into(imageView2)
                     if (firstTime || currentImageIndex != 0){
                         firstTime = true
@@ -143,13 +138,15 @@ class AdvertisementsHelper {
                     var currentMediaItemId = currentMediaItem?.mediaId.toString().toInt()
                     EventBus.getDefault().post(videos[currentMediaItemId])
                     setAnimation(context,relativeLayout,relativeLayout2)
-                    if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
 
-                        currentMediaItemId.let {
-                            videos[it].contentId?.toInt()?.let {
-                                advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
-                            }
+                    if(currentMediaItemId == 0) currentMediaItemId = videos.size-1 else currentMediaItemId = currentMediaItemId-1
+                    currentMediaItemId.let {
+                        videos[it].contentId?.toInt()?.let {
+                            advertisementDataLayer.insertOrUpdateRecords(it,DateHelper.instance.getCurrentDate(),DateHelper.instance.getCurrentPeriod(),Type.VIDEO.media_type)
                         }
+                    }
+
+
                 }
 
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {

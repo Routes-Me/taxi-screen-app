@@ -6,7 +6,6 @@ import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
-import android.os.StrictMode
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -88,7 +87,6 @@ class ContentFragment : Fragment() {
         fetchContent()
         super.onViewCreated(view, savedInstanceState)
     }
-
 
     /*private val myReceiver: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
