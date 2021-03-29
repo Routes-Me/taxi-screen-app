@@ -62,10 +62,10 @@ internal class NotAcceptableRefreshTokenInterceptor(val context: Context) : Inte
         if (response.code() == HttpURLConnection.HTTP_NOT_FOUND && request.url().toString() == baseUrl + "authentications/renewals") {
             Log.d("RefreshToken", "${request.url()} not found !")
 
-          //  val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
+            //  val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
 
-             context.startActivity(Intent(context, LoginActivity::class.java))
-             (context as Activity).finish()
+            context.startActivity(Intent(context, LoginActivity::class.java))
+            (context as Activity).finish()
         }
         return response
     }

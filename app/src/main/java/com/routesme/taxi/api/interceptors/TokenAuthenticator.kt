@@ -36,8 +36,8 @@ class TokenAuthenticator(private val context: Context): Authenticator{
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
         //retryCount(response.request()) == 1 -> null
         else -> {
-           // Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
-          //  null
+            // Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
+            //  null
 
             val authorizationHeader: String? = response.networkResponse()?.request()?.headers()?.get("Authorization")
 
@@ -78,10 +78,10 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     */
 
     private fun Request.reAddAuthorizationHeader(): Request {
-    Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
-   return newBuilder()
-           // .removeHeader(Header.Authorization.toString())
-            .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
-            .build()
-}
+        Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
+        return newBuilder()
+                // .removeHeader(Header.Authorization.toString())
+                .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
+                .build()
+    }
 }
