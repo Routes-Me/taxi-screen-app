@@ -15,6 +15,7 @@ import com.routesme.taxi.room.AdvertisementDatabase
 import com.routesme.taxi.room.entity.AdvertisementTracking
 import com.routesme.taxi.room.helper.DatabaseHelperImpl
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import retrofit2.Call
@@ -35,16 +36,20 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
         try {
             val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
             launch {
+                //Log.d("Workmanager","Date Before ${DateHelper.instance.getCurrentDate() / MIN}")
                 val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
+                //Log.d("Workmanager","Data List ${list}")
                 device_id?.let { deviceId ->
                     if (!list.isNullOrEmpty()) {
                         val call = thisApiCorService.postReport(getJsonArray(list), device_id)
                         call.enqueue(object : Callback<JsonElement> {
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
-                                    Log.d("Workmanager","${Thread.currentThread()}")
-                                    launch {
+                                    GlobalScope.launch {
+                                        //Log.d("Workmanager","Response 2 ${response.isSuccessful}")
+                                        //Log.d("Workmanager","Date After ${DateHelper.instance.getCurrentDate() / MIN}")
                                         val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
+                                        //Log.d("Workmanager","Data deleted ${delete}")
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                                         editior?.commit()
                                     }
@@ -58,7 +63,7 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
 
                     } else {
 
-                        Log.d("WorkManager", "No Data found")
+                        Log.d("Workmanager", "No Data found")
                     }
                 }
             }

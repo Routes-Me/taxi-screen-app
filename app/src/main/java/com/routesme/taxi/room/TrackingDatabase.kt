@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.routesme.taxi.room.doa.LocationFeedsDao
 import com.routesme.taxi.room.entity.LocationFeed
 
-@Database(entities = [LocationFeed::class], version = 11, exportSchema = false)
+@Database(entities = [LocationFeed::class], version = 12, exportSchema = false)
 abstract class TrackingDatabase : RoomDatabase() {
     abstract fun locationFeedsDao(): LocationFeedsDao
 

@@ -50,6 +50,4 @@ interface AdvertisementDoa {
 
     @Query("DELETE FROM tbl_advertisement_tracking")
     suspend fun deleteAllTable(): Int
-
-
 }

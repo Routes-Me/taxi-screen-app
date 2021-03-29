@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -96,7 +97,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-
         launch {
             while (isActive) {
                 date = Date()
