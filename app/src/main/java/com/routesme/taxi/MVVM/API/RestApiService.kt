@@ -20,6 +20,7 @@ interface RestApiService {
     @PUT("devices/{id}/applications")
     fun submitApplicationVersion(@Path("id") deviceId: String, @Body submitApplicationVersionCredentials: SubmitApplicationVersionCredentials): Call<JsonElement>
 
+
     @POST("signin")
     fun signIn(@Body signInCredentials: SignInCredentials): Call<JsonElement>
 
@@ -39,7 +40,7 @@ interface RestApiService {
     fun postReport(@Body data: JsonArray, @Path("deviceId") deviceId: String): Call<JsonElement>
 
     @POST("analytics/devices/playbacks")
-    fun refreshToken(@Query("refreshToken") refresh_token:String?): Call<JsonElement>
+    fun refreshToken(): Call<JsonElement>
 
     @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
     fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>

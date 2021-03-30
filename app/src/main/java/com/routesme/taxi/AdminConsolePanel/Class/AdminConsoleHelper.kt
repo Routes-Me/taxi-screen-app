@@ -21,16 +21,16 @@ import org.greenrobot.eventbus.EventBus
 import kotlin.collections.ArrayList
 
 class AdminConsoleHelper(val activity: Activity) {
-    //private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+    private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
     private val appPackageName = activity.packageName
     private val locationPermissions = arrayOf(Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION)
     private var locationManager: LocationManager = activity.getSystemService(Context.LOCATION_SERVICE) as LocationManager
 
     companion object {
-        const val defaultValue = "- -"
+        private const val defaultValue = "- -"
     }
 
-    /*fun plateNumber() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_plate_number, defaultValue)
+    fun plateNumber() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_plate_number, defaultValue)
     fun institutionName() = sharedPreferences.getString(SharedPreferencesHelper.institution_name, defaultValue)
     fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
     fun simSerialNumber() = sharedPreferences.getString(SharedPreferencesHelper.sim_serial_number, defaultValue)
@@ -39,7 +39,7 @@ class AdminConsoleHelper(val activity: Activity) {
     fun registrationDate() = sharedPreferences.getString(SharedPreferencesHelper.registration_date, defaultValue)
 
     fun vehicleId() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_id, defaultValue)
-    fun deviceId() = sharedPreferences.getString(SharedPreferencesHelper.device_id, defaultValue)*/
+    fun deviceId() = sharedPreferences.getString(SharedPreferencesHelper.device_id, defaultValue)
     fun isMyAppDefaultLauncher(): DetailActionStatus {
         val filters: MutableList<IntentFilter> = ArrayList()
         val activities: List<ComponentName> = ArrayList()
@@ -69,14 +69,14 @@ class AdminConsoleHelper(val activity: Activity) {
         EventBus.getDefault().post(LogOff(true))
 
     }
-    /*fun logOff(){
+    fun logOff(){
 
         sharedPreferences?.edit()?.clear()?.apply()
         activity.apply {
             startActivity(Intent(this,LoginActivity::class.java))
             finish()
         }
-    }*/
+    }
     fun isLocationProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)

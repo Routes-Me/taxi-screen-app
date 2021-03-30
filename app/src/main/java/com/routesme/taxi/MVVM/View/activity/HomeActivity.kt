@@ -14,7 +14,6 @@ import android.view.View
 import androidx.activity.viewModels
 import androidx.lifecycle.Observer
 import androidx.work.WorkManager
-import com.auth0.android.jwt.JWT
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
@@ -42,7 +41,6 @@ import com.routesme.taxi.MVVM.events.DemoVideo
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.App
-import com.routesme.taxi.utils.Session
 
 import kotlinx.android.synthetic.main.home_screen.*
 import org.greenrobot.eventbus.EventBus
@@ -61,11 +59,8 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
-    private  var refresh_token:String?=null
-    private  var access_token:String?=null
     private val advertisementTracking = AdvertisementDataLayer()
     private var getList:List<AdvertisementTracking>?=null
-    private var session:Session?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -78,14 +73,10 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         }
         setSystemUiVisibility()
         setContentView(R.layout.home_screen)
-        session = Session(this)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        //from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
-        from_date = session!!.fromDate()
-        deviceId = session!!.deviceId()
-        refresh_token = session!!.getRefreshToken()
-        access_token = session!!.getAccessToken()
+        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
+        deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         submitApplicationVersion()
         checkDateAndUploadResult()
         initializePlayer()
@@ -94,52 +85,9 @@ class HomeActivity : PermissionsActivity(), IModeChanging {
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
-        WorkManager.getInstance().enqueue(App.periodicWorkRequest)
-        observeTokenManager()
-    }
-
-    private fun observeTokenManager(){
-
-        WorkManager.getInstance().getWorkInfoByIdLiveData(App.periodicWorkRequest.id)
-                .observe(this, Observer { workInfo ->
-                    val status = workInfo.state.name
-                    Log.d("Work_Manager", "${status}")
-                    //refereshToken()
-
-                })
-    }
-
-    private fun refereshToken(){
-
-        if(DateHelper.instance.checkRefreshTokenExp(session!!.getRefreshTokenExpireDate()!!.toLong())){
-
-            if(DateHelper.instance.checkAccessTokenExp(session!!.getAccessTokenExpireDate()!!.toLong())){
-
-                val refreshTokenViewModel : TokenViewModel by viewModels()
-                refreshTokenViewModel.refreshToken(this,refresh_token).observe(this, Observer<RefreshResponse> {
-                    it.refresh_token?.let { refreshToken->
-
-                        it.token?.let {access_token_exp->
-
-                            editor?.apply {
-                                putString(SharedPreferencesHelper.refresh_token,refreshToken)
-                                putString(SharedPreferencesHelper.token,access_token_exp)
-                                putString(SharedPreferencesHelper.refresh_token_exp,JWT(refreshToken).getClaim("exp").asString())
-                                putString(SharedPreferencesHelper.access_token_exp,JWT(access_token_exp).getClaim("exp").asString())
-                            }?.apply()
-
-                        }
-
-
-                    }
-
-                })
-
-            }
-
-        }
 
     }
+
 
 
     private fun setSystemUiVisibility() {

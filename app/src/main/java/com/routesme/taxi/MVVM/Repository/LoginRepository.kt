@@ -33,7 +33,7 @@ class LoginRepository(val context: Context) {
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
 
-                    signInResponse.value = LoginResponse(token = signInSuccessResponse.token,refresh_token = signInSuccessResponse.refresh_token)
+                    signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
                         val objError = JSONObject(response.errorBody()!!.string())
