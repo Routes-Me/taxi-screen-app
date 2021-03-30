@@ -28,7 +28,6 @@ import com.routesme.taxi.MVVM.View.activity.LoginActivity
 import com.routesme.taxi.MVVM.ViewModel.ContentViewModel
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.SharedPreferencesHelper
-import com.routesme.taxi.utils.Session
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
@@ -40,8 +39,8 @@ import java.net.HttpURLConnection
 import java.sql.SQLException
 
 class AdminConsolePanel : AppCompatActivity() {
-    private var session : Session?=null
-    //private var sharedPreferences :SharedPreferences?=null
+    private var adminConsoleHelper : AdminConsoleHelper?=null
+    private var sharedPreferences :SharedPreferences?=null
     private var dialog: AlertDialog? = null
     val contentViewModel : ContentViewModel by viewModels()
     private val advertisementTracking = AdvertisementDataLayer()
@@ -52,8 +51,8 @@ class AdminConsolePanel : AppCompatActivity() {
         initialize()
     }
     private fun initialize(){
-        session = Session(this)
-        //sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        adminConsoleHelper = AdminConsoleHelper(this)
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
         toolbarSetUp()
     }
@@ -98,9 +97,9 @@ class AdminConsolePanel : AppCompatActivity() {
         if(isLogOff.isLogOff){
             try {
                 dialog?.show()
-                session?.deviceId()?.let {deviceID ->
+                adminConsoleHelper?.deviceId()?.let {deviceID ->
 
-                    session?.vehicleId()?.let {vehicleId ->
+                    adminConsoleHelper?.vehicleId()?.let {vehicleId ->
                         //Log.d("Report","${getJsonArray()}")
                         contentViewModel.postReport(this,getJsonArray(),deviceID).observe(this , Observer<ReportResponse> {
 
@@ -133,7 +132,7 @@ class AdminConsolePanel : AppCompatActivity() {
                     if (it.isSuccess) {
                         dialog?.hide()
 
-                        session?.logOff()
+                        adminConsoleHelper?.logOff()
 
                     }else{
                         dialog?.hide()
