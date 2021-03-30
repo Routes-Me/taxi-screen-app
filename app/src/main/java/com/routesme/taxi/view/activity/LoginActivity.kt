@@ -115,6 +115,7 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
+                    Log.d("RefreshTokenTesting", " Received access token: $token")
                     Account().apply { accessToken = token }
                     Log.d("RefreshToken", "Login Activity..Get new access token")
                     openNextActivity()

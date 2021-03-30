@@ -41,50 +41,51 @@ class RefreshTokenService: Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-         super.onStartCommand(intent, flags, startId)
+        super.onStartCommand(intent, flags, startId)
+        Log.d("RefreshTokenTesting", "RefreshTokenService onStartCommand()")
+        startForeground(2, getNotification())
+        refreshToken()
 
-         startForeground(2, getNotification())
-         refreshToken()
-
-         return START_STICKY
+        return START_STICKY
     }
 
     private fun refreshToken() {
-            Log.d("RefreshToken", "Hit Refresh Token")
-            val refreshTokenCredentials = RefreshTokenCredentials(Account().refreshToken.toString())
-            val call = thisApiCoreService.refreshToken(refreshTokenCredentials)
-            APIHelper.enqueueWithRetry(call ,5,object :Callback<JsonElement> {
-              @Override
-              override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                  if (response.isSuccessful && response.body() != null){
-                      val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
-                      Log.d("RefreshToken","successResponse: $successResponse")
-                      successResponse?.let {
-                          saveTokens(it)
-                          if (App.instance.isRefreshActivityAlive) openHomeActivity()
-                          stopRefreshTokenService()
-                      }
-                  } else{
-                      if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
-                          /*
-                           val objError = JSONObject(response.errorBody()!!.string())
-                           val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                           Log.d("RefreshToken","errors: $errors")
+        Log.d("RefreshToken", "Hit Refresh Token")
+        val refreshTokenCredentials = RefreshTokenCredentials(Account().refreshToken.toString())
+        val call = thisApiCoreService.refreshToken(refreshTokenCredentials)
+        APIHelper.enqueueWithRetry(call ,5,object :Callback<JsonElement> {
+            @Override
+            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                if (response.isSuccessful && response.body() != null){
+                    val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
+                    successResponse?.let {
+                        Log.d("RefreshTokenTesting", "Renewals response: $response , Code: ${response.code()}")
+                        saveTokens(it)
+                        if (App.instance.isRefreshActivityAlive) openHomeActivity()
+                        stopRefreshTokenService()
+                    }
+                } else{
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
+                        Log.d("RefreshTokenTesting", "Renewals response: $response , HTTP_NOT_ACCEPTABLE , Code: ${response.code()}")
+                        /*
+                         val objError = JSONObject(response.errorBody()!!.string())
+                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
+                         Log.d("RefreshToken","errors: $errors")
 */
-                          if (App.instance.isRefreshActivityAlive) openLoginActivity()
-                          stopRefreshTokenService()
-                      }else{
-                          val error = Error(detail = response.message(), statusCode = response.code())
-                          val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                          val responseErrors = ResponseErrors(errors)
-                          Log.d("RefreshToken","responseErrors: $responseErrors")
-                      }
-                  }
-              }
-              @Override
-              override fun onFailure(call: Call<JsonElement>, t: Throwable) {
-                  Log.d("RefreshToken","throwable: $t")
-              }
+                        if (App.instance.isRefreshActivityAlive) openLoginActivity()
+                        stopRefreshTokenService()
+                    }else{
+                        val error = Error(detail = response.message(), statusCode = response.code())
+                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                        val responseErrors = ResponseErrors(errors)
+                        Log.d("RefreshToken","responseErrors: $responseErrors")
+                    }
+                }
+            }
+            @Override
+            override fun onFailure(call: Call<JsonElement>, t: Throwable) {
+                Log.d("RefreshToken","throwable: $t")
+            }
         })
         /*
             call.enqueue(object : Callback<JsonElement> {
@@ -129,12 +130,12 @@ class RefreshTokenService: Service() {
     }
 
     private fun openHomeActivity() {
-        startActivity(Intent(applicationContext, HomeActivity::class.java))
+        startActivity(Intent(applicationContext, HomeActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         RefreshTokenActivity.instance.finish()
     }
 
     private fun openLoginActivity() {
-        startActivity(Intent(applicationContext, LoginActivity::class.java))
+        startActivity(Intent(applicationContext, LoginActivity::class.java).setFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         RefreshTokenActivity.instance.finish()
 
     }

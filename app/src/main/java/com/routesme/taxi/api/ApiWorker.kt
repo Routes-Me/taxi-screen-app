@@ -29,7 +29,7 @@ class ApiWorker(val context: Context) {
                      writeTimeout(15, TimeUnit.SECONDS)
                      addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                      addInterceptor(BasicAuthInterceptor(context))
-                     addInterceptor(ReceivedCookiesInterceptor(context))
+                     addInterceptor(ReceivedCookiesInterceptor())
                      addInterceptor(RedirectInterceptor())
                      followSslRedirects(false)
 

@@ -19,8 +19,8 @@ interface RestApiService {
     @PUT("devices/{id}/applications")
     fun submitApplicationVersion(@Path("id") deviceId: String, @Body submitApplicationVersionCredentials: SubmitApplicationVersionCredentials): Call<JsonElement>
 
-    @POST("signin")
-    //@POST("authentications")
+    // @POST("signin")
+    @POST("authentications")
     fun signIn(@Body signInCredentials: SignInCredentials): Call<JsonElement>
 
     @POST("devices")

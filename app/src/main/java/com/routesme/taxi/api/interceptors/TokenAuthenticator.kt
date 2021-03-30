@@ -15,6 +15,7 @@ import okhttp3.Request
 import okhttp3.Response
 import okhttp3.Route
 
+
 class TokenAuthenticator(private val context: Context): Authenticator{
     private val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
     override fun authenticate(route: Route?, response: Response): Request? = when {
@@ -35,8 +36,8 @@ class TokenAuthenticator(private val context: Context): Authenticator{
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
         //retryCount(response.request()) == 1 -> null
         else -> {
-            Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
-          //  null
+            // Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
+            //  null
 
             val authorizationHeader: String? = response.networkResponse()?.request()?.headers()?.get("Authorization")
 
@@ -45,6 +46,7 @@ class TokenAuthenticator(private val context: Context): Authenticator{
                 //If the request redirects [ If authorization header is null ], So I'll add the authorization header again to it , then execute it again
                 response.request().reAddAuthorizationHeader()
             }else{
+                Log.d("RefreshTokenTesting", "TokenAuthenticator... Code: ${response.code()}")
                 //If it's expired, So I'll handle refresh token logic
                 if (!App.instance.isRefreshActivityAlive) {
                     App.instance.isRefreshActivityAlive = true
@@ -56,8 +58,11 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     }
 
     private fun openRefreshTokenActivity() {
-        context.startActivity(Intent(context, RefreshTokenActivity::class.java))
-        (context as Activity).finish()
+        if (context is Activity){
+            val activity: Activity = context
+            activity.startActivity(Intent(activity, RefreshTokenActivity::class.java))
+            activity.finish()
+        }
     }
 
     private fun retryCount(request: Request?)= request?.header(Constants.httpHeaderRetryCount)?.toInt() ?: 0
@@ -73,10 +78,10 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     */
 
     private fun Request.reAddAuthorizationHeader(): Request {
-    Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
-   return newBuilder()
-           // .removeHeader(Header.Authorization.toString())
-            .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
-            .build()
-}
+        Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
+        return newBuilder()
+                // .removeHeader(Header.Authorization.toString())
+                .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
+                .build()
+    }
 }
