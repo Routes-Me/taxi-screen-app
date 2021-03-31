@@ -1,12 +1,13 @@
 package com.routesme.taxi.uplevels
 
 import android.content.Context
+import com.routesme.taxi.App
 import com.routesme.taxi.helper.SharedPreferencesHelper
 
-class Vehicle() {
+class Vehicle {
     var id: String?
         get() {
-            sharedPrefs().getString(SharedPreferencesHelper.vehicle_id, null)?.let{
+            sharedPrefs().getString(SharedPreferencesHelper.vehicle_id, null)?.let {
                 return it
             }
             return null
@@ -16,7 +17,7 @@ class Vehicle() {
 
     var institutionId: String?
         get() {
-            sharedPrefs().getString(SharedPreferencesHelper.institution_id, null)?.let{
+            sharedPrefs().getString(SharedPreferencesHelper.institution_id, null)?.let {
                 return it
             }
             return null
@@ -24,10 +25,9 @@ class Vehicle() {
         set(value) {}
 
 
-
     var deviceId: String?
         get() {
-            sharedPrefs().getString(SharedPreferencesHelper.device_id, null)?.let{
+            sharedPrefs().getString(SharedPreferencesHelper.device_id, null)?.let {
                 return it
             }
             return null

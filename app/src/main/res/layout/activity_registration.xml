@@ -6,152 +6,152 @@
     android:background="@color/white"
     tools:context=".kotlin.View.RegistrationScreen.RegistrationActivity">
 
-<RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/white"
-    android:orientation="vertical">
-
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@color/white"
         android:orientation="vertical">
 
-        <androidx.appcompat.widget.Toolbar
-            android:id="@+id/MyToolBar"
-            style="@style/AppTheme.CustomTextViewToolbar"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="31dp"
-            android:layout_marginBottom="20dp" />
+            android:orientation="vertical">
 
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:fillViewport="true"
-            android:paddingLeft="70dp">
-
-            <LinearLayout
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/MyToolBar"
+                style="@style/AppTheme.CustomTextViewToolbar"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingLeft="70dp"
-                android:paddingTop="16dp"
-                android:paddingBottom="16dp">
+                android:layout_marginTop="31dp"
+                android:layout_marginBottom="20dp" />
 
-                <TextView
-                    style="@style/AppTheme.CustomTextViewTitle"
+            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fillViewport="true"
+                android:paddingLeft="70dp">
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginBottom="40dp"
-                    android:text="Almost done .."
-                    android:textSize="21dp" />
+                    android:orientation="vertical"
+                    android:paddingLeft="70dp"
+                    android:paddingTop="16dp"
+                    android:paddingBottom="16dp">
 
-                <TextView
-                    style="@style/AppTheme.CustomTextViewTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="15dp"
-                    android:text="Taxi" />
+                    <TextView
+                        style="@style/AppTheme.CustomTextViewTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="40dp"
+                        android:text="Almost done .."
+                        android:textSize="21dp" />
 
-                <TextView
-                    android:id="@+id/taxiOffice_tv"
-                    style="@style/AppTheme.CustomTextView"
-                    android:layout_width="482dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/tab_text_selector"
-                    android:drawableRight="@drawable/ic_right_arrow"
-                    android:hint="Taxi office"
-                    android:nextFocusDown="@id/password_et" />
+                    <TextView
+                        style="@style/AppTheme.CustomTextViewTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="15dp"
+                        android:text="Taxi" />
 
-                <TextView
-                    android:id="@+id/taxiOffice_error_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="7dp"
-                    android:gravity="start"
-                    android:text="* Select taxi office"
-                    android:textColor="@color/red"
-                    android:textSize="16sp"
-                    android:textStyle="normal"
-                    android:visibility="invisible" />
+                    <TextView
+                        android:id="@+id/taxiOffice_tv"
+                        style="@style/AppTheme.CustomTextView"
+                        android:layout_width="482dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/tab_text_selector"
+                        android:drawableRight="@drawable/ic_right_arrow"
+                        android:hint="Taxi office"
+                        android:nextFocusDown="@id/password_et" />
 
-                <TextView
-                    android:id="@+id/taxiPlateNumber_tv"
-                    style="@style/AppTheme.CustomTextView"
-                    android:layout_width="482dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="3dp"
-                    android:background="@drawable/tab_text_selector"
-                    android:drawableRight="@drawable/ic_right_arrow"
-                    android:hint="Taxi plate number"
-                    android:nextFocusDown="@id/password_et" />
+                    <TextView
+                        android:id="@+id/taxiOffice_error_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="7dp"
+                        android:gravity="start"
+                        android:text="* Select taxi office"
+                        android:textColor="@color/red"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:visibility="invisible" />
 
-                <TextView
-                    android:id="@+id/taxiPlateNumber_error_tv"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginBottom="20dp"
-                    android:gravity="start"
-                    android:text="* Select taxi plate number"
-                    android:textColor="@color/red"
-                    android:textSize="16sp"
-                    android:textStyle="normal"
-                    android:visibility="invisible" />
+                    <TextView
+                        android:id="@+id/taxiPlateNumber_tv"
+                        style="@style/AppTheme.CustomTextView"
+                        android:layout_width="482dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="3dp"
+                        android:background="@drawable/tab_text_selector"
+                        android:drawableRight="@drawable/ic_right_arrow"
+                        android:hint="Taxi plate number"
+                        android:nextFocusDown="@id/password_et" />
 
-                <TextView
-                    style="@style/AppTheme.CustomTextViewTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="15dp"
-                    android:text="@string/device_id" />
+                    <TextView
+                        android:id="@+id/taxiPlateNumber_error_tv"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginBottom="20dp"
+                        android:gravity="start"
+                        android:text="* Select taxi plate number"
+                        android:textColor="@color/red"
+                        android:textSize="16sp"
+                        android:textStyle="normal"
+                        android:visibility="invisible" />
 
-                <TextView
-                    android:id="@+id/deviceId_tv"
-                    style="@style/AppTheme.CustomEditText"
-                    android:layout_width="482dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginBottom="10dp"
-                    android:background="@drawable/grey_border_text_view"
-                    android:hint="@string/device_id"
-                    android:nextFocusDown="@id/password_et" />
+                    <TextView
+                        style="@style/AppTheme.CustomTextViewTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/device_id" />
 
-                <TextView
-                    style="@style/AppTheme.CustomTextViewTitle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="start"
-                    android:layout_marginBottom="15dp"
-                    android:text="@string/sim_serial_number" />
+                    <TextView
+                        android:id="@+id/deviceId_tv"
+                        style="@style/AppTheme.CustomEditText"
+                        android:layout_width="482dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="10dp"
+                        android:background="@drawable/grey_border_text_view"
+                        android:hint="@string/device_id"
+                        android:nextFocusDown="@id/password_et" />
 
-                <TextView
-                    android:id="@+id/SimSerialNumber_tv"
-                    style="@style/AppTheme.CustomEditText"
-                    android:layout_width="482dp"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/grey_border_text_view"
-                    android:hint="@string/sim_serial_number"
-                    android:nextFocusDown="@id/password_et" />
+                    <TextView
+                        style="@style/AppTheme.CustomTextViewTitle"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="start"
+                        android:layout_marginBottom="15dp"
+                        android:text="@string/sim_serial_number" />
 
-            </LinearLayout>
+                    <TextView
+                        android:id="@+id/SimSerialNumber_tv"
+                        style="@style/AppTheme.CustomEditText"
+                        android:layout_width="482dp"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/grey_border_text_view"
+                        android:hint="@string/sim_serial_number"
+                        android:nextFocusDown="@id/password_et" />
 
-        </ScrollView>
+                </LinearLayout>
 
-    </LinearLayout>
+            </ScrollView>
 
-    <Button
-        android:id="@+id/register_btn"
-        style="@style/AppTheme.CustomButton"
-        android:layout_width="147dp"
-        android:layout_height="wrap_content"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true"
-        android:layout_marginEnd="40dp"
-        android:layout_marginBottom="40dp"
-        android:text="Register" />
-</RelativeLayout>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/register_btn"
+            style="@style/AppTheme.CustomButton"
+            android:layout_width="147dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginEnd="40dp"
+            android:layout_marginBottom="40dp"
+            android:text="Register" />
+    </RelativeLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

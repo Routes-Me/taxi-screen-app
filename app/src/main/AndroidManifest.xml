@@ -18,11 +18,12 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name="com.routesme.taxi.uplevels.App"
+        android:name="com.routesme.taxi.App"
         android:allowBackup="true"
         android:icon="@mipmap/taxi_screen_icon"
         android:keepScreenOn="true"
         android:label="@string/app_name"
+        android:hardwareAccelerated="true"
         android:roundIcon="@mipmap/taxi_screen_icon"
         android:screenOrientation="landscape"
         android:supportsRtl="false"
@@ -31,81 +32,85 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name="com.routesme.taxi.MVVM.View.activity.VehicleInformationActivity"
+        <activity android:name=".view.activity.RefreshTokenActivity"></activity>
+        <activity
+            android:name=".view.activity.VehicleInformationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
         <activity
-            android:name="com.routesme.taxi.MVVM.View.activity.RegistrationActivity"
+            android:name="com.routesme.taxi.view.activity.RegistrationActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
 
         <activity
-            android:name="com.routesme.taxi.AdminConsolePanel.View.AdminConsolePanel"
+            android:name="com.routesme.taxi.view.activity.AdminConsolePanel"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="com.routesme.taxi.MVVM.View.activity.LoginActivity"
+            android:name="com.routesme.taxi.view.activity.LoginActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode" />
         <activity
-            android:name="com.routesme.taxi.MVVM.View.activity.LearnMoreActivity"
+            android:name="com.routesme.taxi.view.activity.LearnMoreActivity"
             android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.routesme.taxi.MVVM.View.activity.HomeActivity"
+            android:name="com.routesme.taxi.view.activity.HomeActivity"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
 
         </activity>
         <activity
-            android:name="com.routesme.taxi.MVVM.View.activity.ModelPresenter"
+            android:name="com.routesme.taxi.view.activity.ModelPresenter"
             android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <receiver
+        <!--<receiver
             android:name="com.routesme.taxi.Class.ConnectivityReceiver"
             android:enabled="true">
-            <intent-filter>
+            <intent-filter>-->
 
                 <!-- Intent filters for broadcast receiver -->
-                <action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
+                <!--<action android:name="android.net.conn.CONNECTIVITY_CHANGE" />
                 <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
                 <action android:name="android.net.wifi.STATE_CHANGE" />
             </intent-filter>
-        </receiver>
+        </receiver>-->
 
-        <activity android:name="com.routesme.taxi.Hotspot_Configuration.MagicActivity">
+        <activity android:name="com.routesme.taxi.view.activity.MagicActivity">
             <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
-
                 <action android:name="android.intent.action.VIEW" />
-
                 <data android:scheme="wifihotspot" />
             </intent-filter>
         </activity>
 
         <service
-            android:name="com.routesme.taxi.Hotspot_Configuration.HotSpotIntentService"
+            android:name="com.routesme.taxi.service.HotSpotIntentService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <service
+            android:name="com.routesme.taxi.service.VideoService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name="com.routesme.taxi.Hotspot_Configuration.Receiver.HotSpotIntentReceiver"
+            android:name="com.routesme.taxi.service.receiver.HotSpotIntentReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -114,11 +119,17 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.routesme.taxi.Class.ModeChangesReceiver"
+            android:name="com.routesme.taxi.service.receiver.ModeChangesReceiver"
             android:enabled="true"
             android:exported="true" />
 
-        <service android:name="com.routesme.taxi.LocationTrackingService.Class.TrackingService" />
+        <service
+            android:name=".service.TrackingService"
+            android:enabled="true" />
+
+        <service
+            android:name=".service.RefreshTokenService"
+            android:enabled="true" />
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"

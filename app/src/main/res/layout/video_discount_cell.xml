@@ -1,181 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    android:layout_width="wrap_content"
+<carbon.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/videoPromotionCard"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    android:layout_gravity="center"
+    android:background="?homeScreenBackground_color"
+    app:carbon_cornerRadius="@dimen/_4sdp">
 
     <carbon.widget.RelativeLayout
-        android:id="@+id/videoPromotionCard"
-        android:layout_width="@dimen/_262sdp"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_margin="@dimen/_1sdp"
+        android:background="?cardViewBackground_color"
         app:carbon_cornerRadius="@dimen/_4sdp"
-        android:layout_gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintDimensionRatio="H,159 : 887"
-        android:background="?homeScreenBackground_color">
+        app:carbon_elevation="@dimen/_4sdp">
 
-        <carbon.widget.RelativeLayout
-            android:id="@+id/videoPromotionShadow"
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_margin="@dimen/_1sdp"
-            app:carbon_elevation="@dimen/_8sdp"
-            app:carbon_cornerRadius="@dimen/_4sdp"
-            android:background="?cardViewBackground_color">
+            android:background="?cardViewBackground_color"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_gravity="center"
-                android:background="?cardViewBackground_color">
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/videoLogoImage"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineTop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.151"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/titleTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="Macdonalds offers a 30% discount"
+                android:textColor="?text_color"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="@+id/subTitleTv"
+                app:layout_constraintStart_toEndOf="@+id/videoLogoImage"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineBottom"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.937"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/subTitleTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:fontFamily="sans-serif"
+                android:maxLines="2"
+                android:textColor="?text_color"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"
+                app:layout_constraintStart_toEndOf="@+id/videoLogoImage"
+                app:layout_constraintTop_toBottomOf="@+id/titleTv"
+                tools:text="Find it out in Avenus " />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineStart"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.012"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/videoQrCodeImage"
+                android:layout_width="@dimen/_56sdp"
+                android:layout_height="@dimen/_56sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineCenterVertical1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.809"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineCenterVertical2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.826"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineEnd"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    app:layout_constraintGuide_percent="0.983"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <androidx.constraintlayout.widget.Guideline
-                    android:id="@+id/guidelineQrCodeTop"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    app:layout_constraintGuide_percent="0.063"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
-                <com.google.android.material.imageview.ShapeableImageView
-                    app:shapeAppearanceOverlay="@style/roundedCornersImageView"
-                    android:id="@+id/videoLogoImage"
-                    android:layout_width="@dimen/_28sdp"
-                    android:layout_height="@dimen/_28sdp"
-                    android:layout_marginEnd="@dimen/_10sdp"
-                    app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-                    app:layout_constraintDimensionRatio="H,1: 1"
-                    app:layout_constraintEnd_toStartOf="@id/titleTv"
-                    app:layout_constraintTop_toTopOf="@id/guidelineTop"
-                    app:layout_constraintStart_toStartOf="@id/guidelineStart"
-                    android:visibility="gone" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/titleTv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif-medium"
-                    android:gravity="start"
-                    android:maxLines="2"
-                    android:text="Macdonalds offfer a "
-                    android:textColor="?text_color"
-                    android:textSize="@dimen/_12sdp"
-                    android:textStyle="normal"
-                    app:layout_constraintBottom_toTopOf="@+id/subTitleTv"
-                    app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"
-                    app:layout_constraintStart_toEndOf="@id/videoLogoImage"
-                    app:layout_constraintTop_toTopOf="@+id/videoLogoImage"
-                    app:layout_constraintVertical_chainStyle="spread_inside" />
-
-                <androidx.appcompat.widget.AppCompatTextView
-                    android:id="@+id/subTitleTv"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:gravity="start"
-                    android:text="Scan Now"
-                    android:layout_marginTop="@dimen/_2sdp"
-                    android:maxLines="2"
-                    android:textSize="@dimen/_10sdp"
-                    android:textColor="?text_color"
-                    android:textStyle="normal"
-                    app:layout_constraintHorizontal_bias="0.5"
-                    app:layout_constraintStart_toStartOf="@id/titleTv"
-                    app:layout_constraintTop_toBottomOf="@id/titleTv"
-                    app:layout_constraintBottom_toBottomOf="@id/videoLogoImage"
-                    app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"/>
-
-
-                <androidx.appcompat.widget.AppCompatImageView
-                    android:id="@+id/videoQrCodeImage"
-                    android:layout_width="@dimen/_56sdp"
-                    android:layout_height="@dimen/_56sdp"
-                    android:layout_marginEnd="@dimen/_5sdp"
-                    app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-                    app:layout_constraintDimensionRatio="H,1: 1"
-                    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-                    app:layout_constraintTop_toTopOf="@id/guidelineQrCodeTop"
-                    app:layout_constraintStart_toStartOf="@id/guidelineCenterVertical2" />
-
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
-
-        </carbon.widget.RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </carbon.widget.RelativeLayout>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</carbon.widget.RelativeLayout>

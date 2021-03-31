@@ -1,0 +1,35 @@
+Index: app/src/main/java/com/routesme/taxi/worker/TaskManager.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.taxi.worker\r\n\r\nimport android.app.Activity\r\nimport android.content.Context\r\nimport android.util.Log\r\nimport androidx.work.Worker\r\nimport androidx.work.WorkerParameters\r\nimport com.google.gson.JsonArray\r\nimport com.google.gson.JsonElement\r\nimport com.google.gson.JsonObject\r\nimport com.routesme.taxi.api.RestApiService\r\nimport com.routesme.taxi.helper.DateHelper\r\nimport com.routesme.taxi.helper.SharedPreferencesHelper\r\nimport com.routesme.taxi.room.AdvertisementDatabase\r\nimport com.routesme.taxi.room.entity.AdvertisementTracking\r\nimport com.routesme.taxi.room.helper.DatabaseHelperImpl\r\nimport kotlinx.coroutines.CoroutineScope\r\nimport kotlinx.coroutines.MainScope\r\nimport kotlinx.coroutines.launch\r\nimport retrofit2.Call\r\nimport retrofit2.Callback\r\nimport retrofit2.Response\r\n\r\nclass TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams),CoroutineScope by MainScope() {\r\n    private var dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))\r\n    private val MIN = 100000000\r\n    private var sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)\r\n    private var editior = sharedPreferences?.edit()\r\n    val thisApiCorService by lazy {\r\n        RestApiService.createCorService(context)\r\n    }\r\n\r\n    override fun doWork(): Result {\r\n        try {\r\n            val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!\r\n            launch {\r\n                val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)\r\n                device_id?.let { deviceId ->\r\n                    if (!list.isNullOrEmpty()) {\r\n                        val call = thisApiCorService.postReport(getJsonArray(list), device_id)\r\n                        call.enqueue(object : Callback<JsonElement> {\r\n                            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {\r\n                                if (response.isSuccessful) {\r\n                                    launch {\r\n                                        val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)\r\n                                        editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())\r\n                                        editior?.commit()\r\n                                    }\r\n                                }\r\n                            }\r\n                            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {\r\n\r\n\r\n                            }\r\n                        })\r\n\r\n                    } else {\r\n\r\n                        Log.d(\"WorkManager\", \"No Data found\")\r\n                    }\r\n                }\r\n            }\r\n            return Result.success()\r\n        } catch (e: Exception) {\r\n            return Result.failure()\r\n        }\r\n\r\n    }\r\n\r\n    private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {\r\n        val jsonArray = JsonArray()\r\n        list.forEach {\r\n            val jsonObject = JsonObject().apply {\r\n                addProperty(\"date\", it.date / 1000)\r\n                addProperty(\"advertisementId\", it.advertisementId)\r\n                addProperty(\"mediaType\", it.media_type)\r\n                add(\"slots\", getJsonArrayOfSlot(it.morning, it.noon, it.evening, it.night))\r\n            }\r\n            jsonArray.add(jsonObject)\r\n        }\r\n\r\n        return jsonArray\r\n\r\n    }\r\n\r\n    private fun getJsonArrayOfSlot(morning: Int, noon: Int, evening: Int, night: Int): JsonArray {\r\n        val jsonArray = JsonArray()\r\n        if (morning != 0) {\r\n            val jsonObject = JsonObject()\r\n            jsonObject.addProperty(\"period\", \"mo\")\r\n            jsonObject.addProperty(\"value\", morning)\r\n            jsonArray.add(jsonObject)\r\n        }\r\n        if (noon != 0) {\r\n            val jsonObject = JsonObject()\r\n            jsonObject.addProperty(\"period\", \"no\")\r\n            jsonObject.addProperty(\"value\", noon)\r\n            jsonArray.add(jsonObject)\r\n        }\r\n        if (evening != 0) {\r\n            val jsonObject = JsonObject()\r\n            jsonObject.addProperty(\"period\", \"ev\")\r\n            jsonObject.addProperty(\"value\", evening)\r\n            jsonArray.add(jsonObject)\r\n        }\r\n        if (night != 0) {\r\n            val jsonObject = JsonObject()\r\n            jsonObject.addProperty(\"period\", \"ni\")\r\n            jsonObject.addProperty(\"value\", night)\r\n            jsonArray.add(jsonObject)\r\n        }\r\n\r\n        return jsonArray\r\n\r\n    }\r\n\r\n}\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/taxi/worker/TaskManager.kt	(revision 18442a77afcc0eb0b5044f93f592da345fb3fb4f)
++++ app/src/main/java/com/routesme/taxi/worker/TaskManager.kt	(date 1617083779614)
+@@ -15,6 +15,7 @@
+ import com.routesme.taxi.room.entity.AdvertisementTracking
+ import com.routesme.taxi.room.helper.DatabaseHelperImpl
+ import kotlinx.coroutines.CoroutineScope
++import kotlinx.coroutines.Dispatchers
+ import kotlinx.coroutines.MainScope
+ import kotlinx.coroutines.launch
+ import retrofit2.Call
+@@ -33,7 +34,7 @@
+     override fun doWork(): Result {
+         try {
+             val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+-            launch {
++            launch(Dispatchers.IO) {
+                 val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
+                 device_id?.let { deviceId ->
+                     if (!list.isNullOrEmpty()) {
+@@ -41,7 +42,7 @@
+                         call.enqueue(object : Callback<JsonElement> {
+                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                                 if (response.isSuccessful) {
+-                                    launch {
++                                    launch(Dispatchers.IO) {
+                                         val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
+                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
+                                         editior?.commit()
