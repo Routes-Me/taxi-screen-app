@@ -8,8 +8,8 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.routesme.taxi.data.model.VehicleInformationModel.Item
 import com.routesme.taxi.R
+import com.routesme.taxi.data.model.VehicleInformationModel.Item
 
 class VehicleInformationAdapter(val context: Context, private var listItemArrayList: List<Item>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var index = -1
@@ -49,9 +49,9 @@ class VehicleInformationAdapter(val context: Context, private var listItemArrayL
                 onItemClick?.invoke(listItemArrayList[position])
             }
             if (index == position) {
-                itemHolder.rowLayout.setBackgroundColor(ContextCompat.getColor(context,R.color.border_background))
+                itemHolder.rowLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.border_background))
             } else {
-                itemHolder.rowLayout.setBackgroundColor(ContextCompat.getColor(context,R.color.white))
+                itemHolder.rowLayout.setBackgroundColor(ContextCompat.getColor(context, R.color.white))
             }
         }
     }

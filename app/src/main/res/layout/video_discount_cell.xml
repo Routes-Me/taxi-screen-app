@@ -1,83 +1,85 @@
 <?xml version="1.0" encoding="utf-8"?>
-<carbon.widget.RelativeLayout
-    android:layout_width="match_parent"
-    android:layout_height="@dimen/_80sdp"
+<carbon.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    app:carbon_cornerRadius="@dimen/_4sdp"
+    android:id="@+id/videoPromotionCard"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center"
     android:background="?homeScreenBackground_color"
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    app:carbon_cornerRadius="@dimen/_4sdp">
+
     <carbon.widget.RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/videoPromotionCard"
-        android:background="?cardViewBackground_color"
         android:layout_margin="@dimen/_1sdp"
-        app:carbon_elevation="@dimen/_4sdp"
-        app:carbon_cornerRadius="@dimen/_4sdp"
-        >
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:background="?cardViewBackground_color"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:carbon_cornerRadius="@dimen/_4sdp"
+        app:carbon_elevation="@dimen/_4sdp">
 
-        <com.google.android.material.imageview.ShapeableImageView
-            android:id="@+id/videoLogoImage"
-            android:layout_width="@dimen/_28sdp"
-            android:layout_height="@dimen/_28sdp"
-            android:layout_marginTop="@dimen/_18sdp"
-            android:layout_marginStart="@dimen/_5sdp"
-            app:layout_constraintStart_toStartOf="parent"
-            android:visibility="visible"
-            app:layout_constraintTop_toTopOf="parent"
-            app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/titleTv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_12sdp"
-            android:fontFamily="sans-serif-medium"
-            android:text="Macdonalds offers a 30% discount"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:textColor="?text_color"
-            android:textSize="@dimen/_12sdp"
-            app:layout_constraintEnd_toEndOf="@+id/subTitleTv"
-            app:layout_constraintStart_toEndOf="@+id/videoLogoImage"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/subTitleTv"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/_5sdp"
-            android:layout_marginTop="@dimen/_5sdp"
-            android:fontFamily="sans-serif"
-            android:textColor="?text_color"
-            android:layout_marginEnd="@dimen/_5sdp"
-            android:textSize="@dimen/_10sdp"
-            android:textStyle="normal"
-            app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"
-            app:layout_constraintStart_toEndOf="@+id/videoLogoImage"
-            app:layout_constraintTop_toBottomOf="@+id/titleTv"
-            tools:text="Find it out in Avenus " />
-
-        <androidx.appcompat.widget.AppCompatImageView
-            android:id="@+id/videoQrCodeImage"
-            android:layout_width="@dimen/_56sdp"
-            android:layout_height="@dimen/_56sdp"
-            android:layout_marginEnd="@dimen/_5sdp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?cardViewBackground_color"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <com.google.android.material.imageview.ShapeableImageView
+                android:id="@+id/videoLogoImage"
+                android:layout_width="@dimen/_28sdp"
+                android:layout_height="@dimen/_28sdp"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_18sdp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:shapeAppearanceOverlay="@style/roundedCornersImageView" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/titleTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_12sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:fontFamily="sans-serif-medium"
+                android:maxLines="1"
+                android:text="Macdonalds offers a 30% discount"
+                android:textColor="?text_color"
+                android:textSize="@dimen/_12sdp"
+                app:layout_constraintEnd_toEndOf="@+id/subTitleTv"
+                app:layout_constraintStart_toEndOf="@+id/videoLogoImage"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                android:id="@+id/subTitleTv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/_5sdp"
+                android:layout_marginTop="@dimen/_5sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                android:fontFamily="sans-serif"
+                android:maxLines="2"
+                android:textColor="?text_color"
+                android:textSize="@dimen/_10sdp"
+                android:textStyle="normal"
+                app:layout_constraintEnd_toStartOf="@+id/videoQrCodeImage"
+                app:layout_constraintStart_toEndOf="@+id/videoLogoImage"
+                app:layout_constraintTop_toBottomOf="@+id/titleTv"
+                tools:text="Find it out in Avenus " />
+
+            <androidx.appcompat.widget.AppCompatImageView
+                android:id="@+id/videoQrCodeImage"
+                android:layout_width="@dimen/_56sdp"
+                android:layout_height="@dimen/_56sdp"
+                android:layout_marginEnd="@dimen/_5sdp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </carbon.widget.RelativeLayout>
 

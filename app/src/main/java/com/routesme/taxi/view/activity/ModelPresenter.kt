@@ -5,11 +5,12 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import com.routesme.taxi.R
 import com.routesme.taxi.App
+import com.routesme.taxi.R
 
 class ModelPresenter : AppCompatActivity() {
-    private var bundle:Bundle?=null
+    private var bundle: Bundle? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.model_presenter)
@@ -30,5 +31,9 @@ class ModelPresenter : AppCompatActivity() {
     private fun openActivity(activity: Activity) {
         startActivity(Intent(this, activity::class.java))
         finish()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
     }
 }

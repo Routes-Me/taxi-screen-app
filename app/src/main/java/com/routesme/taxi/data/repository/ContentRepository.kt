@@ -18,27 +18,21 @@ class ContentRepository(val context: Context) {
 
     private val contentResponse = MutableLiveData<ContentResponse>()
 
-    private val thisApiCoreService by lazy {
+    private val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
     fun getContent(offset: Int, limit: Int): MutableLiveData<ContentResponse> {
-        val call = thisApiCoreService.getContent(offset,limit)
-        Log.d("GetContentApi", "ContentRepository..Call: ${call.request().headers()}")
+        val call = thisApiCorService.getContent(offset,limit)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-               // Log.d("GetContentApi","Url: ${response.errorBody().toString()}, Location header: ${response.headers()}")
                 if (response.isSuccessful && response.body() != null) {
                     val content = Gson().fromJson<Content>(response.body(), Content::class.java)
                     contentResponse.value = ContentResponse(data = content.data)
                 } else{
-                    Log.d("GetContentApi","Response Code: ${response.code()}")
-                    /*
                     val error = Error(detail = response.message(), statusCode = response.code())
                     val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                     val responseErrors = ResponseErrors(errors)
-                    Log.d("GetContentApi","responseErrors: $responseErrors")
                     contentResponse.value = ContentResponse(mResponseErrors = responseErrors)
-                    */
                 }
             }
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {

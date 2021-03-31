@@ -17,8 +17,8 @@ import kotlin.random.Random
 class AesBase64Wrapper {
 
     companion object {
-        private  val encrypt: EncryptModel = EncryptModel()
-        private val charPool : List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
+        private val encrypt: EncryptModel = EncryptModel()
+        private val charPool: List<Char> = ('a'..'z') + ('A'..'Z') + ('0'..'9')
         val factory: SecretKeyFactory = SecretKeyFactory.getInstance(encrypt.factory)
 
         val password = encrypt.password.toCharArray()
@@ -34,30 +34,30 @@ class AesBase64Wrapper {
          Log.d("Encryption", "realSalt: $realSalt")
 */
 
-     fun getEncryptedString(str: String): String {
-         val saltIndexChars = getSalt(2)
-         var saltIndexNumber = 0
-         saltIndexChars.toList().forEach { saltIndexNumber += it.toInt() }
-         val saltBeginIndex = saltIndexNumber % 3
+    fun getEncryptedString(str: String): String {
+        val saltIndexChars = getSalt(2)
+        var saltIndexNumber = 0
+        saltIndexChars.toList().forEach { saltIndexNumber += it.toInt() }
+        val saltBeginIndex = saltIndexNumber % 3
 
-         val saltExcluded = getSalt(3)
-         val fullSalt = getSalt(16)
-         val realSalt = StringBuilder().append(fullSalt).toString().replace("""${saltExcluded.toList()}""".toRegex(), "")
+        val saltExcluded = getSalt(3)
+        val fullSalt = getSalt(16)
+        val realSalt = StringBuilder().append(fullSalt).toString().replace("""${saltExcluded.toList()}""".toRegex(), "")
 
-         val encryptStr = encryptAndEncode(str, realSalt)
+        val encryptStr = encryptAndEncode(str, realSalt)
 
-         val encryptedBody = StringBuilder()
-         encryptedBody.append(encryptStr)
+        val encryptedBody = StringBuilder()
+        encryptedBody.append(encryptStr)
 
-         val saltPart1 = fullSalt.substring(0,10)
-         Log.d("Encryption", "saltPart1: $saltPart1")
-         val saltPart2 = fullSalt.substring(10)
-         Log.d("Encryption", "saltPart2: $saltPart2")
+        val saltPart1 = fullSalt.substring(0, 10)
+        Log.d("Encryption", "saltPart1: $saltPart1")
+        val saltPart2 = fullSalt.substring(10)
+        Log.d("Encryption", "saltPart2: $saltPart2")
 
-         encryptedBody.insert(saltBeginIndex,saltPart1)
-         encryptedBody.insert(saltPart1.length + 1 + saltBeginIndex,saltPart2)
+        encryptedBody.insert(saltBeginIndex, saltPart1)
+        encryptedBody.insert(saltPart1.length + 1 + saltBeginIndex, saltPart2)
 
-         val result = StringBuilder().append(saltIndexChars).append(saltExcluded).append(encryptedBody)
+        val result = StringBuilder().append(saltIndexChars).append(saltExcluded).append(encryptedBody)
 
         /* Log.d("Encryption", "saltIndex: $saltIndexChars")
          Log.d("Encryption", "${saltIndexChars[0]}: ${saltIndexChars[0].toInt()}")
@@ -69,7 +69,7 @@ class AesBase64Wrapper {
          Log.d("Encryption", "realSalt: $realSalt")
          Log.d("Encryption", "encryptStr: $encryptStr")*/
 
-         return result.toString()
+        return result.toString()
     }
 
     @SuppressLint("NewApi")
@@ -97,8 +97,8 @@ class AesBase64Wrapper {
 
     @Throws(Exception::class)
     private fun generateKey(salt: String): Key {
-       // val salt = getBytes(encrypt.salt)
-       // Log.d("Encryption", "RandomString: $randomString, Salt: $salt")
+        // val salt = getBytes(encrypt.salt)
+        // Log.d("Encryption", "RandomString: $randomString, Salt: $salt")
         val spec: KeySpec = PBEKeySpec(password, getBytes(salt), encrypt.iterationCount, encrypt.keyLength)
         val tmp = factory.generateSecret(spec)
         val encoded = tmp.encoded

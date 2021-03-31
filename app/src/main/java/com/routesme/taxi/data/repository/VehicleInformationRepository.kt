@@ -22,40 +22,42 @@ class VehicleInformationRepository(val context: Context) {
     }
 
     fun getInstitutions(offset: Int, limit: Int): MutableLiveData<InstitutionsResponse> {
-        val call = thisApiCorService.getInstitutions(offset,limit)
+        val call = thisApiCorService.getInstitutions(offset, limit)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val institutions = Gson().fromJson<Institutions>(response.body(), Institutions::class.java)
                     institutionsResponse.value = InstitutionsResponse(data = institutions.data)
-                } else{
-                        val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                        val responseErrors = ResponseErrors(errors)
-                        institutionsResponse.value = InstitutionsResponse(mResponseErrors = responseErrors)
+                } else {
+                    val error = Error(detail = response.message(), statusCode = response.code())
+                    val errors = mutableListOf<Error>().apply { add(error) }.toList()
+                    val responseErrors = ResponseErrors(errors)
+                    institutionsResponse.value = InstitutionsResponse(mResponseErrors = responseErrors)
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                institutionsResponse.value = InstitutionsResponse(mThrowable = throwable )
+                institutionsResponse.value = InstitutionsResponse(mThrowable = throwable)
             }
         })
         return institutionsResponse
     }
 
     fun getVehicles(institutionId: String, offset: Int, limit: Int): MutableLiveData<VehiclesResponse> {
-        val call = thisApiCorService.getVehicles(institutionId,offset,limit)
+        val call = thisApiCorService.getVehicles(institutionId, offset, limit)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val vehicles = Gson().fromJson<Vehicles>(response.body(), Vehicles::class.java)
                     vehiclesResponse.value = VehiclesResponse(data = vehicles.data)
-                } else{
-                        val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                        val responseErrors = ResponseErrors(errors)
-                        vehiclesResponse.value = VehiclesResponse(mResponseErrors = responseErrors)
+                } else {
+                    val error = Error(detail = response.message(), statusCode = response.code())
+                    val errors = mutableListOf<Error>().apply { add(error) }.toList()
+                    val responseErrors = ResponseErrors(errors)
+                    vehiclesResponse.value = VehiclesResponse(mResponseErrors = responseErrors)
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 vehiclesResponse.value = VehiclesResponse(mThrowable = throwable)
             }

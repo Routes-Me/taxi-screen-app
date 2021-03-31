@@ -9,6 +9,7 @@ import androidx.annotation.NonNull
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
+import com.microsoft.signalr.TransportEnum
 import com.routesme.taxi.helper.Helper
 import com.routesme.taxi.service.receiver.LocationReceiver
 import com.routesme.taxi.room.doa.LocationFeedsDao
@@ -42,7 +43,7 @@ class TrackingService : Service() {
         locationReceiver = LocationReceiver()
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
-         insertTestFeeds()
+         //insertTestFeeds()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -111,7 +112,7 @@ class TrackingService : Service() {
 
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
-        Log.d("SocketSrv", "trackingUrl: $trackingUrl")
+        Log.d("URL","${trackingUrl}")
         return HubConnectionBuilder
                 .create(trackingUrl)
                 .withHeader("Authorization", Account().accessToken)

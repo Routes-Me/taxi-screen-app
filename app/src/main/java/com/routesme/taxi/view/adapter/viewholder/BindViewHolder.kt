@@ -25,14 +25,18 @@ fun onBindDetail(holder: RecyclerView.ViewHolder, cell: ICell) {
 fun onBindAction(holder: RecyclerView.ViewHolder, cell: ICell) {
     holder as ActionViewHolder
     cell as ActionCell
-    holder.apply { action.text = cell.action}
+    holder.apply { action.text = cell.action }
 }
 
 fun onBindDetailAction(holder: RecyclerView.ViewHolder, cell: ICell) {
     holder as DetailActionViewHolder
     cell as DetailActionCell
     holder.apply {
-        title.text = cell.title; status.apply {if (cell.status == DetailActionStatus.DONE) {text = cell.status.toString(); setBackgroundResource(R.drawable.status_done) }}
+        title.text = cell.title; status.apply {
+        if (cell.status == DetailActionStatus.DONE) {
+            text = cell.status.toString(); setBackgroundResource(R.drawable.status_done)
+        }
+    }
         ; action.apply { text = cell.action }
     }
 }

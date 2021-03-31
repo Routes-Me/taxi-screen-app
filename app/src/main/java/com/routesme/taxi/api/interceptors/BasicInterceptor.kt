@@ -1,4 +1,4 @@
-package com.routesme.taxi.api.interceptors
+package com.routesme.taxi.api
 
 import android.annotation.TargetApi
 import android.app.Activity

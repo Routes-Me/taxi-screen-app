@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit
 
 class DateHelper {
 
-    companion object{
+    companion object {
 
         val instance = DateHelper()
     }
@@ -24,20 +24,20 @@ class DateHelper {
     @SuppressLint("SimpleDateFormat")
     private fun parseDate(time: String) = SimpleDateFormat("HH:mm").parse(time)
 
-    fun checkDate(from_date:Long) : Boolean{
+    fun checkDate(from_date: Long): Boolean {
         val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
-        Log.d("Diff","${diff}")
+        Log.d("Diff", "${diff}")
         return diff > 0
     }
 
-    fun checkRefreshTokenExp(from_date:Long):Boolean{
+    fun getDateDifferenceByOne(from_date: Long): Boolean {
 
         val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
         return diff > 0
 
     }
 
-    fun checkAccessTokenExp(from_date:Long):Boolean{
+    fun checkAccessTokenExp(from_date: Long): Boolean {
 
         val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)
         return diff < 5
@@ -46,23 +46,24 @@ class DateHelper {
 
     fun getCurrentPeriod(): Period {
 
-        if(isMorning()){
+        if (isMorning()) {
 
             return Period.MORNING
 
-        }else if(isNoon()){
+        } else if (isNoon()) {
 
             return Period.NOON
 
-        }else if(isEvening()){
+        } else if (isEvening()) {
 
             return Period.EVENING
-        }else{
+        } else {
 
             return Period.NIGHT
         }
 
     }
+
     fun getCurrentDate() = Calendar.getInstance().timeInMillis
 
     fun isMorning() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("11:59"))

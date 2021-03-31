@@ -10,8 +10,8 @@ import androidx.core.app.ActivityCompat
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
-import com.routesme.taxi.view.activity.AdminConsolePanel
 import com.routesme.taxi.R
+import com.routesme.taxi.view.activity.AdminConsolePanel
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 
 class HomeScreenHelper(val activity: Activity) {
@@ -31,6 +31,7 @@ class HomeScreenHelper(val activity: Activity) {
         }
         return true
     }
+
     fun showAdminVerificationDialog() {
         val exitPassword = exitPassword()
         val adminVerificationDialog = Dialog(activity)
@@ -50,13 +51,15 @@ class HomeScreenHelper(val activity: Activity) {
                     adminVerificationDialog.dismiss()
                 }
             }
+
             override fun onCleared() {}
             override fun onStarted() {}
             override fun onProgress(progressPattern: MutableList<PatternLockView.Dot>?) {}
         })
     }
+
     private fun openAdminConsolePanel() {
-      activity.apply { startActivity(Intent(activity, AdminConsolePanel::class.java)); }
+        activity.apply { startActivity(Intent(activity, AdminConsolePanel::class.java)); }
     }
 
     private fun exitPassword(): String? = Helper.getConfigValue("exitPassword", R.raw.config)

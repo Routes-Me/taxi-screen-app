@@ -8,6 +8,7 @@ import java.io.File
 
 class AdvertisementsHelper {
     val file = File(App.instance.cacheDir, "routes_video")
+
     companion object {
         @get:Synchronized
         val instance = AdvertisementsHelper()
@@ -25,7 +26,7 @@ class AdvertisementsHelper {
         }
     }
 
-    fun deleteCache(){
+    fun deleteCache() {
 
         file.delete()
 

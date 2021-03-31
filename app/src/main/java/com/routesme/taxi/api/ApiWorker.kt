@@ -1,5 +1,6 @@
 package com.routesme.taxi.api
 
+import android.app.Activity
 import android.content.Context
 import com.google.gson.GsonBuilder
 import com.routesme.taxi.api.interceptors.BasicAuthInterceptor
@@ -12,6 +13,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.security.KeyManagementException
 import java.security.NoSuchAlgorithmException
 import java.util.concurrent.TimeUnit
+
 
 class ApiWorker(val context: Context) {
 

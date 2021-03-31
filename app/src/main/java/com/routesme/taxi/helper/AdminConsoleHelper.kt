@@ -11,9 +11,9 @@ import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
 import androidx.core.app.ActivityCompat
+import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.data.model.DetailActionStatus
 import com.routesme.taxi.data.model.LogOff
-import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.view.activity.LoginActivity
 import org.greenrobot.eventbus.EventBus
 
@@ -49,16 +49,19 @@ class AdminConsoleHelper(val activity: Activity) {
         }
         return DetailActionStatus.PENDING
     }
+
     fun openDefaultLauncherSetting() {
         activity.apply { startActivity(Intent(Settings.ACTION_HOME_SETTINGS)) }
     }
+
     fun isLocationPermissionsAllowed(): DetailActionStatus {
-            for (p in locationPermissions) {
-                if (ActivityCompat.checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) return DetailActionStatus.PENDING
-            }
+        for (p in locationPermissions) {
+            if (ActivityCompat.checkSelfPermission(activity, p) != PackageManager.PERMISSION_GRANTED) return DetailActionStatus.PENDING
+        }
         return DetailActionStatus.DONE
     }
-    fun openAppGeneralSettings(){
+
+    fun openAppGeneralSettings() {
         activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", appPackageName, null)))
     }
 
@@ -66,14 +69,16 @@ class AdminConsoleHelper(val activity: Activity) {
         EventBus.getDefault().post(LogOff(true))
 
     }
-    fun logOff(){
+
+    fun logOff() {
 
         sharedPreferences?.edit()?.clear()?.apply()
         activity.apply {
-            startActivity(Intent(this,LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java))
             finish()
         }
     }
+
     fun isLocationProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
     private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
     private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)

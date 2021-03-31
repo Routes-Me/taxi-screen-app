@@ -29,11 +29,11 @@
             android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@drawable/status_pending"
-            android:textSize="20sp"
             android:fontFamily="sans-serif-light"
-            android:textStyle="normal"
             android:text="PENDING"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:textSize="20sp"
+            android:textStyle="normal" />
 
     </RelativeLayout>
 
@@ -49,11 +49,11 @@
         android:id="@+id/action"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="24sp"
         android:fontFamily="sans-serif"
-        android:textStyle="normal"
+        android:text="Action"
         android:textColor="@color/tint_color"
-        android:text="Action"/>
+        android:textSize="24sp"
+        android:textStyle="normal" />
 
 
 </LinearLayout>

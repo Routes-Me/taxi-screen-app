@@ -19,19 +19,19 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi.helper.DateHelper
-import com.routesme.taxi.helper.DateOperations
-import com.routesme.taxi.helper.Operations
+import com.routesme.taxi.App
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.Authorization
 import com.routesme.taxi.data.model.Error
 import com.routesme.taxi.data.model.RegistrationCredentials
 import com.routesme.taxi.data.model.RegistrationResponse
 import com.routesme.taxi.data.model.VehicleInformationModel.VehicleInformationListType
-import com.routesme.taxi.viewmodel.RegistrationViewModel
-import com.routesme.taxi.R
+import com.routesme.taxi.helper.DateHelper
+import com.routesme.taxi.helper.DateOperations
+import com.routesme.taxi.helper.Operations
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.uplevels.Account
-import com.routesme.taxi.App
+import com.routesme.taxi.viewmodel.RegistrationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
@@ -49,7 +49,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private var dialog: AlertDialog? = null
     private var institutionId: String? = null
     private var showRationale = true
-    private  var getDeviceInfo: Boolean = false
+    private var getDeviceInfo: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,7 +61,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     @SuppressLint("CommitPrefEdits")
     private fun initialize() {
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        editor= sharedPreferences.edit()
+        editor = sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         //requestRuntimePermissions();
         toolbarSetUp()
@@ -75,6 +75,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             ActivityCompat.requestPermissions(this, permissionsList, 1)
         }
     }
+
     private fun hasPermissions(vararg permissions: String): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             for (permission in permissions) {
@@ -95,11 +96,13 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             setHomeAsUpIndicator(R.drawable.ic_back_grey)
         }
     }
+
     @SuppressLint("DefaultLocale")
     private fun welcomeString(): String? {
         val username = app.signInCredentials?.userName
-        return "Welcome,  " + if (!username.isNullOrEmpty())username.split(" ").joinToString(" ") { it.capitalize() }.trimEnd() else ""
+        return "Welcome,  " + if (!username.isNullOrEmpty()) username.split(" ").joinToString(" ") { it.capitalize() }.trimEnd() else ""
     }
+
     private fun initializeViews() {
         taxiOffice_tv.setOnClickListener(this)
         taxiPlateNumber_tv.setOnClickListener(this)
@@ -166,7 +169,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             R.id.deviceId_tv, R.id.SimSerialNumber_tv -> clickOnGetDeviceInfo()
             R.id.taxiOffice_tv -> openInstitutionsList()
             R.id.taxiPlateNumber_tv -> openVehiclesList()
-            R.id.register_btn ->   register() //register()
+            R.id.register_btn -> register() //register()
         }
     }
 
@@ -192,14 +195,14 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         startActivity(Intent(this, VehicleInformationActivity::class.java).putExtra(listTypeKey, listType))
     }
 
-    private fun register(){
+    private fun register() {
         if (Account().accessToken != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
             registrationViewModel.register(registerCredentials, this).observe(this, Observer<RegistrationResponse> {
-                 dialog?.dismiss()
-                 operations.enableNextButton(register_btn, true)
+                dialog?.dismiss()
+                operations.enableNextButton(register_btn, true)
                 if (it != null) {
                     if (it.isSuccess) {
                         val deviceId = it.deviceId ?: run {
@@ -225,14 +228,14 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
                 }
             })
-        }else{
+        } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
         }
     }
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
-                operations.displayAlertDialog(this, getString(R.string.registration_error_title), "Error message: ${error.detail}")
+            operations.displayAlertDialog(this, getString(R.string.registration_error_title), "Error message: ${error.detail}")
         }
     }
 

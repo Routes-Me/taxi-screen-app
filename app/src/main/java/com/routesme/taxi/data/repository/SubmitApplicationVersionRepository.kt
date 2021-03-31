@@ -27,13 +27,14 @@ class SubmitApplicationVersionRepository(val context: Context) {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful) {
                     submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(isSuccess = true)
-                } else{
-                        val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                        val responseErrors = ResponseErrors(errors)
-                        submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(mResponseErrors = responseErrors)
+                } else {
+                    val error = Error(detail = response.message(), statusCode = response.code())
+                    val errors = mutableListOf<Error>().apply { add(error) }.toList()
+                    val responseErrors = ResponseErrors(errors)
+                    submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(mResponseErrors = responseErrors)
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(mThrowable = throwable)
             }

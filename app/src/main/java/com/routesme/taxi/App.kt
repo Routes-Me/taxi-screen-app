@@ -10,16 +10,17 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.core.content.ContextCompat
+import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.taxi.data.model.SignInCredentials
 import com.routesme.taxi.helper.DisplayManager
-import com.routesme.taxi.helper.SharedPreferencesHelper
 import com.routesme.taxi.service.TrackingService
-import com.routesme.taxi.uplevels.Account
+import com.routesme.taxi.data.model.SignInCredentials
 import com.routesme.taxi.worker.TaskManager
+import com.routesme.taxi.helper.SharedPreferencesHelper
+import com.routesme.taxi.uplevels.Account
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -39,8 +40,7 @@ class App : Application() {
         @get:Synchronized
         var instance = App()
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
-        val periodicWorkRequest : PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 12, TimeUnit.HOURS).setConstraints(constraint).build()
-
+        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
     }
 
     override fun onCreate() {

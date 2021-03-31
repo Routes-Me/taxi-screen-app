@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="match_parent"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     android:layout_gravity="center">
 
     <carbon.widget.RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
-        app:carbon_cornerRadius="@dimen/_4sdp"
         android:layout_gravity="center"
-        app:layout_constraintTop_toTopOf="parent"
+        android:background="?homeScreenBackground_color"
+        app:carbon_cornerRadius="@dimen/_4sdp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintDimensionRatio="H,53 : 53"
-        android:background="?homeScreenBackground_color">
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <carbon.widget.RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="@dimen/_1sdp"
-            app:carbon_elevation="@dimen/_8sdp"
+            android:background="?cardViewBackground_color"
             app:carbon_cornerRadius="@dimen/_4sdp"
-            app:carbon_elevationShadowColor="@color/card_shadow"
-            android:background="?cardViewBackground_color">
+            app:carbon_elevation="@dimen/_8sdp"
+            app:carbon_elevationShadowColor="@color/card_shadow">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
@@ -77,14 +77,14 @@
                     android:id="@+id/freeWifiTv"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/free_wifi"
+                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:background="@drawable/free_wifi_background"
                     android:fontFamily="sans-serif-medium"
                     android:gravity="center"
+                    android:text="@string/free_wifi"
                     android:textColor="?text_color"
-                    android:background="@drawable/free_wifi_background"
-                    android:textStyle="normal"
                     android:textSize="@dimen/_5sdp"
-                    android:layout_marginBottom="@dimen/_6sdp"
+                    android:textStyle="normal"
                     app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                     app:layout_constraintStart_toStartOf="@id/guidelineStart"
                     app:layout_constraintTop_toBottomOf="@+id/wifiIcon" />
@@ -93,12 +93,12 @@
                     android:id="@+id/nameTv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/wifi_name"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
+                    android:text="@string/wifi_name"
                     android:textColor="?text_color"
-                    android:textStyle="normal"
                     android:textSize="@dimen/_8sdp"
+                    android:textStyle="normal"
                     app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
                     app:layout_constraintStart_toStartOf="@id/guidelineStart"
                     app:layout_constraintTop_toBottomOf="@+id/freeWifiTv" />
@@ -108,19 +108,19 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:src="?key_icon"
-                    app:layout_constraintTop_toTopOf="@id/passwordTv"
                     app:layout_constraintBottom_toBottomOf="@id/passwordTv"
-                    app:layout_constraintStart_toStartOf="@id/guidelineStart"/>
+                    app:layout_constraintStart_toStartOf="@id/guidelineStart"
+                    app:layout_constraintTop_toTopOf="@id/passwordTv" />
 
                 <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/passwordTv"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:text="@string/wifi_password"
                     android:layout_marginTop="@dimen/_1sdp"
                     android:fontFamily="sans-serif"
                     android:gravity="center"
                     android:includeFontPadding="false"
+                    android:text="@string/wifi_password"
                     android:textColor="?text_color"
                     android:textSize="@dimen/_8sdp"
                     android:textStyle="normal"

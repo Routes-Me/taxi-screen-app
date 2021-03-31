@@ -1,8 +1,8 @@
 package com.routesme.taxi.view.events
 
-class DemoVideo(boolean: Boolean,errorMessage: String) {
+class DemoVideo(boolean: Boolean, errorMessage: String) {
 
-    val isPlay :Boolean = boolean
-    val errorMessage:String = errorMessage
+    val isPlay: Boolean = boolean
+    val errorMessage: String = errorMessage
 
 }

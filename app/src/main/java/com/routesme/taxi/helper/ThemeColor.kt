@@ -24,6 +24,6 @@ data class ThemeColor(val tintColor: Int?) {
         val red = Color.red(color)
         val green = Color.green(color)
         val blue = Color.blue(color)
-        return Color.rgb(red,green,blue)
+        return Color.rgb(red, green, blue)
     }
 }

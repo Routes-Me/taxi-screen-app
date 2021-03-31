@@ -10,6 +10,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
+import androidx.fragment.app.commit
+import androidx.fragment.app.replace
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.exoplayer2.MediaItem
@@ -20,13 +22,12 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.helper.DisplayManager
-import com.routesme.taxi.helper.HomeScreenHelper
-import com.routesme.taxi.helper.Mode
-import com.routesme.taxi.helper.ScreenBrightness
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.IModeChanging
 import com.routesme.taxi.data.model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.data.model.SubmitApplicationVersionResponse
+import com.routesme.taxi.helper.*
+import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.view.fragment.ContentFragment
 import com.routesme.taxi.viewmodel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.view.events.DemoVideo
@@ -68,12 +69,10 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
         setContentView(R.layout.home_screen)
-        Log.d("RefreshToken", "Home Activity")
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
-        viewModel =  ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(applicationContext)))).get(RoomDBViewModel::class.java)
         submitApplicationVersion()
         launch {initializePlayer()}
         turnOnHotspot()
@@ -113,7 +112,9 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         submitApplicationVersionViewModel.submitApplicationVersion(deviceId, submitApplicationVersionCredentials, this).observe(this, Observer<SubmitApplicationVersionResponse> {
             if (it != null) {
                 if (it.isSuccess) {
+
                     editor?.putString(SharedPreferencesHelper.submitted_version, submitApplicationVersionCredentials.versions)?.apply()
+
                 }
             }
         })
@@ -146,14 +147,14 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         }
     }
     private fun addFragments() {
-
-        supportFragmentManager.beginTransaction().replace(R.id.contentFragment_container, ContentFragment(), "Content_Fragment").commit()
-
+        supportFragmentManager.commit {
+            replace<ContentFragment>(R.id.contentFragment_container)
+        }
     }
 
     private fun removeFragments() {
         val contentFragment = supportFragmentManager.findFragmentByTag("Content_Fragment")
-        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commitAllowingStateLoss() }
+        contentFragment?.let { supportFragmentManager.beginTransaction().remove(it).commit() }
     }
     override fun onPermissionsOkay() {}
 
@@ -252,4 +253,6 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
         player?.pause()
 
     }
+
+
 }

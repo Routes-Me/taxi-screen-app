@@ -3,9 +3,9 @@ package com.routesme.taxi.data.model
 import android.os.Parcel
 import android.os.Parcelable
 
-data class Content (val pagination: Pagination? = null, val data: List<Data>? = null, val message: String? = null, val status: Boolean? = null, val statusCode: Int? = null)
+data class Content(val pagination: Pagination? = null, val data: List<Data>? = null, val message: String? = null, val status: Boolean? = null, val statusCode: Int? = null)
 
-data class Data(val contentId: String? = null, val type: String? = null, val url: String? = null, val tintColor: Int? = null, val promotion: Promotion? = null):Parcelable {
+data class Data(val contentId: String? = null, val type: String? = null, val url: String? = null, val tintColor: Int? = null, val promotion: Promotion? = null) : Parcelable {
     constructor(parcel: Parcel) : this(
             parcel.readString(),
             parcel.readString(),
@@ -38,7 +38,7 @@ data class Data(val contentId: String? = null, val type: String? = null, val url
 }
 
 
-data class Promotion (val title: String? = null, val subtitle: String? = null, val code: String? = null, val link: String? = null, val logoUrl: String? = null):Parcelable{
+data class Promotion(val title: String? = null, val subtitle: String? = null, val code: String? = null, val link: String? = null, val logoUrl: String? = null) : Parcelable {
     val isExist: Boolean
         get() = !link.isNullOrEmpty()
 
@@ -73,29 +73,23 @@ data class Promotion (val title: String? = null, val subtitle: String? = null, v
 }
 enum class ContentType(val value: String) { Image("image"), Video("video") }
 
-class Report(val status:Boolean?=null,val message:String?=null,val statusCode:Int?=null)
+class Report(val status: Boolean? = null, val message: String? = null, val statusCode: Int? = null)
 
 
-
-class ReportResponse(token: Int? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
-
-    var token: Int? = null
-    init {
-        this.token = token
-    }
+class ReportResponse(val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null) : Response(mResponseErrors, mThrowable) {
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
 }
 
-class ContentResponse(val data: List<Data>? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
+class ContentResponse(val data: List<Data>? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null) : Response(mResponseErrors, mThrowable) {
 
     val imageList = mutableListOf<Data>()
     val videoList = mutableListOf<Data>()
 
     init {
-        if (!data.isNullOrEmpty()){
-            for (d in data){
-                when(d.type){
+        if (!data.isNullOrEmpty()) {
+            for (d in data) {
+                when (d.type) {
                     ContentType.Image.value -> {
                         imageList.add(d)
 

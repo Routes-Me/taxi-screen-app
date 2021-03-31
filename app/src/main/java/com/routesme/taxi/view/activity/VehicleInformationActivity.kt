@@ -7,13 +7,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.routesme.taxi.helper.Operations
-import com.routesme.taxi.view.adapter.VehicleInformationAdapter
+import com.routesme.taxi.App
+import com.routesme.taxi.R
 import com.routesme.taxi.data.model.Error
 import com.routesme.taxi.data.model.VehicleInformationModel.*
+import com.routesme.taxi.helper.Operations
+import com.routesme.taxi.view.adapter.VehicleInformationAdapter
 import com.routesme.taxi.viewmodel.VehicleInformationViewModel
-import com.routesme.taxi.R
-import com.routesme.taxi.App
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_vehicle_information.*
 import java.io.IOException
@@ -45,10 +45,11 @@ class VehicleInformationActivity : AppCompatActivity() {
             getList()
         }
     }
+
     private fun toolbarSetUp() {
         setSupportActionBar(MyToolBar)
         supportActionBar?.apply {
-            title = when(listType){
+            title = when (listType) {
                 VehicleInformationListType.Institution -> getString(R.string.search_for_taxi_offices)
                 else -> getString(R.string.search_plate_numbers)
             }
@@ -72,44 +73,45 @@ class VehicleInformationActivity : AppCompatActivity() {
             else -> getVehicles()
         }
     }
-    private fun getInstitutions(){
-            dialog?.show()
-            val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
-            vehicleInformationViewModel.getInstitutions(1,40,this).observe(this, Observer<InstitutionsResponse> {
-                dialog?.dismiss()
-                if (it != null) {
-                    if (it.isSuccess) {
-                        val list = it.data ?: run {
-                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
-                            return@Observer
-                        }
-                        if (list.isEmpty()){
-                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
-                            return@Observer
-                        }else{
-                            displayInstitutionList(list)
-                        }
+
+    private fun getInstitutions() {
+        dialog?.show()
+        val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
+        vehicleInformationViewModel.getInstitutions(1, 40, this).observe(this, Observer<InstitutionsResponse> {
+            dialog?.dismiss()
+            if (it != null) {
+                if (it.isSuccess) {
+                    val list = it.data ?: run {
+                        operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
+                        return@Observer
+                    }
+                    if (list.isEmpty()) {
+                        operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
+                        return@Observer
                     } else {
-                        if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
-                            it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
-                        } else if (it.mThrowable != null) {
-                            if (it.mThrowable is IOException) {
-                                operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.network_Issue))
-                            } else {
-                                operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.conversion_Issue))
-                            }
-                        }
+                        displayInstitutionList(list)
                     }
                 } else {
-                    operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.unknown_error))
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
                 }
-            })
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.unknown_error))
+            }
+        })
     }
 
     private fun displayInstitutionList(list: List<InstitutionData>) {
         val institutions = mutableListOf<Item>().apply {
             add(Item(null, getString(R.string.institutions), true))
-            for (institution in list){
+            for (institution in list) {
                 add(Item(institution.institutionId, institution.name, false))
             }
         }.toList()
@@ -130,10 +132,10 @@ class VehicleInformationActivity : AppCompatActivity() {
         }
     }
 
-    private fun getVehicles(){
+    private fun getVehicles() {
         dialog?.show()
         val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
-        vehicleInformationViewModel.getVehicles(app.institutionId.toString(),1,150,this).observe(this, Observer<VehiclesResponse> {
+        vehicleInformationViewModel.getVehicles(app.institutionId.toString(), 1, 150, this).observe(this, Observer<VehiclesResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
@@ -141,10 +143,10 @@ class VehicleInformationActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
                         return@Observer
                     }
-                    if (list.isEmpty()){
+                    if (list.isEmpty()) {
                         operations.displayAlertDialog(this, getString(R.string.vehicle_information_error_title), getString(R.string.no_data_found))
                         return@Observer
-                    }else{
+                    } else {
                         displayVehicleList(list)
                     }
                 } else {
@@ -166,19 +168,19 @@ class VehicleInformationActivity : AppCompatActivity() {
 
     private fun displayVehicleList(list: List<VehicleData>) {
         val vehicles = mutableListOf<Item>().apply {
-            add(Item(null, getString(R.string.vehicles) , true))
-            for (vehicle in list){
+            add(Item(null, getString(R.string.vehicles), true))
+            for (vehicle in list) {
                 add(Item(vehicle.vehicleId, vehicle.plateNumber, false))
             }
         }.toList()
 
         vehicleInformationAdapter = VehicleInformationAdapter(this, vehicles)
         vehicleInformationAdapter.onItemClick = {
-                app.apply {
-                    vehicleId = it.id
-                    taxiPlateNumber = it.itemName
-                }
-                finish()
+            app.apply {
+                vehicleId = it.id
+                taxiPlateNumber = it.itemName
+            }
+            finish()
         }
         recyclerView.apply {
             adapter = vehicleInformationAdapter

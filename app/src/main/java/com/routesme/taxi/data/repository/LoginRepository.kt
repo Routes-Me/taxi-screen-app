@@ -5,8 +5,8 @@ import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
-import com.routesme.taxi.data.encryption.AesBase64Wrapper
 import com.routesme.taxi.api.RestApiService
+import com.routesme.taxi.data.encryption.AesBase64Wrapper
 import com.routesme.taxi.data.model.*
 import org.json.JSONObject
 import retrofit2.Call
@@ -34,19 +34,20 @@ class LoginRepository(val context: Context) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
                     Log.d("authenticationsAPI", "$signInSuccessResponse")
                     signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
-                } else{
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED){
+                } else {
+                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
                         val objError = JSONObject(response.errorBody()!!.string())
                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
                         signInResponse.value = LoginResponse(mResponseErrors = errors)
-                    }else{
+                    } else {
                         val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error)  }.toList()
+                        val errors = mutableListOf<Error>().apply { add(error) }.toList()
                         val responseErrors = ResponseErrors(errors)
                         signInResponse.value = LoginResponse(mResponseErrors = responseErrors)
                     }
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 signInResponse.value = LoginResponse(mThrowable = throwable)
             }

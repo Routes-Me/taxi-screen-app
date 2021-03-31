@@ -11,8 +11,8 @@ android {
         applicationId "com.routesme.taxi"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 16
-        versionName "2.3"
+        versionCode 29
+        versionName "3.6"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
@@ -26,7 +26,21 @@ android {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+
     }
+
+    buildTypes {
+        debug {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+
+        }
+    }
+
     lintOptions {
         checkReleaseBuilds false
     }
@@ -83,7 +97,7 @@ dependencies {
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.1'
     implementation 'com.jakewharton.rxbinding:rxbinding:0.4.0'
     //MVVM Architecture
-    annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
+    kapt "android.arch.lifecycle:compiler:1.1.1"
     implementation "androidx.lifecycle:lifecycle-extensions:2.2.0"
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.fragment:fragment-ktx:1.2.5'
@@ -102,6 +116,7 @@ dependencies {
     implementation "android.arch.persistence.room:runtime:1.1.1"
     kapt "android.arch.persistence.room:compiler:1.1.1"
     implementation 'com.microsoft.signalr:signalr:3.0.0'
+    implementation 'org.slf4j:slf4j-jdk14:1.7.25'
     //Exoplayer
     implementation 'com.google.android.exoplayer:exoplayer:2.12.1'
     implementation 'com.google.android.exoplayer:exoplayer-core:2.12.1'

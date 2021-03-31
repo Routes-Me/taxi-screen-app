@@ -11,6 +11,7 @@ class ViewModelFactory(private val dbHelper: DatabaseHelper) : ViewModelProvider
         if (modelClass.isAssignableFrom(RoomDBViewModel::class.java)) {
             return RoomDBViewModel(dbHelper) as T
         }
+
         throw IllegalArgumentException("Unknown class name")
     }
 
