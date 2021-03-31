@@ -33,7 +33,6 @@ class ApiWorker(val context: Context) {
                     addInterceptor(ReceivedCookiesInterceptor())
                     addInterceptor(RedirectInterceptor())
                     followSslRedirects(false)
-
                     // addInterceptor(NotAcceptableRefreshTokenInterceptor(context))
                     authenticator(TokenAuthenticator(context))
                     //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
