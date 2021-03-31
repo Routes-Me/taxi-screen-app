@@ -33,7 +33,4 @@ class ModelPresenter : AppCompatActivity() {
         finish()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
 }

@@ -22,19 +22,14 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.routesme.taxi.BuildConfig
-import com.routesme.taxi.R
 import com.routesme.taxi.data.model.IModeChanging
 import com.routesme.taxi.data.model.SubmitApplicationVersionCredentials
 import com.routesme.taxi.data.model.SubmitApplicationVersionResponse
 import com.routesme.taxi.helper.*
-import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.view.fragment.ContentFragment
 import com.routesme.taxi.viewmodel.SubmitApplicationVersionViewModel
 import com.routesme.taxi.view.events.DemoVideo
 import com.routesme.taxi.R
-import com.routesme.taxi.room.AdvertisementDatabase
-import com.routesme.taxi.room.factory.ViewModelFactory
-import com.routesme.taxi.room.helper.DatabaseHelperImpl
 import com.routesme.taxi.room.viewmodel.RoomDBViewModel
 import com.routesme.taxi.helper.SharedPreferencesHelper
 import kotlinx.android.synthetic.main.home_screen.*
@@ -54,7 +49,6 @@ class HomeActivity : com.routesme.taxi.view.activity.PermissionsActivity(), IMod
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
-    private lateinit var viewModel: RoomDBViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

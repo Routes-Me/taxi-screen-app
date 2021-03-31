@@ -103,11 +103,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                     EventBus.getDefault().post(AnimateVideo(true, exoPlayer.currentPeriodIndex))
                 }
 
-                override fun onTracksChanged(trackGroups: TrackGroupArray, trackSelections: TrackSelectionArray) {
-                    super.onTracksChanged(trackGroups, trackSelections)
-
-                }
-
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {

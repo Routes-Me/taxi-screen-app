@@ -1,9 +1,8 @@
 package com.routesme.taxi.api
 
-import android.app.Activity
 import android.content.Context
 import com.google.gson.GsonBuilder
-import com.routesme.taxi.api.interceptors.BasicAuthInterceptor
+import com.routesme.taxi.App
 import com.routesme.taxi.api.interceptors.ReceivedCookiesInterceptor
 import com.routesme.taxi.api.interceptors.RedirectInterceptor
 import com.routesme.taxi.api.interceptors.TokenAuthenticator
@@ -30,14 +29,13 @@ class ApiWorker(val context: Context) {
                      readTimeout(30, TimeUnit.SECONDS)
                      writeTimeout(15, TimeUnit.SECONDS)
                      addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-                     addInterceptor(BasicAuthInterceptor(context))
+                     addInterceptor(BasicAuthInterceptor())
                      addInterceptor(ReceivedCookiesInterceptor())
                      addInterceptor(RedirectInterceptor())
                      followSslRedirects(false)
-
                     // addInterceptor(NotAcceptableRefreshTokenInterceptor(context))
-                     authenticator(TokenAuthenticator(context))
-                  //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
+                     if(context !is App )authenticator(TokenAuthenticator(context))
+                    //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
                  }.build()
             }
             return mClient!!

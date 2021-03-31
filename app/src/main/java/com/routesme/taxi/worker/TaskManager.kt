@@ -24,7 +24,7 @@ import retrofit2.Response
 class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams),CoroutineScope by MainScope() {
     private var dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))
     private val MIN = 100000000
-    private var sharedPreferences = context?.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+    private var sharedPreferences = context.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
     private var editior = sharedPreferences?.edit()
     val thisApiCorService by lazy {
         RestApiService.createCorService(context)
@@ -35,19 +35,20 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
             val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
             launch {
                 val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
-                device_id?.let { deviceId ->
+                device_id.let { deviceId ->
                     if (!list.isNullOrEmpty()) {
                         val call = thisApiCorService.postReport(getJsonArray(list), device_id)
                         call.enqueue(object : Callback<JsonElement> {
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
                                     launch {
-                                        val delete = dbHelper?.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
+                                        val delete = dbHelper.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                                         editior?.commit()
                                     }
                                 }
                             }
+
                             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
 
 

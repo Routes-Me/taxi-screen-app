@@ -24,7 +24,4 @@ class ContentViewModel : ViewModel() {
 
     fun unlinkDevice(vehicleId: String, deviceId: String, context: Context) = UnlinkRepository(context).unlink(vehicleId, deviceId)
 
-    override fun onCleared() {
-        super.onCleared()
-    }
 }

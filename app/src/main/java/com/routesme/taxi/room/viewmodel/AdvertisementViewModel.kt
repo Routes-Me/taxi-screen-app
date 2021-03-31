@@ -69,9 +69,4 @@ class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
         return deleteAllTableLiveData
     }
 
-    override fun onCleared() {
-
-        super.onCleared()
-    }
-
 }

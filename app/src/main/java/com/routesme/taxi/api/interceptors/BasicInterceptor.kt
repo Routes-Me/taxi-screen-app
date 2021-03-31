@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.NonNull
 import androidx.annotation.RequiresApi
+import com.routesme.taxi.App
 import com.routesme.taxi.BuildConfig
 import com.routesme.taxi.R
 import com.routesme.taxi.helper.AdminConsoleHelper
@@ -19,7 +20,7 @@ import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
 
-internal class BasicAuthInterceptor(val context: Context) : Interceptor {
+internal class BasicAuthInterceptor() : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -33,7 +34,7 @@ internal class BasicAuthInterceptor(val context: Context) : Interceptor {
     }
 
     @RequiresApi(Build.VERSION_CODES.N)
-    private fun countryCode() = context.resources.configuration.locales.get(0).country
+    private fun countryCode() = App.instance.resources.configuration.locales.get(0).country
 
     private fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
 }
@@ -61,9 +62,7 @@ internal class NotAcceptableRefreshTokenInterceptor(val context: Context) : Inte
         val request = response.request()
         if (response.code() == HttpURLConnection.HTTP_NOT_FOUND && request.url().toString() == baseUrl + "authentications/renewals") {
             Log.d("RefreshToken", "${request.url()} not found !")
-
             //  val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
-
             context.startActivity(Intent(context, LoginActivity::class.java))
             (context as Activity).finish()
         }
