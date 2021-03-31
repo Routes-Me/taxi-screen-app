@@ -7,6 +7,7 @@ import android.util.Log
 import com.routesme.taxi.App
 import com.routesme.taxi.R
 import com.routesme.taxi.api.Constants
+import com.routesme.taxi.api.Header
 import com.routesme.taxi.helper.Helper
 import com.routesme.taxi.uplevels.Account
 import com.routesme.taxi.view.activity.RefreshTokenActivity
