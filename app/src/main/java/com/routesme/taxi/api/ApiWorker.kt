@@ -1,8 +1,8 @@
 package com.routesme.taxi.api
 
+import android.app.Activity
 import android.content.Context
 import com.google.gson.GsonBuilder
-import com.routesme.taxi.App
 import com.routesme.taxi.api.interceptors.ReceivedCookiesInterceptor
 import com.routesme.taxi.api.interceptors.RedirectInterceptor
 import com.routesme.taxi.api.interceptors.TokenAuthenticator
@@ -24,19 +24,20 @@ class ApiWorker(val context: Context) {
         @Throws(NoSuchAlgorithmException::class, KeyManagementException::class)
         get() {
             if (mClient == null) {
-                 mClient = OkHttpClient.Builder().apply {
-                     connectTimeout(1, TimeUnit.MINUTES)
-                     readTimeout(30, TimeUnit.SECONDS)
-                     writeTimeout(15, TimeUnit.SECONDS)
-                     addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-                     addInterceptor(BasicAuthInterceptor())
-                     addInterceptor(ReceivedCookiesInterceptor())
-                     addInterceptor(RedirectInterceptor())
-                     followSslRedirects(false)
+                mClient = OkHttpClient.Builder().apply {
+                    connectTimeout(1, TimeUnit.MINUTES)
+                    readTimeout(30, TimeUnit.SECONDS)
+                    writeTimeout(15, TimeUnit.SECONDS)
+                    addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+                    addInterceptor(BasicAuthInterceptor())
+                    addInterceptor(ReceivedCookiesInterceptor())
+                    addInterceptor(RedirectInterceptor())
+                    followSslRedirects(false)
+
                     // addInterceptor(NotAcceptableRefreshTokenInterceptor(context))
-                     if(context !is App )authenticator(TokenAuthenticator(context))
+                    authenticator(TokenAuthenticator(context))
                     //  if (context !is LoginActivity) addInterceptor(UnauthorizedInterceptor(context))
-                 }.build()
+                }.build()
             }
             return mClient!!
         }
