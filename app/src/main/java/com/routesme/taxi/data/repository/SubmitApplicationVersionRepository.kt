@@ -25,6 +25,7 @@ class SubmitApplicationVersionRepository(val context: Context) {
         Log.d("RefreshToken", "SubmitApplicationVersionRepository..Call: $call")
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                //Log.d("Submit Version","${response.code()},${response.message()},${call.request().url()}")
                 if (response.isSuccessful) {
                     submitApplicationVersionResponse.value = SubmitApplicationVersionResponse(isSuccess = true)
                 } else {
