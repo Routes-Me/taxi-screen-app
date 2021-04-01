@@ -16,10 +16,10 @@
         android:layout_height="match_parent"
         android:fontFamily="sans-serif"
         android:gravity="center|start"
+        android:paddingStart="20dp"
         android:textColor="@color/black"
         android:textSize="24sp"
-        android:textStyle="normal"
-        android:paddingStart="20dp">
+        android:textStyle="normal">
 
     </TextView>
 
