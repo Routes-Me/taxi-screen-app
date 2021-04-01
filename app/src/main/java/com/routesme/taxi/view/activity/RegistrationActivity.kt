@@ -109,6 +109,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         deviceId_tv.setOnClickListener(this)
         SimSerialNumber_tv.setOnClickListener(this)
         register_btn.setOnClickListener(this)
+        operations.enableNextButton(register_btn, true)
         dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
     }
 

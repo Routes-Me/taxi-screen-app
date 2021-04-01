@@ -62,6 +62,7 @@ class LoginActivity : AppCompatActivity() {
         openPatternBtn.setOnClickListener { openPatternDialog() }
         technical_login_screen.btn_learnMore.setOnClickListener { openLearnMoreScreen() }
         technical_login_screen.btn_next.setOnClickListener { buttonNextClick() }
+        operations.enableNextButton(btn_next, true)
         editTextListener()
     }
 

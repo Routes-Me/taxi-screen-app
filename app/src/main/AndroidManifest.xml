@@ -25,7 +25,6 @@
         android:label="@string/app_name"
         android:hardwareAccelerated="true"
         android:roundIcon="@mipmap/taxi_screen_icon"
-        android:screenOrientation="landscape"
         android:supportsRtl="false"
         android:largeHeap="true"
         android:theme="@style/FullScreen_Light_Mode"
@@ -35,40 +34,33 @@
         <activity android:name=".view.activity.RefreshTokenActivity"></activity>
         <activity
             android:name=".view.activity.VehicleInformationActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
         <activity
             android:name="com.routesme.taxi.view.activity.RegistrationActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
 
         <activity
             android:name="com.routesme.taxi.view.activity.AdminConsolePanel"
-            android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing" />
         <activity
             android:name="com.routesme.taxi.view.activity.LoginActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode" />
         <activity
             android:name="com.routesme.taxi.view.activity.LearnMoreActivity"
-            android:screenOrientation="landscape"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.routesme.taxi.view.activity.HomeActivity"
-            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
 
         </activity>
         <activity
             android:name="com.routesme.taxi.view.activity.ModelPresenter"
-            android:screenOrientation="landscape"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

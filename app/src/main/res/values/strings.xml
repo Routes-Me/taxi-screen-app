@@ -38,4 +38,19 @@
     <string name="free_wifi">FREE WIFI</string>
     <string name="device_id">Device ID</string>
     <string name="sim_serial_number">SIM serial number</string>
+    <string name="sign_in">Sign in</string>
+    <string name="with_your_routes_account">with your Routes Account</string>
+    <string name="user_name">User Name</string>
+    <string name="email_error">Email Error</string>
+    <string name="password">Password</string>
+    <string name="password_error">Password Error</string>
+    <string name="call_support_22020406">Call support +22020406</string>
+    <string name="next">Next</string>
+    <string name="almost_done">Almost done ..</string>
+    <string name="vehicle">Vehicle</string>
+    <string name="vehicle_institution">Institution</string>
+    <string name="select_vehicle_institution">* Select vehicle institution</string>
+    <string name="select_vehicle_plate_number">* Select vehicle plate number</string>
+    <string name="taxi_plate_number">Plate number</string>
+    <string name="register">Register</string>
 </resources>
