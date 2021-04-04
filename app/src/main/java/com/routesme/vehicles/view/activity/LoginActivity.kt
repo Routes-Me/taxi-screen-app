@@ -34,6 +34,7 @@ import kotlinx.android.synthetic.main.login_screen.*
 import kotlinx.android.synthetic.main.technical_login_layout.*
 import kotlinx.android.synthetic.main.technical_login_layout.view.*
 import java.io.IOException
+import java.net.HttpURLConnection
 import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
@@ -144,8 +145,13 @@ class LoginActivity : AppCompatActivity() {
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
+         /*
             if (error.code == 1 || error.code == 2) {
                 showErrorMessage(error, true)
+            }
+            */
+            if (error.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
+                operations.displayAlertDialog(this, getString(R.string.login_error_title), "Username or password incorrect !")
             } else {
                 operations.displayAlertDialog(this, getString(R.string.login_error_title), "Error message: ${error.detail}")
             }

@@ -170,7 +170,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             R.id.deviceId_tv, R.id.SimSerialNumber_tv -> clickOnGetDeviceInfo()
             R.id.taxiOffice_tv -> openInstitutionsList()
             R.id.taxiPlateNumber_tv -> openVehiclesList()
-            R.id.register_btn -> register() //register()
+            R.id.register_btn -> register()
         }
     }
 
@@ -197,7 +197,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register() {
-        if (Account().accessToken != null && allDataExist()) {
+        registerCredentials.apply {
+            SimSerialNumber = "4556466"
+            VehicleId = "112288"
+        }
+        //if (Account().accessToken != null && allDataExist()) {
+        if (Account().accessToken != null) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
