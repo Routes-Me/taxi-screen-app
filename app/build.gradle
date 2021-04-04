@@ -1,6 +1,6 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'com.google.firebase.crashlytics'
+//apply plugin: 'com.google.gms.google-services'
+//apply plugin: 'com.google.firebase.crashlytics'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.jetbrains.kotlin.kapt"
@@ -8,7 +8,7 @@ android {
     compileSdkVersion 29
     buildToolsVersion '29.0.3'
     defaultConfig {
-        applicationId "com.routesme.taxi"
+        applicationId "com.routesme.vehicles"
         minSdkVersion 26
         targetSdkVersion 29
         versionCode 29
@@ -27,7 +27,7 @@ android {
             jvmTarget = "1.8"
         }
     }
-
+/*
     buildTypes {
         debug {
             minifyEnabled true
@@ -39,6 +39,7 @@ android {
 
         }
     }
+    */
 
     lintOptions {
         checkReleaseBuilds false
@@ -47,6 +48,36 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+
+    flavorDimensions 'default'
+    productFlavors {
+        taxi {
+            dimension 'default'
+            applicationId "com.routesme.vehicles"
+            applicationIdSuffix ".taxi"
+            versionCode 29
+            versionName "3.6"
+        }
+
+        bus {
+            dimension 'default'
+            applicationId "com.routesme.vehicles"
+            applicationIdSuffix ".bus"
+            versionCode 1
+            versionName "1.0"
+        }
+    }
+    sourceSets {
+        bus {
+            res.srcDirs = ['src/bus/res', 'src/bus/res/']
+            java.srcDirs = ['src/bus/java', 'src/bus/java/']
+        }
+        taxi {
+            res.srcDirs = ['src/taxi/res', 'src/taxi/res/']
+            java.srcDirs = ['src/taxi/java', 'src/taxi/java/']
+        }
     }
 }
 

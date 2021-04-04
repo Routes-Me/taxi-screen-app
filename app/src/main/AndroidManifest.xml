@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.routesme.taxi">
+    package="com.routesme.vehicles">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
@@ -18,7 +18,7 @@
         tools:ignore="ProtectedPermissions" />
 
     <application
-        android:name="com.routesme.taxi.App"
+        android:name="com.routesme.vehicles.App"
         android:allowBackup="true"
         android:icon="@mipmap/taxi_screen_icon"
         android:keepScreenOn="true"
@@ -31,36 +31,36 @@
         android:usesCleartextTraffic="true"
         android:windowSoftInputMode="adjustResize|stateHidden"
         tools:replace="android:supportsRtl">
-        <activity android:name=".view.activity.RefreshTokenActivity"></activity>
+        <activity android:name="com.routesme.vehicles.view.activity.RefreshTokenActivity"></activity>
         <activity
-            android:name=".view.activity.VehicleInformationActivity"
+            android:name="com.routesme.vehicles.view.activity.VehicleInformationActivity"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
         <activity
-            android:name="com.routesme.taxi.view.activity.RegistrationActivity"
+            android:name="com.routesme.vehicles.view.activity.RegistrationActivity"
             android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
 
         <activity
-            android:name="com.routesme.taxi.view.activity.AdminConsolePanel"
+            android:name="com.routesme.vehicles.view.activity.AdminConsolePanel"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="com.routesme.taxi.view.activity.LoginActivity"
+            android:name="com.routesme.vehicles.view.activity.LoginActivity"
             android:theme="@style/FullScreen_Light_Mode" />
         <activity
-            android:name="com.routesme.taxi.view.activity.LearnMoreActivity"
+            android:name="com.routesme.vehicles.view.activity.LearnMoreActivity"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name="com.routesme.taxi.view.activity.HomeActivity"
+            android:name="com.routesme.vehicles.view.activity.HomeActivity"
             android:windowSoftInputMode="adjustNothing">
 
         </activity>
         <activity
-            android:name="com.routesme.taxi.view.activity.ModelPresenter"
+            android:name="com.routesme.vehicles.view.activity.ModelPresenter"
             android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -82,7 +82,7 @@
             </intent-filter>
         </receiver>-->
 
-        <activity android:name="com.routesme.taxi.view.activity.MagicActivity">
+        <activity android:name="com.routesme.vehicles.view.activity.MagicActivity">
             <intent-filter>
                 <category android:name="android.intent.category.BROWSABLE" />
                 <category android:name="android.intent.category.DEFAULT" />
@@ -92,17 +92,17 @@
         </activity>
 
         <service
-            android:name="com.routesme.taxi.service.HotSpotIntentService"
+            android:name="com.routesme.vehicles.service.HotSpotIntentService"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name="com.routesme.taxi.service.VideoService"
+            android:name="com.routesme.vehicles.service.VideoService"
             android:enabled="true"
             android:exported="true" />
 
         <receiver
-            android:name="com.routesme.taxi.service.receiver.HotSpotIntentReceiver"
+            android:name="com.routesme.vehicles.service.receiver.HotSpotIntentReceiver"
             android:enabled="true"
             android:exported="true">
             <intent-filter>
@@ -111,16 +111,16 @@
             </intent-filter>
         </receiver>
         <receiver
-            android:name="com.routesme.taxi.service.receiver.ModeChangesReceiver"
+            android:name="com.routesme.vehicles.service.receiver.ModeChangesReceiver"
             android:enabled="true"
             android:exported="true" />
 
         <service
-            android:name=".service.TrackingService"
+            android:name="com.routesme.vehicles.service.TrackingService"
             android:enabled="true" />
 
         <service
-            android:name=".service.RefreshTokenService"
+            android:name="com.routesme.vehicles.service.RefreshTokenService"
             android:enabled="true" />
 
         <meta-data
