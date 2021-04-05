@@ -11,7 +11,7 @@ import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
 import com.routesme.vehicles.helper.Helper
 import com.routesme.vehicles.service.receiver.LocationReceiver
-import com.routesme.vehicles.room.doa.LocationFeedsDao
+import com.routesme.vehicles.room.dao.LocationFeedsDao
 import com.routesme.vehicles.room.TrackingDatabase
 import com.routesme.vehicles.room.entity.LocationFeed
 import com.routesme.vehicles.R

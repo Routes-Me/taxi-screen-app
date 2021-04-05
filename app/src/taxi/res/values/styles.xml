@@ -14,14 +14,19 @@
     </style>
 
     <style name="FullScreen_Light_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
-
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
         <item name="android:windowDisablePreview">true</item>
         <item name="homeScreenBackground_color">@color/homeScreen_lightBackground</item>
         <item name="cardViewBackground_color">@color/white</item>
         <item name="text_color">@color/black</item>
         <item name="wifi_icon">@drawable/ic_wifi_light</item>
         <item name="key_icon">@drawable/ic_key_light</item>
-
+        <item name="video_divider">@drawable/ic_promotion_divider_light</item>
+        <item name="banner_divider">@drawable/ic_banner_divider_light</item>
+        <item name="qrcode_divider">@drawable/ic_qrcode_divider_light</item>
         <item name="pfBackground_color">@color/pf_lightBackground</item>
         <item name="pfTopBackground_color">@drawable/pf_blue_background</item>
         <item name="pfText_color">@color/pf_textColorLight</item>
@@ -32,12 +37,17 @@
     </style>
 
     <style name="FullScreen_Dark_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
-
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
         <item name="homeScreenBackground_color">@color/black</item>
         <item name="cardViewBackground_color">@color/cardView_darkBackground</item>
         <item name="text_color">@color/white</item>
         <item name="wifi_icon">@drawable/ic_wifi_dark</item>
-
+        <item name="video_divider">@drawable/ic_promotion_divider_dark</item>
+        <item name="banner_divider">@drawable/ic_banner_divider_dark</item>
+        <item name="qrcode_divider">@drawable/ic_qrcode_divider_dark</item>
         <item name="key_icon">@drawable/ic_key_dark</item>
         <item name="pfBackground_color">@color/pf_darkBackground</item>
         <item name="pfTopBackground_color">@color/pf_darkBackground</item>

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import com.routesme.vehicles.room.doa.AdvertisementDoa
+import com.routesme.vehicles.room.dao.AdvertisementDoa
 import com.routesme.vehicles.room.entity.AdvertisementTracking
 
 @Database(entities = [AdvertisementTracking::class], version = 7, exportSchema = false)

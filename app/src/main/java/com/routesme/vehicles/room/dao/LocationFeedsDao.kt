@@ -1,4 +1,4 @@
-package com.routesme.vehicles.room.doa
+package com.routesme.vehicles.room.dao
 
 import androidx.room.Dao
 import androidx.room.Insert
