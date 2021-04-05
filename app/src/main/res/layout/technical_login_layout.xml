@@ -4,150 +4,195 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center"
-        android:orientation="vertical">
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.1" />
 
-        <ImageView
-            android:layout_width="44dp"
-            android:layout_height="44.7dp"
-            android:layout_gravity="center"
-            android:layout_marginTop="40dp"
-            android:layout_marginBottom="19.3dp"
-            android:src="@drawable/login_routes_icon" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.9" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.15" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.85" />
+
+    <ImageView
+        android:id="@+id/routes_logo_iv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:src="@mipmap/routes_icon_light"
+        app:layout_constraintBottom_toTopOf="@id/signIn_tv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/signIn_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_3sdp"
+        android:gravity="center"
+        android:text="@string/sign_in"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_18ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@id/btn_learnMore"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/routes_logo_iv" />
+
+    <LinearLayout
+        android:id="@+id/btn_learnMore"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_7sdp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@id/userName_et"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/signIn_tv">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
+            android:fontFamily="sans-serif"
             android:gravity="center_horizontal"
-            android:text="Sign in"
-            android:textColor="#000000"
-            android:textSize="24sp"
+            android:text="@string/with_your_routes_account"
+            android:textColor="@color/black"
+            android:textSize="@dimen/_10ssp"
             android:textStyle="normal" />
 
-        <LinearLayout
-            android:id="@+id/btn_learnMore"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginBottom="15dp"
-            android:orientation="horizontal">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:gravity="center_horizontal"
-                android:text="with your Routes Account"
-                android:textColor="#000000"
-                android:textSize="18sp"
-                android:textStyle="normal" />
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:gravity="center_horizontal"
-                android:text=" Learn more"
-                android:textColor="@color/colorPrimaryDark"
-                android:textSize="18sp"
-                android:textStyle="normal" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="500dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="136dp"
-            android:layout_marginRight="136dp"
-            android:layout_marginBottom="16dp"
-            android:orientation="vertical"
-            android:padding="10dp">
-
-            <EditText
-                android:id="@+id/userName_et"
-                style="@style/AppTheme.CustomEditText"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="3dp"
-                android:hint="User Name"
-                android:imeOptions="actionNext" />
-
-            <TextView
-                android:id="@+id/userName_error_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="5dp"
-                android:gravity="start"
-                android:text="Email Error"
-                android:textColor="@color/red"
-                android:textSize="16sp"
-                android:textStyle="normal"
-                android:visibility="invisible" />
-
-            <com.routesme.taxi.view.utils.ShowAndHidePassword
-                android:id="@+id/password_et"
-                style="@style/AppTheme.CustomEditText"
-                android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="3dp"
-                android:ems="10"
-                android:hint="Password"
-                android:imeOptions="actionDone"
-                android:inputType="textPassword"
-                app:drawable_hide="@drawable/ic_visibility_off"
-                app:drawable_show="@drawable/ic_visibility_on" />
-
-            <TextView
-                android:id="@+id/password_error_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:layout_marginBottom="5dp"
-                android:gravity="start"
-                android:text="Password Error"
-                android:textColor="@color/red"
-                android:textSize="16sp"
-                android:textStyle="normal"
-                android:visibility="invisible" />
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="136dp"
-            android:layout_marginRight="136dp"
-            android:layout_marginBottom="39dp"
-            android:gravity="center">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="177dp"
-                android:fontFamily="sans-serif-medium"
-                android:text="Call support +22020406"
-                android:textColor="#8a000000"
-                android:textSize="16sp"
-                android:textStyle="normal" />
-
-            <Button
-                android:id="@+id/btn_next"
-                style="@style/AppTheme.CustomButton"
-                android:layout_width="119dp"
-                android:layout_height="38dp"
-                android:layout_gravity="end"
-                android:text="Next" />
-
-        </LinearLayout>
+            android:fontFamily="sans-serif"
+            android:gravity="center_horizontal"
+            android:text="@string/learn_more"
+            android:textColor="@color/colorPrimaryDark"
+            android:textSize="@dimen/_10ssp"
+            android:textStyle="normal"
+            android:layout_marginStart="@dimen/_5sdp"/>
 
     </LinearLayout>
+
+    <EditText
+        android:id="@+id/userName_et"
+        style="@style/AppTheme.CustomEditText"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_13sdp"
+        android:hint="@string/user_name"
+        android:imeOptions="actionNext"
+        android:textSize="@dimen/_12ssp"
+        app:layout_constraintBottom_toTopOf="@id/userName_error_tv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/btn_learnMore" />
+
+    <TextView
+        android:id="@+id/userName_error_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:gravity="start"
+        android:text="@string/email_error"
+        android:textColor="@color/red"
+        android:textSize="@dimen/_9ssp"
+        android:textStyle="normal"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@id/password_et_container"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/userName_et" />
+
+    <RelativeLayout
+        android:id="@+id/password_et_container"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/password_error_tv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/userName_error_tv"
+        android:layout_marginTop="@dimen/_10sdp"
+        android:layout_marginBottom="3dp">
+        <com.routesme.vehicles.view.utils.ShowAndHidePassword
+            android:id="@+id/password_et"
+            style="@style/AppTheme.CustomEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="@string/password"
+            android:imeOptions="actionDone"
+            android:inputType="textPassword"
+            android:textSize="@dimen/_12ssp"
+            app:drawable_hide="@drawable/ic_visibility_off"
+            app:drawable_show="@drawable/ic_visibility_on" />
+    </RelativeLayout>
+
+
+    <TextView
+        android:id="@+id/password_error_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_1sdp"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintBottom_toTopOf="@id/btn_next"
+        android:gravity="start"
+        android:text="@string/password_error"
+        android:textColor="@color/red"
+        android:textSize="@dimen/_9ssp"
+        android:textStyle="normal"
+        android:visibility="invisible"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/password_et_container" />
+
+    <Button
+        android:id="@+id/btn_next"
+        style="@style/AppTheme.CustomButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_12sdp"
+        android:text="@string/next"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_chainStyle="spread_inside"
+        app:layout_constraintTop_toBottomOf="@id/password_error_tv" />
+
+    <TextView
+        android:id="@+id/call_support_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/call_support_22020406"
+        android:textColor="#8a000000"
+        android:textSize="@dimen/_10ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/btn_next"
+        app:layout_constraintEnd_toStartOf="@+id/btn_next"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/btn_next" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
