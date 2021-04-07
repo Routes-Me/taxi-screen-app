@@ -15,10 +15,6 @@ class BusValidatorService : Service(){
     private var isPortOpened = false
     private var qrCodeReadingFlag = false
 
-    override fun onCreate() {
-        super.onCreate()
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         if (isPortOpened) closePort()
@@ -27,13 +23,12 @@ class BusValidatorService : Service(){
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         startForeground(3, getNotification())
-        Log.d("BusValidator", "ValidatorService onStartCommand()")
 
         if (!isPortOpened){
             isPortOpened = openPort()
             if (isPortOpened){
                 Log.d("BusValidator", "Open port.. Successfully")
-                openQRCodeReader()
+                runQRCodeReader()
             }else{
                 Log.d("BusValidator", "Open port.. Failed")
             }
@@ -41,41 +36,54 @@ class BusValidatorService : Service(){
         return START_STICKY
     }
 
-    private fun openQRCodeReader() {
+    private fun runQRCodeReader() {
         Thread(Runnable {
-            qrCodeReadingFlag = true
-            var resultArray: Array<String>? = null
-            var result: String? = null
-            result = BasicOper.dc_Scan2DBarcodeStart(0)
-            resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
-            Log.d("BusValidator", "dc_Scan2DBarcodeStart.. result: $result")
-            if (resultArray.first() != ValidatorCodes.operationSuccess) {
-                Log.d("BusValidator", "dc_Scan2DBarcodeStart.. Failed, resultArray: ${resultArray.first()}")
-                return@Runnable
-            }
+            if (!startQrCodeReader()) return@Runnable
             Log.d("BusValidator", "dc_Scan2DBarcodeStart.. Success")
             Log.d("BusValidator", "Please move your QR Code")
-            while (qrCodeReadingFlag) {
-                SystemClock.sleep(500)
-                result = BasicOper.dc_Scan2DBarcodeGetData()
-                resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
-                if (resultArray.first() == ValidatorCodes.operationSuccess) {
-                    val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
-                    Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $content ")
-                    qrCodeReadingFlag = false
-                    break
-                }
-            }
-            result = BasicOper.dc_Scan2DBarcodeExit()
-            resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (resultArray.first() != ValidatorCodes.operationSuccess) {
-                Log.d("BusValidator", "dc_Scan2DBarcodeExit.. Failed")
-                return@Runnable
-            }
+
+            readQrCodeContent()
+
+            if (!stopQrCodeReader()) return@Runnable
+
             Log.d("BusValidator", "dc_Scan2DBarcodeExit.. Success")
             Log.d("BusValidator", "Qr Code operation .. Done !")
-            openQRCodeReader()
         }).start()
+    }
+
+    private fun startQrCodeReader(): Boolean {
+        val result = BasicOper.dc_Scan2DBarcodeStart(0)
+        val  resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
+        return resultArray.first() == ValidatorCodes.operationSuccess
+    }
+
+    private fun stopQrCodeReader(): Boolean{
+        val result = BasicOper.dc_Scan2DBarcodeExit()
+        val resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
+        return resultArray.first() == ValidatorCodes.operationSuccess
+    }
+
+    private fun readQrCodeContent() {
+        qrCodeReadingFlag = true
+        while (qrCodeReadingFlag) {
+            SystemClock.sleep(500)
+            val result = BasicOper.dc_Scan2DBarcodeGetData()
+            val resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
+            if (resultArray.first() == ValidatorCodes.operationSuccess) {
+                val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
+                Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $content ")
+                qrCodeReadingFlag = false
+                break
+            }
+        }
+    }
+
+    private fun hexStringToString(hexString: String): String {
+        var result = hexString
+        result = result.replace(" ", "")
+        val baKeyword = ByteArray(result.length / 2)
+        for (i in baKeyword.indices) baKeyword[i] = (0xff and result.substring(i * 2, i * 2 + 2).toInt(16)).toByte()
+        return String(baKeyword, Charsets.UTF_8)
     }
 
     private fun openPort(): Boolean {
@@ -95,12 +103,4 @@ class BusValidatorService : Service(){
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
-
-    private fun hexStringToString(hexString: String): String {
-        var result = hexString
-        result = result.replace(" ", "")
-        val baKeyword = ByteArray(result.length / 2)
-        for (i in baKeyword.indices) baKeyword[i] = (0xff and result.substring(i * 2, i * 2 + 2).toInt(16)).toByte()
-        return String(baKeyword, Charsets.UTF_8)
-    }
 }
