@@ -197,10 +197,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register() {
-        registerCredentials.apply {
-            SimSerialNumber = "4556466"
-            VehicleId = "112288"
-        }
         //if (Account().accessToken != null && allDataExist()) {
         if (Account().accessToken != null) {
             operations.enableNextButton(register_btn, false)

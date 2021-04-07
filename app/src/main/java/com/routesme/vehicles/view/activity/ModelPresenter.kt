@@ -14,12 +14,10 @@ class ModelPresenter : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.model_presenter)
-        Log.d("RefreshToken", "Model Presenter Activity")
         startActivity()
     }
 
     private fun startActivity() {
-        Log.d("RefreshToken", "Model Presenter Activity..Check witch the next activity to open")
         val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
         if (isRegistered) {
             openActivity(HomeActivity())

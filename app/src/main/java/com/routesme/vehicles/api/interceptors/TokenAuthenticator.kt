@@ -21,33 +21,16 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     private val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
     override fun authenticate(route: Route?, response: Response): Request? = when {
 
-/*
-        response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications/renewals" && response.code() == HttpURLConnection.HTTP_NOT_FOUND -> {
-            Log.d("RefreshToken", "Renewals request .. response code: ${response.code()}")
-            null
-        }
-
-        response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications/renewals" && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE -> {
-           // logOutAuthenticator()
-            null
-        }
-        */
-
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications/renewals" -> null
         response.networkResponse()?.request()?.url().toString() == baseUrl + "authentications" -> null
-        //retryCount(response.request()) == 1 -> null
         else -> {
-            // Log.d("UnAuthorizationRequest", "Auth header: ${response.request().headers().get("Authorization")}")
-            //  null
 
             val authorizationHeader: String? = response.networkResponse()?.request()?.headers()?.get("Authorization")
 
-            //Here.. check if the request redirects or the access token expired ..
             if (authorizationHeader == null){
                 //If the request redirects [ If authorization header is null ], So I'll add the authorization header again to it , then execute it again
                 response.request().reAddAuthorizationHeader()
             }else{
-                Log.d("RefreshTokenTesting", "TokenAuthenticator... Code: ${response.code()}")
                 //If it's expired, So I'll handle refresh token logic
                 if (!App.instance.isRefreshActivityAlive) {
                     App.instance.isRefreshActivityAlive = true
@@ -67,21 +50,10 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     }
 
     private fun retryCount(request: Request?)= request?.header(Constants.httpHeaderRetryCount)?.toInt() ?: 0
-/*
-    private fun Response.createSignedRequest(): Request? {
-        val refreshTokenResponse = TokenRepository(context).refreshToken()
-        val accessToken = refreshTokenResponse.value?.accessToken
-        val refreshToken = refreshTokenResponse.value?.refreshToken
-        accessToken?.let { Account().accessToken = it}
-        refreshToken?.let { Account().refreshToken = it }
-        return request().signWithToken()
-    }
-    */
 
     private fun Request.reAddAuthorizationHeader(): Request {
-        Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
+
         return newBuilder()
-                // .removeHeader(Header.Authorization.toString())
                 .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
                 .build()
     }

@@ -30,7 +30,7 @@
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
--keep class com.routesme.taxi.** { <fields>; }
+-keep class com.routesme.vehicles.** { <fields>; }
 -keep class com.microsoft.signalr.** { *; }
 -keep interface com.microsoft.signalr.** { *; }
 

@@ -14,10 +14,7 @@ import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.entity.AdvertisementTracking
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,8 +39,9 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
                         call.enqueue(object : Callback<JsonElement> {
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
-                                    launch(Dispatchers.IO) {
+                                    GlobalScope.launch {
                                         val delete = dbHelper.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
+
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                                         editior?.commit()
                                     }

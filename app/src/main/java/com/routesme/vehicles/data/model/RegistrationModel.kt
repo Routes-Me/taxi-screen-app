@@ -8,11 +8,11 @@ class RegistrationResponse(deviceId: String? = null, val mResponseErrors: Respon
     init {
        this.deviceId = deviceId
 
-
     }
 
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
+
 
 
 }

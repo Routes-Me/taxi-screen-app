@@ -31,17 +31,17 @@ class RefreshTokenService: Service() {
 
     override fun onCreate() {
         super.onCreate()
-        Log.d("RefreshToken", "onCreate")
+
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("RefreshToken", "onDestroy")
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Log.d("RefreshTokenTesting", "RefreshTokenService onStartCommand()")
+
         startForeground(2, getNotification())
         refreshToken()
 
@@ -49,7 +49,7 @@ class RefreshTokenService: Service() {
     }
 
     private fun refreshToken() {
-        Log.d("RefreshToken", "Hit Refresh Token")
+
         val refreshTokenCredentials = RefreshTokenCredentials(Account().refreshToken.toString())
         val call = thisApiCoreService.refreshToken(refreshTokenCredentials)
         APIHelper.enqueueWithRetry(call ,5,object :Callback<JsonElement> {
@@ -58,14 +58,14 @@ class RefreshTokenService: Service() {
                 if (response.isSuccessful && response.body() != null){
                     val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
                     successResponse?.let {
-                        Log.d("RefreshTokenTesting", "Renewals response: $response , Code: ${response.code()}")
+
                         saveTokens(it)
                         if (App.instance.isRefreshActivityAlive) openHomeActivity()
                         stopRefreshTokenService()
                     }
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
-                        Log.d("RefreshTokenTesting", "Renewals response: $response , HTTP_NOT_ACCEPTABLE , Code: ${response.code()}")
+
                         /*
                          val objError = JSONObject(response.errorBody()!!.string())
                          val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
@@ -77,7 +77,7 @@ class RefreshTokenService: Service() {
                         val error = Error(detail = response.message(), statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error)  }.toList()
                         val responseErrors = ResponseErrors(errors)
-                        Log.d("RefreshToken","responseErrors: $responseErrors")
+
                     }
                 }
             }
@@ -86,39 +86,7 @@ class RefreshTokenService: Service() {
                 Log.d("RefreshToken","throwable: $t")
             }
         })
-        /*
-            call.enqueue(object : Callback<JsonElement> {
-                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                    if (response.isSuccessful && response.body() != null) {
-                        val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
-                        Log.d("RefreshToken","successResponse: $successResponse")
-                        successResponse?.let {
-                            saveTokens(it)
-                            openHomeActivity()
-                            stopRefreshTokenService()
-                        }
-                    } else{
-                        if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
-                           /*
-                            val objError = JSONObject(response.errorBody()!!.string())
-                            val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                            Log.d("RefreshToken","errors: $errors")
-*/
-                            openLoginActivity()
-                            stopRefreshTokenService()
-                        }else{
-                            val error = Error(detail = response.message(), statusCode = response.code())
-                            val errors = mutableListOf<Error>().apply { add(error)  }.toList()
-                            val responseErrors = ResponseErrors(errors)
-                            Log.d("RefreshToken","responseErrors: $responseErrors")
-                        }
-                    }
-                }
-                override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                    Log.d("RefreshToken","throwable: $throwable")
-                }
-            })
-                    */
+
     }
 
     private fun saveTokens(refreshTokenSuccessResponse: RefreshTokenSuccessResponse) {
