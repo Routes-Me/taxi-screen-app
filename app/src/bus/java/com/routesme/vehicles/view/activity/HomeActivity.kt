@@ -1,9 +1,12 @@
 package com.routesme.vehicles.view.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.HomeScreenHelper
+import com.routesme.vehicles.service.BusValidatorService
 import kotlinx.android.synthetic.bus.activity_home.*
 
 class HomeActivity : AppCompatActivity() {
@@ -16,7 +19,12 @@ class HomeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
+        val intent = Intent(this, BusValidatorService::class.java)
+        ContextCompat.startForegroundService(this,intent)
+
         openPatternBtn.setOnClickListener { openPattern() }
+
+        startBusValidatorService()
     }
 
     private fun openPattern() {
@@ -26,5 +34,9 @@ class HomeActivity : AppCompatActivity() {
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()
+    }
+
+    private fun startBusValidatorService() {
+
     }
 }
