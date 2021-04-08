@@ -17,10 +17,11 @@ import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.view.activity.LoginActivity
 import okhttp3.Interceptor
 import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
 import java.io.IOException
 import java.net.HttpURLConnection
 
-internal class BasicAuthInterceptor() : Interceptor {
+internal class BasicAuthInterceptor : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
@@ -28,7 +29,7 @@ internal class BasicAuthInterceptor() : Interceptor {
                 .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
                 .addHeader(Header.CountryCode.toString(), countryCode())
                 .addHeader(Header.AppVersion.toString(), appVersion())
-                .addHeader(Header.application.toString(), "screen")
+                .addHeader(Header.application.toString(), "dashboard")
                 .build()
         return chain.proceed(request)
     }
@@ -61,8 +62,6 @@ internal class NotAcceptableRefreshTokenInterceptor(val context: Context) : Inte
         val response: Response = chain.proceed(chain.request())
         val request = response.request()
         if (response.code() == HttpURLConnection.HTTP_NOT_FOUND && request.url().toString() == baseUrl + "authentications/renewals") {
-            Log.d("RefreshToken", "${request.url()} not found !")
-            //  val currentActivity: Activity = (ApplicationProvider.getApplicationContext() as MyApp).getCurrentActivity()
             context.startActivity(Intent(context, LoginActivity::class.java))
             (context as Activity).finish()
         }

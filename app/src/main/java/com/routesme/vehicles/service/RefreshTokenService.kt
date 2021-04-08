@@ -29,16 +29,6 @@ class RefreshTokenService: Service() {
 
     private val thisApiCoreService by lazy { RestApiService.createCorService(this) }
 
-    override fun onCreate() {
-        super.onCreate()
-
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
@@ -58,19 +48,12 @@ class RefreshTokenService: Service() {
                 if (response.isSuccessful && response.body() != null){
                     val successResponse = Gson().fromJson<RefreshTokenSuccessResponse>(response.body(), RefreshTokenSuccessResponse::class.java)
                     successResponse?.let {
-
                         saveTokens(it)
                         if (App.instance.isRefreshActivityAlive) openHomeActivity()
                         stopRefreshTokenService()
                     }
                 } else{
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){
-
-                        /*
-                         val objError = JSONObject(response.errorBody()!!.string())
-                         val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                         Log.d("RefreshToken","errors: $errors")
-*/
                         if (App.instance.isRefreshActivityAlive) openLoginActivity()
                         stopRefreshTokenService()
                     }else{

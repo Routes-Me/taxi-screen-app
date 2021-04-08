@@ -14,7 +14,6 @@ class ReceivedCookiesInterceptor : Interceptor {
             val cookieList: List<HttpCookie> = HttpCookie.parse(setCookie.first())
             val refreshToken = cookieList.firstOrNull { it.name == "refreshToken" }?.value
             refreshToken?.let { Account().refreshToken = it }
-            Log.d("RefreshTokenTesting", "ReceivedCookiesInterceptor... Received refresh token: $refreshToken")
         }
         return response
     }

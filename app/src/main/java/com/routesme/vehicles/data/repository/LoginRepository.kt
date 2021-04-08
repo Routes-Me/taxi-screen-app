@@ -28,25 +28,16 @@ class LoginRepository(val context: Context) {
         val call = thisApiCorService.signIn(encryptedCredentials)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("authenticationsAPI", "${encryptedCredentials}")
-                Log.d("authenticationsAPI", "${response}")
                 if (response.isSuccessful && response.body() != null) {
                     val signInSuccessResponse = Gson().fromJson<SignInSuccessResponse>(response.body(), SignInSuccessResponse::class.java)
-                    Log.d("authenticationsAPI", "$signInSuccessResponse")
                     signInResponse.value = LoginResponse(token = signInSuccessResponse.token)
                 } else {
-                    /*
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_UNAUTHORIZED) {
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        signInResponse.value = LoginResponse(mResponseErrors = errors)
-                    } else {
-                        */
+
                         val error = Error(detail = response.message(), statusCode = response.code())
                         val errors = mutableListOf<Error>().apply { add(error) }.toList()
                         val responseErrors = ResponseErrors(errors)
                         signInResponse.value = LoginResponse(mResponseErrors = responseErrors)
-                   // }
+
                 }
             }
 

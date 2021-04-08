@@ -48,7 +48,6 @@ class VehicleInformationRepository(val context: Context) {
         val call = thisApiCorService.getVehicles(institutionId, offset, limit)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                Log.d("GetVehicles-API","Response: $response")
                 if (response.isSuccessful && response.body() != null) {
                     val vehicles = Gson().fromJson<Vehicles>(response.body(), Vehicles::class.java)
                     vehiclesResponse.value = VehiclesResponse(data = vehicles.data)

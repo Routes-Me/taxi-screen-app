@@ -63,7 +63,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor = sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
-        //requestRuntimePermissions();
         toolbarSetUp()
         initializeViews()
         getTabletInfo()
@@ -154,7 +153,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     return
                 }
                 getTabletInfo()
-                //showTabletInfoError(false);
+
             } else if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     showRationale = shouldShowRequestPermissionRationale(Manifest.permission.READ_PHONE_STATE)
@@ -197,7 +196,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register() {
-        //if (Account().accessToken != null && allDataExist()) {
+
         if (Account().accessToken != null) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()

@@ -14,7 +14,7 @@ public class MagicActivity extends PermissionsActivity {
 
     public static void useMagicActivityToTurnOn(Context c) {
         Uri uri = new Uri.Builder().scheme(c.getString(R.string.intent_data_scheme)).authority(c.getString(R.string.intent_data_host_turnon)).build();
-        //Toast.makeText(c, "Turn on. Uri: " + uri.toString(), Toast.LENGTH_LONG).show();
+
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.setData(uri);
@@ -23,7 +23,7 @@ public class MagicActivity extends PermissionsActivity {
 
     public static void useMagicActivityToTurnOff(Context c) {
         Uri uri = new Uri.Builder().scheme(c.getString(R.string.intent_data_scheme)).authority(c.getString(R.string.intent_data_host_turnoff)).build();
-        // Toast.makeText(c, "Turn off. Uri: " + uri.toString(), Toast.LENGTH_LONG).show();
+
         Intent i = new Intent(Intent.ACTION_VIEW);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         i.setData(uri);

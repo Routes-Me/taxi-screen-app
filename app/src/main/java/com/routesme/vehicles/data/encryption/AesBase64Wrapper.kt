@@ -23,16 +23,6 @@ class AesBase64Wrapper {
 
         val password = encrypt.password.toCharArray()
     }
-/*
-         Log.d("Encryption", "saltIndex: $saltIndexChars")
-         Log.d("Encryption", "${saltIndexChars[0]}: ${saltIndexChars[0].toInt()}")
-         Log.d("Encryption", "${saltIndexChars[1]}: ${saltIndexChars[1].toInt()}")
-         Log.d("Encryption", "index: $saltIndexNumber")
-         Log.d("Encryption", "saltBeginIndex: $saltBeginIndex")
-         Log.d("Encryption", "saltExcluded: $saltExcluded")
-         Log.d("Encryption", "fullSalt: $fullSalt")
-         Log.d("Encryption", "realSalt: $realSalt")
-*/
 
     fun getEncryptedString(str: String): String {
         val saltIndexChars = getSalt(2)
@@ -50,24 +40,12 @@ class AesBase64Wrapper {
         encryptedBody.append(encryptStr)
 
         val saltPart1 = fullSalt.substring(0, 10)
-        Log.d("Encryption", "saltPart1: $saltPart1")
         val saltPart2 = fullSalt.substring(10)
-        Log.d("Encryption", "saltPart2: $saltPart2")
 
         encryptedBody.insert(saltBeginIndex, saltPart1)
         encryptedBody.insert(saltPart1.length + 1 + saltBeginIndex, saltPart2)
 
         val result = StringBuilder().append(saltIndexChars).append(saltExcluded).append(encryptedBody)
-
-        /* Log.d("Encryption", "saltIndex: $saltIndexChars")
-         Log.d("Encryption", "${saltIndexChars[0]}: ${saltIndexChars[0].toInt()}")
-         Log.d("Encryption", "${saltIndexChars[1]}: ${saltIndexChars[1].toInt()}")
-         Log.d("Encryption", "index: $saltIndexNumber")
-         Log.d("Encryption", "saltBeginIndex: $saltBeginIndex")
-         Log.d("Encryption", "saltExcluded: $saltExcluded")
-         Log.d("Encryption", "fullSalt: $fullSalt")
-         Log.d("Encryption", "realSalt: $realSalt")
-         Log.d("Encryption", "encryptStr: $encryptStr")*/
 
         return result.toString()
     }
@@ -97,8 +75,7 @@ class AesBase64Wrapper {
 
     @Throws(Exception::class)
     private fun generateKey(salt: String): Key {
-        // val salt = getBytes(encrypt.salt)
-        // Log.d("Encryption", "RandomString: $randomString, Salt: $salt")
+
         val spec: KeySpec = PBEKeySpec(password, getBytes(salt), encrypt.iterationCount, encrypt.keyLength)
         val tmp = factory.generateSecret(spec)
         val encoded = tmp.encoded

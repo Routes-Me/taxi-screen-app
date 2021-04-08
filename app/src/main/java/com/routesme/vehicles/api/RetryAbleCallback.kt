@@ -11,16 +11,14 @@ import kotlin.concurrent.schedule
 abstract class RetryAbleCallback<T>(private val call: Call<T>, private val repeatingDelayInMinutes: Long) : Callback<T> {
     override fun onResponse(call: Call<T>, response: Response<T>) {
         if (APIHelper.isCallSuccess(response) || APIHelper.isCallNotAcceptable(response)) {
-            Log.d("RefreshTokenTesting", "Renewals request... onResponse, Done.... Code: ${response.code()}")
             onFinalResponse(call, response)
         } else {
-            Log.d("RefreshTokenTesting", "Renewals request... onResponse, Will retry.... Code: ${response.code()}")
             Timer("RetryAbleCall", true).apply { schedule(TimeUnit.MINUTES.toMillis(repeatingDelayInMinutes)) { retry() } }
         }
     }
 
     override fun onFailure(call: Call<T>, t: Throwable) {
-        Log.d("RefreshTokenTesting", "Renewals request... onFailure,  Will retry")
+
         Timer("RetryAbleCall", true).apply { schedule(TimeUnit.MINUTES.toMillis(repeatingDelayInMinutes)) { retry() } }
     }
 

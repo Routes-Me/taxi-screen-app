@@ -52,7 +52,6 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_screen)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        Log.d("RefreshToken", "Login Activity")
         initialize()
     }
 
@@ -96,8 +95,6 @@ class LoginActivity : AppCompatActivity() {
         operations.enableNextButton(btn_next, false)
         saveAuthCredentials()
         if (userNameValid() && passwordValid()){
-           // startActivity(Intent(this,HomeActivity::class.java))
-           // finish()
             signIn()
         }
     }
@@ -121,9 +118,9 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
-                    Log.d("RefreshTokenTesting", " Received access token: $token")
+
                     Account().apply { accessToken = token }
-                    Log.d("RefreshToken", "Login Activity..Get new access token")
+
                     openNextActivity()
 
                 } else {
@@ -145,11 +142,6 @@ class LoginActivity : AppCompatActivity() {
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
-         /*
-            if (error.code == 1 || error.code == 2) {
-                showErrorMessage(error, true)
-            }
-            */
             if (error.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
                 operations.displayAlertDialog(this, getString(R.string.login_error_title), "Username or password incorrect !")
             } else {
@@ -159,7 +151,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openNextActivity() {
-        Log.d("RefreshToken", "Login Activity..Check witch the next activity to open")
         val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
         val intent = if (isRegistered) Intent(this, ModelPresenter::class.java) else Intent(this, RegistrationActivity::class.java)
         startActivity(intent)
