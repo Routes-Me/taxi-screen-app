@@ -36,14 +36,15 @@
         app:layout_constraintGuide_percent="0.996" />
 
     <TextView
+        android:id="@+id/readingStatus_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-        android:text="Bus Application \n Home Activity"
-        android:textSize="@dimen/_30sdp"
+        android:text="Reading Status"
+        android:textSize="@dimen/_20sdp"
         android:textColor="@color/tint_color"
         android:gravity="center"/>
 

@@ -127,6 +127,10 @@
             android:name="com.routesme.vehicles.service.BusValidatorService"
             android:enabled="true" />
 
+        <service
+            android:name="com.routesme.vehicles.service.BusPaymentService"
+            android:enabled="true" />
+
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
             android:value="AIzaSyAoAYo4ShfpT7cLSG-lfdCLe3P8q_jrQF8" />

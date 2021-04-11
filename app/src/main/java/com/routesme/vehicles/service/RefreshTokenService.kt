@@ -10,6 +10,7 @@ import android.util.Log
 import com.google.gson.Gson
 import com.google.gson.JsonElement
 import com.routesme.vehicles.App
+import com.routesme.vehicles.R
 import com.routesme.vehicles.api.APIHelper
 import com.routesme.vehicles.api.RestApiService
 import com.routesme.vehicles.data.model.RefreshTokenCredentials
@@ -147,7 +148,7 @@ class RefreshTokenService: Service() {
     private fun getNotification(): Notification {
         val channel = NotificationChannel("channel_2", "Refresh Token Channel", NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(this, "channel_2").setAutoCancel(true).build()
+        return Notification.Builder(this, "channel_2").setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

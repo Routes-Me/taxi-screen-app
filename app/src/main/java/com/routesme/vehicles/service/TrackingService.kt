@@ -73,7 +73,7 @@ class TrackingService : Service() {
     private fun getNotification(): Notification {
         val channel = NotificationChannel("channel_1", "Live Tracking Channel", NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(this, "channel_1").setAutoCancel(true).build()
+        return Notification.Builder(this, "channel_1").setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
     }
 
     private fun insertTestFeeds() {
