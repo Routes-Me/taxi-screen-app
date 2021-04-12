@@ -32,7 +32,7 @@ class BusValidatorService : Service(){
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        startForeground(3, getNotification())
+        startForeground(ServiceInfo.BusValidator.serviceId, getNotification())
 
         if (!isPortOpened){
             isPortOpened = openPort()
@@ -136,9 +136,9 @@ class BusValidatorService : Service(){
     }
 
     private fun getNotification(): Notification {
-        val channel = NotificationChannel("channel_3", "Bus Validator Service Channel", NotificationManager.IMPORTANCE_NONE)
+        val channel = NotificationChannel(ServiceInfo.BusValidator.channelId, ServiceInfo.BusValidator.channelName, NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(this, "channel_3").setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
+        return Notification.Builder(this, ServiceInfo.BusValidator.channelId).setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
