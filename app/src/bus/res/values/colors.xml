@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="payment_approved_background">#9eba7e</color>
+    <color name="payment_approved_text_color">#3d4f46</color>
+   <color name="payment_rejected_background">#aa4f44</color>
+</resources>

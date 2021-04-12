@@ -1,1 +1,5 @@
-<resources></resources>
+<resources>
+    <string name="rejected">Rejected</string>
+    <string name="approved">Approved</string>
+    <string name="payment_approved_message">You will be receiving a notification for a digital ticket</string>
+</resources>

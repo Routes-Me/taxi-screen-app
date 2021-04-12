@@ -56,7 +56,8 @@
             android:windowSoftInputMode="adjustPan" />
         <activity
             android:name="com.routesme.vehicles.view.activity.HomeActivity"
-            android:windowSoftInputMode="adjustNothing">
+            android:windowSoftInputMode="adjustNothing"
+            android:theme="@style/FullScreen_Light_Mode">
 
         </activity>
         <activity

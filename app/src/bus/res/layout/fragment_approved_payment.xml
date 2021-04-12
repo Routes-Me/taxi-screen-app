@@ -1,0 +1,93 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context="com.routesme.vehicles.view.fragment.ApprovedPaymentFragment"
+    android:background="@color/payment_approved_background">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.8" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.2" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.8" />
+
+
+    <ImageView
+        android:id="@+id/approvedIcon_iv"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_33sdp"
+        android:src="@drawable/payment_approved_icon"
+        app:layout_constraintBottom_toTopOf="@id/approvedMessage_tv"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        android:layout_marginBottom="@dimen/_16sdp"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
+    <TextView
+        android:id="@+id/price_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="300 fils"
+        android:textColor="@color/payment_approved_text_color"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/approvedIcon_iv"
+        app:layout_constraintBottom_toTopOf="@id/approvedTitle_tv"
+        app:layout_constraintEnd_toStartOf="@id/approvedIcon_iv"/>
+
+    <TextView
+        android:id="@+id/approvedTitle_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/approved"
+        android:textColor="@color/payment_approved_text_color"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="normal"
+        app:layout_constraintStart_toStartOf="@id/price_tv"
+        app:layout_constraintTop_toBottomOf="@id/price_tv"
+        app:layout_constraintBottom_toBottomOf="@id/approvedIcon_iv"
+        app:layout_constraintEnd_toEndOf="@id/price_tv"/>
+
+    <TextView
+        android:id="@+id/approvedMessage_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:text="@string/payment_approved_message"
+        android:textColor="@color/payment_approved_text_color"
+        android:textSize="@dimen/_13ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/approvedIcon_iv" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
