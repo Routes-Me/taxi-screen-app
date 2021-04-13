@@ -1,0 +1,103 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+
+    </style>
+
+    <style name="roundedCornersImageView" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSize">8dp</item>
+    </style>
+
+    <style name="FullScreen_Light_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <item name="android:windowDisablePreview">true</item>
+        <item name="homeScreenBackground">@mipmap/bus_main_screen_background_light</item>
+        <item name="homeScreenTextColor">@color/black</item>
+        <item name="routesPayIcon">@drawable/ic_routes_pay_light</item>
+    </style>
+
+    <style name="FullScreen_Dark_Mode" parent="@style/Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowActionBar">false</item>
+        <item name="android:windowFullscreen">true</item>
+        <!--<item name="android:windowContentOverlay">@null</item>-->
+        <item name="homeScreenBackground">@color/home_screen_background_dark_color</item>
+        <item name="homeScreenTextColor">@color/white</item>
+        <item name="routesPayIcon">@drawable/ic_routes_pay_dark</item>
+    </style>
+
+    <style name="AppTheme.CustomEditText" parent="android:style/Widget.EditText">
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/grey_border_edit_text</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#8a000000</item>
+        <item name="android:textColorHint">#8a000000</item>
+        <item name="android:textSize">@dimen/_18ssp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_gravity">start</item>
+    </style>
+
+    <style name="AppTheme.CustomTextViewToolbar">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+        <item name="android:background">@color/white</item>
+    </style>
+
+    <style name="AppTheme.CustomTextViewList">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:padding">2dp</item>
+    </style>
+
+    <style name="AppTheme.CustomTextViewTitle">
+        <item name="android:textStyle">normal</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:fontFamily">sans-serif</item>
+    </style>
+
+    <style name="AppTheme.CustomButton" parent="Widget.AppCompat.ActionButton">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/next_button_border_enable</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:fontFamily">sans-serif-medium</item>
+    </style>
+
+    <style name="AppTheme.CustomTextView">
+        <item name="android:imeOptions">actionNext</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:background">@drawable/grey_border_text_view</item>
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:textColor">#8a000000</item>
+        <item name="android:textColorHint">#8a000000</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">normal</item>
+        <item name="android:layout_gravity">start</item>
+        <item name="android:clickable">false</item>
+    </style>
+
+    <style name="SpotsDialogStyle" parent="android:Theme.DeviceDefault.Dialog">
+        <item name="DialogTitleAppearance">@android:style/TextAppearance.Medium</item>
+        <item name="android:background">@color/tint_color</item>
+        <item name="DialogTitleText">@string/please_wait</item>
+        <item name="android:textColorTertiary">@color/white</item>
+        <item name="DialogSpotColor">@color/white</item>
+        <item name="DialogSpotCount">4</item>
+
+    </style>
+</resources>

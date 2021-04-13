@@ -9,10 +9,15 @@ import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.PaymentRejectCauses
 import com.routesme.vehicles.data.ReadQrCode
+import com.routesme.vehicles.data.model.IModeChanging
+import com.routesme.vehicles.helper.DisplayManager
 import com.routesme.vehicles.helper.HomeScreenHelper
+import com.routesme.vehicles.helper.Mode
+import com.routesme.vehicles.helper.ScreenBrightness
 import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
+import com.routesme.vehicles.view.fragment.MainFragment
 import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
 import kotlinx.android.synthetic.bus.activity_home.*
 import org.greenrobot.eventbus.EventBus
@@ -22,11 +27,12 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
-class HomeActivity : AppCompatActivity() {
+class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private var pressedTime: Long = 0
     private var clickTimes = 0
     private val helper = HomeScreenHelper(this)
+    private lateinit var mainFragment: MainFragment
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
     private lateinit var rejectedPaymentFragment: RejectedPaymentFragment
     private var isDismissFragmentTimerAlive = false
@@ -36,13 +42,26 @@ class HomeActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        DisplayManager.instance.registerActivity(this)
+        if (DisplayManager.instance.isAnteMeridiem()) {
+           DisplayManager.instance.currentMode = Mode.Light
+            setTheme(R.style.FullScreen_Light_Mode)
+            ScreenBrightness.instance.setBrightnessValue(this, 80)
+        } else {
+            DisplayManager.instance.currentMode = Mode.Dark
+            setTheme(R.style.FullScreen_Dark_Mode)
+            ScreenBrightness.instance.setBrightnessValue(this, 20)
+        }
         setContentView(R.layout.activity_home)
 
         openPatternBtn.setOnClickListener { openPattern() }
         EventBus.getDefault().register(this)
 
+        mainFragment = MainFragment()
         approvedPaymentFragment = ApprovedPaymentFragment()
         rejectedPaymentFragment = RejectedPaymentFragment()
+
+        showFragment(mainFragment)
        // addAllFragments()
        // hideFragments()
         startBusValidatorService()
@@ -87,16 +106,19 @@ class HomeActivity : AppCompatActivity() {
          }
 
 
-      if (readQrCode.isApproved) showFragment(approvedPaymentFragment)
+      if (readQrCode.isApproved) {
+          showFragment(approvedPaymentFragment)
+          dismissFragment(approvedScreenShowingTime)
+      }
       else {
-        //  readQrCode.rejectCauses?.let {  EventBus.getDefault().post(it) }
           showFragment(rejectedPaymentFragment)
-        //  readQrCode.rejectCauses?.let { rejectedPaymentFragment.displayRejectCause(it) }
+          dismissFragment(rejectedScreenShowingTime)
       }
     }
 
     private fun addAllFragments(){
         supportFragmentManager.beginTransaction().apply {
+            add(R.id.fragment_container, mainFragment)
             add(R.id.fragment_container, approvedPaymentFragment)
             add(R.id.fragment_container, rejectedPaymentFragment)
         }.commitAllowingStateLoss()
@@ -109,10 +131,6 @@ class HomeActivity : AppCompatActivity() {
             else add(R.id.fragment_container, fragment)
             //Log.d("BusValidator","No of current fragments: ${supportFragmentManager.fragments.size}")
         }.commitAllowingStateLoss()
-        if (fragment == approvedPaymentFragment) dismissFragment(approvedScreenShowingTime)
-        else {
-            dismissFragment(rejectedScreenShowingTime)
-        }
     }
 
     private fun dismissFragment(screenShowingTime: Long) {
@@ -122,6 +140,7 @@ class HomeActivity : AppCompatActivity() {
             schedule(screenShowingTime) {
                 Log.d("BusValidator","Dismiss Fragment Timer, Executing")
                 hideFragments()
+                showFragment(mainFragment)
                 isDismissFragmentTimerAlive = false
                 this@apply.apply{
                     cancel()
@@ -134,6 +153,18 @@ class HomeActivity : AppCompatActivity() {
         Log.d("BusValidator","Hide Fragment")
         supportFragmentManager.beginTransaction().apply {
             supportFragmentManager.fragments.forEach { hide(it) }
+        }.commitAllowingStateLoss()
+    }
+
+    override fun onModeChange() {
+        removeFragments()
+        recreate()
+    }
+
+    private fun removeFragments() {
+        supportFragmentManager.beginTransaction().apply {
+            remove(approvedPaymentFragment)
+            remove(rejectedPaymentFragment)
         }.commitAllowingStateLoss()
     }
 }

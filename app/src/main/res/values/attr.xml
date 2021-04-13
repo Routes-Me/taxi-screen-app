@@ -18,5 +18,6 @@
         <attr name="pfCopyrightTextColor" format="reference" />
         <attr name="pfRoutesLogo" format="reference" />
         <attr name="pfQrCodeShadow" format="reference" />
+
     </declare-styleable>
 </resources>
