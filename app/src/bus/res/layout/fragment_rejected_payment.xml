@@ -69,6 +69,7 @@
         android:textColor="#e6ffffff"
         android:textSize="@dimen/_13ssp"
         android:textStyle="normal"
+        android:text="Your qr code is expired, please make sure to present from the App"
         app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"

@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
+import com.routesme.vehicles.data.PaymentRejectCauses
 import com.routesme.vehicles.data.ReadQrCode
 import com.routesme.vehicles.helper.HomeScreenHelper
 import com.routesme.vehicles.service.BusPaymentService
@@ -29,21 +30,21 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
     private lateinit var rejectedPaymentFragment: RejectedPaymentFragment
     private var isDismissFragmentTimerAlive = false
-    private lateinit var dismissFragmentTimer: Timer
+    private var dismissFragmentTimer: Timer? = null
+    private val approvedScreenShowingTime = TimeUnit.SECONDS.toMillis(1)
+    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
 
         openPatternBtn.setOnClickListener { openPattern() }
-
-        dismissFragmentTimer = Timer("dismissFragmentTimer", true)
-
         EventBus.getDefault().register(this)
 
-        approvedPaymentFragment = ApprovedPaymentFragment.instance
-        rejectedPaymentFragment = RejectedPaymentFragment.instance
-
+        approvedPaymentFragment = ApprovedPaymentFragment()
+        rejectedPaymentFragment = RejectedPaymentFragment()
+       // addAllFragments()
+       // hideFragments()
         startBusValidatorService()
         startBusPaymentService()
     }
@@ -74,33 +75,65 @@ class HomeActivity : AppCompatActivity() {
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(readQrCode: ReadQrCode){
-      if (readQrCode.isApproved) replaceFragment(approvedPaymentFragment)
+        Log.d("BusValidator","Read new qr code: $readQrCode")
+         if (isDismissFragmentTimerAlive) {
+             Log.d("BusValidator","There's dismiss timer already running")
+             dismissFragmentTimer?.apply {
+                 cancel()
+                 purge()
+             }
+             hideFragments()
+             isDismissFragmentTimerAlive = false
+         }
+
+
+      if (readQrCode.isApproved) showFragment(approvedPaymentFragment)
       else {
-          replaceFragment(rejectedPaymentFragment)
-          readQrCode.rejectCauses?.let { rejectedPaymentFragment.displayRejectCause(it) }
+        //  readQrCode.rejectCauses?.let {  EventBus.getDefault().post(it) }
+          showFragment(rejectedPaymentFragment)
+        //  readQrCode.rejectCauses?.let { rejectedPaymentFragment.displayRejectCause(it) }
       }
     }
 
-    private fun replaceFragment(fragment: Fragment) {
+    private fun addAllFragments(){
         supportFragmentManager.beginTransaction().apply {
-            if (fragment.isAdded) show(fragment)
-            else add(R.id.fragment_container, fragment)
-            if (isDismissFragmentTimerAlive) dismissFragmentTimer.cancel()
-            dismissFragment()
-            supportFragmentManager.fragments.forEach { if (it != fragment && it.isAdded) hide(it) }
+            add(R.id.fragment_container, approvedPaymentFragment)
+            add(R.id.fragment_container, rejectedPaymentFragment)
         }.commitAllowingStateLoss()
     }
 
-    private fun dismissFragment() {
-        dismissFragmentTimer.apply {
+    private fun showFragment(fragment: Fragment) {
+        //Log.d("BusValidator","Show Fragment: $fragment")
+        supportFragmentManager.beginTransaction().apply {
+            if (fragment.isAdded) show(fragment)
+            else add(R.id.fragment_container, fragment)
+            //Log.d("BusValidator","No of current fragments: ${supportFragmentManager.fragments.size}")
+        }.commitAllowingStateLoss()
+        if (fragment == approvedPaymentFragment) dismissFragment(approvedScreenShowingTime)
+        else {
+            dismissFragment(rejectedScreenShowingTime)
+        }
+    }
+
+    private fun dismissFragment(screenShowingTime: Long) {
+        dismissFragmentTimer = Timer("dismissFragmentTimer", true).apply {
+            Log.d("BusValidator","Dismiss Fragment Timer, Calling, Timer: $this")
             isDismissFragmentTimerAlive = true
-            schedule(TimeUnit.MILLISECONDS.toMillis(1500)) {
-                Log.d("BusValidator","Dismiss Fragment")
-                supportFragmentManager.beginTransaction().apply {
-                    supportFragmentManager.fragments.forEach { if (it.isAdded) hide(it) }
-                }.commitAllowingStateLoss()
+            schedule(screenShowingTime) {
+                Log.d("BusValidator","Dismiss Fragment Timer, Executing")
+                hideFragments()
                 isDismissFragmentTimerAlive = false
+                this@apply.apply{
+                    cancel()
+                    purge()
+                }
             }
         }
+    }
+    private fun hideFragments(){
+        Log.d("BusValidator","Hide Fragment")
+        supportFragmentManager.beginTransaction().apply {
+            supportFragmentManager.fragments.forEach { hide(it) }
+        }.commitAllowingStateLoss()
     }
 }
