@@ -50,8 +50,8 @@ class BusValidatorService : Service(){
     }
 
     private fun runQRCodeReader() {
-            if (!startQrCodeReader()) return
-            readQrCodeContent(idleModeReadingInMilliseconds)
+        if (!startQrCodeReader()) return
+        readQrCodeContent(idleModeReadingInMilliseconds)
     }
 
     private fun startQrCodeReader(): Boolean {
