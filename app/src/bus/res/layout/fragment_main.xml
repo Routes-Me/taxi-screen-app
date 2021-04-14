@@ -115,7 +115,7 @@ tools:context="com.routesme.vehicles.view.fragment.MainFragment">
     android:layout_height="wrap_content"
     android:layout_marginTop="@dimen/_16sdp"
     android:fontFamily="sans-serif"
-    android:text="Scan your QR Code or NFC "
+    android:text="@string/scan_your_qr_code_or_nfc"
     android:textColor="?homeScreenTextColor"
     android:textSize="@dimen/_15ssp"
     android:textStyle="normal"
@@ -148,28 +148,27 @@ tools:context="com.routesme.vehicles.view.fragment.MainFragment">
     app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
     app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
-<TextView
-    android:id="@+id/date_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif"
-    android:text="2021.5.10"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_15ssp"
-    android:textStyle="normal"
-    app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+    <TextClock
+        android:id="@+id/date_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:format12Hour="yyyy.MM.dd"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
-<TextView
-    android:id="@+id/time_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif"
-    android:text="09:30:26"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_15ssp"
-    android:textStyle="normal"
-    app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd" />
-
+    <TextClock
+        android:id="@+id/time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:format12Hour="hh:mm:ss"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd" />
 </androidx.constraintlayout.widget.ConstraintLayout>

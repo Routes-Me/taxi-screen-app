@@ -10,10 +10,7 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.data.PaymentRejectCauses
 import com.routesme.vehicles.data.ReadQrCode
 import com.routesme.vehicles.data.model.IModeChanging
-import com.routesme.vehicles.helper.DisplayManager
-import com.routesme.vehicles.helper.HomeScreenHelper
-import com.routesme.vehicles.helper.Mode
-import com.routesme.vehicles.helper.ScreenBrightness
+import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
@@ -37,7 +34,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     private lateinit var rejectedPaymentFragment: RejectedPaymentFragment
     private var isDismissFragmentTimerAlive = false
     private var dismissFragmentTimer: Timer? = null
-    private val approvedScreenShowingTime = TimeUnit.SECONDS.toMillis(1)
+    private val approvedScreenShowingTime = TimeUnit.MILLISECONDS.toMillis(1500)
     private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -115,15 +112,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
           dismissFragment(rejectedScreenShowingTime)
       }
     }
-
-    private fun addAllFragments(){
-        supportFragmentManager.beginTransaction().apply {
-            add(R.id.fragment_container, mainFragment)
-            add(R.id.fragment_container, approvedPaymentFragment)
-            add(R.id.fragment_container, rejectedPaymentFragment)
-        }.commitAllowingStateLoss()
-    }
-
+    
     private fun showFragment(fragment: Fragment) {
         //Log.d("BusValidator","Show Fragment: $fragment")
         supportFragmentManager.beginTransaction().apply {
