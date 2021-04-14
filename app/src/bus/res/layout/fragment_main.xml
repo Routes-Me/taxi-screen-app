@@ -1,152 +1,149 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="?homeScreenBackground"
-tools:context="com.routesme.vehicles.view.fragment.MainFragment">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="?homeScreenBackground"
+    tools:context="com.routesme.vehicles.view.fragment.MainFragment">
 
-<androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guidelineTop"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    app:layout_constraintGuide_percent="0.068" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineTop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.068" />
 
-<androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guidelineBottom"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    app:layout_constraintGuide_percent="0.98" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineBottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.98" />
 
-<androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guidelineStart"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:layout_constraintGuide_percent="0.04" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineStart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.04" />
 
-<androidx.constraintlayout.widget.Guideline
-    android:id="@+id/guidelineEnd"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:orientation="vertical"
-    app:layout_constraintGuide_percent="0.96" />
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guidelineEnd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.96" />
 
-<TextView
-    android:id="@+id/routeNumber_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif-medium"
-    android:gravity="center_horizontal"
-    android:text="Route 999"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_15ssp"
-    android:textStyle="normal"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart"
-    app:layout_constraintTop_toTopOf="@id/guidelineTop" />
+    <TextView
+        android:id="@+id/routeNumber_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center_horizontal"
+        android:text="Route 999"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop" />
 
+    <TextView
+        android:id="@+id/routeWay_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:text="Maliya to Fahaheel"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/routeNumber_tv" />
 
-<TextView
-    android:id="@+id/routeWay_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif"
-    android:gravity="center_horizontal"
-    android:text="Maliya to Fahaheel"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_15ssp"
-    android:textStyle="normal"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart"
-    app:layout_constraintTop_toBottomOf="@id/routeNumber_tv" />
+    <TextView
+        android:id="@+id/ticketPrice_keyword_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-light"
+        android:text="Ticket Price"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@id/ticketPrice_tv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
+        app:layout_constraintVertical_chainStyle="packed" />
 
-<TextView
-    android:id="@+id/ticketPrice_keyword_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:fontFamily="sans-serif-light"
-    android:text="Ticket Price"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_15ssp"
-    android:textStyle="normal"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart"
-    app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
-    app:layout_constraintBottom_toTopOf="@id/ticketPrice_tv"
-    app:layout_constraintVertical_chainStyle="packed"/>
+    <TextView
+        android:id="@+id/ticketPrice_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_8sdp"
+        android:fontFamily="@font/montserrat_regular"
+        android:text="300"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_35ssp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@id/scan_keyword_tv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/fils_keyword_tv"
+        app:layout_constraintTop_toBottomOf="@id/ticketPrice_keyword_tv" />
 
-<TextView
-    android:id="@+id/ticketPrice_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_8sdp"
-    android:fontFamily="@font/montserrat_regular"
-    android:text="300"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_35ssp"
-    android:textStyle="normal"
-    app:layout_constraintBottom_toTopOf="@id/scan_keyword_tv"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toEndOf="@id/fils_keyword_tv"
-    app:layout_constraintTop_toBottomOf="@id/ticketPrice_keyword_tv" />
+    <TextView
+        android:id="@+id/fils_keyword_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_7sdp"
+        android:fontFamily="@font/montserrat_regular"
+        android:text="fils"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_22ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="@id/ticketPrice_tv"
+        app:layout_constraintEnd_toStartOf="@id/ticketPrice_tv"
+        app:layout_constraintHorizontal_chainStyle="packed"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
-<TextView
-    android:id="@+id/fils_keyword_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="@dimen/_7sdp"
-    android:fontFamily="@font/montserrat_regular"
-    android:text="fils"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_22ssp"
-    android:textStyle="normal"
-    app:layout_constraintBottom_toBottomOf="@id/ticketPrice_tv"
-    app:layout_constraintEnd_toStartOf="@id/ticketPrice_tv"
-    app:layout_constraintHorizontal_chainStyle="packed"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+    <TextView
+        android:id="@+id/scan_keyword_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/_16sdp"
+        android:fontFamily="sans-serif"
+        android:text="@string/scan_your_qr_code_or_nfc"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_15ssp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toTopOf="@id/qrcode_iv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/ticketPrice_tv" />
 
-<TextView
-    android:id="@+id/scan_keyword_tv"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="@dimen/_16sdp"
-    android:fontFamily="sans-serif"
-    android:text="@string/scan_your_qr_code_or_nfc"
-    android:textColor="?homeScreenTextColor"
-    android:textSize="@dimen/_15ssp"
-    android:textStyle="normal"
-    app:layout_constraintBottom_toTopOf="@id/qrcode_iv"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart"
-    app:layout_constraintTop_toBottomOf="@id/ticketPrice_tv" />
+    <ImageView
+        android:id="@+id/qrcode_iv"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_50sdp"
+        android:layout_marginBottom="@dimen/_6sdp"
+        android:src="@drawable/ic_routesme_qrcode"
+        app:layout_constraintBottom_toTopOf="@id/routesPay_iv"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
-
-<ImageView
-    android:id="@+id/qrcode_iv"
-    android:layout_width="0dp"
-    android:layout_height="@dimen/_50sdp"
-    android:layout_marginBottom="@dimen/_6sdp"
-    android:src="@drawable/ic_routesme_qrcode"
-    app:layout_constraintBottom_toTopOf="@id/routesPay_iv"
-    app:layout_constraintDimensionRatio="1:1"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart" />
-
-
-<ImageView
-    android:id="@+id/routesPay_iv"
-    android:layout_width="@dimen/_87sdp"
-    android:layout_height="@dimen/_26sdp"
-    android:layout_marginBottom="@dimen/_18sdp"
-    android:src="?routesPayIcon"
-    app:layout_constraintBottom_toTopOf="@id/date_tv"
-    app:layout_constraintDimensionRatio="1:1"
-    app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-    app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+    <ImageView
+        android:id="@+id/routesPay_iv"
+        android:layout_width="@dimen/_87sdp"
+        android:layout_height="@dimen/_26sdp"
+        android:layout_marginBottom="@dimen/_18sdp"
+        android:src="?routesPayIcon"
+        app:layout_constraintBottom_toTopOf="@id/date_tv"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
     <TextClock
         android:id="@+id/date_tv"
