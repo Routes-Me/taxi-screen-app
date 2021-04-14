@@ -7,7 +7,6 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.PaymentRejectCauses
 import com.routesme.vehicles.data.ReadQrCode
 import com.routesme.vehicles.data.model.IModeChanging
 import com.routesme.vehicles.helper.*
@@ -28,14 +27,14 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private var pressedTime: Long = 0
     private var clickTimes = 0
-    private val helper = HomeScreenHelper(this)
+    private val approvedScreenShowingTime = TimeUnit.MILLISECONDS.toMillis(1500)
+    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
+    private lateinit var helper: HomeScreenHelper
     private lateinit var mainFragment: MainFragment
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
     private lateinit var rejectedPaymentFragment: RejectedPaymentFragment
     private var isDismissFragmentTimerAlive = false
     private var dismissFragmentTimer: Timer? = null
-    private val approvedScreenShowingTime = TimeUnit.MILLISECONDS.toMillis(1500)
-    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,6 +50,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         }
         setContentView(R.layout.activity_home)
 
+        helper = HomeScreenHelper(this)
         openPatternBtn.setOnClickListener { openPattern() }
         EventBus.getDefault().register(this)
 
@@ -59,15 +59,15 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         rejectedPaymentFragment = RejectedPaymentFragment()
 
         showFragment(mainFragment)
-       // addAllFragments()
-       // hideFragments()
         startBusValidatorService()
         startBusPaymentService()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        removeFragments()
         EventBus.getDefault().unregister(this)
+        if (DisplayManager.instance.wasRegistered(this)) DisplayManager.instance.unregisterActivity(this)
     }
 
     private fun openPattern() {
@@ -80,13 +80,11 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     }
 
     private fun startBusValidatorService() {
-        val intent = Intent(this, BusValidatorService::class.java)
-        ContextCompat.startForegroundService(this,intent)
+        ContextCompat.startForegroundService(this,Intent(this, BusValidatorService::class.java))
     }
 
     private fun startBusPaymentService() {
-        val intent = Intent(this, BusPaymentService::class.java)
-        ContextCompat.startForegroundService(this,intent)
+        ContextCompat.startForegroundService(this,Intent(this, BusPaymentService::class.java))
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -102,23 +100,19 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
              isDismissFragmentTimerAlive = false
          }
 
-
       if (readQrCode.isApproved) {
           showFragment(approvedPaymentFragment)
           dismissFragment(approvedScreenShowingTime)
-      }
-      else {
+      } else {
           showFragment(rejectedPaymentFragment)
           dismissFragment(rejectedScreenShowingTime)
       }
     }
-    
+
     private fun showFragment(fragment: Fragment) {
-        //Log.d("BusValidator","Show Fragment: $fragment")
         supportFragmentManager.beginTransaction().apply {
             if (fragment.isAdded) show(fragment)
             else add(R.id.fragment_container, fragment)
-            //Log.d("BusValidator","No of current fragments: ${supportFragmentManager.fragments.size}")
         }.commitAllowingStateLoss()
     }
 
@@ -144,16 +138,15 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
             supportFragmentManager.fragments.forEach { hide(it) }
         }.commitAllowingStateLoss()
     }
-
-    override fun onModeChange() {
-        removeFragments()
-        recreate()
-    }
-
     private fun removeFragments() {
         supportFragmentManager.beginTransaction().apply {
-            remove(approvedPaymentFragment)
-            remove(rejectedPaymentFragment)
+            mainFragment.let { if (it.isAdded) remove(it) }
+            approvedPaymentFragment.let { if (it.isAdded) remove(it) }
+            rejectedPaymentFragment.let { if (it.isAdded) remove(it) }
         }.commitAllowingStateLoss()
+    }
+
+    override fun onModeChange() {
+        recreate()
     }
 }
