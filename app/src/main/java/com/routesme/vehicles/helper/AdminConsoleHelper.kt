@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.data.model.DetailActionStatus

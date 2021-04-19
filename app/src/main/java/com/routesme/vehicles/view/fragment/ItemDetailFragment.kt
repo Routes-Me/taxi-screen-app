@@ -30,8 +30,8 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     private var mContext: Context? = null
     private val adminConsoleLists = AdminConsoleLists(activity)
     private var detailsList = adminConsoleLists.infoCells
-    private val adminConsoleHelper = AdminConsoleHelper(activity)
-    private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+ //   private val adminConsoleHelper = AdminConsoleHelper(activity)
+   // private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,6 +81,4 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
 
         ItemDetailsRecyclerView.apply { adapter = activity?.let { AdminConsoleDetailsListAdapter(it, detailsList) } }
     }
-
-
 }

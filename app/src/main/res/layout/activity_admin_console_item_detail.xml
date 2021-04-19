@@ -4,10 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white"
-    android:fitsSystemWindows="true"
-    android:orientation="vertical"
-    tools:context=".kotlin.View.AdminConsole.ItemListActivity">
+    tools:context="com.routesme.vehicles.view.activity.AdminConsoleItemDetailActivity"
+    android:orientation="vertical">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -18,10 +16,11 @@
         android:layout_marginBottom="20dp">
 
         <TextView
+            android:id="@+id/tabTitle_tv"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:text="Admin Console"
+            android:text="Title"
             android:textColor="@color/grey"
             android:textSize="@dimen/_12ssp"
             android:textStyle="normal" />
@@ -29,11 +28,10 @@
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout
+        android:id="@+id/item_detail_container"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
-
-        <include layout="@layout/item_list" />
-    </FrameLayout>
+        android:layout_marginStart="@dimen/_3sdp"
+        android:layout_marginEnd="@dimen/_3sdp"/>
 
 </LinearLayout>
