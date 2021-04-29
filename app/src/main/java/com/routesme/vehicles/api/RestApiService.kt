@@ -44,6 +44,9 @@ interface RestApiService {
     @DELETE("vehicles/{vehilceId}/devices/{deviceId}")
     fun deleteVehicle(@Path("vehilceId") vehilceId:String,@Path("deviceId") deviceId:String): Call<JsonElement>
 
+    @GET("buses/{vehicleId}")
+    fun getBusInformation(@Path("vehicleId") vehicleId: String, @Query("include") include: String): Call<JsonElement>
+
     companion object {
 
         fun createCorService(context: Context): RestApiService {

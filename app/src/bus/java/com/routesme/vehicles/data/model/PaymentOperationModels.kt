@@ -1,4 +1,4 @@
-package com.routesme.vehicles.data
+package com.routesme.vehicles.data.model
 
 import com.routesme.vehicles.App
 import com.routesme.vehicles.R

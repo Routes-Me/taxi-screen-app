@@ -9,8 +9,8 @@ import android.os.IBinder
 import android.util.Log
 import com.decard.NDKMethod.BasicOper
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.PaymentRejectCauses
-import com.routesme.vehicles.data.ReadQrCode
+import com.routesme.vehicles.data.model.PaymentRejectCauses
+import com.routesme.vehicles.data.model.ReadQrCode
 import com.routesme.vehicles.helper.ValidatorCodes
 import org.greenrobot.eventbus.EventBus
 import java.util.*
@@ -90,7 +90,7 @@ class BusValidatorService : Service(){
                        Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
                        //For testing of Approved or Rejected
                        val readQrCode =
-                               if (it.startsWith("Expired")) ReadQrCode(it, false , PaymentRejectCauses.Expired)
+                               if (it.startsWith("Expired")) ReadQrCode(it, false, PaymentRejectCauses.Expired)
                                else ReadQrCode(it, true)
                        EventBus.getDefault().post(readQrCode)
 

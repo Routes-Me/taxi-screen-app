@@ -8,7 +8,7 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.ReadQrCode
+import com.routesme.vehicles.data.model.ReadQrCode
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode

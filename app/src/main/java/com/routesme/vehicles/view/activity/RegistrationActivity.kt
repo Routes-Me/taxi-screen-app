@@ -20,17 +20,17 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.Authorization
-import com.routesme.vehicles.data.model.Error
-import com.routesme.vehicles.data.model.RegistrationCredentials
-import com.routesme.vehicles.data.model.RegistrationResponse
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.helper.DateOperations
 import com.routesme.vehicles.helper.Operations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.BusInformation
+import com.routesme.vehicles.viewmodel.BusInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
@@ -214,7 +214,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                             return@Observer
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
-                        saveTabletInfoIntoSharedPreferences(deviceId)
+                        saveDeviceInfoIntoSharedPreferences(deviceId)
+                        if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getBusInformation(it) } }
                         App.instance.startTrackingService()
                         openModelPresenterScreen()
                     } else {
@@ -234,6 +235,38 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             })
         } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
+        }
+    }
+
+    private fun getBusInformation(vehicleId: String) {
+        val busInformationViewModel: BusInformationViewModel by viewModels()
+        busInformationViewModel.getBusInformation(vehicleId, "currencies", this).observe(this, Observer<BusInformationModel.BusInformationResponse> {
+            if (it != null) {
+                if (it.isSuccess) {
+                    it.busInformationModel?.let { saveBusInformationIntoSharePreferences(it) }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun saveBusInformationIntoSharePreferences(busInformationModel: BusInformationModel.BusInformationModel) {
+        BusInformation().apply {
+            routeNumber = busInformationModel.routeNumber
+            destination = busInformationModel.destination
+            tickets = busInformationModel.tickets
+            currencies = busInformationModel.included.currencies
         }
     }
 
@@ -276,7 +309,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun saveTabletInfoIntoSharedPreferences(deviceId: String) {
+    private fun saveDeviceInfoIntoSharedPreferences(deviceId: String) {
         editor.apply {
             putString(SharedPreferencesHelper.username, app.signInCredentials?.userName)
             putString(SharedPreferencesHelper.registration_date, DateOperations().registrationDate(Date()))
@@ -316,7 +349,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             getTabletInfo()
         }
     }
-
 
     private fun showInputError(show: Boolean, requireField: Int) {
         if (show) {
