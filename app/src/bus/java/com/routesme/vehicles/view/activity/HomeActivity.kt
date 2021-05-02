@@ -7,8 +7,8 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.ReadQrCode
 import com.routesme.vehicles.data.model.IModeChanging
+import com.routesme.vehicles.data.model.ReadQrCode
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
@@ -60,7 +60,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
         showFragment(mainFragment)
         startBusValidatorService()
-        startBusPaymentService()
+       // startBusPaymentService()
     }
 
     override fun onDestroy() {

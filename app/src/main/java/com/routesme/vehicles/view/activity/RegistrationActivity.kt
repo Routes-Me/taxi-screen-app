@@ -267,6 +267,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             destination = carrierInformationModel.destination
             tickets = carrierInformationModel.tickets
             currencies = carrierInformationModel.included.currencies
+            lastUpdateDate = DateOperations().registrationDate(Date())
         }
     }
 

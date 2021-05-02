@@ -43,9 +43,10 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
             if (it.containsKey(ARG_ITEM_ID)) {
                 val item = adminConsoleLists.masterItems[it.getInt(ARG_ITEM_ID)]
                 detailsList = when (item.type) {
-                    MasterItemType.Account -> adminConsoleLists.accountCells
-                    MasterItemType.Settings -> adminConsoleLists.settingsCells
-                    else -> adminConsoleLists.infoCells
+                    MasterItemType.Account.title -> adminConsoleLists.accountCells
+                    MasterItemType.Settings.title -> adminConsoleLists.settingsCells
+                    MasterItemType.Info.title -> adminConsoleLists.infoCells
+                    else -> adminConsoleLists.routesAndTicketsCells
                     // else -> getSavedLocations()
                 }
             }

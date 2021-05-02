@@ -21,9 +21,10 @@ class SharedPreferencesHelper {
         const val call_api = "isCallingApi"
 
         //Carrier Information
-        const val busRouteNumber = "busRouteNumber"
-        const val busDestination = "busDestination"
-        const val busTickets = "busTickets"
+        const val carrierInformationLastUpdate = "carrierInformationLastUpdate"
+        const val carrierRouteNumber = "carrierRouteNumber"
+        const val carrierDestination = "carrierDestination"
+        const val carrierTickets = "carrierTickets"
         const val currencies = "currencies"
     }
 }

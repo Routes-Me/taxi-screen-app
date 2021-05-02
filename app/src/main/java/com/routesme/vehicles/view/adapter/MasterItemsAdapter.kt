@@ -41,7 +41,7 @@ class MasterItemsAdapter(private val parentActivity: AdminConsolePanel, private 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = MasterItems[position]
-        holder.itemTitle.text = item.type.toString()
+        holder.itemTitle.text = item.type
         with(holder.itemView) { tag = item; setOnClickListener(onClickListener) }
         holder.listItem.apply {
             if (rowIndex == position) setBackgroundResource(R.drawable.list_item_style_selected) else {
