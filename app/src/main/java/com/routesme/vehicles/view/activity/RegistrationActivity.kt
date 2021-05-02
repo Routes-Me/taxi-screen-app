@@ -29,8 +29,8 @@ import com.routesme.vehicles.helper.DateOperations
 import com.routesme.vehicles.helper.Operations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
-import com.routesme.vehicles.uplevels.BusInformation
-import com.routesme.vehicles.viewmodel.BusInformationViewModel
+import com.routesme.vehicles.uplevels.CarrierInformation
+import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
@@ -215,7 +215,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveDeviceInfoIntoSharedPreferences(deviceId)
-                        if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getBusInformation(it) } }
+                        if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         App.instance.startTrackingService()
                         openModelPresenterScreen()
                     } else {
@@ -238,12 +238,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun getBusInformation(vehicleId: String) {
-        val busInformationViewModel: BusInformationViewModel by viewModels()
-        busInformationViewModel.getBusInformation(vehicleId, "currencies", this).observe(this, Observer<BusInformationModel.BusInformationResponse> {
+    private fun getCarrierInformation(vehicleId: String) {
+        val carrierInformationViewModel: CarrierInformationViewModel by viewModels()
+        carrierInformationViewModel.getCarrierInformation(vehicleId, "currencies", this).observe(this, Observer<CarrierInformationModel.CarrierInformationResponse> {
             if (it != null) {
                 if (it.isSuccess) {
-                    it.busInformationModel?.let { saveBusInformationIntoSharePreferences(it) }
+                    it.carrierInformationModel?.let { saveCarrierInformationIntoSharePreferences(it) }
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
@@ -261,12 +261,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun saveBusInformationIntoSharePreferences(busInformationModel: BusInformationModel.BusInformationModel) {
-        BusInformation().apply {
-            routeNumber = busInformationModel.routeNumber
-            destination = busInformationModel.destination
-            tickets = busInformationModel.tickets
-            currencies = busInformationModel.included.currencies
+    private fun saveCarrierInformationIntoSharePreferences(carrierInformationModel: CarrierInformationModel.CarrierInformationModel) {
+        CarrierInformation().apply {
+            routeNumber = carrierInformationModel.routeNumber
+            destination = carrierInformationModel.destination
+            tickets = carrierInformationModel.tickets
+            currencies = carrierInformationModel.included.currencies
         }
     }
 

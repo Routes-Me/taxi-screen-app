@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.JsonElement
 import com.routesme.vehicles.api.RestApiService
-import com.routesme.vehicles.data.model.BusInformationModel.*
+import com.routesme.vehicles.data.model.CarrierInformationModel.*
 import retrofit2.Callback
 import retrofit2.Call
 import retrofit2.Response
@@ -12,33 +12,33 @@ import com.google.gson.Gson
 import com.routesme.vehicles.data.model.Error
 import com.routesme.vehicles.data.model.ResponseErrors
 
-class BusInformationRepository(val context: Context){
+class CarrierInformationRepository(val context: Context){
 
-    private val busInformationResponse = MutableLiveData<BusInformationResponse>()
+    private val carrierInformationResponse = MutableLiveData<CarrierInformationResponse>()
 
     private val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
 
-    fun getBusInformation(vehicleId: String, include: String): MutableLiveData<BusInformationResponse> {
-        val call = thisApiCorService.getBusInformation(vehicleId, include)
+    fun getCarrierInformation(vehicleId: String, include: String): MutableLiveData<CarrierInformationResponse> {
+        val call = thisApiCorService.getCarrierInformation(vehicleId, include)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val busInformation = Gson().fromJson<BusInformationModel>(response.body(), BusInformationModel::class.java)
-                    busInformationResponse.value = BusInformationResponse(busInformationModel = busInformation)
+                    val carrierInformation = Gson().fromJson<CarrierInformationModel>(response.body(), CarrierInformationModel::class.java)
+                    carrierInformationResponse.value = CarrierInformationResponse(carrierInformationModel = carrierInformation)
                 } else {
                     val error = Error(detail = response.message(), statusCode = response.code())
                     val errors = mutableListOf<Error>().apply { add(error) }.toList()
                     val responseErrors = ResponseErrors(errors)
-                    busInformationResponse.value = BusInformationResponse(mResponseErrors = responseErrors)
+                    carrierInformationResponse.value = CarrierInformationResponse(mResponseErrors = responseErrors)
                 }
             }
 
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-                busInformationResponse.value = BusInformationResponse(mThrowable = throwable)
+                carrierInformationResponse.value = CarrierInformationResponse(mThrowable = throwable)
             }
         })
-        return busInformationResponse
+        return carrierInformationResponse
     }
 }

@@ -4,11 +4,11 @@ import android.content.Context
 import com.google.common.reflect.TypeToken
 import com.google.gson.Gson
 import com.routesme.vehicles.App
-import com.routesme.vehicles.data.model.BusInformationModel.*
+import com.routesme.vehicles.data.model.CarrierInformationModel.*
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import java.lang.reflect.Type
 
-class BusInformation {
+class CarrierInformation {
 
         var routeNumber: String?
             get() {

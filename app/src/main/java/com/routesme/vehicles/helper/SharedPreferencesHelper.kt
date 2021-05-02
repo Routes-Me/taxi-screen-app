@@ -20,7 +20,7 @@ class SharedPreferencesHelper {
         const val from_date = "from_date"
         const val call_api = "isCallingApi"
 
-        //Bus Information
+        //Carrier Information
         const val busRouteNumber = "busRouteNumber"
         const val busDestination = "busDestination"
         const val busTickets = "busTickets"

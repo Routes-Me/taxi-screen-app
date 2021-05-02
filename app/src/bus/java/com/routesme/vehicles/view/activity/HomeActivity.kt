@@ -7,13 +7,11 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.BusInformationModel
 import com.routesme.vehicles.data.model.ReadQrCode
 import com.routesme.vehicles.data.model.IModeChanging
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
-import com.routesme.vehicles.uplevels.BusInformation
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
 import com.routesme.vehicles.view.fragment.MainFragment
 import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
