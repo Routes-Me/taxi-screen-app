@@ -45,7 +45,7 @@ class AdminConsoleLists(val activity: Activity) {
         add(DetailCell("Last Update", "${CarrierInformation().lastUpdateDate}", true))
         add(ActionCell(Actions.SyncAndUpdateCarrierInformation.title, ActionCellTextColor.Blue))
         CarrierInformation().tickets?.let {
-            LabelCell("Tickets")
+            add(LabelCell("Tickets"))
             for (ticket in it){
                 add(DetailCell("${ticket.amount} files", "1 day", true))
             }

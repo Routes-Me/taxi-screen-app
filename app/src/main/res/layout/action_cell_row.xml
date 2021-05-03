@@ -9,7 +9,6 @@
     android:gravity="center"
     android:paddingTop="15dp"
     android:paddingBottom="15dp"
-    android:layout_marginBottom="@dimen/_15sdp"
     android:text="Unlink Device"
     android:textColor="#d50000"
     android:textSize="24sp"
