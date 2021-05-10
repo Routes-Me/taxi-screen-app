@@ -15,7 +15,7 @@ import com.routesme.vehicles.service.BusValidatorService
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
 import com.routesme.vehicles.view.fragment.MainFragment
 import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
-import com.routesme.vehicles.view.fragment.TicketsFragment
+import com.routesme.vehicles.view.fragment.MultiTicketsScanFirstFragment
 import kotlinx.android.synthetic.bus.activity_home.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -34,7 +34,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     private lateinit var mainFragment: MainFragment
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
     private lateinit var rejectedPaymentFragment: RejectedPaymentFragment
-    private lateinit var ticketsFragment: TicketsFragment
+    private lateinit var multiTicketsScanFirstFragment: MultiTicketsScanFirstFragment
     private var isDismissFragmentTimerAlive = false
     private var dismissFragmentTimer: Timer? = null
 
@@ -59,9 +59,9 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         mainFragment = MainFragment()
         approvedPaymentFragment = ApprovedPaymentFragment()
         rejectedPaymentFragment = RejectedPaymentFragment()
-        ticketsFragment = TicketsFragment()
+        multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
 
-        showFragment(ticketsFragment)
+        showFragment(multiTicketsScanFirstFragment)
 
         //showFragment(mainFragment)
        // startBusValidatorService()
@@ -107,7 +107,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
       if (readQrCode.isApproved) {
          // showFragment(approvedPaymentFragment)
-          showFragment(ticketsFragment)
+          showFragment(multiTicketsScanFirstFragment)
           dismissFragment(approvedScreenShowingTime)
       } else {
           showFragment(rejectedPaymentFragment)

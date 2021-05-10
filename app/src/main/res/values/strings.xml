@@ -60,5 +60,6 @@
     <string name="scan_your_qr_code_or_nfc">Scan your <b>QR Code</b> or <b>NFC</b></string>
     <string name="payment_approved_message">You will be receiving a notification for a <b>digital ticket</b></string>
     <string name="qrcode_expired_message">Your qr code is expired, please make sure to present from the <b>App</b></string>
+    <string name="Select_ticket_to_complete"><b>Select</b> ticket to complete \n 👇 </string>
 
 </resources>

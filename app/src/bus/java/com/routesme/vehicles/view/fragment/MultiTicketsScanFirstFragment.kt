@@ -12,19 +12,19 @@ import androidx.recyclerview.widget.LinearSnapHelper
 import com.routesme.vehicles.R
 import com.routesme.vehicles.uplevels.CarrierInformation
 import com.routesme.vehicles.view.adapter.PriceButtonRecyclerViewAdapter
-import kotlinx.android.synthetic.bus.fragment_tickets.view.*
+import kotlinx.android.synthetic.bus.fragment_multi_tickets_scan_first.view.*
 
-class TicketsFragment : Fragment(), PriceButtonRecyclerViewAdapter.ItemClickListener {
+class MultiTicketsScanFirstFragment : Fragment(), PriceButtonRecyclerViewAdapter.ItemClickListener {
     private lateinit var selectTicketFragmentView: View
     private lateinit var ticketsAdapter: PriceButtonRecyclerViewAdapter
 
     companion object {
         @get:Synchronized
-        var instance = TicketsFragment()
+        var instance = MultiTicketsScanFirstFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        selectTicketFragmentView = inflater.inflate(R.layout.fragment_tickets, container, false)
+        selectTicketFragmentView = inflater.inflate(R.layout.fragment_multi_tickets_scan_first, container, false)
         initialize()
         return selectTicketFragmentView
     }
@@ -37,7 +37,7 @@ class TicketsFragment : Fragment(), PriceButtonRecyclerViewAdapter.ItemClickList
         val tickets = CarrierInformation().tickets
         tickets?.let { tickets ->
             val snapHelper = LinearSnapHelper()
-            ticketsAdapter = PriceButtonRecyclerViewAdapter(activity,tickets)
+            ticketsAdapter = PriceButtonRecyclerViewAdapter(activity,tickets,R.layout.price_button_row_white)
             ticketsAdapter.setClickListener(this)
             val ticketSize = tickets.size
             val layoutManager= GridLayoutManager(activity,2)

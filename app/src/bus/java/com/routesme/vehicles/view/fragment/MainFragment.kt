@@ -33,7 +33,7 @@ class MainFragment : Fragment() {
     private fun setupPricesButtons() {
         val tickets = CarrierInformation().tickets
         tickets?.let { tickets ->
-            ticketsAdapter = PriceButtonRecyclerViewAdapter(activity,tickets)
+            ticketsAdapter = PriceButtonRecyclerViewAdapter(activity,tickets, R.layout.price_button_row_blue)
             mainFragmentView.pricesListRecyclerView.apply {
                 layoutManager = GridLayoutManager(activity,2)
                 adapter  = ticketsAdapter
