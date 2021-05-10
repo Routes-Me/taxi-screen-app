@@ -9,8 +9,6 @@
 
     <padding
         android:bottom="@dimen/_29sdp"
-        android:left="@dimen/_19sdp"
-        android:right="@dimen/_19sdp"
         android:top="@dimen/_34sdp" />
 
     <solid android:color="@color/white" />
