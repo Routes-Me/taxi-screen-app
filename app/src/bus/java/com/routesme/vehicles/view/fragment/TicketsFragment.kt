@@ -10,19 +10,19 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.routesme.vehicles.R
 import com.routesme.vehicles.uplevels.CarrierInformation
 import com.routesme.vehicles.view.adapter.PriceButtonRecyclerViewAdapter
-import kotlinx.android.synthetic.bus.fragment_select_ticket.view.*
+import kotlinx.android.synthetic.bus.fragment_tickets.view.*
 
-class SelectTicketFragment : Fragment(), PriceButtonRecyclerViewAdapter.ItemClickListener {
+class TicketsFragment : Fragment(), PriceButtonRecyclerViewAdapter.ItemClickListener {
     private lateinit var selectTicketFragmentView: View
     private lateinit var ticketsAdapter: PriceButtonRecyclerViewAdapter
 
     companion object {
         @get:Synchronized
-        var instance = SelectTicketFragment()
+        var instance = TicketsFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        selectTicketFragmentView = inflater.inflate(R.layout.fragment_select_ticket, container, false)
+        selectTicketFragmentView = inflater.inflate(R.layout.fragment_tickets, container, false)
         initialize()
         return selectTicketFragmentView
     }

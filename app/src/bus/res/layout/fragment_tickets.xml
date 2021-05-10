@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".view.fragment.SelectTicketFragment"
+    tools:context=".view.fragment.TicketsFragment"
     android:background="@color/payment_approved_background">
 
     <androidx.constraintlayout.widget.Guideline
