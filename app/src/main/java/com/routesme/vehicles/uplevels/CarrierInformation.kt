@@ -46,8 +46,11 @@ class CarrierInformation {
     var tickets: List<Ticket>?
         get() {
             return listOf(
-                    Ticket(amount = 300.0),
-                    Ticket(amount = 250.0)
+                    Ticket(amount = 300.0, first_station = "Station 1"),
+                    Ticket(amount = 250.0, first_station = "Station 2"),
+                    Ticket(amount = 200.0),
+                    Ticket(amount = 150.0, first_station = "Station 4"),
+                    Ticket(amount = 100.0, first_station = "Station 5")
             )
             /*
             sharedPrefs().getString(SharedPreferencesHelper.carrierTickets, null)?.let {
