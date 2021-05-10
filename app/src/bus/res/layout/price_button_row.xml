@@ -1,41 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/_100sdp"
+    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    app:cardCornerRadius="@dimen/_20sdp"
-    android:layout_margin="@dimen/_10sdp"
-    android:gravity="center">
+    android:layout_marginStart="@dimen/_8sdp"
+    android:layout_marginEnd="@dimen/_8sdp"
+    android:layout_marginBottom="@dimen/_8sdp"
+    android:layout_marginTop="@dimen/_8sdp"
+    android:layout_gravity="center"
+    app:cardCornerRadius="@dimen/_7sdp">
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:background="@color/payment_approved_text_color"
-        android:gravity="center"
-        android:padding="@dimen/_5sdp">
+        android:background="@drawable/ticket_button_background"
+        android:gravity="center">
 
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/firstStationName_tv"
+        <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Station Name"
-            android:textSize="@dimen/_20ssp"
-            android:textColor="@color/white"
-            android:fontFamily="sans-serif"
-            android:textStyle="bold"
-            android:visibility="gone"
-            android:layout_marginBottom="@dimen/_7sdp"/>
+            android:fontFamily="@font/montserrat_regular"
+            android:textStyle="normal"
+            android:textSize="@dimen/_20sdp"
+            android:textColor="@color/ticket_color"
+            android:text="fils" />
 
-        <androidx.appcompat.widget.AppCompatTextView
+        <TextView
             android:id="@+id/price_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Price"
-            android:textSize="@dimen/_18ssp"
-            android:textColor="@color/white"
+            android:fontFamily="@font/montserrat_medium"
+            android:textStyle="normal"
+            android:textSize="@dimen/_35sdp"
+            android:textColor="@color/ticket_color"
+            android:text=" 300" />
+
+        <TextView
+            android:id="@+id/firstStationName_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
-            android:textStyle="bold"/>
+            android:textStyle="normal"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/ticket_color"
+            android:text="from Kuwait" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -20,8 +20,8 @@ class PriceButtonRecyclerViewAdapter internal constructor(val context: Context?,
 
     override fun onBindViewHolder(@NonNull holder: ViewHolder, position: Int) {
         holder.apply {
-            tickets[position].first_station?.let { firstStationName.text = it; firstStationName.visibility = View.VISIBLE }
-            tickets[position].amount?.let { price.text = "$it FILS" }
+            tickets[position].first_station?.let { firstStationName.text = "from $it"; firstStationName.visibility = View.VISIBLE }
+            tickets[position].amount?.let { price.text = it.toString() }
         }
     }
 

@@ -4,4 +4,5 @@
     <color name="payment_approved_text_color">#3d4f46</color>
    <color name="payment_rejected_background">#aa4f44</color>
     <color name="home_screen_background_dark_color">#292929</color>
+    <color name="ticket_color">#18428f</color>
 </resources>
