@@ -61,9 +61,9 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         rejectedPaymentFragment = RejectedPaymentFragment()
         multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
 
-        //showFragment(multiTicketsScanFirstFragment)
+        showFragment(multiTicketsScanFirstFragment)
 
-        showFragment(mainFragment)
+        //showFragment(mainFragment)
        // startBusValidatorService()
        // startBusPaymentService()
     }
@@ -149,6 +149,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
             mainFragment.let { if (it.isAdded) remove(it) }
             approvedPaymentFragment.let { if (it.isAdded) remove(it) }
             rejectedPaymentFragment.let { if (it.isAdded) remove(it) }
+            multiTicketsScanFirstFragment.let { if (it.isAdded) remove(it) }
         }.commitAllowingStateLoss()
     }
 
