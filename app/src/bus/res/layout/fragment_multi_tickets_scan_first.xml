@@ -45,22 +45,22 @@
         android:textColor="@color/black"
         android:gravity="center_horizontal"
         android:layout_marginBottom="@dimen/_8sdp"
-        android:text="@string/Select_ticket_to_complete"
+        android:text="@string/select_ticket_to_complete"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        app:layout_constraintBottom_toTopOf="@id/pricesListRecyclerView"/>
+        app:layout_constraintBottom_toTopOf="@id/ticketListRecyclerView"/>
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/pricesListRecyclerView"
-        android:layout_width="0dp"
+        android:id="@+id/ticketListRecyclerView"
+        android:layout_width="wrap_content"
         android:layout_height="0dp"
         android:layout_gravity="center_horizontal"
         android:gravity="center_horizontal"
-        tools:listitem="@layout/price_button_row_white"
+        tools:listitem="@layout/ticket_button_row_white"
         app:layout_constraintTop_toBottomOf="@id/select_your_ticket_tv"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom"/>
+        app:layout_constraintBottom_toBottomOf="@id/guidelineBottom" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -5,15 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.GridLayoutManager
 import com.routesme.vehicles.R
 import com.routesme.vehicles.uplevels.CarrierInformation
-import com.routesme.vehicles.view.adapter.PriceButtonRecyclerViewAdapter
 import kotlinx.android.synthetic.bus.fragment_main.view.*
 
 class MainFragment : Fragment() {
     private lateinit var mainFragmentView: View
-    private lateinit var ticketsAdapter: PriceButtonRecyclerViewAdapter
+    private lateinit var priceFragment: PriceFragment
+    private lateinit var multiTicketsSelectFirstFragment: MultiTicketsSelectFirstFragment
 
     companion object {
         @get:Synchronized
@@ -27,17 +26,22 @@ class MainFragment : Fragment() {
     }
 
     private fun initialize(){
-       // setupPricesButtons()
+
+        priceFragment = PriceFragment()
+        multiTicketsSelectFirstFragment = MultiTicketsSelectFirstFragment()
+        val tickets = CarrierInformation().tickets
+        tickets?.let {
+            if (it.size == 1) showFragment(priceFragment) else showFragment(multiTicketsSelectFirstFragment)
+            if (it.size > 2) mainFragmentView.logo_layout.visibility =  View.GONE
+        }
+
     }
 
-    private fun setupPricesButtons() {
-        val tickets = CarrierInformation().tickets
-        tickets?.let { tickets ->
-            ticketsAdapter = PriceButtonRecyclerViewAdapter(activity,tickets, R.layout.price_button_row_blue)
-            mainFragmentView.pricesListRecyclerView.apply {
-                layoutManager = GridLayoutManager(activity,2)
-                adapter  = ticketsAdapter
-            }
-        }
+    private fun showFragment(fragment: Fragment) {
+        childFragmentManager.beginTransaction().apply {
+            if (fragment.isAdded) show(fragment)
+            else add(R.id.main_fragment_container, fragment)
+            childFragmentManager.fragments.forEach { if (it != fragment) hide(it) }
+        }.commit()
     }
 }

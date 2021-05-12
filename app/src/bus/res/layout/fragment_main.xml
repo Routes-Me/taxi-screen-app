@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        app:layout_constraintGuide_percent="0.068" />
+        app:layout_constraintGuide_percent="0.032" />
 
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/guidelineBottom"
@@ -59,104 +59,55 @@
         android:textColor="?homeScreenTextColor"
         android:textSize="@dimen/_15ssp"
         android:textStyle="normal"
+        android:layout_marginBottom="@dimen/_10sdp"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/routeNumber_tv" />
+        app:layout_constraintTop_toBottomOf="@id/routeNumber_tv"
+        app:layout_constraintBottom_toTopOf="@id/content_layout"/>
 
-    <TextView
-        android:id="@+id/ticketPrice_keyword_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif-light"
-        android:text="Ticket Price"
-        android:textColor="?homeScreenTextColor"
-        android:textSize="@dimen/_15ssp"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@id/ticketPrice_tv"
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:id="@+id/content_layout"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@id/date_tv"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
-        app:layout_constraintVertical_chainStyle="packed" />
+        android:gravity="bottom|center_horizontal">
+        <FrameLayout
+            android:id="@+id/main_fragment_container"
+            android:name="androidx.navigation.fragment.NavHostFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
-    <TextView
-        android:id="@+id/ticketPrice_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_8sdp"
-        android:fontFamily="@font/montserrat_regular"
-        android:text="300"
-        android:textColor="?homeScreenTextColor"
-        android:textSize="@dimen/_35ssp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@id/scan_keyword_tv"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toEndOf="@id/fils_keyword_tv"
-        app:layout_constraintTop_toBottomOf="@id/ticketPrice_keyword_tv" />
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/logo_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:layout_marginTop="@dimen/_20sdp">
 
-    <TextView
-        android:id="@+id/fils_keyword_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="@dimen/_7sdp"
-        android:fontFamily="@font/montserrat_regular"
-        android:text="fils"
-        android:textColor="?homeScreenTextColor"
-        android:textSize="@dimen/_22ssp"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toBottomOf="@id/ticketPrice_tv"
-        app:layout_constraintEnd_toStartOf="@id/ticketPrice_tv"
-        app:layout_constraintHorizontal_chainStyle="packed"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+            <ImageView
+                android:id="@+id/qrcode_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/_50sdp"
+                android:layout_marginBottom="@dimen/_6sdp"
+                android:src="@drawable/ic_routesme_qrcode" />
 
-    <TextView
-        android:id="@+id/scan_keyword_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/_16sdp"
-        android:fontFamily="sans-serif"
-        android:text="@string/scan_your_qr_code_or_nfc"
-        android:textColor="?homeScreenTextColor"
-        android:textSize="@dimen/_15ssp"
-        android:textStyle="normal"
-        app:layout_constraintBottom_toTopOf="@id/pricesListRecyclerView"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/ticketPrice_tv" />
+            <ImageView
+                android:id="@+id/routesPay_iv"
+                android:layout_width="@dimen/_87sdp"
+                android:layout_height="@dimen/_26sdp"
+                android:src="?routesPayIcon" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/pricesListRecyclerView"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toBottomOf="@id/scan_keyword_tv"
-        app:layout_constraintBottom_toTopOf="@id/qrcode_iv"
-        android:layout_marginTop="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:layout_gravity="center_horizontal"/>
+        </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <ImageView
-        android:id="@+id/qrcode_iv"
-        android:layout_width="0dp"
-        android:layout_height="@dimen/_50sdp"
-        android:layout_marginBottom="@dimen/_6sdp"
-        android:src="@drawable/ic_routesme_qrcode"
-        app:layout_constraintBottom_toTopOf="@id/routesPay_iv"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintTop_toBottomOf="@+id/pricesListRecyclerView"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
 
-    <ImageView
-        android:id="@+id/routesPay_iv"
-        android:layout_width="@dimen/_87sdp"
-        android:layout_height="@dimen/_26sdp"
-        android:layout_marginBottom="@dimen/_18sdp"
-        android:src="?routesPayIcon"
-        app:layout_constraintBottom_toTopOf="@id/date_tv"
-        app:layout_constraintDimensionRatio="1:1"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart" />
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <TextClock
         android:id="@+id/date_tv"

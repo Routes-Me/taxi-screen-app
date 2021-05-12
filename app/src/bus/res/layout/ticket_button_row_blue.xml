@@ -3,10 +3,10 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="@dimen/_8sdp"
-    android:layout_marginEnd="@dimen/_8sdp"
-    android:layout_marginBottom="@dimen/_8sdp"
-    android:layout_marginTop="@dimen/_8sdp"
+    android:layout_marginStart="@dimen/_5sdp"
+    android:layout_marginEnd="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:layout_marginTop="@dimen/_5sdp"
     android:layout_gravity="center"
     app:layout_gravity="center"
     android:gravity="center"
@@ -14,8 +14,8 @@
     >
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="@dimen/_130sdp"
-        android:layout_height="wrap_content"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_142sdp"
         android:orientation="vertical"
         android:background="@drawable/ticket_button_blue_background"
         android:gravity="center"

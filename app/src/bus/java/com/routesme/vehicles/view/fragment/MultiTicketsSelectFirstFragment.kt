@@ -1,32 +1,32 @@
 package com.routesme.vehicles.view.fragment
 
 import android.os.Bundle
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.GridLayoutManager.SpanSizeLookup
 import androidx.recyclerview.widget.LinearSnapHelper
 import com.routesme.vehicles.R
 import com.routesme.vehicles.uplevels.CarrierInformation
 import com.routesme.vehicles.view.adapter.TicketsButtonRecyclerViewAdapter
-import kotlinx.android.synthetic.bus.fragment_multi_tickets_scan_first.view.*
+import kotlinx.android.synthetic.bus.fragment_multi_tickets_select_first.view.*
 
-class MultiTicketsScanFirstFragment : Fragment(), TicketsButtonRecyclerViewAdapter.ItemClickListener {
-    private lateinit var selectTicketFragmentView: View
+class MultiTicketsSelectFirstFragment : Fragment(), TicketsButtonRecyclerViewAdapter.ItemClickListener {
+
+    private lateinit var multiTicketsSelectFirstFragmentView: View
     private lateinit var ticketsAdapter: TicketsButtonRecyclerViewAdapter
 
     companion object {
         @get:Synchronized
-        var instance = MultiTicketsScanFirstFragment()
+        var instance = MultiTicketsSelectFirstFragment()
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        selectTicketFragmentView = inflater.inflate(R.layout.fragment_multi_tickets_scan_first, container, false)
+        multiTicketsSelectFirstFragmentView = inflater.inflate(R.layout.fragment_multi_tickets_select_first, container, false)
         initialize()
-        return selectTicketFragmentView
+        return multiTicketsSelectFirstFragmentView
     }
 
     private fun initialize(){
@@ -37,11 +37,11 @@ class MultiTicketsScanFirstFragment : Fragment(), TicketsButtonRecyclerViewAdapt
         val tickets = CarrierInformation().tickets
         tickets?.let { tickets ->
             val snapHelper = LinearSnapHelper()
-            ticketsAdapter = TicketsButtonRecyclerViewAdapter(activity,tickets,R.layout.ticket_button_row_white)
+            ticketsAdapter = TicketsButtonRecyclerViewAdapter(activity,tickets,R.layout.ticket_button_row_blue)
             ticketsAdapter.setClickListener(this)
             val ticketSize = tickets.size
             val layoutManager= GridLayoutManager(activity,2)
-            layoutManager.spanSizeLookup = object : SpanSizeLookup() {
+            layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                 override fun getSpanSize(position: Int): Int {
                     return if (ticketSize.rem(2) == 0) 1
                     else{
@@ -54,7 +54,7 @@ class MultiTicketsScanFirstFragment : Fragment(), TicketsButtonRecyclerViewAdapt
                 }
             }
 
-            selectTicketFragmentView.ticketListRecyclerView.apply {
+            multiTicketsSelectFirstFragmentView.ticketListRecyclerView.apply {
                 this.layoutManager = layoutManager
                 snapHelper.attachToRecyclerView(this)
                 adapter  = ticketsAdapter

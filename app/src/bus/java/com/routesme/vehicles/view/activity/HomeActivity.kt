@@ -61,9 +61,9 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         rejectedPaymentFragment = RejectedPaymentFragment()
         multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
 
-        showFragment(multiTicketsScanFirstFragment)
+        //showFragment(multiTicketsScanFirstFragment)
 
-        //showFragment(mainFragment)
+        showFragment(mainFragment)
        // startBusValidatorService()
        // startBusPaymentService()
     }

@@ -5,7 +5,8 @@
     android:viewportWidth="173"
     android:viewportHeight="52">
   <group>
-    <clip-path android:pathData="M10.187,1.118C4.578,1.118 0.031,5.678 0.031,11.303v30.223c0,5.625 4.547,10.185 10.156,10.185h152.655c5.609,0 10.155,-4.56 10.155,-10.185L172.997,11.304c0,-5.625 -4.546,-10.185 -10.155,-10.185L10.187,1.119z M 0,0"/>
+    <clip-path
+        android:pathData="M10.187,1.118C4.578,1.118 0.031,5.678 0.031,11.303v30.223c0,5.625 4.547,10.185 10.156,10.185h152.655c5.609,0 10.155,-4.56 10.155,-10.185L172.997,11.304c0,-5.625 -4.546,-10.185 -10.155,-10.185L10.187,1.119z"/>
     <path
         android:pathData="M10.187,1.118C4.578,1.118 0.031,5.678 0.031,11.303v30.223c0,5.625 4.547,10.185 10.156,10.185h152.655c5.609,0 10.155,-4.56 10.155,-10.185L172.997,11.304c0,-5.625 -4.546,-10.185 -10.155,-10.185L10.187,1.119z"
         android:fillType="evenOdd">
@@ -16,8 +17,8 @@
             android:endY="29.208754"
             android:endX="142.15889"
             android:type="linear">
-          <item android:offset="0" android:color="#FFF7C641"/>
-          <item android:offset="1" android:color="#FFE98B45"/>
+          <item android:offset="0" android:color="#FF02AEEF"/>
+          <item android:offset="1" android:color="#FF18428F"/>
         </gradient>
       </aapt:attr>
     </path>

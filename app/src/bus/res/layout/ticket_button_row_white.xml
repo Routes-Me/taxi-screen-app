@@ -1,51 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <carbon.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_marginStart="@dimen/_8sdp"
-    android:layout_marginEnd="@dimen/_8sdp"
-    android:layout_marginBottom="@dimen/_8sdp"
-    android:layout_marginTop="@dimen/_8sdp"
     android:layout_gravity="center"
-    app:layout_gravity="center"
+    android:layout_marginStart="@dimen/_5sdp"
+    android:layout_marginEnd="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:layout_marginTop="@dimen/_5sdp"
     android:gravity="center"
-    app:cardCornerRadius="@dimen/_7sdp">
+    app:cardCornerRadius="@dimen/_7sdp"
+    app:layout_gravity="center">
 
     <androidx.appcompat.widget.LinearLayoutCompat
-        android:layout_width="@dimen/_130sdp"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_142sdp"
+        android:layout_gravity="center"
         android:background="@drawable/ticket_button_white_background"
         android:gravity="center"
-        android:layout_gravity="center">
+        android:orientation="vertical">
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_regular"
-            android:textStyle="normal"
-            android:textSize="@dimen/_20sdp"
+            android:text="fils"
             android:textColor="@color/white"
-            android:text="fils" />
+            android:textSize="@dimen/_20sdp"
+            android:textStyle="normal" />
 
         <TextView
             android:id="@+id/price_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="@font/montserrat_medium"
-            android:textStyle="normal"
+            android:textColor="@color/white"
             android:textSize="@dimen/_35sdp"
-            android:textColor="@color/white" />
+            android:textStyle="normal" />
 
         <TextView
             android:id="@+id/firstStationName_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif"
-            android:textStyle="normal"
+            android:textColor="@color/white"
             android:textSize="@dimen/_15sdp"
-            android:textColor="@color/white" />
+            android:textStyle="normal" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

@@ -10,7 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.CarrierInformationModel
 
-class PriceButtonRecyclerViewAdapter internal constructor(val context: Context?, private val tickets: List<CarrierInformationModel.Ticket>, private val resource: Int) : RecyclerView.Adapter<PriceButtonRecyclerViewAdapter.ViewHolder?>() {
+class TicketsButtonRecyclerViewAdapter internal constructor(val context: Context?, private val tickets: List<CarrierInformationModel.Ticket>, private val resource: Int) : RecyclerView.Adapter<TicketsButtonRecyclerViewAdapter.ViewHolder?>() {
     private var mClickListener: ItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
