@@ -12,13 +12,15 @@
     app:cardCornerRadius="@dimen/_7sdp"
     app:layout_gravity="center">
 
-    <androidx.appcompat.widget.LinearLayoutCompat
+    <LinearLayout
+        android:id="@+id/ticketLayout"
         android:layout_width="@dimen/_120sdp"
         android:layout_height="@dimen/_142sdp"
         android:layout_gravity="center"
         android:background="@drawable/ticket_button_white_background"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        android:layout_margin="@dimen/_3sdp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -47,6 +49,6 @@
             android:textSize="@dimen/_15sdp"
             android:textStyle="normal" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
+    </LinearLayout>
 
 </carbon.widget.RelativeLayout>

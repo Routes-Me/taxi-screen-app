@@ -25,7 +25,7 @@
         android:fontFamily="sans-serif-medium"
         android:textStyle="normal"
         android:textSize="@dimen/_15ssp"
-        android:textColor="@color/black"
+        android:textColor="?homeScreenTextColor"
         android:gravity="center_horizontal"
         android:text="@string/select_ticket_then_scan_your_QR_Codeor_NFC" />
 
