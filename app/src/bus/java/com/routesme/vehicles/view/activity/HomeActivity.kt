@@ -61,11 +61,10 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         rejectedPaymentFragment = RejectedPaymentFragment()
         multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
 
-       // showFragment(multiTicketsScanFirstFragment)
-
-        showFragment(mainFragment)
-       // startBusValidatorService()
-       // startBusPaymentService()
+       showFragment(multiTicketsScanFirstFragment)
+       // showFragment(mainFragment)
+        startBusValidatorService()
+        startBusPaymentService()
     }
 
     override fun onDestroy() {
@@ -106,8 +105,8 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
          }
 
       if (readQrCode.isApproved) {
-         // showFragment(approvedPaymentFragment)
-          showFragment(multiTicketsScanFirstFragment)
+          showFragment(approvedPaymentFragment)
+          //showFragment(multiTicketsScanFirstFragment)
           dismissFragment(approvedScreenShowingTime)
       } else {
           showFragment(rejectedPaymentFragment)
