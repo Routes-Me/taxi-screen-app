@@ -14,8 +14,8 @@ interface AdvertisementDoa {
     suspend fun insertAdvertisement(advertisement: AdvertisementTracking)
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type  FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
-    suspend fun getItem(id: String, timestamp: Long): AdvertisementTracking
+    @Query("SELECT id, advertisementId, resourceName, date,morning,noon,evening,night,time_in_day,media_type  FROM tbl_advertisement_tracking WHERE resourceName = :resourceName AND time_in_day = :timestamp")
+    suspend fun getItem(resourceName: String, timestamp: Long): AdvertisementTracking
 
     @Transaction
     @Query("UPDATE tbl_advertisement_tracking SET morning = morning+1 WHERE id = :id ")
@@ -34,15 +34,15 @@ interface AdvertisementDoa {
     suspend fun updateSlotNight(id: Int)
 
     @Transaction
-    @Query("SELECT * FROM tbl_advertisement_tracking WHERE advertisementId = :id AND time_in_day = :timestamp")
-    suspend fun getLastItem(id: String, timestamp: Long): AdvertisementTracking
+    @Query("SELECT * FROM tbl_advertisement_tracking WHERE resourceName = :resourceName AND time_in_day = :timestamp")
+    suspend fun getLastItem(resourceName: String, timestamp: Long): AdvertisementTracking
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate  ORDER BY date ASC")
+    @Query("SELECT id,advertisementId, resourceName, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate  ORDER BY date ASC")
     suspend fun getList(currentDate: Long): List<AdvertisementTracking>
 
     @Transaction
-    @Query("SELECT id,advertisementId, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking  ORDER BY date ASC")
+    @Query("SELECT id,advertisementId, resourceName, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking  ORDER BY date ASC")
     suspend fun getAllList(): List<AdvertisementTracking>
 
     @Query("DELETE FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate")
