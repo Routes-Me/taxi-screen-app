@@ -43,7 +43,7 @@ class RefreshTokenService: Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         Log.d("RefreshTokenTesting", "RefreshTokenService onStartCommand()")
-        startForeground(2, getNotification())
+        startForeground(ServiceInfo.RefreshToken.serviceId, getNotification())
         refreshToken()
 
         return START_STICKY
@@ -146,9 +146,9 @@ class RefreshTokenService: Service() {
     }
 
     private fun getNotification(): Notification {
-        val channel = NotificationChannel("channel_2", "Refresh Token Channel", NotificationManager.IMPORTANCE_NONE)
+        val channel = NotificationChannel(ServiceInfo.RefreshToken.channelId, ServiceInfo.RefreshToken.channelName, NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(this, "channel_2").setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
+        return Notification.Builder(this, ServiceInfo.RefreshToken.channelId).setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

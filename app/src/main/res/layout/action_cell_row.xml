@@ -3,7 +3,7 @@
     android:id="@+id/action"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="49.5dp"
+    android:layout_marginTop="@dimen/_15sdp"
     android:background="#33d8d8d8"
     android:fontFamily="sans-serif"
     android:gravity="center"

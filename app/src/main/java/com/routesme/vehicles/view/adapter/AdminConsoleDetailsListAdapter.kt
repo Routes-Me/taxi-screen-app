@@ -3,6 +3,7 @@ package com.routesme.vehicles.view.adapter
 import android.app.Activity
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
@@ -24,10 +25,9 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity, private val
         TYPE_DETAIL -> DetailViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_cell_row, parent, false))
         TYPE_ACTION -> ActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.action_cell_row, parent, false)).listen { pos, _ ->
             val actionCell = list[pos] as ActionCell
-
             when (actionCell.action) {
-
                 Actions.LogOff.title -> adminConsoleHelper.sendLogOffRequestToActvitiy()
+                else -> Toast.makeText(activity,"Sync and Update Button clicked !", Toast.LENGTH_SHORT).show() //getCarrierInformation()
             }
         }
         else -> DetailActionViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.detail_action_cell_row, parent, false)).listen { pos, _ ->

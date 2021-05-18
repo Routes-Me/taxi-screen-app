@@ -20,17 +20,17 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.Authorization
-import com.routesme.vehicles.data.model.Error
-import com.routesme.vehicles.data.model.RegistrationCredentials
-import com.routesme.vehicles.data.model.RegistrationResponse
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.helper.DateOperations
 import com.routesme.vehicles.helper.Operations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.CarrierInformation
+import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
@@ -199,10 +199,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private fun register() {
         registerCredentials.apply {
             SimSerialNumber = "4556466"
-            VehicleId = "112288"
         }
-        //if (Account().accessToken != null && allDataExist()) {
-        if (Account().accessToken != null) {
+        if (Account().accessToken != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
@@ -216,7 +214,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                             return@Observer
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
-                        saveTabletInfoIntoSharedPreferences(deviceId)
+                        saveDeviceInfoIntoSharedPreferences(deviceId)
+                        if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         App.instance.startTrackingService()
                         openModelPresenterScreen()
                     } else {
@@ -236,6 +235,39 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             })
         } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
+        }
+    }
+
+    private fun getCarrierInformation(vehicleId: String) {
+        val carrierInformationViewModel: CarrierInformationViewModel by viewModels()
+        carrierInformationViewModel.getCarrierInformation(vehicleId, "currencies", this).observe(this, Observer<CarrierInformationModel.CarrierInformationResponse> {
+            if (it != null) {
+                if (it.isSuccess) {
+                    it.carrierInformationModel?.let { saveCarrierInformationIntoSharePreferences(it) }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun saveCarrierInformationIntoSharePreferences(carrierInformationModel: CarrierInformationModel.CarrierInformationModel) {
+        CarrierInformation().apply {
+            routeNumber = carrierInformationModel.routeNumber
+            destination = carrierInformationModel.destination
+            tickets = carrierInformationModel.tickets
+            currencies = carrierInformationModel.included.currencies
+            lastUpdateDate = DateOperations().registrationDate(Date())
         }
     }
 
@@ -278,7 +310,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    private fun saveTabletInfoIntoSharedPreferences(deviceId: String) {
+    private fun saveDeviceInfoIntoSharedPreferences(deviceId: String) {
         editor.apply {
             putString(SharedPreferencesHelper.username, app.signInCredentials?.userName)
             putString(SharedPreferencesHelper.registration_date, DateOperations().registrationDate(Date()))
@@ -318,7 +350,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             getTabletInfo()
         }
     }
-
 
     private fun showInputError(show: Boolean, requireField: Int) {
         if (show) {

@@ -53,4 +53,14 @@
     <string name="select_vehicle_plate_number">* Select vehicle plate number</string>
     <string name="taxi_plate_number">Plate number</string>
     <string name="register">Register</string>
+
+    <!-- Bus Payment -->
+    <string name="rejected">Rejected</string>
+    <string name="approved">Approved</string>
+    <string name="scan_your_qr_code_or_nfc">Scan your <b>QR Code</b> or <b>NFC</b></string>
+    <string name="payment_approved_message">You will be receiving a notification for a <b>digital ticket</b></string>
+    <string name="qrcode_expired_message">Your qr code is expired, please make sure to present from the <b>App</b></string>
+    <string name="select_ticket_to_complete"><b>Select</b> ticket to complete \n 👇 </string>
+    <string name="select_ticket_then_scan_your_QR_Codeor_NFC"><b>Select</b> ticket then scan your <b>QR Code</b> \n or <b>NFC</b></string>
+
 </resources>

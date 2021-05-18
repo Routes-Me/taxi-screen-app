@@ -9,6 +9,8 @@ import android.os.IBinder
 import android.util.Log
 import com.decard.NDKMethod.BasicOper
 import com.routesme.vehicles.R
+import com.routesme.vehicles.data.model.PaymentRejectCauses
+import com.routesme.vehicles.data.model.ReadQrCode
 import com.routesme.vehicles.helper.ValidatorCodes
 import org.greenrobot.eventbus.EventBus
 import java.util.*
@@ -32,7 +34,7 @@ class BusValidatorService : Service(){
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        startForeground(3, getNotification())
+        startForeground(ServiceInfo.BusValidator.serviceId, getNotification())
 
         if (!isPortOpened){
             isPortOpened = openPort()
@@ -48,18 +50,8 @@ class BusValidatorService : Service(){
     }
 
     private fun runQRCodeReader() {
-      //  Thread(Runnable {
-            if (!startQrCodeReader()) return
-            Log.d("BusValidator", "dc_Scan2DBarcodeStart.. Success")
-            Log.d("BusValidator", "Please move your QR Code")
-
-            readQrCodeContent(idleModeReadingInMilliseconds)
-
-            //if (!stopQrCodeReader()) return
-
-           // Log.d("BusValidator", "dc_Scan2DBarcodeExit.. Success")
-           // Log.d("BusValidator", "Qr Code operation .. Done !")
-       // }).start()
+        if (!startQrCodeReader()) return
+        readQrCodeContent(idleModeReadingInMilliseconds)
     }
 
     private fun startQrCodeReader(): Boolean {
@@ -78,13 +70,16 @@ class BusValidatorService : Service(){
         Timer("qrCodeReaderTimer", true).apply {
             schedule(TimeUnit.MILLISECONDS.toMillis(timeInMilliseconds), TimeUnit.MILLISECONDS.toMillis(timeInMilliseconds)) {
                 Log.d("BusValidator", "qrCodeReaderTimer .. after delay: $timeInMilliseconds MS")
-                Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
+               Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 qrCodeReaderTimeoutInMilliseconds += timeInMilliseconds
                 Log.d("BusValidator", "qrCodeReaderTimer .. Timeout after add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 if (qrCodeReaderTimeoutInMilliseconds >= twoMinutesInMilliseconds) {
                     Log.d("BusValidator", "qrCodeReaderTimer .. Timeout is over ,, $qrCodeReaderTimeoutInMilliseconds MS")
                     qrCodeReaderTimeoutInMilliseconds = 0
-                    this.cancel()
+                    this@apply.apply {
+                        cancel()
+                        purge()
+                    }
                     readQrCodeContent(idleModeReadingInMilliseconds)
                 }
                 val result = BasicOper.dc_Scan2DBarcodeGetData()
@@ -93,28 +88,22 @@ class BusValidatorService : Service(){
                     val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
                    content?.let {
                        Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
-                       EventBus.getDefault().post(PaymentOperation(it))
+                       //For testing of Approved or Rejected
+                       val readQrCode =
+                               if (it.startsWith("Expired")) ReadQrCode(it, false, PaymentRejectCauses.Expired)
+                               else ReadQrCode(it, true)
+                       EventBus.getDefault().post(readQrCode)
+
                        qrCodeReaderTimeoutInMilliseconds = 0
-                       this.cancel()
+                       this@apply.apply {
+                           cancel()
+                           purge()
+                       }
                        readQrCodeContent(defaultReadingInMilliseconds)
                    }
                 }
             }
         }
-        /*
-        qrCodeReadingFlag = true
-        while (qrCodeReadingFlag) {
-            SystemClock.sleep(500)
-            val result = BasicOper.dc_Scan2DBarcodeGetData()
-            val resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
-            if (resultArray.first() == ValidatorCodes.operationSuccess) {
-                val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
-                Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $content ")
-                qrCodeReadingFlag = false
-                break
-            }
-        }
-        */
     }
 
     private fun hexStringToString(hexString: String): String {
@@ -136,9 +125,9 @@ class BusValidatorService : Service(){
     }
 
     private fun getNotification(): Notification {
-        val channel = NotificationChannel("channel_3", "Bus Validator Service Channel", NotificationManager.IMPORTANCE_NONE)
+        val channel = NotificationChannel(ServiceInfo.BusValidator.channelId, ServiceInfo.BusValidator.channelName, NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(this, "channel_3").setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
+        return Notification.Builder(this, ServiceInfo.BusValidator.channelId).setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null

@@ -59,7 +59,7 @@ class TrackingService : Service() {
         super.onStartCommand(intent, flags, startId)
       //  Log.d("Test-location-service", "onStartCommand")
        // Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
-        startForeground(1, getNotification())
+        startForeground(ServiceInfo.Tracking.serviceId, getNotification())
         locationReceiver.apply {
             if (isProviderEnabled()) {
                 startLocationUpdatesListener()
@@ -71,9 +71,9 @@ class TrackingService : Service() {
     }
 
     private fun getNotification(): Notification {
-        val channel = NotificationChannel("channel_1", "Live Tracking Channel", NotificationManager.IMPORTANCE_NONE)
+        val channel = NotificationChannel(ServiceInfo.Tracking.channelId, ServiceInfo.Tracking.channelName, NotificationManager.IMPORTANCE_NONE)
         getSystemService(NotificationManager::class.java)?.createNotificationChannel(channel)
-        return Notification.Builder(this, "channel_1").setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
+        return Notification.Builder(this, ServiceInfo.Tracking.channelId).setSmallIcon(R.mipmap.routes_icon_light).setAutoCancel(true).build()
     }
 
     private fun insertTestFeeds() {

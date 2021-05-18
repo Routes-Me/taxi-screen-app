@@ -1,18 +1,21 @@
 package com.routesme.vehicles.helper
 
 import android.app.Activity
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.data.model.*
+import com.routesme.vehicles.uplevels.CarrierInformation
 
 class AdminConsoleLists(val activity: Activity) {
 
     private val adminConsoleHelper = AdminConsoleHelper(activity)
 
-    val masterItems = listOf(
-            MasterItem(0, MasterItemType.Info),
-            MasterItem(1, MasterItemType.Account),
-            MasterItem(2, MasterItemType.Settings)
-          //  MasterItem(3, MasterItemType.Location_Feeds)
-    )
+    val masterItems = mutableListOf<MasterItem>().apply{
+        add(MasterItem(0, MasterItemType.Info.title))
+        add(MasterItem(1, MasterItemType.Account.title))
+        add(MasterItem(2, MasterItemType.Settings.title))
+        if (BuildConfig.FLAVOR == "bus") add(MasterItem(3, MasterItemType.RoutesAndTickets.title))
+    }
+
     val infoCells = listOf(
             LabelCell("Vehicle"),
             DetailCell("Plate Number", "${adminConsoleHelper.plateNumber()}", true),
@@ -27,7 +30,7 @@ class AdminConsoleLists(val activity: Activity) {
             LabelCell("Technician"),
             DetailCell("User Name", "${adminConsoleHelper.technicalUserName()?.capitalize()}", true),
             DetailCell("Registration Date", "${adminConsoleHelper.registrationDate()}", false),
-            ActionCell(Actions.LogOff.title)
+            ActionCell(Actions.LogOff.title, ActionCellTextColor.Red)
     )
     val settingsCells = listOf(
             LabelCell("Launcher"),
@@ -35,4 +38,17 @@ class AdminConsoleLists(val activity: Activity) {
             LabelCell("Tracking"),
             DetailActionCell("Location", adminConsoleHelper.isLocationPermissionsAllowed(), Actions.General.title)
     )
+
+    val routesAndTicketsCells = mutableListOf<ICell>().apply {
+        add(LabelCell("Route"))
+        add(DetailCell("Route Number", "${CarrierInformation().routeNumber}", true))
+        add(DetailCell("Last Update", "${CarrierInformation().lastUpdateDate}", true))
+        add(ActionCell(Actions.SyncAndUpdateCarrierInformation.title, ActionCellTextColor.Blue))
+        CarrierInformation().tickets?.let {
+            add(LabelCell("Tickets"))
+            for (ticket in it){
+                add(DetailCell("${ticket.amount} files", "1 day", true))
+            }
+        }
+    }
 }

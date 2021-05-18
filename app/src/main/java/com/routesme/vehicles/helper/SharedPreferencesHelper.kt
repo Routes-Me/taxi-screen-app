@@ -19,5 +19,12 @@ class SharedPreferencesHelper {
         const val sim_serial_number = "sim_serial_number"
         const val from_date = "from_date"
         const val call_api = "isCallingApi"
+
+        //Carrier Information
+        const val carrierInformationLastUpdate = "carrierInformationLastUpdate"
+        const val carrierRouteNumber = "carrierRouteNumber"
+        const val carrierDestination = "carrierDestination"
+        const val carrierTickets = "carrierTickets"
+        const val currencies = "currencies"
     }
 }

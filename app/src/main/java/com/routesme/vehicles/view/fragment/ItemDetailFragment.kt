@@ -30,8 +30,8 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     private var mContext: Context? = null
     private val adminConsoleLists = AdminConsoleLists(activity)
     private var detailsList = adminConsoleLists.infoCells
-    private val adminConsoleHelper = AdminConsoleHelper(activity)
-    private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+ //   private val adminConsoleHelper = AdminConsoleHelper(activity)
+   // private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,9 +43,10 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
             if (it.containsKey(ARG_ITEM_ID)) {
                 val item = adminConsoleLists.masterItems[it.getInt(ARG_ITEM_ID)]
                 detailsList = when (item.type) {
-                    MasterItemType.Account -> adminConsoleLists.accountCells
-                    MasterItemType.Settings -> adminConsoleLists.settingsCells
-                    else -> adminConsoleLists.infoCells
+                    MasterItemType.Account.title -> adminConsoleLists.accountCells
+                    MasterItemType.Settings.title -> adminConsoleLists.settingsCells
+                    MasterItemType.Info.title -> adminConsoleLists.infoCells
+                    else -> adminConsoleLists.routesAndTicketsCells
                     // else -> getSavedLocations()
                 }
             }
@@ -81,6 +82,4 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
 
         ItemDetailsRecyclerView.apply { adapter = activity?.let { AdminConsoleDetailsListAdapter(it, detailsList) } }
     }
-
-
 }

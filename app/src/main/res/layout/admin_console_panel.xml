@@ -23,7 +23,7 @@
             android:fontFamily="sans-serif-medium"
             android:text="Admin Console"
             android:textColor="@color/grey"
-            android:textSize="21sp"
+            android:textSize="@dimen/_12ssp"
             android:textStyle="normal" />
 
     </androidx.appcompat.widget.Toolbar>

@@ -13,6 +13,7 @@ import kotlinx.coroutines.launch
 
 class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
     private val MIN = 100000000
+    
     private val analyticsListLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val analyticsListAllLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val deleteTableLiveData = MutableLiveData<ResponseBody<Int>>()

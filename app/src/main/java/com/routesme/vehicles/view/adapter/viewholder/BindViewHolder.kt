@@ -1,5 +1,6 @@
 package com.routesme.vehicles.view.adapter.viewholder
 
+import android.graphics.Color
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView
 import com.routesme.vehicles.R
@@ -25,7 +26,7 @@ fun onBindDetail(holder: RecyclerView.ViewHolder, cell: ICell) {
 fun onBindAction(holder: RecyclerView.ViewHolder, cell: ICell) {
     holder as ActionViewHolder
     cell as ActionCell
-    holder.apply { action.text = cell.action }
+    holder.apply { action.text = cell.action ; action.setTextColor(Color.parseColor(cell.textColor.colorCode))}
 }
 
 fun onBindDetailAction(holder: RecyclerView.ViewHolder, cell: ICell) {

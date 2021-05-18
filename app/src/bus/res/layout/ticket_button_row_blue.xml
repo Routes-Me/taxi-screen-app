@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<carbon.widget.RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_marginStart="@dimen/_5sdp"
+    android:layout_marginEnd="@dimen/_5sdp"
+    android:layout_marginBottom="@dimen/_5sdp"
+    android:layout_marginTop="@dimen/_5sdp"
+    android:layout_gravity="center"
+    app:layout_gravity="center"
+    android:gravity="center"
+    app:cardCornerRadius="@dimen/_7sdp"
+    >
+
+    <LinearLayout
+        android:id="@+id/ticketLayout"
+        android:layout_width="@dimen/_120sdp"
+        android:layout_height="@dimen/_142sdp"
+        android:orientation="vertical"
+        android:background="@drawable/ticket_button_blue_background"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/_3sdp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_regular"
+            android:textStyle="normal"
+            android:textSize="@dimen/_20sdp"
+            android:textColor="@color/ticket_color"
+            android:text="fils" />
+
+        <TextView
+            android:id="@+id/price_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserrat_medium"
+            android:textStyle="normal"
+            android:textSize="@dimen/_35sdp"
+            android:textColor="@color/ticket_color" />
+
+        <TextView
+            android:id="@+id/firstStationName_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:textSize="@dimen/_15sdp"
+            android:textColor="@color/ticket_color" />
+
+    </LinearLayout>
+
+</carbon.widget.RelativeLayout>

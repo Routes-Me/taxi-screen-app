@@ -6,6 +6,7 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -39,6 +40,7 @@ import org.greenrobot.eventbus.ThreadMode
 import java.sql.SQLException
 
 class AdminConsolePanel : AppCompatActivity() {
+    private var twoPane: Boolean = false
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private var adminConsoleHelper: AdminConsoleHelper? = null
     private var sharedPreferences: SharedPreferences? = null
@@ -57,14 +59,11 @@ class AdminConsolePanel : AppCompatActivity() {
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
         toolbarSetUp()
-    }
 
-    override fun onResume() {
-        super.onResume()
-        setUpItemDetailFragment()
+        twoPane =  (item_detail_container != null)
+        if (twoPane) setUpItemDetailFragment()
         setupRecyclerView(masterRecyclerView)
     }
-
     private fun toolbarSetUp() {
         setSupportActionBar(toolbar)
         if (supportActionBar != null) {
@@ -89,7 +88,7 @@ class AdminConsolePanel : AppCompatActivity() {
     }
 
     private fun setupRecyclerView(recyclerView: RecyclerView) {
-        recyclerView.apply { adapter = MasterItemsAdapter(this@AdminConsolePanel, AdminConsoleLists(this@AdminConsolePanel).masterItems) }
+        recyclerView.apply { adapter = MasterItemsAdapter(this@AdminConsolePanel, AdminConsoleLists(this@AdminConsolePanel).masterItems, twoPane) }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
