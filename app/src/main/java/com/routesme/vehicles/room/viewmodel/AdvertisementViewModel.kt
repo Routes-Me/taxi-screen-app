@@ -1,9 +1,11 @@
 package com.routesme.vehicles.room.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.room.ResponseBody
 import com.routesme.vehicles.room.entity.AdvertisementTracking
 import com.routesme.vehicles.room.helper.DatabaseHelper
@@ -13,21 +15,21 @@ import kotlinx.coroutines.launch
 
 class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
     private val MIN = 100000000
-    
     private val analyticsListLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val analyticsListAllLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val deleteTableLiveData = MutableLiveData<ResponseBody<Int>>()
     private val deleteAllTableLiveData = MutableLiveData<ResponseBody<Int>>()
 
     fun insertLog(id: String, timeStamp: Long, period: Period, type: String) {
+        val currentDate = DateHelper.instance.getDateString(timeStamp)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var analysisRecord = dbHelper.getItem(id, timeStamp / MIN)
+                var analysisRecord = dbHelper.getItem(id, currentDate)
                 if (analysisRecord != null) {
                     update(analysisRecord.id, period)
                 } else {
-                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = id, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = timeStamp / MIN, media_type = type))
-                    var lastItem = dbHelper.getLastItem(id, timeStamp / MIN)
+                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = id, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = currentDate, media_type = type))
+                    var lastItem = dbHelper.getLastItem(id, currentDate)
                     update(lastItem.id, period)
                 }
 

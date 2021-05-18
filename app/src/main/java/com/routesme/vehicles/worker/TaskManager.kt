@@ -14,10 +14,7 @@ import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.entity.AdvertisementTracking
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -34,17 +31,17 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
     override fun doWork(): Result {
         try {
             val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+            val currentDate = DateHelper.instance.getDateString(DateHelper.instance.getCurrentDate())
             launch {
-                val list = dbHelper.getList(DateHelper.instance.getCurrentDate() / MIN)
+                val list = dbHelper.getList(currentDate)
                 device_id.let { deviceId ->
                     if (!list.isNullOrEmpty()) {
                         val call = thisApiCorService.postReport(getJsonArray(list), device_id)
                         call.enqueue(object : Callback<JsonElement> {
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
-                                    launch(Dispatchers.IO) {
-                                        val delete = dbHelper.deleteTable(DateHelper.instance.getCurrentDate() / MIN)
-                                        Log.d("Workmanager","${delete}")
+                                    GlobalScope.launch {
+                                        val delete = dbHelper.deleteTable(currentDate)
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                                         editior?.commit()
                                     }
