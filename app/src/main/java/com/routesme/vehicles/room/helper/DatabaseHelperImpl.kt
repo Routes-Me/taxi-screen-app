@@ -8,7 +8,7 @@ class DatabaseHelperImpl(private val advertismentDatabase: AdvertisementDatabase
 
     override suspend fun insertAdvertisement(advertisementTracking: AdvertisementTracking) = advertismentDatabase.advertisementTracking().insertAdvertisement(advertisementTracking)
 
-    override suspend fun getItem(id: String, timestamp: Long): AdvertisementTracking = advertismentDatabase.advertisementTracking().getItem(id, timestamp)
+    override suspend fun getItem(resourceName: String, timestamp: Long): AdvertisementTracking = advertismentDatabase.advertisementTracking().getItem(resourceName, timestamp)
 
     override suspend fun updateSlotMorning(id: Int) {
 
@@ -28,7 +28,7 @@ class DatabaseHelperImpl(private val advertismentDatabase: AdvertisementDatabase
 
     override suspend fun updateSlotNight(id: Int) = advertismentDatabase.advertisementTracking().updateSlotNight(id)
 
-    override suspend fun getLastItem(id: String, timeStamp: Long): AdvertisementTracking = advertismentDatabase.advertisementTracking().getLastItem(id, timeStamp)
+    override suspend fun getLastItem(resourceName: String, timeStamp: Long): AdvertisementTracking = advertismentDatabase.advertisementTracking().getLastItem(resourceName, timeStamp)
 
     override suspend fun getList(timeStamp: Long): List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getList(timeStamp)
 

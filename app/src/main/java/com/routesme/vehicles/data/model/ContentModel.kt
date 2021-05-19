@@ -5,8 +5,9 @@ import android.os.Parcelable
 
 data class Content(val pagination: Pagination? = null, val data: List<Data>? = null, val message: String? = null, val status: Boolean? = null, val statusCode: Int? = null)
 
-data class Data(val contentId: String? = null, val type: String? = null, val url: String? = null, val tintColor: Int? = null, val promotion: Promotion? = null) : Parcelable {
+data class Data(val contentId: String? = null, val resourceName: String? = null, val type: String? = null, val url: String? = null, val tintColor: Int? = null, val promotion: Promotion? = null) : Parcelable {
     constructor(parcel: Parcel) : this(
+            parcel.readString(),
             parcel.readString(),
             parcel.readString(),
             parcel.readString(),
@@ -15,6 +16,7 @@ data class Data(val contentId: String? = null, val type: String? = null, val url
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeString(contentId)
+        parcel.writeString(resourceName)
         parcel.writeString(type)
         parcel.writeString(url)
         parcel.writeValue(tintColor)

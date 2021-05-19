@@ -7,7 +7,7 @@ interface DatabaseHelper {
 
     suspend fun insertAdvertisement(advertisementTracking: AdvertisementTracking)
 
-    suspend fun getItem(id: String, timeStamp: Long): AdvertisementTracking
+    suspend fun getItem(resourceName: String, timeStamp: Long): AdvertisementTracking
 
     suspend fun updateSlotMorning(id: Int)
 
@@ -17,7 +17,7 @@ interface DatabaseHelper {
 
     suspend fun updateSlotNight(id: Int)
 
-    suspend fun getLastItem(id: String, timeStamp: Long): AdvertisementTracking
+    suspend fun getLastItem(resourceName: String, timeStamp: Long): AdvertisementTracking
 
     suspend fun getList(timeStamp: Long): List<AdvertisementTracking>
 

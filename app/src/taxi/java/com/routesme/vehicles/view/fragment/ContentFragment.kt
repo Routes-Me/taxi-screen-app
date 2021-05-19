@@ -183,8 +183,9 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
         launch {
             while (isActive) {
-                images[count].contentId?.let {
-                    viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)
+                val image =  images[count]
+                image.contentId?.let {
+                    viewModel.insertLog(it, image.resourceName!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)
                 }
                 viewPageSideBanner.setCurrentItem(count, true)
                 bottomRightPromotion.setCurrentItem(count, true)

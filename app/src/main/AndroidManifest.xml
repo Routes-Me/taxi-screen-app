@@ -57,6 +57,10 @@
             android:name=".view.activity.HomeActivity"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing">
+        </activity>
+        <activity
+            android:name=".view.activity.ModelPresenter"
+            android:windowSoftInputMode="adjustNothing">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -64,11 +68,6 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".view.activity.ModelPresenter"
-            android:windowSoftInputMode="adjustNothing">
-
         </activity>
         <!--
 <receiver

@@ -92,10 +92,9 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                     currentMediaItemId = exoPlayer.currentPeriodIndex
                     if (currentMediaItemId == 0) currentMediaItemId = list.size - 1 else currentMediaItemId = currentMediaItemId - 1
                     currentMediaItemId.let {
-                        list[it].contentId?.let {
-
-                            viewModel.insertLog(it, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.VIDEO.media_type)
-
+                        val video =  list[it]
+                        video.contentId?.let {
+                            viewModel.insertLog(it, video.resourceName!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.VIDEO.media_type)
                         }
                     }
                     EventBus.getDefault().post(AnimateVideo(true, exoPlayer.currentPeriodIndex))
