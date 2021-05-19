@@ -1,6 +1,5 @@
 package com.routesme.vehicles.room.viewmodel
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -21,16 +20,16 @@ class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
     private val deleteTableLiveData = MutableLiveData<ResponseBody<Int>>()
     private val deleteAllTableLiveData = MutableLiveData<ResponseBody<Int>>()
 
-    fun insertLog(advertisementId: String, resourceName: String,timeStamp: Long, period: Period, type: String) {
+    fun insertLog(advertisementId: String, resourceNumber: String, timeStamp: Long, period: Period, type: String) {
         val currentDate = DateHelper.instance.getDateString(timeStamp)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var analysisRecord = dbHelper.getItem(resourceName, currentDate)
+                var analysisRecord = dbHelper.getItem(resourceNumber, currentDate)
                 if (analysisRecord != null) {
                     update(analysisRecord.id, period)
                 } else {
-                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = advertisementId, resourceName = resourceName, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = currentDate, media_type = type))
-                    var lastItem = dbHelper.getLastItem(resourceName, currentDate)
+                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = advertisementId, resourceNumber = resourceNumber, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = currentDate, media_type = type))
+                    var lastItem = dbHelper.getLastItem(resourceNumber, currentDate)
                     update(lastItem.id, period)
                 }
 
