@@ -15,21 +15,22 @@ import kotlinx.coroutines.launch
 
 class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
     private val MIN = 100000000
+    
     private val analyticsListLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val analyticsListAllLiveData = MutableLiveData<ResponseBody<List<AdvertisementTracking>>>()
     private val deleteTableLiveData = MutableLiveData<ResponseBody<Int>>()
     private val deleteAllTableLiveData = MutableLiveData<ResponseBody<Int>>()
 
-    fun insertLog(id: String, timeStamp: Long, period: Period, type: String) {
+    fun insertLog(advertisementId: String, resourceName: String,timeStamp: Long, period: Period, type: String) {
         val currentDate = DateHelper.instance.getDateString(timeStamp)
         viewModelScope.launch(Dispatchers.IO) {
             try {
-                var analysisRecord = dbHelper.getItem(id, currentDate)
+                var analysisRecord = dbHelper.getItem(resourceName, currentDate)
                 if (analysisRecord != null) {
                     update(analysisRecord.id, period)
                 } else {
-                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = id, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = currentDate, media_type = type))
-                    var lastItem = dbHelper.getLastItem(id, currentDate)
+                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = advertisementId, resourceName = resourceName, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = timeStamp / MIN, media_type = type))
+                    var lastItem = dbHelper.getLastItem(resourceName, currentDate)
                     update(lastItem.id, period)
                 }
 
