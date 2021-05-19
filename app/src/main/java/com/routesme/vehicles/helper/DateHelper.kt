@@ -8,7 +8,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DateHelper {
-
+    private val simpleDateFormat = SimpleDateFormat("yyMMddHHmm", Locale.ENGLISH)
     companion object {
 
         val instance = DateHelper()
@@ -65,6 +65,8 @@ class DateHelper {
     }
 
     fun getCurrentDate() = Calendar.getInstance().timeInMillis
+
+    fun getDateString(time: Long) : String = simpleDateFormat.format(time)
 
     fun isMorning() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("11:59"))
     fun isNoon() = currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("16:59"))

@@ -1,0 +1,45 @@
+Index: app/src/main/java/com/routesme/vehicles/helper/DateHelper.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.vehicles.helper\r\n\r\nimport android.annotation.SuppressLint\r\nimport android.util.Log\r\nimport com.routesme.vehicles.view.utils.Period\r\nimport java.text.SimpleDateFormat\r\nimport java.util.*\r\nimport java.util.concurrent.TimeUnit\r\n\r\nclass DateHelper {\r\n\r\n    companion object {\r\n\r\n        val instance = DateHelper()\r\n    }\r\n\r\n    private fun currentDate(): Date {\r\n        val calendar = Calendar.getInstance()\r\n        val hour = calendar.get(Calendar.HOUR_OF_DAY)\r\n        val minute = calendar.get(Calendar.MINUTE)\r\n        return parseDate(\"$hour:$minute\")\r\n    }\r\n\r\n    @SuppressLint(\"SimpleDateFormat\")\r\n    private fun parseDate(time: String) = SimpleDateFormat(\"HH:mm\").parse(time)\r\n\r\n    fun checkDate(from_date: Long): Boolean {\r\n        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)\r\n        Log.d(\"Diff\", \"${diff}\")\r\n        return diff > 0\r\n    }\r\n\r\n    fun getDateDifferenceByOne(from_date: Long): Boolean {\r\n\r\n        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)\r\n        return diff > 0\r\n\r\n    }\r\n\r\n    fun checkAccessTokenExp(from_date: Long): Boolean {\r\n\r\n        val diff = TimeUnit.DAYS.convert((getCurrentDate() - from_date), TimeUnit.MILLISECONDS)\r\n        return diff < 5\r\n\r\n    }\r\n\r\n    fun getCurrentPeriod(): Period {\r\n\r\n        if (isMorning()) {\r\n\r\n            return Period.MORNING\r\n\r\n        } else if (isNoon()) {\r\n\r\n            return Period.NOON\r\n\r\n        } else if (isEvening()) {\r\n\r\n            return Period.EVENING\r\n        } else {\r\n\r\n            return Period.NIGHT\r\n        }\r\n\r\n    }\r\n\r\n    fun getCurrentDate() = Calendar.getInstance().timeInMillis\r\n\r\n    fun isMorning() = currentDate().after(parseDate(\"06:00\")) && currentDate().before(parseDate(\"11:59\"))\r\n    fun isNoon() = currentDate().after(parseDate(\"12:00\")) && currentDate().before(parseDate(\"16:59\"))\r\n    fun isEvening() = currentDate().after(parseDate(\"17:00\")) && currentDate().before(parseDate(\"23:59\"))\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/vehicles/helper/DateHelper.kt	(revision 950929b7d058d582adfad5982712e8cf6a5cb474)
++++ app/src/main/java/com/routesme/vehicles/helper/DateHelper.kt	(date 1621416228171)
+@@ -8,7 +8,7 @@
+ import java.util.concurrent.TimeUnit
+ 
+ class DateHelper {
+-
++    private val simpleDateFormat = SimpleDateFormat("yyMMddHHmm", Locale.ENGLISH)
+     companion object {
+ 
+         val instance = DateHelper()
+@@ -66,6 +66,8 @@
+ 
+     fun getCurrentDate() = Calendar.getInstance().timeInMillis
+ 
++    fun getDateString(time: Long) : String = simpleDateFormat.format(time)
++
+     fun isMorning() = currentDate().after(parseDate("06:00")) && currentDate().before(parseDate("11:59"))
+     fun isNoon() = currentDate().after(parseDate("12:00")) && currentDate().before(parseDate("16:59"))
+     fun isEvening() = currentDate().after(parseDate("17:00")) && currentDate().before(parseDate("23:59"))
+Index: app/src/main/java/com/routesme/vehicles/App.kt
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package com.routesme.vehicles\r\n\r\nimport android.Manifest\r\nimport android.annotation.SuppressLint\r\nimport android.app.Activity\r\nimport android.app.Application\r\nimport android.content.Intent\r\nimport android.content.pm.PackageManager\r\nimport android.os.Build\r\nimport android.os.Bundle\r\nimport androidx.core.content.ContextCompat\r\nimport androidx.work.BackoffPolicy\r\nimport androidx.work.Constraints\r\nimport androidx.work.NetworkType\r\nimport androidx.work.PeriodicWorkRequest\r\nimport com.google.firebase.analytics.FirebaseAnalytics\r\nimport com.routesme.vehicles.helper.DisplayManager\r\nimport com.routesme.vehicles.service.TrackingService\r\nimport com.routesme.vehicles.data.model.SignInCredentials\r\nimport com.routesme.vehicles.worker.TaskManager\r\nimport com.routesme.vehicles.helper.SharedPreferencesHelper\r\nimport com.routesme.vehicles.uplevels.Account\r\nimport java.text.SimpleDateFormat\r\nimport java.util.*\r\nimport java.util.concurrent.TimeUnit\r\n\r\nclass App : Application() {\r\n    val account = Account()\r\n    private val displayManager = DisplayManager.instance\r\n    var signInCredentials: SignInCredentials? = null\r\n    var isNewLogin = false\r\n    var institutionId: String? = null\r\n    var taxiPlateNumber: String? = null\r\n    var vehicleId: String? = null\r\n    var institutionName: String? = null\r\n    var isRefreshActivityAlive: Boolean = false\r\n\r\n    companion object {\r\n        @get:Synchronized\r\n        var instance = App()\r\n        val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()\r\n        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()\r\n    }\r\n\r\n    override fun onCreate() {\r\n        super.onCreate()\r\n        instance = this\r\n        logApplicationStartingPeriod(currentPeriod())\r\n        displayManager.setAlarm(this)\r\n        startTrackingService()\r\n    }\r\n\r\n    fun startTrackingService(){\r\n        val isRegistered = !getDeviceId().isNullOrEmpty()\r\n        if (isLocationPermissionsGranted() && isRegistered){\r\n            val intent = Intent(instance, TrackingService::class.java)\r\n            ContextCompat.startForegroundService(instance,intent)\r\n        }\r\n    }\r\n\r\n    private fun logApplicationStartingPeriod(timePeriod: TimePeriod) {\r\n        val params = Bundle()\r\n        params.putString(\"TimePeriod\", timePeriod.toString())\r\n        FirebaseAnalytics.getInstance(this).logEvent(\"application_starting_period\", params)\r\n    }\r\n    private fun currentPeriod(): TimePeriod {\r\n        val currentDate = currentDate()\r\n        return if (currentDate.after(parseDate(\"04:00\")) && currentDate.before(parseDate(\"12:00\"))) TimePeriod.Morning\r\n        else if (currentDate.after(parseDate(\"12:00\")) && currentDate.before(parseDate(\"17:00\"))) TimePeriod.Noon\r\n        else if (currentDate.after(parseDate(\"17:00\")) && currentDate.before(parseDate(\"24:00\"))) TimePeriod.Evening\r\n        else TimePeriod.Night\r\n    }\r\n    private fun currentDate(): Date {\r\n        val calendar = Calendar.getInstance()\r\n        val hour = calendar.get(Calendar.HOUR_OF_DAY)\r\n        val minute = calendar.get(Calendar.MINUTE)\r\n        return parseDate(\"$hour:$minute\")\r\n    }\r\n\r\n    @SuppressLint(\"SimpleDateFormat\")\r\n    private fun parseDate(time: String) = SimpleDateFormat(\"HH:mm\").parse(time)\r\n    enum class TimePeriod { Morning, Noon, Evening, Night }\r\n    private fun isLocationPermissionsGranted(): Boolean {\r\n        val permissions = arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION, Manifest.permission.ACCESS_FINE_LOCATION)\r\n        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {\r\n            for (p in permissions) {\r\n                if (ContextCompat.checkSelfPermission(instance, p) != PackageManager.PERMISSION_GRANTED) {\r\n                    return false\r\n                }\r\n            }\r\n        }\r\n        return true\r\n    }\r\n    private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)\r\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+--- app/src/main/java/com/routesme/vehicles/App.kt	(revision 950929b7d058d582adfad5982712e8cf6a5cb474)
++++ app/src/main/java/com/routesme/vehicles/App.kt	(date 1621416228190)
+@@ -39,7 +39,7 @@
+         @get:Synchronized
+         var instance = App()
+         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
+-        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 1, TimeUnit.DAYS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
++        val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 4, TimeUnit.HOURS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
+     }
+ 
+     override fun onCreate() {

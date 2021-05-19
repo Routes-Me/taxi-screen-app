@@ -6,13 +6,13 @@ class RegistrationResponse(deviceId: String? = null, val mResponseErrors: Respon
 
     var deviceId: String? = null
     init {
-      // this.deviceId = deviceId
-        this.deviceId = "25335"
+       this.deviceId = deviceId
+        //this.deviceId = "25335"
 
     }
 
     val isSuccess: Boolean
-      //  get() = (mResponseErrors == null && mThrowable == null)
-      get() = true
+        get() = (mResponseErrors == null && mThrowable == null)
+      //get() = true
 
 }
