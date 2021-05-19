@@ -29,7 +29,7 @@ class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
                 if (analysisRecord != null) {
                     update(analysisRecord.id, period)
                 } else {
-                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = advertisementId, resourceName = resourceName, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = timeStamp / MIN, media_type = type))
+                    dbHelper.insertAdvertisement(AdvertisementTracking(advertisementId = advertisementId, resourceName = resourceName, date = timeStamp, morning = 0, noon = 0, evening = 0, night = 0, time_in_day = currentDate, media_type = type))
                     var lastItem = dbHelper.getLastItem(resourceName, currentDate)
                     update(lastItem.id, period)
                 }
