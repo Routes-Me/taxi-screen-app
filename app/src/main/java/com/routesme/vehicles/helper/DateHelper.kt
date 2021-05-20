@@ -8,7 +8,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DateHelper {
-    private val simpleDateFormat = SimpleDateFormat("yyMMddHHmm", Locale.ENGLISH)
+    private val simpleDateFormat = SimpleDateFormat("yyMMdd", Locale.ENGLISH)
     companion object {
 
         val instance = DateHelper()

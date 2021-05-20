@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -66,6 +67,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private var imageBannerAdapter: ImageBannerAdapter? = null
     private lateinit var viewModel: RoomDBViewModel
     private var date = Date()
+    private lateinit var dbHelper : DatabaseHelperImpl
     private lateinit var glide: RequestManager
     private lateinit var contentViewModel: ContentViewModel
     private lateinit var imageOptions: RequestOptions
@@ -89,6 +91,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         viewModel = ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
+        dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext))
         workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP, App.periodicWorkRequest)
         fetchContent()
     }
@@ -183,6 +186,9 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
         launch {
             while (isActive) {
+                dbHelper.getList().forEach {
+                    Log.d("AnalyticsTesting","${it.id},${it.resourceNumber},${it.date},${it.time_in_day},${it.advertisementId},${it.morning},${it.noon},${it.evening},${it.night},")
+                }
                 val image =  images[count]
                 image.contentId?.let {
                     viewModel.insertLog(it, image.resourceNumber!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)

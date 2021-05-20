@@ -1,5 +1,6 @@
 package com.routesme.vehicles.room.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,6 +26,7 @@ class RoomDBViewModel(private val dbHelper: DatabaseHelper) : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 var analysisRecord = dbHelper.getItem(resourceNumber, currentDate)
+
                 if (analysisRecord != null) {
                     update(analysisRecord.id, period)
                 } else {
