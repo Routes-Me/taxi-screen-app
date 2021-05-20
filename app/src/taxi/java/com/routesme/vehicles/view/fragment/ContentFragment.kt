@@ -134,40 +134,33 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                             startVideoService(videos)
                         }
                     }
-
                 } else {
 
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let {
-
                             startThread(getString(R.string.no_data_found))
                         }
                     } else if (it.mThrowable != null) {
 
                         if (it.mThrowable is IOException) {
                             startThread(getString(R.string.network_Issue))
-
                         } else {
                             startThread(getString(R.string.conversion_Issue))
-
                         }
                     }
                 }
             } else {
                 startThread(getString(R.string.unknown_error))
-
             }
         })
     }
 
     private fun setUpWifiAndQRCodeAdapter(list: List<Data>) {
-
         wifiAndQRCodeAdapter = WifiAndQRCodeAdapter(mContext, list)
         bottomRightPromotion.apply {
             adapter = wifiAndQRCodeAdapter
             isUserInputEnabled = false
         }
-
     }
 
     private fun setUpAdapter(list: List<Data>) {
@@ -186,9 +179,9 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
         launch {
             while (isActive) {
-                dbHelper.getList().forEach {
+               /* dbHelper.getList().forEach {
                     Log.d("AnalyticsTesting","${it.id},${it.resourceNumber},${it.date},${it.time_in_day},${it.advertisementId},${it.morning},${it.noon},${it.evening},${it.night},")
-                }
+                }*/
                 val image =  images[count]
                 image.contentId?.let {
                     viewModel.insertLog(it, image.resourceNumber!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)
@@ -197,9 +190,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                 bottomRightPromotion.setCurrentItem(count, true)
                 if (imageBannerAdapter?.itemCount!! - 1 === count) count = 0 else count++
                 delay(15 * 1000)
-
             }
-
         }
     }
 
@@ -254,6 +245,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     override fun onDestroy() {
         super.onDestroy()
         cancel()
+        Log.d("AnalyticsTesting","Destroy")
         callApiJob.cancel()
         AdvertisementsHelper.instance.deleteCache()
     }

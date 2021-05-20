@@ -65,7 +65,6 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
         } catch (e: Exception) {
             return Result.failure()
         }
-
     }
 
     private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
@@ -79,9 +78,7 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
             }
             jsonArray.add(jsonObject)
         }
-
         return jsonArray
-
     }
 
     private fun getJsonArrayOfSlot(morning: Int, noon: Int, evening: Int, night: Int): JsonArray {
