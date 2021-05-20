@@ -87,7 +87,7 @@ class TrackingService : Service() {
 
     private fun scheduleLocationFeeds() {
         sendFeedsTimer = Timer("SendFeedsTimer", true).apply {
-            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(5)) {
+            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(10)) {
                 hubConnection.let {
                         if (it.connectionState == HubConnectionState.CONNECTED) {
                             sendFeeds()
