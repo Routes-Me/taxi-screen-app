@@ -31,9 +31,8 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
     override fun doWork(): Result {
         try {
             val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
-            val currentDate = DateHelper.instance.getDateString(DateHelper.instance.getCurrentDate())
             launch {
-                val list = dbHelper.getList(currentDate)
+                val list = dbHelper.getList()
                 device_id.let { deviceId ->
                     if (!list.isNullOrEmpty()) {
                         val call = thisApiCorService.postReport(getJsonArray(list), device_id)
@@ -41,7 +40,9 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
                                     GlobalScope.launch {
-                                        val delete = dbHelper.deleteTable(currentDate)
+
+                                        val delete = dbHelper.deleteTable(list.first().id,list.last().id)
+                                        Log.d("AnalyticsTesting","${delete}")
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
                                         editior?.commit()
                                     }
@@ -64,7 +65,6 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
         } catch (e: Exception) {
             return Result.failure()
         }
-
     }
 
     private fun getJsonArray(list: List<AdvertisementTracking>): JsonArray {
@@ -78,9 +78,7 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
             }
             jsonArray.add(jsonObject)
         }
-
         return jsonArray
-
     }
 
     private fun getJsonArrayOfSlot(morning: Int, noon: Int, evening: Int, night: Int): JsonArray {

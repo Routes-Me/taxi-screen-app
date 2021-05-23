@@ -10,13 +10,13 @@ import android.content.pm.PackageManager
 import android.location.LocationManager
 import android.net.Uri
 import android.provider.Settings
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.data.model.DetailActionStatus
 import com.routesme.vehicles.data.model.LogOff
 import com.routesme.vehicles.view.activity.LoginActivity
 import org.greenrobot.eventbus.EventBus
+
 
 class AdminConsoleHelper(val activity: Activity) {
     private val sharedPreferences = activity.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
@@ -75,7 +75,7 @@ class AdminConsoleHelper(val activity: Activity) {
 
         sharedPreferences?.edit()?.clear()?.apply()
         activity.apply {
-            startActivity(Intent(this, LoginActivity::class.java))
+            startActivity(Intent(this, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
             finish()
         }
     }

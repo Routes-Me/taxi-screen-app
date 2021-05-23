@@ -30,11 +30,11 @@ class DatabaseHelperImpl(private val advertismentDatabase: AdvertisementDatabase
 
     override suspend fun getLastItem(resourceNumber: String, timeStamp: String): AdvertisementTracking = advertismentDatabase.advertisementTracking().getLastItem(resourceNumber, timeStamp)
 
-    override suspend fun getList(timeStamp: String): List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getList(timeStamp)
+    override suspend fun getList(): List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getList()
 
     override suspend fun getAllList(): List<AdvertisementTracking> = advertismentDatabase.advertisementTracking().getAllList()
 
-    override suspend fun deleteTable(timeStamp: String): Int = advertismentDatabase.advertisementTracking().deleteTable(timeStamp)
+    override suspend fun deleteTable(id1: Int,id2:Int): Int = advertismentDatabase.advertisementTracking().deleteTable(id1,id2)
 
     override suspend fun deleteAllTable(): Int = advertismentDatabase.advertisementTracking().deleteAllTable()
 

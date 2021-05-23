@@ -38,15 +38,18 @@ interface AdvertisementDoa {
     suspend fun getLastItem(resourceNumber: String, timestamp: String): AdvertisementTracking
 
     @Transaction
-    @Query("SELECT id,advertisementId, resourceNumber, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate  ORDER BY date ASC")
-    suspend fun getList(currentDate: String): List<AdvertisementTracking>
+    @Query("SELECT id,advertisementId, resourceNumber, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking ORDER BY date ASC")
+    suspend fun getList(): List<AdvertisementTracking>
 
     @Transaction
     @Query("SELECT id,advertisementId, resourceNumber, date,morning,noon,evening,night,time_in_day,media_type FROM tbl_advertisement_tracking  ORDER BY date ASC")
     suspend fun getAllList(): List<AdvertisementTracking>
 
-    @Query("DELETE FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate")
-    suspend fun deleteTable(currentDate: String): Int
+    /*@Query("DELETE FROM tbl_advertisement_tracking WHERE time_in_day != :currentDate")
+    suspend fun deleteTable(currentDate: String): Int*/
+
+    @Query("DELETE FROM tbl_advertisement_tracking WHERE id BETWEEN :id1 AND :id2")
+    suspend fun deleteTable(id1: Int,id2:Int): Int
 
     @Query("DELETE FROM tbl_advertisement_tracking")
     suspend fun deleteAllTable(): Int
