@@ -135,6 +135,7 @@ class TrackingService : Service() {
         val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
         val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)
         val deviceId = sharedPref.getString(SharedPreferencesHelper.device_id, null)
+        Log.d("SocketSrv", "DeviceId: $deviceId")
         return Uri.Builder().apply {
             scheme("http")
             encodedAuthority(trackingAuthorityUrl)
