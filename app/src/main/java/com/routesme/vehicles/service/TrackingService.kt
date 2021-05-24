@@ -101,8 +101,10 @@ class TrackingService : Service() {
         GlobalScope.launch(Dispatchers.IO) {
             locationFeedsDao.getFeeds().let { feeds ->
                 if (!feeds.isNullOrEmpty()) {
+                  //  Log.d("SocketSrv", "Feeds to send: $feeds")
                     val feedCoordinates = feeds.map { it.coordinate }
                     hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                   // Log.d("SocketSrv", "Feeds to delete: ${feeds.first().id} - ${feeds.last().id}")
                     locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
                 }
             }
@@ -137,7 +139,7 @@ class TrackingService : Service() {
         val deviceId = sharedPref.getString(SharedPreferencesHelper.device_id, null)
         Log.d("SocketSrv", "DeviceId: $deviceId")
         return Uri.Builder().apply {
-            scheme("http")
+            scheme("https")
             encodedAuthority(trackingAuthorityUrl)
             appendPath("trackServiceHub")
             appendQueryParameter("vehicleId", vehicleId)
