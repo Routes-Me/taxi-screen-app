@@ -10,8 +10,11 @@ import com.routesme.vehicles.data.model.SignInCredentials
 import com.routesme.vehicles.data.model.SubmitApplicationVersionCredentials
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.RefreshTokenCredentials
+import com.routesme.vehicles.room.entity.LocationCoordinate
+import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Retrofit
+import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
 
 interface RestApiService {
@@ -47,11 +50,15 @@ interface RestApiService {
     @GET("carriers/{vehicleId}")
     fun getCarrierInformation(@Path("vehicleId") vehicleId: String, @Query("include") include: String): Call<JsonElement>
 
+    @POST("vehicles/{vehicleId}/coordinates")
+    fun locationCoordinates (@Path("vehicleId") vehicleId: String, @Body coordinates: List<LocationCoordinate>): Call<String>
+
     companion object {
 
         fun createCorService(context: Context): RestApiService {
             return Retrofit.Builder()
                     .baseUrl(Helper.getConfigValue("baseUrl", R.raw.config)!!)
+                    .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(ApiWorker(context).gsonConverter!!)
                     .client(ApiWorker(context).client)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())

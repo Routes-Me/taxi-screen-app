@@ -18,31 +18,42 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.App
+import com.routesme.vehicles.api.RestApiService
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import org.greenrobot.eventbus.EventBus
+import org.greenrobot.eventbus.Subscribe
+import org.greenrobot.eventbus.ThreadMode
 import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class TrackingService : Service() {
 
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
-    private lateinit var db : TrackingDatabase
+    private lateinit var db: TrackingDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
     private var sendFeedsTimer: Timer? = null
+    private val thisApiCoreService by lazy { RestApiService.createCorService(this) }
+    private var vehicleId: String? = null
 
     override fun onCreate() {
         super.onCreate()
+        vehicleId = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.vehicle_id, null)
         hubConnection = prepareHubConnection()
+        EventBus.getDefault().register(this)
         locationReceiver = LocationReceiver()
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
-         //insertTestFeeds()
+        //insertTestFeeds()
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
@@ -50,6 +61,7 @@ class TrackingService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         locationReceiver.stopLocationUpdatesListener()
+        EventBus.getDefault().unregister(this)
         sendFeedsTimer?.cancel()
         db.apply { if (isOpen) close() }
         hubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
@@ -57,15 +69,13 @@ class TrackingService : Service() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-      //  Log.d("Test-location-service", "onStartCommand")
-       // Log.d("Service-Thread", "onConnected... ${Thread.currentThread().name}")
         startForeground(ServiceInfo.Tracking.serviceId, getNotification())
         locationReceiver.apply {
             if (isProviderEnabled()) {
                 startLocationUpdatesListener()
                 startHubConnection()
             }
-            scheduleLocationFeeds()
+            vehicleId?.let { scheduleLocationFeeds() }
         }
         return START_STICKY
     }
@@ -87,33 +97,38 @@ class TrackingService : Service() {
 
     private fun scheduleLocationFeeds() {
         sendFeedsTimer = Timer("SendFeedsTimer", true).apply {
-            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(10)) {
-                hubConnection.let {
-                        if (it.connectionState == HubConnectionState.CONNECTED) {
-                            sendFeeds()
+            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.MINUTES.toMillis(1)) {
+                GlobalScope.launch(Dispatchers.IO) {
+                    locationFeedsDao.getFeeds().let { feeds ->
+                        Log.d("LocationArchiving", "PostCoordinates... Get feeds from Room DB: $feeds")
+                        if (!feeds.isNullOrEmpty()) {
+                            sendFeeds(feeds)
                         }
+                    }
                 }
             }
         }
     }
 
-    private fun sendFeeds() {
-        GlobalScope.launch(Dispatchers.IO) {
-            locationFeedsDao.getFeeds().let { feeds ->
-                if (!feeds.isNullOrEmpty()) {
-                  //  Log.d("SocketSrv", "Feeds to send: $feeds")
-                    val feedCoordinates = feeds.map { it.coordinate }
-                    hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
-                   // Log.d("SocketSrv", "Feeds to delete: ${feeds.first().id} - ${feeds.last().id}")
-                    locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
+    private fun sendFeeds(feeds: List<LocationFeed>) {
+        val coordinates = feeds.map { it.coordinate }
+        val call = thisApiCoreService.locationCoordinates(vehicleId!!, coordinates)
+        call.enqueue(object : Callback<String> {
+            override fun onResponse(call: Call<String>, response: Response<String>) {
+                if (response.isSuccessful) {
+                    GlobalScope.launch(Dispatchers.IO) {
+                        locationFeedsDao.deleteFeeds(feeds.first().id, feeds.last().id)
+                        Log.d("LocationArchiving", "PostCoordinates... Successfully . Deleted feeds: ${feeds.first().id} - ${feeds.last().id}")
+                    }
                 }
             }
-        }
+            override fun onFailure(call: Call<String>, throwable: Throwable) {}
+        })
     }
 
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
-        Log.d("URL","${trackingUrl}")
+        Log.d("URL", "${trackingUrl}")
         return HubConnectionBuilder
                 .create(trackingUrl)
                 .withHeader("Authorization", Account().accessToken)
@@ -160,6 +175,7 @@ class TrackingService : Service() {
                             }
                         }
                     }
+
                     override fun onComplete() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
@@ -170,4 +186,21 @@ class TrackingService : Service() {
                 })
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(locationFeed: LocationFeed) {
+        Log.d("LocationArchiving", "EventBus... TrackingService... received LocationFeed: $locationFeed")
+        GlobalScope.launch(Dispatchers.IO) {
+            hubConnection.let {
+                if (it.connectionState == HubConnectionState.CONNECTED) {
+                    val feeds = mutableListOf<LocationFeed>().apply { add(locationFeed) }.toList()
+                    val feedCoordinates = feeds.map { it.coordinate }
+                    it.send("SendLocations", feedCoordinates)
+                    Log.d("LocationArchiving", "hubConnection connected... sent LocationFeed by signalR")
+                } else {
+                    locationFeedsDao.insertLocation(locationFeed)
+                    Log.d("LocationArchiving", "hubConnection not connected... inserted LocationFeed into room DB")
+                }
+            }
+        }
+    }
 }
