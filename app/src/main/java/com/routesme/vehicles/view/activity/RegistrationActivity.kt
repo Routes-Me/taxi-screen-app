@@ -197,9 +197,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register() {
-        registerCredentials.apply {
-            SimSerialNumber = "4556466"
-        }
         if (Account().accessToken != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
