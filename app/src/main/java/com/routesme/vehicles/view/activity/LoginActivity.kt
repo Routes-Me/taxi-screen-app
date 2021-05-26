@@ -20,6 +20,7 @@ import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.Error
 import com.routesme.vehicles.data.model.LoginResponse
@@ -56,6 +57,7 @@ class LoginActivity : AppCompatActivity() {
         initialize()
     }
 
+    @SuppressLint("SetTextI18n")
     private fun initialize() {
         dialogSetUp()
         openLoginLayout(app.isNewLogin)
@@ -65,6 +67,7 @@ class LoginActivity : AppCompatActivity() {
         technical_login_screen.btn_next.setOnClickListener { buttonNextClick() }
         operations.enableNextButton(btn_next, true)
         editTextListener()
+        appVersion_tv.text = "V${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
     }
 
     private fun editTextListener() {
