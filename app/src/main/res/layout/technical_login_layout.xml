@@ -195,4 +195,16 @@
         app:layout_constraintTop_toTopOf="@id/btn_next" />
 
 
+    <TextView
+        android:id="@+id/appVersion_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_9ssp"
+        android:textStyle="normal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginEnd="@dimen/_10sdp"
+        android:layout_marginBottom="@dimen/_10sdp"/>
+
 </androidx.constraintlayout.widget.ConstraintLayout>
