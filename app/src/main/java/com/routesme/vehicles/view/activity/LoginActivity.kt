@@ -1,11 +1,13 @@
 package com.routesme.vehicles.view.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.*
@@ -13,6 +15,7 @@ import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.telephony.TelephonyManager
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -21,6 +24,7 @@ import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
@@ -40,12 +44,20 @@ import kotlinx.android.synthetic.main.exit_pattern_dialog.*
 import kotlinx.android.synthetic.main.login_screen.*
 import kotlinx.android.synthetic.main.technical_login_layout.*
 import kotlinx.android.synthetic.main.technical_login_layout.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import java.io.IOException
 import java.net.HttpURLConnection
+import java.util.*
+import java.util.concurrent.TimeUnit
+import kotlin.concurrent.schedule
 import kotlin.system.exitProcess
 
 class LoginActivity : AppCompatActivity() {
 
+    private lateinit var telephonyManager: TelephonyManager
+    private val READ_PHONE_STATE_REQUEST_CODE = 101
     private var pressedTime: Long = 0
     private var clickTimes = 0
     private val app = App.instance
@@ -69,6 +81,7 @@ class LoginActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun initialize() {
+        telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         dialogSetUp()
         openLoginLayout(app.isNewLogin)
         btnOpenLoginScreen.setOnClickListener { showLoginView() }
@@ -78,6 +91,7 @@ class LoginActivity : AppCompatActivity() {
         operations.enableNextButton(btn_next, true)
         editTextListener()
         appVersion_tv.text = "V${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
+        checkSimAvailability()
     }
 
 
@@ -310,6 +324,49 @@ class LoginActivity : AppCompatActivity() {
         app.isNewLogin = true
     }
 
+    private fun checkSimAvailability() {
+        when (telephonyManager.simState) {
+            TelephonyManager.SIM_STATE_READY -> {simStatus_tv.text = SimStates.READY.value; getSimSerialNumber() }
+            TelephonyManager.SIM_STATE_ABSENT -> {simStatus_tv.text = SimStates.ABSENT.value; retryGetSimAvailability()}
+            TelephonyManager.SIM_STATE_NETWORK_LOCKED -> simStatus_tv.text = SimStates.NETWORK_LOCKED.value
+            TelephonyManager.SIM_STATE_PIN_REQUIRED -> simStatus_tv.text = SimStates.PIN_REQUIRED.value
+            TelephonyManager.SIM_STATE_PUK_REQUIRED -> simStatus_tv.text = SimStates.PUK_REQUIRED.value
+            // TelephonyManager.SIM_STATE_UNKNOWN -> SimStates.UNKNOWN.value
+            else -> simStatus_tv.text = SimStates.UNKNOWN.value
+        }
+    }
+
+    @SuppressLint("HardwareIds")
+    private fun getSimSerialNumber() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), READ_PHONE_STATE_REQUEST_CODE)
+            return
+        } else {
+            simSerialNumber_tv.text = telephonyManager.simSerialNumber
+        }
+    }
+
+    @SuppressLint("HardwareIds")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            READ_PHONE_STATE_REQUEST_CODE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                getSimSerialNumber()
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun retryGetSimAvailability() {
+        Timer("RetryGetSimState", true).apply {
+            schedule(TimeUnit.SECONDS.toMillis(10)) {
+                Log.d("SimState", "RetryGetSimState")
+                GlobalScope.launch(Dispatchers.Main) {
+                    checkSimAvailability()
+                }
+            }
+        }
+    }
+
     private fun registerNetworkListener() {
         registerReceiver(mWifiReceiver , IntentFilter(CONNECTIVITY_ACTION))
     }
@@ -326,6 +383,8 @@ class LoginActivity : AppCompatActivity() {
         super.onDestroy()
         unRegisterNetworkListener();
     }
+
 }
 
 enum class Field(val code: Int) { UserName(1), Password(2) }
+enum class SimStates(val value: String) {READY("SIM READY"), ABSENT("SIM ABSENT"), NETWORK_LOCKED("SIM NETWORK LOCKED"), PIN_REQUIRED("SIM PIN REQUIRED"), PUK_REQUIRED("SIM PUK REQUIRED"), UNKNOWN("SIM UNKNOWN")}
