@@ -27,7 +27,7 @@ class ApiWorker(val context: Context) {
                     connectTimeout(1, TimeUnit.MINUTES)
                     readTimeout(30, TimeUnit.SECONDS)
                     writeTimeout(15, TimeUnit.SECONDS)
-                    addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
+                    //addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
                     addInterceptor(BasicAuthInterceptor())
                     addInterceptor(ReceivedCookiesInterceptor())
                     addInterceptor(RedirectInterceptor())
