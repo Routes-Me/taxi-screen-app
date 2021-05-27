@@ -30,9 +30,9 @@
 #-keep class com.google.gson.stream.** { *; }
 
 # Application classes that will be serialized/deserialized over Gson
--keep class com.routesme.taxi.** { <fields>; }
-#-keep class com.microsoft.signalr.** { *; }
-#-keep interface com.microsoft.signalr.** { *; }
+-keep class com.routesme.vehicles.** { <fields>; }
+-keep class com.microsoft.signalr.** { *; }
+-keep interface com.microsoft.signalr.** { *; }
 
 # Prevent proguard from stripping interface information from TypeAdapter, TypeAdapterFactory,
 # JsonSerializer, JsonDeserializer instances (so they can be used in @JsonAdapter)
@@ -44,6 +44,14 @@
 # Prevent R8 from leaving Data object members always null
 -keepclassmembers,allowobfuscation class * {
   @com.google.gson.annotations.SerializedName <fields>;
+}
+
+-assumenosideeffects class android.util.Log {
+  public static *** v(...);
+  public static *** d(...);
+  public static *** i(...);
+  public static *** w(...);
+  public static *** e(...);
 }
 
 -keepattributes *Annotation*

@@ -3,6 +3,11 @@ package com.routesme.vehicles.view.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.net.ConnectivityManager
+import android.net.ConnectivityManager.NetworkCallback
+import android.net.ConnectivityManager.TYPE_WIFI
+import android.net.Network
+import android.net.NetworkInfo
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -18,9 +23,10 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.routesme.vehicles.App
+import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.ContentResponse
 import com.routesme.vehicles.data.model.Data
-import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.AdvertisementsHelper
 import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.helper.DateOperations
@@ -29,7 +35,6 @@ import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.factory.ViewModelFactory
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
-import com.routesme.vehicles.App
 import com.routesme.vehicles.service.VideoService
 import com.routesme.vehicles.view.adapter.BottomBannerAdapter
 import com.routesme.vehicles.view.adapter.ImageBannerAdapter
@@ -76,7 +81,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         super.onAttach(context)
         mContext = context
     }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view : View = inflater.inflate(R.layout.content_fragment, container, false)
         return view

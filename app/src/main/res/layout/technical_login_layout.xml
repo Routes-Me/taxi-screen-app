@@ -205,8 +205,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
         android:layout_marginEnd="@dimen/_10sdp"
-        android:layout_marginBottom="@dimen/_10sdp"
-        android:text="v1.0.1"/>
+        android:layout_marginBottom="@dimen/_10sdp" />
 
     <TextView
         android:id="@+id/simStatus_tv"
@@ -215,7 +214,6 @@
         android:textColor="@color/black"
         android:textSize="@dimen/_9ssp"
         android:textStyle="normal"
-        android:text="SIM Status"
         app:layout_constraintTop_toTopOf="@id/appVersion_tv"
         app:layout_constraintBottom_toBottomOf="@id/appVersion_tv"
         app:layout_constraintStart_toStartOf="parent"
@@ -232,5 +230,27 @@
         android:layout_marginStart="@dimen/_4sdp"
         app:layout_constraintTop_toTopOf="@id/simStatus_tv"
         app:layout_constraintBottom_toBottomOf="@id/simStatus_tv"/>
+
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textViewNetworkState"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="@dimen/_4sdp"
+        android:layout_marginBottom="@dimen/_10sdp"
+        android:textColor="@color/black"
+        android:textSize="@dimen/_9sdp"
+        android:textStyle="normal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/appVersion_tv" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="@dimen/_8sdp"
+        android:layout_height="@dimen/_8sdp"
+        android:layout_marginEnd="@dimen/_2sdp"
+        android:background="@drawable/circular_active_bg"
+        app:layout_constraintBottom_toBottomOf="@+id/textViewNetworkState"
+        app:layout_constraintEnd_toStartOf="@+id/textViewNetworkState"
+        app:layout_constraintTop_toTopOf="@+id/textViewNetworkState" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

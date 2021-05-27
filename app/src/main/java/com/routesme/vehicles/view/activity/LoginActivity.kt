@@ -4,8 +4,14 @@ import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
+import android.content.BroadcastReceiver
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.content.IntentFilter
+import android.net.ConnectivityManager
+import android.net.ConnectivityManager.*
+import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -60,12 +66,16 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var password: String
     private var dialog: AlertDialog? = null
     private val operations = Operations.instance
-
+    var mWifiReceiver: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+            checkWifiConnect()
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_screen)
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
-        Log.d("RefreshToken", "Login Activity")
+        registerNetworkListener();
         initialize()
     }
 
@@ -83,6 +93,7 @@ class LoginActivity : AppCompatActivity() {
         appVersion_tv.text = "V${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
         checkSimAvailability()
     }
+
 
     private fun editTextListener() {
         userName_et.addTextChangedListener(object : TextWatcher {
@@ -105,6 +116,21 @@ class LoginActivity : AppCompatActivity() {
         })
     }
 
+    private fun checkWifiConnect() {
+        val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        val netInfo = cm.activeNetworkInfo
+        if(netInfo != null && netInfo.isConnected) {
+            view.background = getDrawable(R.drawable.circular_active_bg)
+            when (netInfo.type) {
+                TYPE_WIFI -> textViewNetworkState.text = "WIFI"
+                TYPE_MOBILE -> textViewNetworkState.text = "SIM"
+            }
+        }else{
+            view.background = getDrawable(R.drawable.circular_deactive_bg)
+            textViewNetworkState.text = "Not connected"
+        }
+    }
+
     private fun dialogSetUp() {
         dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
     }
@@ -112,18 +138,10 @@ class LoginActivity : AppCompatActivity() {
     private fun buttonNextClick() {
         operations.enableNextButton(btn_next, false)
         saveAuthCredentials()
-        if (userNameValid() && passwordValid()) {
-            // startActivity(Intent(this,HomeActivity::class.java))
-            // finish()
+        if (userNameValid() && passwordValid()){
             signIn()
         }
     }
-
-    /*private fun testEncryption() {
-        val str = password
-        val encrypted = AesBase64Wrapper().getEncryptedString(str)
-        Log.d("Encryption", "Origin: $str \n Encrypted: $encrypted")
-    }*/
 
     private fun signIn() {
         dialog?.show()
@@ -138,9 +156,7 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
-                    Log.d("RefreshTokenTesting", " Received access token: $token")
                     Account().apply { accessToken = token }
-                    Log.d("RefreshToken", "Login Activity..Get new access token")
                     openNextActivity()
 
                 } else {
@@ -162,12 +178,7 @@ class LoginActivity : AppCompatActivity() {
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {
-            /*
-               if (error.code == 1 || error.code == 2) {
-                   showErrorMessage(error, true)
-               }
-               */
-            if (error.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED) {
+            if (error.statusCode == HttpURLConnection.HTTP_UNAUTHORIZED){
                 operations.displayAlertDialog(this, getString(R.string.login_error_title), "Username or password incorrect !")
             } else {
                 operations.displayAlertDialog(this, getString(R.string.login_error_title), "Error message: ${error.detail}")
@@ -176,7 +187,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openNextActivity() {
-        Log.d("RefreshToken", "Login Activity..Check witch the next activity to open")
         val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
         val intent = if (isRegistered) Intent(this, ModelPresenter::class.java) else Intent(this, RegistrationActivity::class.java)
         startActivity(intent)
@@ -356,6 +366,24 @@ class LoginActivity : AppCompatActivity() {
             }
         }
     }
+
+    private fun registerNetworkListener() {
+        registerReceiver(mWifiReceiver , IntentFilter(CONNECTIVITY_ACTION))
+    }
+
+    protected fun unRegisterNetworkListener() {
+        try {
+            unregisterReceiver(mWifiReceiver)
+        } catch (e: IllegalArgumentException) {
+            e.printStackTrace()
+        }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        unRegisterNetworkListener();
+    }
+
 }
 
 enum class Field(val code: Int) { UserName(1), Password(2) }

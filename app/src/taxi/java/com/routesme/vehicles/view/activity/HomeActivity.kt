@@ -39,7 +39,7 @@ import org.greenrobot.eventbus.ThreadMode
 class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(){
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
-    private val helper = HomeScreenHelper(this)
+    private val helper by lazy { HomeScreenHelper(this) }
     private var isHotspotAlive = false
     private var pressedTime: Long = 0
     private lateinit var mView: View
@@ -164,7 +164,6 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     }
 
     private fun turnOnHotspot() {
-
         val intent = Intent(getString(R.string.intent_action_turnon))
         sendImplicitBroadcast(intent)
         isHotspotAlive = true
