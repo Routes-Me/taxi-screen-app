@@ -97,7 +97,7 @@ class TrackingService : Service() {
 
     private fun scheduleLocationFeeds() {
         sendFeedsTimer = Timer("SendFeedsTimer", true).apply {
-            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.MINUTES.toMillis(1)) {
+            schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.MINUTES.toMillis(5)) {
                 GlobalScope.launch(Dispatchers.IO) {
                     locationFeedsDao.getFeeds().let { feeds ->
                         Log.d("LocationArchiving", "PostCoordinates... Get feeds from Room DB: $feeds")
