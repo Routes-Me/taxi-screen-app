@@ -140,15 +140,16 @@ class AdminConsolePanel : AppCompatActivity() {
             when (it.status) {
 
                 ResponseBody.Status.SUCCESS -> {
-
-                    it.data?.let { list ->
-                        contentViewModel.postReport(this, getJsonArray(list), deviceId).observe(this, Observer<ReportResponse> {
+                    if(!it.data.isNullOrEmpty()){
+                        contentViewModel.postReport(this, getJsonArray(it.data), deviceId).observe(this, Observer<ReportResponse> {
                             if (it.isSuccess) {
                                 observeDeleteTable(deviceId, vehicleId)
                             } else {
                                 dialog?.hide()
                             }
                         })
+                    }else{
+                        observeDeleteTable(deviceId, vehicleId)
                     }
                 }
                 ResponseBody.Status.ERROR -> {
