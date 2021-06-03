@@ -8,11 +8,15 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
+import com.google.android.gms.nearby.messages.PublishCallback
+import com.google.android.gms.nearby.messages.PublishOptions
+import com.google.android.gms.nearby.messages.Strategy
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.vehicles.helper.DisplayManager
 import com.routesme.vehicles.service.TrackingService
@@ -20,6 +24,8 @@ import com.routesme.vehicles.data.model.SignInCredentials
 import com.routesme.vehicles.worker.TaskManager
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.view.events.PublishNearBy
+import org.greenrobot.eventbus.EventBus
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -38,6 +44,24 @@ class App : Application() {
     companion object {
         @get:Synchronized
         var instance = App()
+        var nearbyPublishOptions = PublishOptions.Builder()
+                .setStrategy(nearbyStrategy())
+                .setCallback(object : PublishCallback() {
+                    override fun onExpired() {
+                        super.onExpired()
+                        EventBus.getDefault().post(PublishNearBy(true))
+                        Log.d("Publish","Expire")
+                    }
+                }).build()
+
+
+        private fun nearbyStrategy(): Strategy {
+            return Strategy.Builder()
+                    .setTtlSeconds(Strategy.TTL_SECONDS_DEFAULT)
+                    .setDistanceType(Strategy.DISTANCE_TYPE_DEFAULT)
+                    .setDiscoveryMode(Strategy.DISCOVERY_MODE_DEFAULT)
+                    .build()
+        }
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         val periodicWorkRequest: PeriodicWorkRequest = PeriodicWorkRequest.Builder(TaskManager::class.java, 4, TimeUnit.HOURS).setConstraints(constraint).setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS).build()
     }

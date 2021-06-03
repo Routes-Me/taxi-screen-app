@@ -118,7 +118,7 @@
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"
-            android:value="AIzaSyAoAYo4ShfpT7cLSG-lfdCLe3P8q_jrQF8" />
+            android:value="AIzaSyD5Smq7lcUIWm4jVvcDiN8QUjpmdaxmWBw" />
     </application>
 
 </manifest>

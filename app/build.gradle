@@ -167,4 +167,6 @@ dependencies {
     implementation 'android.arch.work:work-runtime:1.0.1'
     //Gif imageView
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.18'
+    //Nearby
+    implementation 'com.google.android.gms:play-services-nearby:17.0.0'
 }

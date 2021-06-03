@@ -29,7 +29,10 @@ import com.routesme.vehicles.view.fragment.ContentFragment
 import com.routesme.vehicles.viewmodel.SubmitApplicationVersionViewModel
 import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.R
+import com.routesme.vehicles.data.model.Parameter
 import com.routesme.vehicles.helper.SharedPreferencesHelper
+import com.routesme.vehicles.nearby.NearByOperation
+import com.routesme.vehicles.view.events.PublishNearBy
 import kotlinx.android.synthetic.taxi.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -186,6 +189,14 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         }
     }
 
+    private fun getScreenInfo(): Parameter {
+        //return sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+        val item = Parameter()
+        item.deviceID = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        item.plateNo = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
+        return item
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(demoVideo: DemoVideo){
         try {
@@ -210,6 +221,12 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         }
 
     }
+    @Subscribe()
+    fun onEvent(boolean: PublishNearBy){
+        Log.d("Publish","Event Trigger")
+        NearByOperation.instance.publish(getScreenInfo(),this)
+
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -224,11 +241,13 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     }
     override fun onStart() {
         Log.d("LifeCycle","onStart")
+        NearByOperation.instance.publish(getScreenInfo(),this)
         EventBus.getDefault().register(this)
         super.onStart()
     }
 
     override fun onStop() {
+        Log.d("LifeCycle","Stop")
         EventBus.getDefault().unregister(this)
         super.onStop()
     }
