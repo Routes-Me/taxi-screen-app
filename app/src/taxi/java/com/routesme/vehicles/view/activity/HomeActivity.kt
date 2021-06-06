@@ -50,6 +50,7 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
+    private  var terminalId:String?=null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,9 +66,17 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         }
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        terminalId = sharedPreferences?.getString(SharedPreferencesHelper.terminal_id, null)
+        if(terminalId == null){
+            Log.d("Terminal Id","Is Null ${terminalId}")
+            registerTerminal()
+        }else{
+            Log.d("Terminal Id","Not Null ${terminalId}")
+        }
         submitApplicationVersion()
         launch {initializePlayer()}
         turnOnHotspot()
@@ -75,6 +84,11 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         helper.requestRuntimePermissions()
         addFragments()
         setSystemUiVisibility()
+    }
+
+    private fun registerTerminal() {
+
+
     }
 
     private fun setSystemUiVisibility() {

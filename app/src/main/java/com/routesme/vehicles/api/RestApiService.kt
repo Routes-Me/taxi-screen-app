@@ -5,11 +5,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.vehicles.helper.Helper
-import com.routesme.vehicles.data.model.RegistrationCredentials
-import com.routesme.vehicles.data.model.SignInCredentials
-import com.routesme.vehicles.data.model.SubmitApplicationVersionCredentials
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.RefreshTokenCredentials
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.room.entity.LocationCoordinate
 import org.json.JSONArray
 import retrofit2.Call
@@ -49,6 +46,9 @@ interface RestApiService {
 
     @GET("carriers/{vehicleId}")
     fun getCarrierInformation(@Path("vehicleId") vehicleId: String, @Query("include") include: String): Call<JsonElement>
+
+    @POST("terminals")
+    fun createTerminal(@Body parameter: Parameter ): Call<JsonElement>
 
     @POST("vehicles/{vehicleId}/coordinates")
     fun locationCoordinates (@Path("vehicleId") vehicleId: String, @Body coordinates: List<LocationCoordinate>): Call<String>

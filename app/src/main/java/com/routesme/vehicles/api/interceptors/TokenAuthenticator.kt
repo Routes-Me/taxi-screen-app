@@ -50,6 +50,7 @@ class TokenAuthenticator(private val context: Context): Authenticator{
                 Log.d("RefreshTokenTesting", "TokenAuthenticator... Code: ${response.code()}")
                 //If it's expired, So I'll handle refresh token logic
                 if (!App.instance.isRefreshActivityAlive) {
+                    Log.d("RefreshTokenTesting","${App.instance.isRefreshActivityAlive}")
                     App.instance.isRefreshActivityAlive = true
                     openRefreshTokenActivity()
                 }

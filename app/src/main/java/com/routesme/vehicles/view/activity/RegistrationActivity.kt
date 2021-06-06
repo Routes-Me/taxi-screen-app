@@ -12,13 +12,19 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.installations.FirebaseInstallations
+import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
@@ -32,6 +38,7 @@ import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.uplevels.CarrierInformation
 import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
+import com.routesme.vehicles.viewmodel.TerminalViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
@@ -122,6 +129,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         registerCredentials.VehicleId = app.vehicleId
         taxiOffice_tv.text = showTaxiOfficeName(app.institutionName)
         taxiPlateNumber_tv.text = showTaxiPlateNumber(app.taxiPlateNumber)
+
+
         super.onRestart()
     }
 
@@ -215,6 +224,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         App.instance.startTrackingService()
                         openModelPresenterScreen()
+                        //registerTerminal(getParemeter(deviceId))
+
                     } else {
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
@@ -233,6 +244,34 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
         }
+    }
+
+
+
+    private fun registerTerminal(parameter : Parameter) {
+        val terminalViewModel : TerminalViewModel by viewModels()
+        terminalViewModel.createTerminal(parameter,this).observe(this, Observer<TerminalResponse> {
+            if (it != null) {
+                if (it.isSuccess) {
+                    editor.apply {
+                        putString(SharedPreferencesHelper.terminal_id, it.terminalId)
+                    }.apply()
+                    openModelPresenterScreen()
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
+            }
+        })
     }
 
     private fun getCarrierInformation(vehicleId: String) {
@@ -405,5 +444,16 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             finish()
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private fun getParemeter(deviceId: String): Parameter {
+        val parameter = Parameter()
+        parameter.deviceID = deviceId
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            // Get new FCM registration token
+            parameter.notificationIdentifier  = task.result
+            Log.d("FCM_TOKEN", task.result)
+        })
+        return parameter
     }
 }

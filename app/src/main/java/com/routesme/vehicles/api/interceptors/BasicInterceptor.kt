@@ -24,6 +24,7 @@ internal class BasicAuthInterceptor() : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
+        Log.d("AccessToken", "${Account().accessToken.toString()}")
         val request = chain.request().newBuilder()
                 .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
                 .addHeader(Header.CountryCode.toString(), countryCode())

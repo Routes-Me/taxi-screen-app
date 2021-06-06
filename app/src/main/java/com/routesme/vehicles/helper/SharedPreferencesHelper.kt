@@ -9,6 +9,7 @@ class SharedPreferencesHelper {
         const val refresh_token_exp = "refresh_token_exp"
         const val refresh_token = "refresh_token"
         const val username = "username"
+        const val terminal_id = "TERMINAL_ID"
         const val registration_date = "registration_date"
         const val institution_id = "institution_id"
         const val institution_name = "institution_name"
