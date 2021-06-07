@@ -40,7 +40,6 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
                             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                 if (response.isSuccessful) {
                                     GlobalScope.launch {
-
                                         val delete = dbHelper.deleteTable(list.first().id,list.last().id)
                                         Log.d("AnalyticsTesting","${delete}")
                                         editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
@@ -48,15 +47,10 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
                                     }
                                 }
                             }
-
                             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-
-
                             }
                         })
-
                     } else {
-
                         Log.d("WorkManager", "No Data found")
                     }
                 }

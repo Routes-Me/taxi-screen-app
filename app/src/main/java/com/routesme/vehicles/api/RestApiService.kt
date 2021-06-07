@@ -53,6 +53,9 @@ interface RestApiService {
     @POST("vehicles/{vehicleId}/coordinates")
     fun locationCoordinates (@Path("vehicleId") vehicleId: String, @Body coordinates: List<LocationCoordinate>): Call<String>
 
+    @PUT("terminals/{terminalId}")
+    fun updateFCM (@Body parameter: Parameter,@Path("terminalId") deviceId: String): Call<JsonElement>
+
     companion object {
 
         fun createCorService(context: Context): RestApiService {

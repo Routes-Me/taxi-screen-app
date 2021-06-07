@@ -55,6 +55,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var telephonyManager: TelephonyManager
     private var dialog: AlertDialog? = null
     private var institutionId: String? = null
+    private var fcm_token: String? = null
     private var showRationale = true
     private var getDeviceInfo: Boolean = false
 
@@ -74,6 +75,15 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         toolbarSetUp()
         initializeViews()
         getTabletInfo()
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                //Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            // Get new FCM registration token
+            fcm_token = task.result
+            Log.d("FCM_TOKEN",fcm_token)
+        })
     }
 
     private fun requestRuntimePermissions() {
@@ -223,9 +233,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         saveDeviceInfoIntoSharedPreferences(deviceId)
                         if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         App.instance.startTrackingService()
-                        openModelPresenterScreen()
-                        //registerTerminal(getParemeter(deviceId))
-
+                        //openModelPresenterScreen()
+                        Log.d("FCM_TOKEN","${getParemeter(deviceId)}")
+                        registerTerminal(getParemeter(deviceId))
                     } else {
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
@@ -249,10 +259,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
 
     private fun registerTerminal(parameter : Parameter) {
+        dialog?.show()
         val terminalViewModel : TerminalViewModel by viewModels()
         terminalViewModel.createTerminal(parameter,this).observe(this, Observer<TerminalResponse> {
             if (it != null) {
                 if (it.isSuccess) {
+                    dialog?.dismiss()
                     editor.apply {
                         putString(SharedPreferencesHelper.terminal_id, it.terminalId)
                     }.apply()
@@ -448,12 +460,13 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun getParemeter(deviceId: String): Parameter {
         val parameter = Parameter()
-        parameter.deviceID = deviceId
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            // Get new FCM registration token
-            parameter.notificationIdentifier  = task.result
-            Log.d("FCM_TOKEN", task.result)
-        })
+        parameter.DeviceId = deviceId
+        parameter.NotificationIdentifier = fcm_token
+
         return parameter
+    }
+
+    private fun getToken(){
+
     }
 }

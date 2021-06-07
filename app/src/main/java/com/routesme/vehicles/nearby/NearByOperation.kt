@@ -40,7 +40,7 @@ class NearByOperation {
         mMessageClient = Nearby.getMessagesClient(mContext!!)
         mMessageClient!!.publish(nearbyMessage(message), App.nearbyPublishOptions).addOnSuccessListener {
 
-            Log.d("Publish","${message.deviceID},${message.plateNo}")
+            Log.d("Publish","${message.DeviceId},${message.plateNo}")
 
         }.addOnFailureListener {
 

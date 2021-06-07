@@ -20,24 +20,25 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.routesme.vehicles.BuildConfig
-import com.routesme.vehicles.data.model.IModeChanging
-import com.routesme.vehicles.data.model.SubmitApplicationVersionCredentials
-import com.routesme.vehicles.data.model.SubmitApplicationVersionResponse
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.view.fragment.ContentFragment
 import com.routesme.vehicles.viewmodel.SubmitApplicationVersionViewModel
 import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.Parameter
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.nearby.NearByOperation
 import com.routesme.vehicles.view.events.PublishNearBy
+import com.routesme.vehicles.viewmodel.TerminalViewModel
 import kotlinx.android.synthetic.taxi.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.IOException
 
 class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), IModeChanging,CoroutineScope by MainScope(){
     private var sharedPreferences: SharedPreferences? = null
@@ -66,17 +67,11 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         }
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-
         editor= sharedPreferences?.edit()
         from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         terminalId = sharedPreferences?.getString(SharedPreferencesHelper.terminal_id, null)
-        if(terminalId == null){
-            Log.d("Terminal Id","Is Null ${terminalId}")
-            registerTerminal()
-        }else{
-            Log.d("Terminal Id","Not Null ${terminalId}")
-        }
+        //if(terminalId == null) registerTerminal(getParemeter(deviceId!!))
         submitApplicationVersion()
         launch {initializePlayer()}
         turnOnHotspot()
@@ -86,9 +81,30 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         setSystemUiVisibility()
     }
 
-    private fun registerTerminal() {
+    private fun registerTerminal(parameter:Parameter) {
+        val terminalViewModel : TerminalViewModel by viewModels()
+        terminalViewModel.createTerminal(parameter,this).observe(this, Observer<TerminalResponse> {
+            if (it != null) {
+                if (it.isSuccess) {
+                    editor?.apply {
+                        putString(SharedPreferencesHelper.terminal_id, it.terminalId)
+                    }?.apply()
+                } else {
 
+                }
+            }
+        })
+    }
 
+    private fun getParemeter(deviceId: String): Parameter {
+        val parameter = Parameter()
+        parameter.DeviceId = deviceId
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            // Get new FCM registration token
+            parameter.NotificationIdentifier  = task.result
+            Log.d("FCM_TOKEN", task.result)
+        })
+        return parameter
     }
 
     private fun setSystemUiVisibility() {
@@ -206,7 +222,7 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     private fun getScreenInfo(): Parameter {
         //return sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         val item = Parameter()
-        item.deviceID = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        item.DeviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         item.plateNo = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
         return item
     }
@@ -254,7 +270,6 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         cancel()
     }
     override fun onStart() {
-        Log.d("LifeCycle","onStart")
         NearByOperation.instance.publish(getScreenInfo(),this)
         EventBus.getDefault().register(this)
         super.onStart()
