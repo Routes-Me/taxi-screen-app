@@ -136,27 +136,26 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
                             Log.e("ExoPlayer", "TYPE_SOURCE")
-                            if (error.sourceException.message == "Response code: 404") {
-                                exoPlayer.seekTo(exoPlayer.nextWindowIndex, 0)
-
-                            } else {
-                                prepare()
-                            }
-
+                            moveToNextVideo()
+                            prepare()
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
+                            moveToNextVideo()
                             prepare()
                             Log.e("ExoPlayer", "TYPE_RENDERER")
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
+                            moveToNextVideo()
                             Log.e("ExoPlayer", "TYPE_UNEXPECTED")
                         }
                     }
                 }
-
             })
         }
+    }
 
+    private fun moveToNextVideo(){
+        exoPlayer.seekTo(exoPlayer.nextWindowIndex, 0)
     }
 
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {
