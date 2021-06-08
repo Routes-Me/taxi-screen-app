@@ -20,8 +20,7 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.iid.FirebaseInstanceId
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.view.fragment.ContentFragment
@@ -53,6 +52,7 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     private  var deviceId:String?=null
     private  var terminalId:String?=null
 
+    @SuppressLint("WrongThread")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
@@ -99,11 +99,7 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     private fun getParemeter(deviceId: String): Parameter {
         val parameter = Parameter()
         parameter.DeviceId = deviceId
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            // Get new FCM registration token
-            parameter.NotificationIdentifier  = task.result
-            Log.d("FCM_TOKEN", task.result)
-        })
+        parameter.NotificationIdentifier = FirebaseInstanceId.getInstance().token
         return parameter
     }
 

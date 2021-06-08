@@ -80,6 +80,7 @@ class FirebaseService : FirebaseMessagingService(){
                 override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                     if (response.isSuccessful && response.body() != null){
                         val successResponse = Gson().fromJson<TerminalSuccessResponse>(response.body(), TerminalSuccessResponse::class.java::class.java)
+                        Log.d("FCM_Token","Update Success full")
                         //terminalResponse.value = TerminalResponse(terminalId = terminal.terminalId)
                     } else{
                         if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_NOT_ACCEPTABLE){

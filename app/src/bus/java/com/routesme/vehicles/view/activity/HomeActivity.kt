@@ -51,18 +51,15 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
             ScreenBrightness.instance.setBrightnessValue(this, 20)
         }
         setContentView(R.layout.activity_home)
-
         helper = HomeScreenHelper(this)
         openPatternBtn.setOnClickListener { openPattern() }
         EventBus.getDefault().register(this)
-
         mainFragment = MainFragment()
         approvedPaymentFragment = ApprovedPaymentFragment()
         rejectedPaymentFragment = RejectedPaymentFragment()
         multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
-
-       showFragment(multiTicketsScanFirstFragment)
-       // showFragment(mainFragment)
+        showFragment(multiTicketsScanFirstFragment)
+       //showFragment(mainFragment) 
         startBusValidatorService()
         startBusPaymentService()
     }

@@ -12,19 +12,14 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
-import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.google.firebase.installations.FirebaseInstallations
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.iid.FirebaseInstanceId
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
@@ -55,14 +50,12 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var telephonyManager: TelephonyManager
     private var dialog: AlertDialog? = null
     private var institutionId: String? = null
-    private var fcm_token: String? = null
     private var showRationale = true
     private var getDeviceInfo: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
-
         initialize()
     }
 
@@ -75,15 +68,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         toolbarSetUp()
         initializeViews()
         getTabletInfo()
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                //Log.w(TAG, "Fetching FCM registration token failed", task.exception)
-                return@OnCompleteListener
-            }
-            // Get new FCM registration token
-            fcm_token = task.result
-            Log.d("FCM_TOKEN",fcm_token)
-        })
     }
 
     private fun requestRuntimePermissions() {
@@ -139,8 +123,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         registerCredentials.VehicleId = app.vehicleId
         taxiOffice_tv.text = showTaxiOfficeName(app.institutionName)
         taxiPlateNumber_tv.text = showTaxiPlateNumber(app.taxiPlateNumber)
-
-
         super.onRestart()
     }
 
@@ -234,7 +216,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         App.instance.startTrackingService()
                         //openModelPresenterScreen()
-                        Log.d("FCM_TOKEN","${getParemeter(deviceId)}")
+                        //Log.d("FCM_TOKEN","${getParemeter(deviceId)}")
                         registerTerminal(getParemeter(deviceId))
                     } else {
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
@@ -461,12 +443,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private fun getParemeter(deviceId: String): Parameter {
         val parameter = Parameter()
         parameter.DeviceId = deviceId
-        parameter.NotificationIdentifier = fcm_token
-
+        parameter.NotificationIdentifier = FirebaseInstanceId.getInstance().token
         return parameter
-    }
-
-    private fun getToken(){
-
     }
 }
