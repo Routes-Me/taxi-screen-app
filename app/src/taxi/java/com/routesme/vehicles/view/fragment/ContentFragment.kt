@@ -134,8 +134,10 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                                 setUpImageAdapter(images)
                                 setUpWifiAndQRCodeAdapter(images)
                             }
-                            setUpAdapter(videos)
-                            startVideoService(videos)
+                            if(!videos.isNullOrEmpty()){
+                                setUpAdapter(videos)
+                                startVideoService(videos)
+                            }
                         }
                     }
                 } else {
