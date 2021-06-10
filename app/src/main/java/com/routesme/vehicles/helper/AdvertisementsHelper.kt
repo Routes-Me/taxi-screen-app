@@ -27,8 +27,6 @@ class AdvertisementsHelper {
     }
 
     fun deleteCache() {
-
-        file.delete()
-
+        file.deleteRecursively()
     }
 }

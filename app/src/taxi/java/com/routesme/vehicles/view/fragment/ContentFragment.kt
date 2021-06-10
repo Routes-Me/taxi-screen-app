@@ -245,7 +245,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         val intent = Intent(mContext, VideoService::class.java)
         intent.putExtra("video_list", list as ArrayList<Data>)
         mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-
     }
 
     override fun onDestroy() {
@@ -253,7 +252,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         cancel()
         Log.d("AnalyticsTesting","Destroy")
         callApiJob.cancel()
-        AdvertisementsHelper.instance.deleteCache()
+
     }
 
     override fun onStart() {
