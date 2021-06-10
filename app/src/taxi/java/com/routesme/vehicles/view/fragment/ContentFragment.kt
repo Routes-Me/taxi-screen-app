@@ -102,7 +102,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-
         launch {
             while (isActive){
                 date = Date()
@@ -141,7 +140,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                         }
                     }
                 } else {
-
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let {
                             startThread(getString(R.string.no_data_found))
@@ -250,9 +248,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     override fun onDestroy() {
         super.onDestroy()
         cancel()
-        Log.d("AnalyticsTesting","Destroy")
         callApiJob.cancel()
-
     }
 
     override fun onStart() {
