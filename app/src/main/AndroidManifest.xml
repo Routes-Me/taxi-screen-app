@@ -44,7 +44,6 @@
             android:name=".view.activity.AdminConsolePanel"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing">
-
         </activity>
         <activity
             android:name=".view.activity.LoginActivity"
