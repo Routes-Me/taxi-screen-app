@@ -102,7 +102,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     @SuppressLint("SetTextI18n")
     private fun setTime() {
-
         launch {
             while (isActive){
                 date = Date()
@@ -134,12 +133,13 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                                 setUpImageAdapter(images)
                                 setUpWifiAndQRCodeAdapter(images)
                             }
-                            setUpAdapter(videos)
-                            startVideoService(videos)
+                            if(!videos.isNullOrEmpty()){
+                                setUpAdapter(videos)
+                                startVideoService(videos)
+                            }
                         }
                     }
                 } else {
-
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                         it.mResponseErrors?.errors?.let {
                             startThread(getString(R.string.no_data_found))
@@ -243,15 +243,12 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         val intent = Intent(mContext, VideoService::class.java)
         intent.putExtra("video_list", list as ArrayList<Data>)
         mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
-
     }
 
     override fun onDestroy() {
         super.onDestroy()
         cancel()
-        Log.d("AnalyticsTesting","Destroy")
         callApiJob.cancel()
-        AdvertisementsHelper.instance.deleteCache()
     }
 
     override fun onStart() {

@@ -57,6 +57,7 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         exoPlayer = SimpleExoPlayer.Builder(this).setLoadControl(getLoadControl()).build()
+        AdvertisementsHelper.instance.deleteCache()
         viewModel = RoomDBViewModel(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))
     }
 
@@ -136,27 +137,26 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
                             Log.e("ExoPlayer", "TYPE_SOURCE")
-                            if (error.sourceException.message == "Response code: 404") {
-                                exoPlayer.seekTo(exoPlayer.nextWindowIndex, 0)
-
-                            } else {
-                                prepare()
-                            }
-
+                            moveToNextVideo()
+                            prepare()
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
+                            moveToNextVideo()
                             prepare()
                             Log.e("ExoPlayer", "TYPE_RENDERER")
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
+                            moveToNextVideo()
                             Log.e("ExoPlayer", "TYPE_UNEXPECTED")
                         }
                     }
                 }
-
             })
         }
+    }
 
+    private fun moveToNextVideo(){
+        exoPlayer.seekTo(exoPlayer.nextWindowIndex, 0)
     }
 
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {
@@ -164,7 +164,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
         val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         videos.let { videos ->
             for (video in videos) {
-
                 val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))
                 mediaSource.add(mediaSourceItem)
             }

@@ -16,16 +16,20 @@ class AdminConsoleLists(val activity: Activity) {
         if (BuildConfig.FLAVOR == "bus") add(MasterItem(3, MasterItemType.RoutesAndTickets.title))
     }
 
-    val infoCells = listOf(
-            LabelCell("Vehicle"),
-            DetailCell("Plate Number", "${adminConsoleHelper.plateNumber()}", true),
-            DetailCell("Institution Name", "${adminConsoleHelper.institutionName()}", false),
-            LabelCell("General"),
-            // DetailCell("Channel ID", "#${adminConsoleHelper.channelId()}", true),
-            DetailCell("App Version", adminConsoleHelper.appVersion(), true),
-            DetailCell("Sim Serial Number", "${adminConsoleHelper.simSerialNumber()}", true),
-            DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)
-    )
+    val infoCells = mutableListOf<ICell>().apply {
+        add(LabelCell("Vehicle"))
+        add(DetailCell("Plate Number", "${adminConsoleHelper.plateNumber()}", true))
+        add(DetailCell("Institution Name", "${adminConsoleHelper.institutionName()}", false))
+        add(LabelCell("General"))
+        // DetailCell("Channel ID", "#${adminConsoleHelper.channelId()}", true),
+        add(DetailCell("App Version", adminConsoleHelper.appVersion(), true))
+        adminConsoleHelper.getNetworkType()?.let { addAll(it) }
+        adminConsoleHelper.getSimStatus()?.let { addAll(it) }
+        add(DetailCell("Sim Serial Number", "${adminConsoleHelper.simSerialNumber()}", true))
+        add(DetailCell("IMEI", "${adminConsoleHelper.imei()}", true))
+        // DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)
+        adminConsoleHelper.getBuildInfo()?.let { addAll(it) }
+    }.toList()
     val accountCells = listOf(
             LabelCell("Technician"),
             DetailCell("User Name", "${adminConsoleHelper.technicalUserName()?.capitalize()}", true),
