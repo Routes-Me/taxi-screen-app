@@ -161,7 +161,7 @@ class VideoService : Service(), CoroutineScope by MainScope() {
 
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {
         var mediaSource = ArrayList<MediaSource>()
-        val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name))))
+        val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
         videos.let { videos ->
             for (video in videos) {
                 val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))

@@ -45,6 +45,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private lateinit var telephonyManager: TelephonyManager
     private var dialog: AlertDialog? = null
     private var institutionId: String? = null
+    val advertisementsHelper = AdvertisementsHelper()
     private var showRationale = true
     private var getDeviceInfo: Boolean = false
 
@@ -208,7 +209,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveDeviceInfoIntoSharedPreferences(deviceId)
-                        AdvertisementsHelper.instance.deleteCache()
+                        advertisementsHelper.deleteCache()
                         if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         App.instance.startTrackingService()
                         openModelPresenterScreen()

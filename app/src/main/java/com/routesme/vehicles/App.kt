@@ -13,16 +13,18 @@ import androidx.work.BackoffPolicy
 import androidx.work.Constraints
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequest
+import com.github.pedrovgs.lynx.LynxShakeDetector
 import com.google.firebase.analytics.FirebaseAnalytics
-import com.routesme.vehicles.helper.DisplayManager
-import com.routesme.vehicles.service.TrackingService
 import com.routesme.vehicles.data.model.SignInCredentials
-import com.routesme.vehicles.worker.TaskManager
+import com.routesme.vehicles.helper.DisplayManager
 import com.routesme.vehicles.helper.SharedPreferencesHelper
+import com.routesme.vehicles.service.TrackingService
 import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.worker.TaskManager
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
+
 
 class App : Application() {
     val account = Account()
@@ -46,6 +48,8 @@ class App : Application() {
         super.onCreate()
         instance = this
         logApplicationStartingPeriod(currentPeriod())
+        val lynxShakeDetector = LynxShakeDetector(this)
+        lynxShakeDetector.init()
         displayManager.setAlarm(this)
         startTrackingService()
     }

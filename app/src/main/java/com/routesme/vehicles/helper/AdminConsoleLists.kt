@@ -40,7 +40,9 @@ class AdminConsoleLists(val activity: Activity) {
             LabelCell("Launcher"),
             DetailActionCell("Home App", adminConsoleHelper.isMyAppDefaultLauncher(), Actions.Launcher.title),
             LabelCell("Tracking"),
-            DetailActionCell("Location", adminConsoleHelper.isLocationPermissionsAllowed(), Actions.General.title)
+            DetailActionCell("Location", adminConsoleHelper.isLocationPermissionsAllowed(), Actions.General.title),
+            LabelCell("System Log"),
+            DetailActionCell("Logs", DetailActionStatus.DONE, Actions.SystemLogs.title)
     )
 
     val routesAndTicketsCells = mutableListOf<ICell>().apply {
