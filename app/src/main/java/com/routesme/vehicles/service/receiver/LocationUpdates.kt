@@ -9,38 +9,58 @@ import android.location.LocationManager
 import android.os.Bundle
 import android.os.HandlerThread
 import android.util.Log
-import com.google.android.gms.location.LocationRequest
 import com.routesme.vehicles.App
 import com.routesme.vehicles.room.entity.LocationFeed
-import org.greenrobot.eventbus.EventBus
 import java.util.concurrent.TimeUnit
 
-
-class LocationReceiver : LocationListener {
+class LocationUpdates  : LocationListener{
     private var locationManagerThread: HandlerThread? = null
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isLocationUpdatesRequested = false
-    private val minTime = TimeUnit.MINUTES.toMillis(1)
-    private val minDistance = 27F
+    private val minTime = TimeUnit.SECONDS.toMillis(5)
+    private val minDistance = 20F
+
     fun startLocationUpdatesListener() {
         try {
             locationManagerThread = HandlerThread("LocationManagerThread").apply {
                 start()
-                locationManager.requestLocationUpdates(minTime, minDistance, createFineCriteria(), this@LocationReceiver, this.looper)
+                locationManager.requestLocationUpdates(minTime, minDistance, createFineCriteria(), this@LocationUpdates, this.looper)
                 isLocationUpdatesRequested = true
             }
         } catch (ex: SecurityException) {
             Log.d("LocationManagerProvider", "Security Exception, no location available")
         }
     }
+    override fun onLocationChanged(p0: Location?) {
 
-    fun isProviderEnabled() = isGPSEnabled() || isNetworkEnabled()
-    private fun isGPSEnabled() = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)
-    private fun isNetworkEnabled() = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {
+
+    }
+
+    override fun onProviderEnabled(p0: String?) {
+
+    }
+
+    override fun onProviderDisabled(p0: String?) {
+
+    }
+
+    private fun createFineCriteria() = Criteria().apply {
+        accuracy = Criteria.ACCURACY_FINE
+        isAltitudeRequired = false
+        isBearingRequired = false
+        isSpeedRequired = true
+        isCostAllowed = true
+        powerRequirement = Criteria.POWER_HIGH
+        horizontalAccuracy = Criteria.ACCURACY_HIGH
+        verticalAccuracy = Criteria.ACCURACY_HIGH
+    }
 
     fun stopLocationUpdatesListener() {
         if (isLocationUpdatesRequested) {
-            locationManager.removeUpdates(this@LocationReceiver)
+            locationManager.removeUpdates(this@LocationUpdates)
             isLocationUpdatesRequested = false
         }
 
@@ -60,26 +80,4 @@ class LocationReceiver : LocationListener {
 
     private val bestProvider = locationManager.getBestProvider(createFineCriteria(), true)
 
-    override fun onLocationChanged(location: Location?) {
-        Log.d("OnLocation Change","OnLocationChange")
-        location?.let {
-            val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
-            Log.d("LocationArchiving", "onLocationChanged")
-            EventBus.getDefault().post(locationFeed)
-        }
-    }
-
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
-    override fun onProviderEnabled(p0: String?) {}
-    override fun onProviderDisabled(p0: String?) {}
-    private fun createFineCriteria() = Criteria().apply {
-        accuracy = Criteria.ACCURACY_FINE
-        isAltitudeRequired = false
-        isBearingRequired = false
-        isSpeedRequired = true
-        isCostAllowed = true
-        powerRequirement = Criteria.POWER_HIGH
-        horizontalAccuracy = Criteria.ACCURACY_HIGH
-        verticalAccuracy = Criteria.ACCURACY_HIGH
-    }
 }

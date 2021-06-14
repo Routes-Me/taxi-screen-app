@@ -19,11 +19,10 @@ import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.App
 import com.routesme.vehicles.api.RestApiService
+import com.routesme.vehicles.service.receiver.LocationUpdates
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -38,10 +37,14 @@ import retrofit2.Response
 class TrackingService : Service() {
 
     private lateinit var hubConnection: HubConnection
+    private lateinit var locationUpdates: LocationUpdates
     private lateinit var locationReceiver: LocationReceiver
     private lateinit var db: TrackingDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
     private var sendFeedsTimer: Timer? = null
+    private var maxTimeLimit = 300
+    private var isTimeRunning = false
+    private var sendInstanceLocationTimer: Timer? = null
     private val thisApiCoreService by lazy { RestApiService.createCorService(this) }
     private var vehicleId: String? = null
 
@@ -51,6 +54,7 @@ class TrackingService : Service() {
         hubConnection = prepareHubConnection()
         EventBus.getDefault().register(this)
         locationReceiver = LocationReceiver()
+        locationUpdates = LocationUpdates()
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
         //insertTestFeeds()
@@ -63,6 +67,8 @@ class TrackingService : Service() {
         locationReceiver.stopLocationUpdatesListener()
         EventBus.getDefault().unregister(this)
         sendFeedsTimer?.cancel()
+        locationUpdates.stopLocationUpdatesListener()
+        sendInstanceLocationTimer?.cancel()
         db.apply { if (isOpen) close() }
         hubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
     }
@@ -70,10 +76,12 @@ class TrackingService : Service() {
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         startForeground(ServiceInfo.Tracking.serviceId, getNotification())
+        locationUpdates.startLocationUpdatesListener()
         locationReceiver.apply {
             if (isProviderEnabled()) {
                 startLocationUpdatesListener()
                 startHubConnection()
+                Log.d("SocketSrv","isProviderEnabled")
             }
             vehicleId?.let { scheduleLocationFeeds() }
         }
@@ -128,7 +136,6 @@ class TrackingService : Service() {
 
     private fun prepareHubConnection(): HubConnection {
         val trackingUrl = getTrackingUrl().toString()
-        Log.d("URL", "${trackingUrl}")
         return HubConnectionBuilder
                 .create(trackingUrl)
                 .withHeader("Authorization", Account().accessToken)
@@ -138,12 +145,41 @@ class TrackingService : Service() {
                         Log.d("SocketSrv", "onClosed, Exception: $it")
                         startHubConnection()
                     }
+                    on("WillFocusInstantLocation ", { message: String? ->
+                        message?.let {
+                            if(maxTimeLimit == 300) sendInstantLocation() else maxTimeLimit = 300
+                        }
+                    }, String::class.java)
                     on("CommonMessage", { message: String? ->
                         message?.let {
-                            Log.d("SocketSrv", "CommonMessage .. Message: $it")
+                            Log.d("ListenerLocation", "CommonMessage .. Message: $it")
                         }
                     }, String::class.java)
                 }
+    }
+
+    private fun sendInstantLocation() {
+            sendInstanceLocationTimer = Timer("WillFocusInstantLocation", true).apply {
+                schedule(TimeUnit.SECONDS.toMillis(0), TimeUnit.SECONDS.toMillis(5)) {
+                    if(maxTimeLimit == 0){
+
+                        Log.d("Timer", "")
+                        maxTimeLimit = 300
+                        isTimeRunning = false
+                        sendInstanceLocationTimer?.cancel()
+                    }else{
+                        GlobalScope.launch(Dispatchers.IO) {
+                            maxTimeLimit -= 5
+                            Log.d("Timer", "Every 5 second ${maxTimeLimit}")
+                            locationUpdates.getLastKnownLocationMessage()?.let {location->
+                                val feedCoordinates = mutableListOf<LocationFeed>().apply { add(location) }.map { it.coordinate }
+                                Log.d("Timer", "Every 5 second ${feedCoordinates}")
+                                hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                            }
+                        }
+                    }
+                }
+            }
     }
 
     private fun getTrackingUrl(): Uri {
@@ -178,8 +214,8 @@ class TrackingService : Service() {
 
                     override fun onComplete() {
                         Log.d("SocketSrv", "onComplete")
-                        locationReceiver.getLastKnownLocationMessage()?.let {
-                            val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
+                        locationReceiver.getLastKnownLocationMessage()?.let {location->
+                            val feedCoordinates = mutableListOf<LocationFeed>().apply { add(location) }.map { it.coordinate }
                             hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
                         }
                     }
@@ -189,6 +225,7 @@ class TrackingService : Service() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(locationFeed: LocationFeed) {
         Log.d("LocationArchiving", "EventBus... TrackingService... received LocationFeed: $locationFeed")
+        Log.d("Timer", "OnLocationChanged time ${maxTimeLimit}")
         GlobalScope.launch(Dispatchers.IO) {
             hubConnection.let {
                 if (it.connectionState == HubConnectionState.CONNECTED) {
