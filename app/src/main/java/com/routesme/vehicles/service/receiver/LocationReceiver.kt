@@ -12,12 +12,13 @@ import android.util.Log
 import com.routesme.vehicles.App
 import com.routesme.vehicles.room.entity.LocationFeed
 import org.greenrobot.eventbus.EventBus
+import java.util.concurrent.TimeUnit
 
 class LocationReceiver : LocationListener {
     private var locationManagerThread: HandlerThread? = null
     private var locationManager: LocationManager = App.instance.getSystemService(Context.LOCATION_SERVICE) as LocationManager
     private var isLocationUpdatesRequested = false
-    private val minTime = 5000L
+    private val minTime = TimeUnit.MINUTES.toMillis(1)
     private val minDistance = 27F
     fun startLocationUpdatesListener() {
         try {
