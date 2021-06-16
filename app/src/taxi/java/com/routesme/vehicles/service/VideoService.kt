@@ -1,7 +1,9 @@
 package com.routesme.vehicles.service
 
+import android.app.Activity
 import android.app.Service
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
@@ -18,6 +20,7 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.Data
 import com.routesme.vehicles.helper.AdvertisementsHelper
 import com.routesme.vehicles.helper.DateHelper
+import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
@@ -35,13 +38,15 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     var currentMediaItemId = 0
     private var count = 0
     private var isPlayingDemoVideo = false
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+    private var isCacheCleared:Boolean?=null
     private lateinit var viewModel: RoomDBViewModel
     override fun onBind(intent: Intent?): IBinder? {
-
         exoPlayer.playWhenReady = true
         setMediaPlayer(intent?.getSerializableExtra("video_list") as List<Data>)
-        return VideoServiceBinder()
 
+        return VideoServiceBinder()
     }
 
     inner class VideoServiceBinder : Binder() {
@@ -57,7 +62,8 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         exoPlayer = SimpleExoPlayer.Builder(this).setLoadControl(getLoadControl()).build()
-        //AdvertisementsHelper.instance.deleteCache()
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
         viewModel = RoomDBViewModel(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))
     }
 
@@ -79,7 +85,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     }
 
     fun setMediaPlayer(list: List<Data>) {
-
         exoPlayer.apply {
             setMediaSources(getMediaSource(list))
             repeatMode = Player.REPEAT_MODE_ALL
@@ -104,20 +109,17 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-
                             exoPlayer.prepare()
                             exoPlayer.playbackState
-
                         }
                         Player.STATE_BUFFERING -> {
-
                             count++
                             if (count >= 5) {
                                 count = 0
                                 EventBus.getDefault().post(DemoVideo(true, "NO VIDEO CACHE"))
+                                editor.putBoolean(SharedPreferencesHelper.isCacheClear, false).apply()
                                 isPlayingDemoVideo = true
                             }
-
                         }
                         Player.STATE_READY -> {
                             if (isPlayingDemoVideo) {
@@ -125,7 +127,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                                 isPlayingDemoVideo = false
                             }
                             count = 0
-
                         }
                         Player.STATE_ENDED -> {
 
