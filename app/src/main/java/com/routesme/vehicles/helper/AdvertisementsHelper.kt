@@ -1,5 +1,6 @@
 package com.routesme.vehicles.helper
 
+import android.util.Log
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
@@ -19,7 +20,9 @@ class AdvertisementsHelper {
             val totalMemory = Runtime.getRuntime().totalMemory()
             val used = totalMemory - freeMemory
             val free = maxMemory - used
-            val exoPlayerCacheSize: Long = free / 5
+            Log.d("FreeMemory","${free}")
+            val exoPlayerCacheSize: Long = free / 2
+            //val exoPlayerCacheSize: Long = 100 * 1024 * 1024
             val leastRecentlyUsedCacheEvictor = LeastRecentlyUsedCacheEvictor(exoPlayerCacheSize)
             val exoDatabaseProvider = ExoDatabaseProvider(App.instance)
             return SimpleCache(instance.file, leastRecentlyUsedCacheEvictor, exoDatabaseProvider)
