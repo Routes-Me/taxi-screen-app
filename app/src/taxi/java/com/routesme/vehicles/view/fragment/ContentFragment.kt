@@ -219,10 +219,12 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private fun videoProgressbarRunnable() {
         launch {
             while (isActive) {
-                val current = (playerView.player?.currentPosition)!!.toInt()
-                val progress = current * 100 / (playerView.player?.duration)!!.toInt()
-                videoRingProgressBar?.progress = progress
-                delay(1000)
+                if(playerView.player != null){
+                    val current = (playerView.player?.currentPosition)!!.toInt()
+                    val progress = current * 100 / (playerView.player?.duration)!!.toInt()
+                    videoRingProgressBar?.progress = progress
+                    delay(1000)
+                }
             }
         }
     }

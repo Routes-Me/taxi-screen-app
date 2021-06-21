@@ -13,6 +13,8 @@ import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultAllocator
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
@@ -21,6 +23,7 @@ import com.google.android.exoplayer2.upstream.cache.CacheDataSource
 import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
 import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.Data
@@ -115,17 +118,14 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                         Player.STATE_IDLE -> {
                             exoPlayer.prepare()
                             exoPlayer.playbackState
-                            //Toast.makeText(this@VideoService,"STATE_IDLE",Toast.LENGTH_LONG).show()
                         }
                         Player.STATE_BUFFERING -> {
                             count++
                             if (count >= 5) {
                                 count = 0
                                 EventBus.getDefault().post(DemoVideo(true, "NO VIDEO CACHE"))
-                                editor.putBoolean(SharedPreferencesHelper.isCacheClear, false).apply()
                                 isPlayingDemoVideo = true
                             }
-                           // Toast.makeText(this@VideoService,"STATE_BUFFERING",Toast.LENGTH_LONG).show()
                         }
                         Player.STATE_READY -> {
                             if (isPlayingDemoVideo) {
@@ -135,7 +135,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                             count = 0
                         }
                         Player.STATE_ENDED -> {
-                            //Toast.makeText(this@VideoService,"State End",Toast.LENGTH_LONG).show()
                             exoPlayer.prepare()
                             exoPlayer.playbackState
                         }
@@ -145,13 +144,12 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                 override fun onPlayerError(error: ExoPlaybackException) {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
-                            Log.e("ExoPlayer", "TYPE_SOURCE ${error.sourceException}")
-                            //Toast.makeText(this@VideoService,"TYPE_SOURCE ${error.sourceException}",Toast.LENGTH_LONG).show()
-                                moveToNextVideo()
-                                prepare()
+                            Toast.makeText(this@VideoService,"TYPE_SOURCE  ${error.sourceException}",Toast.LENGTH_LONG).show()
+                            moveToNextVideo()
+                            prepare()
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
-                            //Toast.makeText(this@VideoService,"TYPE_RENDERER ",Toast.LENGTH_LONG).show()
+                            Toast.makeText(this@VideoService,"TYPE_RENDERER ",Toast.LENGTH_LONG).show()
                             moveToNextVideo()
                             prepare()
                             Log.e("ExoPlayer", "TYPE_RENDERER")
@@ -159,35 +157,28 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
                             advertisementHelper.deleteCache()
                             moveToNextVideo()
-                            //Toast.makeText(this@VideoService,"TYPE_UNEXPECTED ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "TYPE_UNEXPECTED")
+                            Toast.makeText(this@VideoService,"TYPE_UNEXPECTED ",Toast.LENGTH_LONG).show()
                         }
                         ExoPlaybackException.TIMEOUT_OPERATION_RELEASE ->{
-                            //Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_RELEASE ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "Error while releasing exoplayer")
+                            Toast.makeText(this@VideoService,"Error while releasing exoplayer ",Toast.LENGTH_LONG).show()
                         }
                         ExoPlaybackException.TIMEOUT_OPERATION_SET_FOREGROUND_MODE ->{
-                            //Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_SET_FOREGROUND_MODE ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "TIMEOUT_OPERATION_SET_FOREGROUND_MODE ")
+                            Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_SET_FOREGROUND_MODE ",Toast.LENGTH_LONG).show()
                         }
                         ExoPlaybackException.TIMEOUT_OPERATION_UNDEFINED ->{
-                            //Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_UNDEFINED ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "Exoplayer timeout operation undefined exception")
+                            Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_UNDEFINED ",Toast.LENGTH_LONG).show()
                         }
                         ExoPlaybackException.TYPE_OUT_OF_MEMORY->{
                             advertisementHelper.deleteCache()
-                            //Toast.makeText(this@VideoService,"TYPE_OUT_OF_MEMORY ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "Exoplayer is out of memory clearing cache from system")
+                            Toast.makeText(this@VideoService,"TYPE_OUT_OF_MEMORY ",Toast.LENGTH_LONG).show()
                         }
                         ExoPlaybackException.TYPE_REMOTE ->{
                             moveToNextVideo()
-                            //Toast.makeText(this@VideoService,"TYPE_REMOTE ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "TYPE_REMOTE  ${error.message}")
+                            Toast.makeText(this@VideoService,"TYPE_REMOTE ",Toast.LENGTH_LONG).show()
                         }
                         ExoPlaybackException.TYPE_TIMEOUT->{
                             moveToNextVideo()
-                            //Toast.makeText(this@VideoService,"TYPE_TIMEOUT ",Toast.LENGTH_LONG).show()
-                            Log.e("ExoPlayer", "TYPE_TIMEOUT  ${error.timeoutException}")
+                            Toast.makeText(this@VideoService,"TYPE_TIMEOUT ",Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -205,7 +196,7 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                 DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,true)).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         videos.let { videos ->
             for (video in videos) {
-                val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))
+                val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.Builder().setUri(video.url!!).setMimeType(MimeTypes.APPLICATION_MP4).build())
                 mediaSource.add(mediaSourceItem)
             }
             return mediaSource

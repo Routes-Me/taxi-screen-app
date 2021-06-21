@@ -21,10 +21,10 @@ class ModelPresenter : AppCompatActivity() {
         setContentView(R.layout.model_presenter)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor = sharedPreferences.edit()
-        isCacheCleared  = sharedPreferences?.getBoolean(SharedPreferencesHelper.isCacheClear,false)
+        /*isCacheCleared  = sharedPreferences?.getBoolean(SharedPreferencesHelper.isCacheClear,false)
         if(!isCacheCleared!!){
             editor.putBoolean(SharedPreferencesHelper.isCacheClear, AdvertisementsHelper.instance.deleteCache()).apply()
-        }
+        }*/
         startActivity()
     }
 

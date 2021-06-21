@@ -57,8 +57,8 @@ android {
             dimension 'default'
             applicationId "com.routesme.vehicles"
             applicationIdSuffix ".taxi"
-            versionCode 39
-            versionName "4.6"
+            versionCode 44
+            versionName "4.9.3"
         }
 
         bus {
