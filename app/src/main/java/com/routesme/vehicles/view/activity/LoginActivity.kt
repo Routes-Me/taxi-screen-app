@@ -147,6 +147,7 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn() {
         dialog?.show()
         val signInCredentials = SignInCredentials(userName, password)
+        //Log.d("Password","${encrypt(password)}")
         val loginViewModel: LoginViewModel by viewModels()
         loginViewModel.signIn(signInCredentials, this).observe(this, Observer<LoginResponse> {
             dialog?.dismiss()

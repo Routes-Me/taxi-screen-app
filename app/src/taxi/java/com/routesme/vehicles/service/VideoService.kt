@@ -152,7 +152,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                             Toast.makeText(this@VideoService,"TYPE_RENDERER ",Toast.LENGTH_LONG).show()
                             moveToNextVideo()
                             prepare()
-                            Log.e("ExoPlayer", "TYPE_RENDERER")
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
                             advertisementHelper.deleteCache()
