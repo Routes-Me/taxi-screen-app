@@ -1,6 +1,7 @@
 package com.routesme.vehicles.data.repository
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -21,7 +22,7 @@ class TerminalRepository(val context: Context){
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val terminal = Gson().fromJson<TerminalSuccessResponse>(response.body(), TerminalSuccessResponse::class.java::class.java)
+                    val terminal = Gson().fromJson<TerminalSuccessResponse>(response.body(), TerminalSuccessResponse::class.java)
                     terminalResponse.value = TerminalResponse(terminalId = terminal.terminalId)
                 } else {
                     val error = Error(detail = response.message(), statusCode = response.code())

@@ -52,7 +52,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private var institutionId: String? = null
     private var showRationale = true
     private var getDeviceInfo: Boolean = false
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)

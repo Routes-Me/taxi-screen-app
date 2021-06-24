@@ -9,6 +9,7 @@ import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.work.BackoffPolicy
 import androidx.work.Constraints
@@ -51,15 +52,14 @@ class App : Application() {
                         super.onExpired()
                         EventBus.getDefault().post(PublishNearBy(true))
                         Log.d("Publish","Expire")
+                        Toast.makeText(App.instance,"Expire and restart",Toast.LENGTH_LONG).show()
                     }
                 }).build()
-
-
         private fun nearbyStrategy(): Strategy {
             return Strategy.Builder()
+                    .setDiscoveryMode(Strategy.DISCOVERY_MODE_BROADCAST)
+                    .setDistanceType(Strategy.DISTANCE_TYPE_EARSHOT)
                     .setTtlSeconds(Strategy.TTL_SECONDS_DEFAULT)
-                    .setDistanceType(Strategy.DISTANCE_TYPE_DEFAULT)
-                    .setDiscoveryMode(Strategy.DISCOVERY_MODE_DEFAULT)
                     .build()
         }
         val constraint: Constraints = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
