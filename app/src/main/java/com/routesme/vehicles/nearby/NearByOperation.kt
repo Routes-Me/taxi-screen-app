@@ -2,6 +2,7 @@ package com.routesme.vehicles.nearby
 
 import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.nearby.Nearby
@@ -27,7 +28,7 @@ class NearByOperation {
         mMessageClient = Nearby.getMessagesClient(mContext!!)
         mMessageClient!!.publish(nearbyMessage(message), App.nearbyPublishOptions).addOnSuccessListener {
             Log.d("Publish","${message.DeviceId},${message.plateNo}")
-            Toast.makeText(App.instance,"Publish ${message.DeviceId},${message.plateNo}", Toast.LENGTH_LONG).show()
+           // Toast.makeText(App.instance,"Publish ${message.DeviceId},${message.plateNo}", Toast.LENGTH_LONG).show()
 
         }.addOnFailureListener {
 
@@ -46,6 +47,7 @@ class NearByOperation {
             Log.d("Publish","Complete")
 
         }
+
         /* Nearby.getMessagesClient(activity).publish(nearbyMessage(message), App.nearbyPublishOptions).addOnFailureListener {
 
              Log.d("Publish","Failure")
@@ -55,8 +57,9 @@ class NearByOperation {
              Log.d("Publish","Success")
 
          }*/
-        //messagesClient.publish(Message(message.), App.nearbyPublishOptions)
     }
+
+
 
     fun unPublish(message: Parameter, context: Context) {
         Nearby.getMessagesClient(context).unpublish(nearbyMessage(message))
