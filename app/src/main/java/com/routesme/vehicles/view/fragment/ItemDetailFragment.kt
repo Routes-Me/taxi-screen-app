@@ -26,7 +26,6 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
         private val trackingDatabase = TrackingDatabase.invoke(App.instance)
         private val locationFeedsDao = trackingDatabase.locationFeedsDao()
     }
-
     private var mContext: Context? = null
     private val adminConsoleLists = AdminConsoleLists(activity)
     private var detailsList = adminConsoleLists.infoCells
@@ -79,7 +78,6 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? = inflater.inflate(R.layout.item_detail_fragment, container, false)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         ItemDetailsRecyclerView.apply { adapter = activity?.let { AdminConsoleDetailsListAdapter(it, detailsList) } }
     }
 }

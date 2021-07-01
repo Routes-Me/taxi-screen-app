@@ -35,6 +35,7 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity, private val
             when (detailActionCell.action) {
                 Actions.Launcher.title -> adminConsoleHelper.openDefaultLauncherSetting()
                 Actions.General.title -> adminConsoleHelper.openAppGeneralSettings()
+                Actions.SystemLogs.title -> adminConsoleHelper.openSystemLogs()
             }
         }
     }

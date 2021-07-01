@@ -18,7 +18,9 @@ import android.provider.Settings
 import android.telephony.TelephonyManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat.getSystemService
+import androidx.core.content.ContextCompat.startActivity
+import com.github.pedrovgs.lynx.LynxActivity
+import com.github.pedrovgs.lynx.LynxConfig
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.data.model.DetailActionStatus
@@ -122,6 +124,12 @@ class AdminConsoleHelper(val activity: Activity) {
 
     fun openAppGeneralSettings() {
         activity.startActivity(Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).setData(Uri.fromParts("package", appPackageName, null)))
+    }
+
+    fun openSystemLogs() {
+        val lynxConfig = LynxConfig()
+        lynxConfig.setMaxNumberOfTracesToShow(2000000)
+        activity.startActivity(Intent(LynxActivity.getIntent(activity, lynxConfig)))
     }
 
     fun sendLogOffRequestToActvitiy() {

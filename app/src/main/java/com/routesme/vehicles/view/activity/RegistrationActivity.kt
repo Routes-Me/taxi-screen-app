@@ -24,10 +24,7 @@ import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
-import com.routesme.vehicles.helper.DateHelper
-import com.routesme.vehicles.helper.DateOperations
-import com.routesme.vehicles.helper.Operations
-import com.routesme.vehicles.helper.SharedPreferencesHelper
+import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.uplevels.CarrierInformation
 import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
@@ -54,7 +51,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_registration)
-
         initialize()
     }
 
@@ -356,6 +352,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                     taxiPlateNumber_error_tv.visibility = View.INVISIBLE
                 }
                 2 -> {
+
                     taxiOffice_error_tv.visibility = View.INVISIBLE
                     taxiPlateNumber_error_tv.visibility = View.VISIBLE
                 }

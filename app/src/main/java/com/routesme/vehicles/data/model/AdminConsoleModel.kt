@@ -11,4 +11,4 @@ class DetailActionCell(val title: String, val status: DetailActionStatus, val ac
 
 enum class ActionCellTextColor(val colorCode: String){Red("#d50000"), Blue("#18428f")}
 enum class DetailActionStatus { DONE, PENDING }
-enum class Actions(val title: String) { Launcher("Open launcher settings"), General("Open general settings"), LogOff("Unlink Device"), SyncAndUpdateCarrierInformation ("Sync and Update") }
+enum class Actions(val title: String) { Launcher("Open launcher settings"), General("Open general settings"), SystemLogs("Open system logs"), LogOff("Unlink Device"), SyncAndUpdateCarrierInformation ("Sync and Update") }

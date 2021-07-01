@@ -32,6 +32,7 @@ import com.andrognito.patternlockview.utils.PatternLockUtils
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
+import com.routesme.vehicles.data.encryption.AesBase64Wrapper
 import com.routesme.vehicles.data.model.Error
 import com.routesme.vehicles.data.model.LoginResponse
 import com.routesme.vehicles.data.model.SignInCredentials
@@ -146,6 +147,7 @@ class LoginActivity : AppCompatActivity() {
     private fun signIn() {
         dialog?.show()
         val signInCredentials = SignInCredentials(userName, password)
+        //Log.d("Password","${encrypt(password)}")
         val loginViewModel: LoginViewModel by viewModels()
         loginViewModel.signIn(signInCredentials, this).observe(this, Observer<LoginResponse> {
             dialog?.dismiss()
@@ -175,6 +177,8 @@ class LoginActivity : AppCompatActivity() {
             }
         })
     }
+
+    private fun encrypt(str: String) = AesBase64Wrapper().getEncryptedString(str)
 
     private fun displayErrors(errors: List<Error>) {
         for (error in errors) {

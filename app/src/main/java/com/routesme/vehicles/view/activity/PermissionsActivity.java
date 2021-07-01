@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
@@ -25,7 +26,6 @@ public abstract class PermissionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         settingPermission();
         locationsPermission();
-
         if (mLocationPermission && mSettingPermission) onPermissionsOkay();
     }
 
@@ -67,12 +67,25 @@ public abstract class PermissionsActivity extends AppCompatActivity {
                 // result of the request.
             }
         }
+
+        if(ContextCompat.checkSelfPermission(this, Manifest.permission.SYSTEM_ALERT_WINDOW)
+                != PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SYSTEM_ALERT_WINDOW)) {
+
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            }
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         // Check which request we're responding to
         super.onActivityResult(requestCode, resultCode, data);
+        Log.d("RequestCode",String.valueOf(requestCode));
         if (requestCode == MY_PERMISSIONS_MANAGE_WRITE_SETTINGS) {
             // Make sure the request was successful
             if (resultCode == RESULT_OK) {

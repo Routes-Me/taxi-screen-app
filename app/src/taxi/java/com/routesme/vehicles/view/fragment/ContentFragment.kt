@@ -52,6 +52,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
@@ -183,9 +184,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
         launch {
             while (isActive) {
-               /* dbHelper.getList().forEach {
-                    Log.d("AnalyticsTesting","${it.id},${it.resourceNumber},${it.date},${it.time_in_day},${it.advertisementId},${it.morning},${it.noon},${it.evening},${it.night},")
-                }*/
                 val image =  images[count]
                 image.contentId?.let {
                     viewModel.insertLog(it, image.resourceNumber!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)
@@ -221,10 +219,12 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private fun videoProgressbarRunnable() {
         launch {
             while (isActive) {
-                val current = (playerView.player?.currentPosition)!!.toInt()
-                val progress = current * 100 / (playerView.player?.duration)!!.toInt()
-                videoRingProgressBar?.progress = progress
-                delay(1000)
+                if(playerView.player != null){
+                    val current = (playerView.player?.currentPosition)!!.toInt()
+                    val progress = current * 100 / (playerView.player?.duration)!!.toInt()
+                    videoRingProgressBar?.progress = progress
+                    delay(1000)
+                }
             }
         }
     }
