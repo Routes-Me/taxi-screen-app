@@ -54,8 +54,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         initialize()
     }
 
-    @SuppressLint("CommitPrefEdits")
     private fun initialize() {
+        @SuppressLint("CommitPrefEdits")
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor = sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
