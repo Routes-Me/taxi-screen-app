@@ -52,6 +52,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
@@ -118,7 +119,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
             if (it != null) {
                 if (it.isSuccess) {
                     val images = it.imageList.toList()
-                    val videos = it.videoList.toList()
+                    val videos = it.videoList
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()) {
                         startThread(getString(R.string.no_data_found))
                         return@Observer
@@ -239,7 +240,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
     }
 
-    private fun startVideoService(list: List<Data>) {
+    private fun startVideoService(list: MutableList<Data>) {
         val intent = Intent(mContext, VideoService::class.java)
         intent.putExtra("video_list", list as ArrayList<Data>)
         mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)
