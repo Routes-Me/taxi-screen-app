@@ -166,4 +166,6 @@ dependencies {
     //Gif imageView
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.18'
     implementation 'com.github.pedrovgs:lynx:1.1.0'
+
+    implementation 'com.google.android.gms:play-services-nearby:18.0.0'
 }

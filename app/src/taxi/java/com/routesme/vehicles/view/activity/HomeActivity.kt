@@ -21,14 +21,12 @@ import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
 import com.routesme.vehicles.BuildConfig
-import com.routesme.vehicles.data.model.IModeChanging
-import com.routesme.vehicles.data.model.SubmitApplicationVersionCredentials
-import com.routesme.vehicles.data.model.SubmitApplicationVersionResponse
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.view.fragment.ContentFragment
 import com.routesme.vehicles.viewmodel.SubmitApplicationVersionViewModel
 import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.R
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import kotlinx.android.synthetic.taxi.home_screen.*
 import kotlinx.coroutines.*
@@ -47,6 +45,8 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     private var player : SimpleExoPlayer?=null
     private  var from_date:String?=null
     private  var deviceId:String?=null
+
+   // private val nearbyData = NearbyData("1128","88977","TerminalId44","inst756")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,7 +67,7 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
         submitApplicationVersion()
         launch {initializePlayer()}
-        turnOnHotspot()
+       // turnOnHotspot()
         openPatternBtn.setOnClickListener { openPattern() }
         helper.requestRuntimePermissions()
         addFragments()
@@ -211,6 +211,18 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
 
     }
 
+    fun playVideo(){
+
+        player?.play()
+
+    }
+
+    fun stopVideo(){
+
+        player?.pause()
+
+    }
+
     override fun onDestroy() {
         super.onDestroy()
         if(player !=null){
@@ -224,25 +236,26 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     }
     override fun onStart() {
         EventBus.getDefault().register(this)
+        NearByOperation.instance.publish(NearByOperation.instance.getNearbyDataJson(getNearbyData()),this)
         super.onStart()
     }
 
     override fun onStop() {
         EventBus.getDefault().unregister(this)
+        NearByOperation.instance.unPublish(NearByOperation.instance.getNearbyDataJson(getNearbyData()),this)
         super.onStop()
     }
 
-    fun playVideo(){
-
-        player?.play()
-
+    @Subscribe()
+    fun onEvent(publishNearBy: PublishNearby){
+        Log.d("NearbyMessagesApi","Publisher.. Republish after expired")
+        if (publishNearBy.isPublish) NearByOperation.instance.publish(NearByOperation.instance.getNearbyDataJson(getNearbyData()),this)
     }
 
-    fun stopVideo(){
-
-        player?.pause()
-
-    }
-
-
+    private fun getNearbyData() = NearbyData().apply {
+         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+         plateNumber = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
+         terminalId = sharedPreferences?.getString(SharedPreferencesHelper.terminal_id, null)
+         institutionId = sharedPreferences?.getString(SharedPreferencesHelper.institution_id, null)
+     }
 }
