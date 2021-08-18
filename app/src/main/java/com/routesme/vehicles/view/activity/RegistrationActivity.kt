@@ -12,13 +12,16 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.analytics.FirebaseAnalytics
+import com.google.firebase.messaging.FirebaseMessaging
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
@@ -209,6 +212,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveDeviceInfoIntoSharedPreferences(deviceId)
                         if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
+                        registerDeviceAsTerminal(deviceId)
                         App.instance.startTrackingService()
                         openModelPresenterScreen()
                     } else {
@@ -229,6 +233,24 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
         }
+    }
+
+    private fun registerDeviceAsTerminal(deviceId: String) {
+        FirebaseMessaging.getInstance().token
+                .addOnCompleteListener(OnCompleteListener { task ->
+                    if (!task.isSuccessful) {
+                        Log.d("FCM-Token", "Fetching FCM registration token failed, Exception: ${task.exception}")
+                        return@OnCompleteListener
+                    }
+                    // Get new FCM registration token
+                    val token = task.result
+                    Log.d("FCM-Token","Token: $token")
+                    registerTerminal(token, deviceId)
+                })
+    }
+
+    private fun registerTerminal(token: String, deviceId: String) {
+
     }
 
     private fun getCarrierInformation(vehicleId: String) {
