@@ -27,6 +27,7 @@ import com.routesme.vehicles.data.model.DetailActionStatus
 import com.routesme.vehicles.data.model.DetailCell
 import com.routesme.vehicles.data.model.ICell
 import com.routesme.vehicles.data.model.LogOff
+import com.routesme.vehicles.uplevels.DeviceInformation
 import com.routesme.vehicles.view.activity.LoginActivity
 import org.greenrobot.eventbus.EventBus
 
@@ -42,13 +43,13 @@ class AdminConsoleHelper(val activity: Activity) {
         private const val defaultValue = "- -"
     }
 
-    fun plateNumber() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_plate_number, defaultValue)
-    fun institutionName() = sharedPreferences.getString(SharedPreferencesHelper.institution_name, defaultValue)
+    fun plateNumber() = App.instance.deviceInformation.vehiclePlateNumber?: defaultValue
+    fun institutionName() = App.instance.deviceInformation.institutionName?: defaultValue
     fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
-    fun simSerialNumber() = sharedPreferences.getString(SharedPreferencesHelper.sim_serial_number, defaultValue)
-    fun imei() = sharedPreferences.getString(SharedPreferencesHelper.device_serial_number, defaultValue)
-    fun technicalUserName() = sharedPreferences.getString(SharedPreferencesHelper.username, defaultValue)
-    fun registrationDate() = sharedPreferences.getString(SharedPreferencesHelper.registration_date, defaultValue)
+    fun simSerialNumber() = App.instance.deviceInformation.simSerialNumber?: defaultValue
+    fun imei() = App.instance.deviceInformation.deviceSerialNumber?: defaultValue
+    fun technicalUserName() = App.instance.deviceInformation.username?: defaultValue
+    fun registrationDate() = App.instance.deviceInformation.registrationDate?: defaultValue
 
     fun getSimStatus():List<ICell>?{
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
@@ -96,8 +97,8 @@ class AdminConsoleHelper(val activity: Activity) {
         return mutableListOf<ICell>().apply {add(DetailCell("Network Type",type, true))}
     }
 
-    fun vehicleId() = sharedPreferences.getString(SharedPreferencesHelper.vehicle_id, defaultValue)
-    fun deviceId() = sharedPreferences.getString(SharedPreferencesHelper.device_id, defaultValue)
+    fun vehicleId() = App.instance.deviceInformation.vehicleId?: defaultValue
+    fun deviceId() = App.instance.deviceInformation.deviceId?: defaultValue
     fun isMyAppDefaultLauncher(): DetailActionStatus {
         val filters: MutableList<IntentFilter> = ArrayList()
         val activities: List<ComponentName> = ArrayList()

@@ -14,6 +14,7 @@ import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.entity.AdvertisementTracking
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
+import com.routesme.vehicles.uplevels.DeviceInformation
 import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -22,15 +23,13 @@ import retrofit2.Response
 class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(context, workerParams),CoroutineScope by MainScope() {
     private var dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(context))
     private val MIN = 100000000
-    private var sharedPreferences = context.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-    private var editior = sharedPreferences?.edit()
     val thisApiCorService by lazy {
         RestApiService.createCorService(context)
     }
 
     override fun doWork(): Result {
         try {
-            val device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+            val device_id = DeviceInformation().deviceId!!
             launch {
                 val list = dbHelper.getList()
                 device_id.let { deviceId ->
@@ -43,8 +42,7 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
 
                                         val delete = dbHelper.deleteTable(list.first().id,list.last().id)
                                         Log.d("AnalyticsTesting","${delete}")
-                                        editior?.putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-                                        editior?.commit()
+                                        DeviceInformation().fromDate = DateHelper.instance.getCurrentDate().toString()
                                     }
                                 }
                             }

@@ -19,7 +19,8 @@ import com.routesme.vehicles.data.model.SignInCredentials
 import com.routesme.vehicles.helper.DisplayManager
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.service.TrackingService
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
+import com.routesme.vehicles.uplevels.DeviceInformation
 import com.routesme.vehicles.worker.TaskManager
 import java.text.SimpleDateFormat
 import java.util.*
@@ -27,7 +28,8 @@ import java.util.concurrent.TimeUnit
 
 
 class App : Application() {
-    val account = Account()
+    val account = AuthorizationTokens()
+    val deviceInformation = DeviceInformation()
     private val displayManager = DisplayManager.instance
     var signInCredentials: SignInCredentials? = null
     var isNewLogin = false
@@ -95,5 +97,5 @@ class App : Application() {
         }
         return true
     }
-    private fun getDeviceId() =  getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.device_id,null)
+    private fun getDeviceId() = instance.deviceInformation.deviceId
 }

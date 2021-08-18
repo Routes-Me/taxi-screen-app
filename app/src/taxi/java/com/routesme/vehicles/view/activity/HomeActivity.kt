@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DataSpec
 import com.google.android.exoplayer2.upstream.RawResourceDataSource
+import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.view.fragment.ContentFragment
@@ -28,6 +29,7 @@ import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.helper.SharedPreferencesHelper
+import com.routesme.vehicles.uplevels.DeviceInformation
 import kotlinx.android.synthetic.taxi.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -63,8 +65,8 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
         setContentView(R.layout.home_screen)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         editor= sharedPreferences?.edit()
-        from_date = sharedPreferences?.getString(SharedPreferencesHelper.from_date,null)
-        deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
+        from_date = App.instance.deviceInformation.fromDate
+        deviceId = App.instance.deviceInformation.deviceId
         submitApplicationVersion()
         launch {initializePlayer()}
        // turnOnHotspot()
@@ -253,9 +255,9 @@ class HomeActivity : com.routesme.vehicles.view.activity.PermissionsActivity(), 
     }
 
     private fun getNearbyData() = NearbyData().apply {
-         deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)
-         plateNumber = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
-         terminalId = sharedPreferences?.getString(SharedPreferencesHelper.terminal_id, null)
-         institutionId = sharedPreferences?.getString(SharedPreferencesHelper.institution_id, null)
+         deviceId = App.instance.deviceInformation.deviceId
+         plateNumber = App.instance.deviceInformation.vehiclePlateNumber
+         terminalId = App.instance.deviceInformation.terminalId
+         institutionId = App.instance.deviceInformation.institutionId
      }
 }

@@ -1,11 +1,20 @@
 package com.routesme.vehicles.notification
 
-import android.annotation.SuppressLint
 import android.app.NotificationManager
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
+import com.routesme.vehicles.api.RestApiService
+import com.routesme.vehicles.data.model.TerminalCredentials
+import com.routesme.vehicles.data.model.TerminalResponse
+import org.json.JSONObject
+import retrofit2.Callback
+import retrofit2.Call
+import retrofit2.Response
+import java.net.HttpURLConnection
+import com.routesme.vehicles.data.model.*
+import com.routesme.vehicles.uplevels.DeviceInformation
 
 class FcmMessageService: FirebaseMessagingService() {
     private var notificationManager: NotificationManager? = null
@@ -19,7 +28,34 @@ class FcmMessageService: FirebaseMessagingService() {
     }
 
     private fun sendTokenToServer(token: String?) {
+        token?.let { newToken ->
+            val deviceInformation = DeviceInformation()
+            val deviceId = deviceInformation.deviceId
+            val terminalId = deviceInformation.terminalId
+            if (!deviceId.isNullOrEmpty() && !terminalId.isNullOrBlank()) {
+                val thisApiCorService by lazy { RestApiService.createCorService(this) }
+                val terminalCredentials = TerminalCredentials(newToken, deviceId)
+                val call = thisApiCorService.updateTerminal(terminalId, terminalCredentials)
+                call.enqueue(object : Callback<Void> {
+                    override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                        if (response.isSuccessful) {
 
+                        } else {
+                            if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
+                                val objError = JSONObject(response.errorBody()!!.string())
+                                val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
+                            } else {
+                                val error = Error(detail = response.message(), statusCode = response.code())
+                                val errors = mutableListOf<Error>().apply { add(error) }.toList()
+                                val responseErrors = ResponseErrors(errors)
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<Void>, throwable: Throwable) {}
+                })
+            }
+        }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {

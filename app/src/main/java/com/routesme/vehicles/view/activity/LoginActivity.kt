@@ -11,7 +11,6 @@ import android.content.pm.PackageManager
 import android.content.IntentFilter
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.*
-import android.net.NetworkCapabilities
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
@@ -38,7 +37,7 @@ import com.routesme.vehicles.data.model.LoginResponse
 import com.routesme.vehicles.data.model.SignInCredentials
 import com.routesme.vehicles.helper.Helper
 import com.routesme.vehicles.helper.Operations
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import com.routesme.vehicles.viewmodel.LoginViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
@@ -158,7 +157,7 @@ class LoginActivity : AppCompatActivity() {
                         operations.displayAlertDialog(this, getString(R.string.login_error_title), getString(R.string.token_is_null_value))
                         return@Observer
                     }
-                    Account().apply { accessToken = token }
+                    AuthorizationTokens().apply { accessToken = token }
                     openNextActivity()
 
                 } else {
@@ -191,7 +190,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun openNextActivity() {
-        val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
+        val isRegistered: Boolean = !App.instance.deviceInformation.deviceId.isNullOrEmpty()
         val intent = if (isRegistered) Intent(this, ModelPresenter::class.java) else Intent(this, RegistrationActivity::class.java)
         startActivity(intent)
         finish()

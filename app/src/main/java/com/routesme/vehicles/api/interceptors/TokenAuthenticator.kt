@@ -9,7 +9,7 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.api.Constants
 import com.routesme.vehicles.api.Header
 import com.routesme.vehicles.helper.Helper
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import com.routesme.vehicles.view.activity.RefreshTokenActivity
 import okhttp3.Authenticator
 import okhttp3.Request
@@ -50,7 +50,6 @@ class TokenAuthenticator(private val context: Context): Authenticator{
                 Log.d("RefreshTokenTesting", "TokenAuthenticator... Code: ${response.code()}")
                 //If it's expired, So I'll handle refresh token logic
                 if (!App.instance.isRefreshActivityAlive) {
-                    App.instance.isRefreshActivityAlive = true
                     openRefreshTokenActivity()
                 }
                 null
@@ -79,10 +78,10 @@ class TokenAuthenticator(private val context: Context): Authenticator{
     */
 
     private fun Request.reAddAuthorizationHeader(): Request {
-        Log.d("reAddAuthorizationHeader","Add token Again, Token: ${Account().accessToken.toString()}, Url: ${url()}")
+        Log.d("reAddAuthorizationHeader","Add token Again, Token: ${AuthorizationTokens().accessToken.toString()}, Url: ${url()}")
         return newBuilder()
                 // .removeHeader(Header.Authorization.toString())
-                .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
+                .addHeader(Header.Authorization.toString(), AuthorizationTokens().accessToken.toString())
                 .build()
     }
 }

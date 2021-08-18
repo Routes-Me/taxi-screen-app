@@ -29,7 +29,7 @@ class ModelPresenter : AppCompatActivity() {
     }
 
     private fun startActivity() {
-        val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
+        val isRegistered: Boolean = !App.instance.deviceInformation.deviceId.isNullOrEmpty()
         if (isRegistered) {
             openActivity(HomeActivity())
         } else {

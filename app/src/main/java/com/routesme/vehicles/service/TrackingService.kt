@@ -16,9 +16,10 @@ import com.routesme.vehicles.room.TrackingDatabase
 import com.routesme.vehicles.room.entity.LocationFeed
 import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.SharedPreferencesHelper
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import com.routesme.vehicles.App
 import com.routesme.vehicles.api.RestApiService
+import com.routesme.vehicles.uplevels.DeviceInformation
 import io.reactivex.CompletableObserver
 import io.reactivex.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -47,7 +48,7 @@ class TrackingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
-        vehicleId = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.vehicle_id, null)
+        vehicleId = App.instance.deviceInformation.vehicleId
         hubConnection = prepareHubConnection()
         EventBus.getDefault().register(this)
         locationReceiver = LocationReceiver()
@@ -131,7 +132,7 @@ class TrackingService : Service() {
         Log.d("URL", "${trackingUrl}")
         return HubConnectionBuilder
                 .create(trackingUrl)
-                .withHeader("Authorization", Account().accessToken)
+                .withHeader("Authorization", AuthorizationTokens().accessToken)
                 .build().apply {
                     serverTimeout = TimeUnit.MINUTES.toMillis(6)
                     onClosed {
@@ -149,10 +150,10 @@ class TrackingService : Service() {
     private fun getTrackingUrl(): Uri {
         val trackingAuthorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
+        val vehicleId = App.instance.deviceInformation.vehicleId
       //  val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)
         val institutionId = "A1535832388"
-        val deviceId = sharedPref.getString(SharedPreferencesHelper.device_id, null)
+        val deviceId = App.instance.deviceInformation.deviceId
         Log.d("SocketSrv", "DeviceId: $deviceId")
         return Uri.Builder().apply {
             scheme("https")

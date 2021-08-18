@@ -36,6 +36,7 @@ import com.routesme.vehicles.room.factory.ViewModelFactory
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
 import com.routesme.vehicles.service.VideoService
+import com.routesme.vehicles.uplevels.DeviceInformation
 import com.routesme.vehicles.view.adapter.BottomBannerAdapter
 import com.routesme.vehicles.view.adapter.ImageBannerAdapter
 import com.routesme.vehicles.view.adapter.WifiAndQRCodeAdapter
@@ -93,7 +94,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         editor= sharedPreferences?.edit()
         glide = Glide.with(App.instance)
         imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+        device_id = App.instance.deviceInformation.deviceId!!
         viewModel = ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
         dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext))

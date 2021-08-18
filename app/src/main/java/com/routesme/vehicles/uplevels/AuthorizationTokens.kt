@@ -4,7 +4,7 @@ import android.content.Context
 import com.routesme.vehicles.App
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 
-class Account {
+class AuthorizationTokens {
     var accessToken: String?
         get() {
             sharedPrefs().getString(SharedPreferencesHelper.token, null)?.let {
@@ -26,8 +26,6 @@ class Account {
         set(value) {
             sharedPrefs().edit().putString(SharedPreferencesHelper.refresh_token, value).apply()
         }
-
-    var vehicle = Vehicle()
 
     private fun sharedPrefs() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Context.MODE_PRIVATE)
 }

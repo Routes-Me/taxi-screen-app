@@ -17,7 +17,7 @@ import com.routesme.vehicles.data.model.RefreshTokenCredentials
 import com.routesme.vehicles.data.model.RefreshTokenSuccessResponse
 import com.routesme.vehicles.data.model.ResponseErrors
 import com.routesme.vehicles.data.model.Error
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import com.routesme.vehicles.view.activity.HomeActivity
 import com.routesme.vehicles.view.activity.LoginActivity
 import com.routesme.vehicles.view.activity.RefreshTokenActivity
@@ -51,7 +51,7 @@ class RefreshTokenService: Service() {
 
     private fun refreshToken() {
         Log.d("RefreshToken", "Hit Refresh Token")
-        val refreshTokenCredentials = RefreshTokenCredentials(Account().refreshToken.toString())
+        val refreshTokenCredentials = RefreshTokenCredentials(AuthorizationTokens().refreshToken.toString())
         val call = thisApiCoreService.refreshToken(refreshTokenCredentials)
         APIHelper.enqueueWithRetry(call ,5,object :Callback<JsonElement> {
             @Override
@@ -123,7 +123,7 @@ class RefreshTokenService: Service() {
     }
 
     private fun saveTokens(refreshTokenSuccessResponse: RefreshTokenSuccessResponse) {
-        Account().apply {
+        AuthorizationTokens().apply {
             accessToken = refreshTokenSuccessResponse.accessToken
             refreshToken = refreshTokenSuccessResponse.refreshToken
         }

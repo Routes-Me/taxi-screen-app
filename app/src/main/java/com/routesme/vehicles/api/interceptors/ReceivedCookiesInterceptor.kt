@@ -1,7 +1,7 @@
 package com.routesme.vehicles.api.interceptors
 
 import android.util.Log
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import okhttp3.Interceptor
 import okhttp3.Response
 import java.net.HttpCookie
@@ -13,7 +13,7 @@ class ReceivedCookiesInterceptor : Interceptor {
         if (!setCookie.isNullOrEmpty()) {
             val cookieList: List<HttpCookie> = HttpCookie.parse(setCookie.first())
             val refreshToken = cookieList.firstOrNull { it.name == "refreshToken" }?.value
-            refreshToken?.let { Account().refreshToken = it }
+            refreshToken?.let { AuthorizationTokens().refreshToken = it }
             Log.d("RefreshTokenTesting", "ReceivedCookiesInterceptor... Received refresh token: $refreshToken")
         }
         return response

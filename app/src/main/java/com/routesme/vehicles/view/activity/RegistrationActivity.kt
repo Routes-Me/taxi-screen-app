@@ -28,10 +28,12 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.vehicles.helper.*
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import com.routesme.vehicles.uplevels.CarrierInformation
+import com.routesme.vehicles.uplevels.DeviceInformation
 import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
+import com.routesme.vehicles.viewmodel.TerminalViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
@@ -43,8 +45,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private var registerCredentials = RegistrationCredentials()
     private val operations = Operations.instance
     private val READ_PHONE_STATE_REQUEST_CODE = 101
-    private lateinit var sharedPreferences: SharedPreferences
-    private lateinit var editor: SharedPreferences.Editor
     private lateinit var telephonyManager: TelephonyManager
     private var dialog: AlertDialog? = null
     private var institutionId: String? = null
@@ -58,9 +58,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun initialize() {
-        @SuppressLint("CommitPrefEdits")
-        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
-        editor = sharedPreferences.edit()
         telephonyManager = getSystemService(TELEPHONY_SERVICE) as TelephonyManager
         //requestRuntimePermissions();
         toolbarSetUp()
@@ -196,13 +193,11 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun register() {
-        if (Account().accessToken != null && allDataExist()) {
+        if (AuthorizationTokens().accessToken != null && allDataExist()) {
             operations.enableNextButton(register_btn, false)
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
             registrationViewModel.register(registerCredentials, this).observe(this, Observer<RegistrationResponse> {
-                dialog?.dismiss()
-                operations.enableNextButton(register_btn, true)
                 if (it != null) {
                     if (it.isSuccess) {
                         val deviceId = it.deviceId ?: run {
@@ -213,9 +208,9 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         saveDeviceInfoIntoSharedPreferences(deviceId)
                         if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
                         registerDeviceAsTerminal(deviceId)
-                        App.instance.startTrackingService()
-                        openModelPresenterScreen()
                     } else {
+                        operations.enableNextButton(register_btn, true)
+                        dialog?.dismiss()
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
                         } else if (it.mThrowable != null) {
@@ -227,6 +222,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 } else {
+                    operations.enableNextButton(register_btn, true)
+                    dialog?.dismiss()
                     operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
                 }
             })
@@ -250,7 +247,38 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun registerTerminal(token: String, deviceId: String) {
-
+        val terminalCredentials = TerminalCredentials(token,deviceId)
+            val terminalViewModel: TerminalViewModel by viewModels()
+            terminalViewModel.register(terminalCredentials, this).observe(this, Observer<TerminalResponse> {
+                if (it != null) {
+                    if (it.isSuccess) {
+                        val terminalId = it.terminalId ?: run {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.terminal_id_is_null_value))
+                            return@Observer
+                        }
+                        App.instance.deviceInformation.terminalId = terminalId
+                        Log.d("TestTerminal","Terminal Credentials: $terminalCredentials, Terminal Id: ${it.terminalId}")
+                       App.instance.startTrackingService()
+                       openModelPresenterScreen()
+                    } else {
+                        dialog?.dismiss()
+                        operations.enableNextButton(register_btn, true)
+                        if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                            it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                        } else if (it.mThrowable != null) {
+                            if (it.mThrowable is IOException) {
+                                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                            } else {
+                                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
+                            }
+                        }
+                    }
+                } else {
+                    dialog?.dismiss()
+                    operations.enableNextButton(register_btn, true)
+                    operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
+                }
+            })
     }
 
     private fun getCarrierInformation(vehicleId: String) {
@@ -326,18 +354,18 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun saveDeviceInfoIntoSharedPreferences(deviceId: String) {
-        editor.apply {
-            putString(SharedPreferencesHelper.username, app.signInCredentials?.userName)
-            putString(SharedPreferencesHelper.registration_date, DateOperations().registrationDate(Date()))
-            putString(SharedPreferencesHelper.institution_id, app.institutionId)
-            putString(SharedPreferencesHelper.institution_name, app.institutionName)
-            putString(SharedPreferencesHelper.vehicle_id, app.vehicleId)
-            putString(SharedPreferencesHelper.vehicle_plate_number, app.taxiPlateNumber)
-            putString(SharedPreferencesHelper.device_id, deviceId)
-            putString(SharedPreferencesHelper.device_serial_number, registerCredentials.serialNumber)
-            putString(SharedPreferencesHelper.sim_serial_number, registerCredentials.SimSerialNumber)
-            putString(SharedPreferencesHelper.from_date, DateHelper.instance.getCurrentDate().toString())
-        }.apply()
+        App.instance.deviceInformation.apply {
+            this.username = app.signInCredentials?.userName
+            this.registrationDate = DateOperations().registrationDate(Date())
+            this.institutionId = app.institutionId
+            this.institutionName = app.institutionName
+            this.vehicleId = app.vehicleId
+            this.vehiclePlateNumber = app.taxiPlateNumber
+            this.deviceId = deviceId
+            this.deviceSerialNumber = registerCredentials.serialNumber
+            this.simSerialNumber = registerCredentials.SimSerialNumber
+            this.fromDate = DateHelper.instance.getCurrentDate().toString()
+        }
     }
 
     private fun openModelPresenterScreen() {

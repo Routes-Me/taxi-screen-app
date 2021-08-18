@@ -13,7 +13,7 @@ import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.AdminConsoleHelper
 import com.routesme.vehicles.helper.Helper
-import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.AuthorizationTokens
 import com.routesme.vehicles.view.activity.LoginActivity
 import okhttp3.Interceptor
 import okhttp3.Response
@@ -25,7 +25,7 @@ internal class BasicAuthInterceptor() : Interceptor {
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request = chain.request().newBuilder()
-                .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
+                .addHeader(Header.Authorization.toString(), AuthorizationTokens().accessToken.toString())
                 .addHeader(Header.CountryCode.toString(), countryCode())
                 .addHeader(Header.AppVersion.toString(), appVersion())
                 .addHeader(Header.application.toString(), "screen")

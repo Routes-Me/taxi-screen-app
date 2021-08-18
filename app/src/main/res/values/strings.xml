@@ -28,6 +28,7 @@
     <string name="content_error_title">Content error</string>
     <string name="token_is_null_value">Token is null value</string>
     <string name="device_id_is_null_value">Device ID is null value</string>
+    <string name="terminal_id_is_null_value">Terminal ID is null value</string>
     <string name="no_data_found">NO DATA FOUND</string>
     <string name="network_Issue">NETWORK ISSUE</string>
     <string name="conversion_Issue">CONVERSION ISSUE</string>
