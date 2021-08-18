@@ -7,5 +7,4 @@ import com.routesme.vehicles.data.repository.TerminalRepository
 
 class TerminalViewModel : ViewModel() {
     fun register(terminalCredentials: TerminalCredentials, context: Context) = TerminalRepository(context).register(terminalCredentials)
-    fun update(terminalId: String, terminalCredentials: TerminalCredentials, context: Context) = TerminalRepository(context).update(terminalId, terminalCredentials)
 }

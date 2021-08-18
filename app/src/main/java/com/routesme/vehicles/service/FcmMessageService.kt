@@ -1,4 +1,4 @@
-package com.routesme.vehicles.notification
+package com.routesme.vehicles.service
 
 import android.app.NotificationManager
 import android.util.Log
@@ -7,7 +7,6 @@ import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import com.routesme.vehicles.api.RestApiService
 import com.routesme.vehicles.data.model.TerminalCredentials
-import com.routesme.vehicles.data.model.TerminalResponse
 import org.json.JSONObject
 import retrofit2.Callback
 import retrofit2.Call
@@ -24,18 +23,18 @@ class FcmMessageService: FirebaseMessagingService() {
 
     override fun onNewToken(token: String){
         Log.d("FCM-Token",token)
-        sendTokenToServer(token)
+        updateTokenInServer(token)
     }
 
-    private fun sendTokenToServer(token: String?) {
+    private fun updateTokenInServer(token: String?) {
         token?.let { newToken ->
             val deviceInformation = DeviceInformation()
             val deviceId = deviceInformation.deviceId
             val terminalId = deviceInformation.terminalId
             if (!deviceId.isNullOrEmpty() && !terminalId.isNullOrBlank()) {
-                val thisApiCorService by lazy { RestApiService.createCorService(this) }
+                val apiCorService by lazy { RestApiService.createCorService(this) }
                 val terminalCredentials = TerminalCredentials(newToken, deviceId)
-                val call = thisApiCorService.updateTerminal(terminalId, terminalCredentials)
+                val call = apiCorService.updateTerminal(terminalId, terminalCredentials)
                 call.enqueue(object : Callback<Void> {
                     override fun onResponse(call: Call<Void>, response: Response<Void>) {
                         if (response.isSuccessful) {
@@ -51,7 +50,6 @@ class FcmMessageService: FirebaseMessagingService() {
                             }
                         }
                     }
-
                     override fun onFailure(call: Call<Void>, throwable: Throwable) {}
                 })
             }

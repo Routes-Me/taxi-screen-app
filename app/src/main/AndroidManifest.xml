@@ -123,7 +123,7 @@
             android:value="AIzaSyAdYkz1EGK0Iw2u2GyCZxGhxLBgijQ3s_U" />
 
         <service
-            android:name=".notification.FcmMessageService"
+            android:name=".service.FcmMessageService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

@@ -258,8 +258,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         App.instance.deviceInformation.terminalId = terminalId
                         Log.d("TestTerminal","Terminal Credentials: $terminalCredentials, Terminal Id: ${it.terminalId}")
-                       App.instance.startTrackingService()
-                       openModelPresenterScreen()
+                        App.instance.startTrackingService()
+                        openModelPresenterScreen()
                     } else {
                         dialog?.dismiss()
                         operations.enableNextButton(register_btn, true)

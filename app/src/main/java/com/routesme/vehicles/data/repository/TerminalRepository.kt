@@ -47,30 +47,4 @@ class TerminalRepository(val context: Context) {
         })
         return terminalResponse
     }
-
-    fun update(terminalId: String, terminalCredentials: TerminalCredentials): MutableLiveData<TerminalResponse> {
-        val call = thisApiCorService.updateTerminal(terminalId, terminalCredentials)
-        call.enqueue(object : Callback<Void> {
-            override fun onResponse(call: Call<Void>, response: Response<Void>) {
-                if (response.isSuccessful) {
-                    terminalResponse.value = TerminalResponse(terminalId = null)
-                } else {
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                        terminalResponse.value = TerminalResponse(mResponseErrors = errors)
-                    } else {
-                        val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error) }.toList()
-                        val responseErrors = ResponseErrors(errors)
-                        terminalResponse.value = TerminalResponse(mResponseErrors = responseErrors)
-                    }
-                }
-            }
-            override fun onFailure(call: Call<Void>, throwable: Throwable) {
-                terminalResponse.value = TerminalResponse(mThrowable = throwable)
-            }
-        })
-        return terminalResponse
-    }
 }
