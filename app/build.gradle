@@ -68,6 +68,14 @@ android {
             versionCode 1
             versionName "1.0"
         }
+
+        qa {
+            dimension 'default'
+            applicationId "com.routesme.vehicles"
+            applicationIdSuffix ".taxi.qa"
+            versionCode 1
+            versionName "1.0"
+        }
     }
     sourceSets {
         bus {
@@ -75,6 +83,10 @@ android {
             java.srcDirs = ['src/bus/java', 'src/bus/java/']
         }
         taxi {
+            res.srcDirs = ['src/taxi/res', 'src/taxi/res/']
+            java.srcDirs = ['src/taxi/java', 'src/taxi/java/']
+        }
+        qa {
             res.srcDirs = ['src/taxi/res', 'src/taxi/res/']
             java.srcDirs = ['src/taxi/java', 'src/taxi/java/']
         }
