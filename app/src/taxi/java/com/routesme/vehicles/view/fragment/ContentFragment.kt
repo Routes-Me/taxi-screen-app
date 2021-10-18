@@ -3,14 +3,8 @@ package com.routesme.vehicles.view.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
-import android.net.ConnectivityManager
-import android.net.ConnectivityManager.NetworkCallback
-import android.net.ConnectivityManager.TYPE_WIFI
-import android.net.Network
-import android.net.NetworkInfo
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -27,7 +21,6 @@ import com.routesme.vehicles.App
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.ContentResponse
 import com.routesme.vehicles.data.model.Data
-import com.routesme.vehicles.helper.AdvertisementsHelper
 import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.helper.DateOperations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
@@ -44,7 +37,7 @@ import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.view.utils.Type
 import com.routesme.vehicles.viewmodel.ContentViewModel
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.taxi.content_fragment.*
+import kotlinx.android.synthetic.taxi.content_fragment.view.*
 import kotlinx.android.synthetic.taxi.date_cell.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
@@ -77,13 +70,14 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private lateinit var contentViewModel: ContentViewModel
     private lateinit var imageOptions: RequestOptions
     private var workManager = WorkManager.getInstance()
+    private lateinit var contentFragmentView: View
     override fun onAttach(context: Context) {
         super.onAttach(context)
         mContext = context
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val view : View = inflater.inflate(R.layout.content_fragment, container, false)
-        return view
+        contentFragmentView  = inflater.inflate(R.layout.content_fragment, container, false)
+        return contentFragmentView
     }
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
@@ -124,7 +118,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                         return@Observer
                     } else {
                         if (isAlive) removeThread()
-                        constraintLayoutDateCell?.let {
+                        contentFragmentView.constraintLayoutDateCell?.let {
                             it.visibility = View.VISIBLE
                         }
                         launch {
@@ -161,7 +155,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     private fun setUpWifiAndQRCodeAdapter(list: List<Data>) {
         wifiAndQRCodeAdapter = WifiAndQRCodeAdapter(mContext, list)
-        bottomRightPromotion.apply {
+        contentFragmentView.bottomRightPromotion.apply {
             adapter = wifiAndQRCodeAdapter
             isUserInputEnabled = false
         }
@@ -169,7 +163,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     private fun setUpAdapter(list: List<Data>) {
         bottomBannerAdapter = BottomBannerAdapter(mContext, list)
-        bottomLeftPromtion.apply {
+        contentFragmentView.bottomLeftPromtion.apply {
             adapter = bottomBannerAdapter
             isUserInputEnabled = false
         }
@@ -177,7 +171,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     private fun setUpImageAdapter(images: List<Data>) {
         imageBannerAdapter = ImageBannerAdapter(mContext, images)
-        viewPageSideBanner.apply {
+        contentFragmentView.viewPageSideBanner.apply {
             adapter = imageBannerAdapter
             isUserInputEnabled = false
         }
@@ -190,8 +184,8 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                 image.contentId?.let {
                     viewModel.insertLog(it, image.resourceNumber!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)
                 }
-                viewPageSideBanner.setCurrentItem(count, true)
-                bottomRightPromotion.setCurrentItem(count, true)
+                contentFragmentView.viewPageSideBanner.setCurrentItem(count, true)
+                contentFragmentView.bottomRightPromotion.setCurrentItem(count, true)
                 if (imageBannerAdapter?.itemCount!! - 1 === count) count = 0 else count++
                 delay(15 * 1000)
             }
@@ -210,7 +204,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         try {
             launch {
                 position = animateVideo.position
-                bottomLeftPromtion.setCurrentItem(position, true)
+                contentFragmentView.bottomLeftPromtion.setCurrentItem(position, true)
             }
 
         } catch (e: Exception) {
@@ -221,9 +215,9 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private fun videoProgressbarRunnable() {
         launch {
             while (isActive) {
-                val current = (playerView.player?.currentPosition)!!.toInt()
-                val progress = current * 100 / (playerView.player?.duration)!!.toInt()
-                videoRingProgressBar?.progress = progress
+                val current = (contentFragmentView.playerView.player?.currentPosition)!!.toInt()
+                val progress = current * 100 / (contentFragmentView.playerView.player?.duration)!!.toInt()
+                contentFragmentView.videoRingProgressBar?.progress = progress
                 delay(1000)
             }
         }
@@ -268,8 +262,8 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
         override fun onServiceConnected(name: ComponentName?, service: IBinder?) {
             if (service is VideoService.VideoServiceBinder) {
-                playerView.player = service.getExoPlayerInstance()
-                bottomLeftPromtion.setCurrentItem(playerView.player?.currentPeriodIndex!!, true)
+                contentFragmentView.playerView.player = service.getExoPlayerInstance()
+                contentFragmentView.bottomLeftPromtion.setCurrentItem(contentFragmentView.playerView.player?.currentPeriodIndex!!, true)
                 videoProgressbarRunnable()
             }
         }
