@@ -194,7 +194,7 @@ class TrackingService : Service() {
                 if (it.connectionState == HubConnectionState.CONNECTED) {
                     val feeds = mutableListOf<LocationFeed>().apply { add(locationFeed) }.toList()
                     val feedCoordinates = feeds.map { it.coordinate }
-                    it.send("SendLocations", feedCoordinates)
+                    if (it.connectionState == HubConnectionState.CONNECTED)  it.send("HubConnectionLocations", feedCoordinates)
                     Log.d("LocationArchiving", "hubConnection connected... sent LocationFeed by signalR")
                 } else {
                     locationFeedsDao.insertLocation(locationFeed)
