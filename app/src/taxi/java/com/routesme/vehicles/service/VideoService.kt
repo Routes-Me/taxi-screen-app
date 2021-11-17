@@ -1,23 +1,35 @@
 package com.routesme.vehicles.service
 
+import android.app.Activity
 import android.app.Service
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
+import android.widget.Toast
 import androidx.annotation.Nullable
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.database.ExoDatabaseProvider
 import com.google.android.exoplayer2.source.MediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
+import com.google.android.exoplayer2.source.TrackGroupArray
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultAllocator
+import com.google.android.exoplayer2.upstream.DefaultHttpDataSource
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory
 import com.google.android.exoplayer2.upstream.cache.CacheDataSource
+import com.google.android.exoplayer2.upstream.cache.CacheDataSourceFactory
+import com.google.android.exoplayer2.upstream.cache.LeastRecentlyUsedCacheEvictor
+import com.google.android.exoplayer2.upstream.cache.SimpleCache
+import com.google.android.exoplayer2.util.MimeTypes
 import com.google.android.exoplayer2.util.Util
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.Data
 import com.routesme.vehicles.helper.AdvertisementsHelper
 import com.routesme.vehicles.helper.DateHelper
+import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
@@ -35,15 +47,16 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     var currentMediaItemId = 0
     private var count = 0
     private var isPlayingDemoVideo = false
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var editor: SharedPreferences.Editor
+    private var isCacheCleared:Boolean?=null
     private lateinit var viewModel: RoomDBViewModel
+    private var advertisementHelper = AdvertisementsHelper()
     override fun onBind(intent: Intent?): IBinder? {
-
         exoPlayer.playWhenReady = true
         setMediaPlayer(intent?.getSerializableExtra("video_list") as List<Data>)
         return VideoServiceBinder()
-
     }
-
     inner class VideoServiceBinder : Binder() {
 
         /**
@@ -57,7 +70,8 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     override fun onCreate() {
         super.onCreate()
         exoPlayer = SimpleExoPlayer.Builder(this).setLoadControl(getLoadControl()).build()
-        AdvertisementsHelper.instance.deleteCache()
+        sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        editor = sharedPreferences.edit()
         viewModel = RoomDBViewModel(DatabaseHelperImpl(AdvertisementDatabase.invoke(this)))
     }
 
@@ -79,7 +93,6 @@ class VideoService : Service(), CoroutineScope by MainScope() {
     }
 
     fun setMediaPlayer(list: List<Data>) {
-
         exoPlayer.apply {
             setMediaSources(getMediaSource(list))
             repeatMode = Player.REPEAT_MODE_ALL
@@ -100,24 +113,19 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                     }
                     EventBus.getDefault().post(AnimateVideo(true, exoPlayer.currentPeriodIndex))
                 }
-
                 override fun onPlayerStateChanged(playWhenReady: Boolean, playbackState: Int) {
                     when (playbackState) {
                         Player.STATE_IDLE -> {
-
                             exoPlayer.prepare()
                             exoPlayer.playbackState
-
                         }
                         Player.STATE_BUFFERING -> {
-
                             count++
                             if (count >= 5) {
                                 count = 0
                                 EventBus.getDefault().post(DemoVideo(true, "NO VIDEO CACHE"))
                                 isPlayingDemoVideo = true
                             }
-
                         }
                         Player.STATE_READY -> {
                             if (isPlayingDemoVideo) {
@@ -125,10 +133,10 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                                 isPlayingDemoVideo = false
                             }
                             count = 0
-
                         }
                         Player.STATE_ENDED -> {
-
+                            exoPlayer.prepare()
+                            exoPlayer.playbackState
                         }
                     }
                 }
@@ -136,18 +144,40 @@ class VideoService : Service(), CoroutineScope by MainScope() {
                 override fun onPlayerError(error: ExoPlaybackException) {
                     when (error.type) {
                         ExoPlaybackException.TYPE_SOURCE -> {
-                            Log.e("ExoPlayer", "TYPE_SOURCE")
+                            Toast.makeText(this@VideoService,"TYPE_SOURCE  ${error.sourceException}",Toast.LENGTH_LONG).show()
                             moveToNextVideo()
                             prepare()
                         }
                         ExoPlaybackException.TYPE_RENDERER -> {
+                            Toast.makeText(this@VideoService,"TYPE_RENDERER ",Toast.LENGTH_LONG).show()
                             moveToNextVideo()
                             prepare()
-                            Log.e("ExoPlayer", "TYPE_RENDERER")
                         }
                         ExoPlaybackException.TYPE_UNEXPECTED -> {
+                            advertisementHelper.deleteCache()
                             moveToNextVideo()
-                            Log.e("ExoPlayer", "TYPE_UNEXPECTED")
+                            Toast.makeText(this@VideoService,"TYPE_UNEXPECTED ",Toast.LENGTH_LONG).show()
+                        }
+                        ExoPlaybackException.TIMEOUT_OPERATION_RELEASE ->{
+                            Toast.makeText(this@VideoService,"Error while releasing exoplayer ",Toast.LENGTH_LONG).show()
+                        }
+                        ExoPlaybackException.TIMEOUT_OPERATION_SET_FOREGROUND_MODE ->{
+                            Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_SET_FOREGROUND_MODE ",Toast.LENGTH_LONG).show()
+                        }
+                        ExoPlaybackException.TIMEOUT_OPERATION_UNDEFINED ->{
+                            Toast.makeText(this@VideoService,"TIMEOUT_OPERATION_UNDEFINED ",Toast.LENGTH_LONG).show()
+                        }
+                        ExoPlaybackException.TYPE_OUT_OF_MEMORY->{
+                            advertisementHelper.deleteCache()
+                            Toast.makeText(this@VideoService,"TYPE_OUT_OF_MEMORY ",Toast.LENGTH_LONG).show()
+                        }
+                        ExoPlaybackException.TYPE_REMOTE ->{
+                            moveToNextVideo()
+                            Toast.makeText(this@VideoService,"TYPE_REMOTE ",Toast.LENGTH_LONG).show()
+                        }
+                        ExoPlaybackException.TYPE_TIMEOUT->{
+                            moveToNextVideo()
+                            Toast.makeText(this@VideoService,"TYPE_TIMEOUT ",Toast.LENGTH_LONG).show()
                         }
                     }
                 }
@@ -161,10 +191,11 @@ class VideoService : Service(), CoroutineScope by MainScope() {
 
     fun getMediaSource(videos: List<Data>): MutableList<MediaSource> {
         var mediaSource = ArrayList<MediaSource>()
-        val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)))).setFlags(CacheDataSource.FLAG_IGNORE_CACHE_ON_ERROR)
+        val dataSourceFactory: DataSource.Factory = CacheDataSource.Factory().setCache(AdvertisementsHelper.simpleCache).setUpstreamDataSourceFactory(DefaultHttpDataSourceFactory(Util.getUserAgent(this, getString(R.string.app_name)), DefaultHttpDataSource.DEFAULT_CONNECT_TIMEOUT_MILLIS,
+                DefaultHttpDataSource.DEFAULT_READ_TIMEOUT_MILLIS,true)).setFlags(CacheDataSource.FLAG_BLOCK_ON_CACHE)
         videos.let { videos ->
             for (video in videos) {
-                val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.fromUri(video.url!!))
+                val mediaSourceItem = ProgressiveMediaSource.Factory(dataSourceFactory).createMediaSource(MediaItem.Builder().setUri(video.url!!).setMimeType(MimeTypes.APPLICATION_MP4).build())
                 mediaSource.add(mediaSourceItem)
             }
             return mediaSource

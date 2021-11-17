@@ -37,6 +37,7 @@ import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.view.utils.Type
 import com.routesme.vehicles.viewmodel.ContentViewModel
 import dmax.dialog.SpotsDialog
+import kotlinx.android.synthetic.taxi.content_fragment.*
 import kotlinx.android.synthetic.taxi.content_fragment.view.*
 import kotlinx.android.synthetic.taxi.date_cell.*
 import kotlinx.coroutines.*
@@ -45,6 +46,7 @@ import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 import java.io.IOException
 import java.util.*
+import kotlin.collections.ArrayList
 
 class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
@@ -112,7 +114,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
             if (it != null) {
                 if (it.isSuccess) {
                     val images = it.imageList.toList()
-                    val videos = it.videoList.toList()
+                    val videos = it.videoList
                     if (images.isNullOrEmpty() && videos.isNullOrEmpty()) {
                         startThread(getString(R.string.no_data_found))
                         return@Observer
@@ -177,9 +179,6 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
         launch {
             while (isActive) {
-               /* dbHelper.getList().forEach {
-                    Log.d("AnalyticsTesting","${it.id},${it.resourceNumber},${it.date},${it.time_in_day},${it.advertisementId},${it.morning},${it.noon},${it.evening},${it.night},")
-                }*/
                 val image =  images[count]
                 image.contentId?.let {
                     viewModel.insertLog(it, image.resourceNumber!!, DateHelper.instance.getCurrentDate(), DateHelper.instance.getCurrentPeriod(), Type.IMAGE.media_type)
@@ -215,10 +214,12 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private fun videoProgressbarRunnable() {
         launch {
             while (isActive) {
-                val current = (contentFragmentView.playerView.player?.currentPosition)!!.toInt()
-                val progress = current * 100 / (contentFragmentView.playerView.player?.duration)!!.toInt()
-                contentFragmentView.videoRingProgressBar?.progress = progress
-                delay(1000)
+                if (contentFragmentView.playerView.player != null) {
+                    val current = (contentFragmentView.playerView.player?.currentPosition)!!.toInt()
+                    val progress = current * 100 / (contentFragmentView.playerView.player?.duration)!!.toInt()
+                    contentFragmentView.videoRingProgressBar?.progress = progress
+                    delay(1000)
+                }
             }
         }
     }
@@ -233,7 +234,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
     }
 
-    private fun startVideoService(list: List<Data>) {
+    private fun startVideoService(list: MutableList<Data>) {
         val intent = Intent(mContext, VideoService::class.java)
         intent.putExtra("video_list", list as ArrayList<Data>)
         mContext.bindService(intent, connection, Context.BIND_AUTO_CREATE)

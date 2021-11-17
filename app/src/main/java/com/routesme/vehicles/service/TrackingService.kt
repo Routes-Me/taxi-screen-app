@@ -150,7 +150,8 @@ class TrackingService : Service() {
         val trackingAuthorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
-        val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)
+      //  val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)
+        val institutionId = "A1535832388"
         val deviceId = sharedPref.getString(SharedPreferencesHelper.device_id, null)
         Log.d("SocketSrv", "DeviceId: $deviceId")
         return Uri.Builder().apply {

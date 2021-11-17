@@ -16,7 +16,6 @@ class ImageBannerAdapter(context: Context, data: List<Data>) : RecyclerView.Adap
     private val context: Context = context
     private var list: List<Data> = data
 
-
     inner class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
 
         var imageView: ImageView = view.findViewById(R.id.side_banner_image) as ImageView
@@ -29,7 +28,7 @@ class ImageBannerAdapter(context: Context, data: List<Data>) : RecyclerView.Adap
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         list[position].url?.let {
-            Glide.with(context).load(it).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(holder.imageView)
+            Glide.with(context).load(it).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.ALL)).into(holder.imageView)
         }
     }
 

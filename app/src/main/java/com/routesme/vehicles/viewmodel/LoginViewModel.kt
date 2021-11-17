@@ -8,6 +8,4 @@ import com.routesme.vehicles.data.repository.LoginRepository
 class LoginViewModel : ViewModel() {
 
     fun signIn(signInCredentials: SignInCredentials, context: Context) = LoginRepository(context).signIn(signInCredentials)
-
-
 }
