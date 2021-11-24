@@ -19,8 +19,8 @@ import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.App
 import com.routesme.vehicles.api.RestApiService
-import io.reactivex.CompletableObserver
-import io.reactivex.disposables.Disposable
+import io.reactivex.rxjava3.core.CompletableObserver
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -195,7 +195,7 @@ class TrackingService : Service() {
                 if (it.connectionState == HubConnectionState.CONNECTED) {
                     val feeds = mutableListOf<LocationFeed>().apply { add(locationFeed) }.toList()
                     val feedCoordinates = feeds.map { it.coordinate }
-                    it.send("SendLocations", feedCoordinates)
+                    if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates)
                     Log.d("LocationArchiving", "hubConnection connected... sent LocationFeed by signalR")
                 } else {
                     locationFeedsDao.insertLocation(locationFeed)
