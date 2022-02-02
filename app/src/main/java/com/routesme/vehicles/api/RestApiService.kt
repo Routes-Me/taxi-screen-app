@@ -36,7 +36,7 @@ interface RestApiService {
     fun getVehicles(@Query("institutionId") institutionId: String, @Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
 
     @GET("contents")
-    fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int): Call<JsonElement>
+    fun getContent(@Query("offset") offset: Int, @Query("limit") limit: Int , @Query("institutionId") institutionId: String, @Query("vehicleId") vehicleId: String, @Query("plateNumber") plateNumber: String): Call<JsonElement>
 
     @POST("analytics/devices/{deviceId}/playbacks")
     fun postReport(@Body data: JsonArray, @Path("deviceId") deviceId: String): Call<JsonElement>

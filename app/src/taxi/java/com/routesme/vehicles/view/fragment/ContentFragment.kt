@@ -21,6 +21,7 @@ import com.routesme.vehicles.App
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.ContentResponse
 import com.routesme.vehicles.data.model.Data
+import com.routesme.vehicles.helper.AdminConsoleHelper
 import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.helper.DateOperations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
@@ -109,50 +110,57 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     }
 
     private fun fetchContent() {
-        contentViewModel.getContent(1, 100, mContext)?.observe(viewLifecycleOwner, Observer<ContentResponse> {
-            dialog?.dismiss()
-            if (it != null) {
-                if (it.isSuccess) {
-                    val images = it.imageList.toList()
-                    val videos = it.videoList
-                    if (images.isNullOrEmpty() && videos.isNullOrEmpty()) {
-                        startThread(getString(R.string.no_data_found))
-                        return@Observer
-                    } else {
-                        if (isAlive) removeThread()
-                        contentFragmentView.constraintLayoutDateCell?.let {
-                            it.visibility = View.VISIBLE
-                        }
-                        launch {
-                            setTime()
-                            if (!images.isNullOrEmpty()) {
-                                setUpImageAdapter(images)
-                                setUpWifiAndQRCodeAdapter(images)
+        sharedPreferences?.let {
+            val institutionId = it.getString(SharedPreferencesHelper.institution_id, null)
+            val vehicleId = it.getString(SharedPreferencesHelper.vehicle_id, null)
+            val plateNumber = it.getString(SharedPreferencesHelper.vehicle_plate_number, null)
+            if (!institutionId.isNullOrEmpty() && !vehicleId.isNullOrEmpty() && !plateNumber.isNullOrEmpty()){
+                contentViewModel.getContent(1, 100, institutionId, vehicleId, plateNumber, mContext)?.observe(viewLifecycleOwner, Observer<ContentResponse> {
+                    dialog?.dismiss()
+                    if (it != null) {
+                        if (it.isSuccess) {
+                            val images = it.imageList.toList()
+                            val videos = it.videoList
+                            if (images.isNullOrEmpty() && videos.isNullOrEmpty()) {
+                                startThread(getString(R.string.no_data_found))
+                                return@Observer
+                            } else {
+                                if (isAlive) removeThread()
+                                contentFragmentView.constraintLayoutDateCell?.let {
+                                    it.visibility = View.VISIBLE
+                                }
+                                launch {
+                                    setTime()
+                                    if (!images.isNullOrEmpty()) {
+                                        setUpImageAdapter(images)
+                                        setUpWifiAndQRCodeAdapter(images)
+                                    }
+                                    if (!videos.isNullOrEmpty()) {
+                                        setUpAdapter(videos)
+                                        startVideoService(videos)
+                                    }
+                                }
                             }
-                            if(!videos.isNullOrEmpty()){
-                                setUpAdapter(videos)
-                                startVideoService(videos)
-                            }
-                        }
-                    }
-                } else {
-                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
-                        it.mResponseErrors?.errors?.let {
-                            startThread(getString(R.string.no_data_found))
-                        }
-                    } else if (it.mThrowable != null) {
-
-                        if (it.mThrowable is IOException) {
-                            startThread(getString(R.string.network_Issue))
                         } else {
-                            startThread(getString(R.string.conversion_Issue))
+                            if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                                it.mResponseErrors?.errors?.let {
+                                    startThread(getString(R.string.no_data_found))
+                                }
+                            } else if (it.mThrowable != null) {
+
+                                if (it.mThrowable is IOException) {
+                                    startThread(getString(R.string.network_Issue))
+                                } else {
+                                    startThread(getString(R.string.conversion_Issue))
+                                }
+                            }
                         }
+                    } else {
+                        startThread(getString(R.string.unknown_error))
                     }
-                }
-            } else {
-                startThread(getString(R.string.unknown_error))
-            }
-        })
+                })
+        }
+        }
     }
 
     private fun setUpWifiAndQRCodeAdapter(list: List<Data>) {

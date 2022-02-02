@@ -13,9 +13,9 @@ import com.routesme.vehicles.data.repository.UnlinkRepository
 class ContentViewModel : ViewModel() {
     private var contentResponse: MutableLiveData<ContentResponse>? = null
 
-    fun getContent(offset: Int, limit: Int, context: Context): LiveData<ContentResponse>? {
+    fun getContent(offset: Int, limit: Int, institutionId: String, vehicleId: String, plateNumber: String, context: Context): LiveData<ContentResponse>? {
         if (contentResponse?.value?.data == null) {
-            contentResponse = ContentRepository(context).getContent(offset, limit)
+            contentResponse = ContentRepository(context).getContent(offset, limit, institutionId, vehicleId, plateNumber)
         }
         return contentResponse
     }
