@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".view.fragment.PriceFragment"
     android:orientation="vertical"
-    android:gravity="center"
-    android:layout_marginBottom="@dimen/_60sdp">
+    android:gravity="center">
 
     <TextView
         android:id="@+id/ticketPrice_keyword_tv"

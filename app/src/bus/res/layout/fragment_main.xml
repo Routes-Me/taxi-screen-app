@@ -61,7 +61,39 @@
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/routeNumber_tv"
+        app:layout_constraintBottom_toTopOf="@id/companyName_tv"/>
+
+    <TextView
+        android:id="@+id/companyName_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="normal"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
         app:layout_constraintBottom_toTopOf="@id/main_fragment_container"/>
+
+<!--
+    <TextView
+        android:id="@+id/plateNumber_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="normal"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/companyName_tv"
+        app:layout_constraintTop_toTopOf="@id/companyName_tv"
+        app:layout_constraintBottom_toBottomOf="@id/companyName_tv"/>
+-->
 
     <FrameLayout
         android:id="@+id/main_fragment_container"
@@ -71,8 +103,8 @@
         app:layout_constraintBottom_toTopOf="@id/logo_layout"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
-        android:layout_marginBottom="@dimen/_5sdp" />
+        app:layout_constraintTop_toBottomOf="@id/companyName_tv"
+        android:layout_marginBottom="@dimen/_8sdp" />
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/logo_layout"

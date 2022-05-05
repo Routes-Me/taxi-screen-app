@@ -44,6 +44,7 @@ class MainFragment : Fragment() {
         mainFragmentView.apply {
             routeNumber_tv.text = "Route ${activatedBusInfo.busRouteName}"
             routeWay_tv.text = activatedBusInfo.busDestination
+            companyName_tv.text = "${activatedBusInfo.busCompany} - ${activatedBusInfo.busPlateNumber}"
         }
     }
 
