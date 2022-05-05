@@ -5,11 +5,8 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.vehicles.BuildConfig
-import com.routesme.vehicles.helper.Helper
-import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.room.entity.LocationCoordinate
-import org.json.JSONArray
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
@@ -51,10 +48,15 @@ interface RestApiService {
     @POST("vehicles/{vehicleId}/coordinates")
     fun locationCoordinates (@Path("vehicleId") vehicleId: String, @Body coordinates: List<LocationCoordinate>): Call<String>
 
+
+
     //New server endpoints
 
     @POST("divice/ActiveBus")
-    fun activateBus(@Body activateBusCredentials: ActivateBusCredentials): Call<JsonElement>
+    fun activateBus(@Body busActivationCredentials: BusActivationCredentials): Call<JsonElement>
+
+    @POST("divice/UnActiveBus")
+    fun deactivateBus(@Body busActivationCredentials: BusActivationCredentials): Call<JsonElement>
 
     companion object {
 

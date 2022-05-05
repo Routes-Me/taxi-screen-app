@@ -241,7 +241,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun activateBus(vehicleId: String){
         Log.d("BusProcessTesting", "vehicleId: $vehicleId")
-        val activateBusCredentials = ActivateBusCredentials(SecondID = vehicleId)
+        val activateBusCredentials = BusActivationCredentials(SecondID = vehicleId)
         val busActivationViewModel: BusActivationViewModel by viewModels()
         busActivationViewModel.activate(activateBusCredentials, this).observe(this, Observer<ActivateBusResponse> {
             dialog?.dismiss()
@@ -252,7 +252,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         App.instance.startTrackingService()
                         openModelPresenterScreen()
                     }else{
-                        operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.description?.message}")
+                        operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusDescription?.message}")
                     }
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
