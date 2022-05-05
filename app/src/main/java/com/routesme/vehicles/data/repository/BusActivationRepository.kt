@@ -27,8 +27,8 @@ class BusActivationRepository(val context: Context) {
                 if (response.isSuccessful && response.body() != null) {
                     val activateBusResponseDTO = Gson().fromJson<ActivateBusResponseDTO>(response.body(), ActivateBusResponseDTO::class.java)
                     activateBusResponse.value =
-                    if (activateBusResponseDTO.status) ActivateBusResponse(activatedBusInformation = activateBusResponseDTO.description as ActivatedBusInformation)
-                    else ActivateBusResponse(activateBusFailedMessage = activateBusResponseDTO.description as String)
+                    if (activateBusResponseDTO.status) ActivateBusResponse(isActivatedSuccessfully = activateBusResponseDTO.status, activatedBusInformation = activateBusResponseDTO.description as ActivatedBusInformation)
+                    else ActivateBusResponse(isActivatedSuccessfully = activateBusResponseDTO.status, activateBusFailedMessage = activateBusResponseDTO.description as String)
                 } else {
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                         val objError = JSONObject(response.errorBody()!!.string())

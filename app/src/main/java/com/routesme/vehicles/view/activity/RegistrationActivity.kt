@@ -247,7 +247,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
-                    if (it.isBusActivatedSuccessfully) {
+                    if (it.isActivatedSuccessfully) {
                         it.activatedBusInformation?.let { saveActivatedBusInfoIntoSharedPreferences(it) }
                         registerationProcess()
                     }else{

@@ -23,7 +23,7 @@ data class ActivatedBusInformation (
         val company     : String?  = null,
         val socondID    : String?  = null
 )
-class ActivateBusResponse(val activatedBusInformation: ActivatedBusInformation? = null, val activateBusFailedMessage: String? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
+class ActivateBusResponse(val isActivatedSuccessfully: Boolean = false, val activatedBusInformation: ActivatedBusInformation? = null, val activateBusFailedMessage: String? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
 /*
     var activateBusDescription: ActivateBusSuccessDescription? = null
@@ -35,8 +35,10 @@ class ActivateBusResponse(val activatedBusInformation: ActivatedBusInformation? 
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
 
+    /*
     val isBusActivatedSuccessfully: Boolean
         get() = (activatedBusInformation != null && activateBusFailedMessage == null)
+    */
 }
 
 
