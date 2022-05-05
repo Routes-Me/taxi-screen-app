@@ -20,6 +20,23 @@ class SharedPreferencesHelper {
         const val from_date = "from_date"
         const val call_api = "isCallingApi"
         const val isCacheClear = "isCacheClear"
+
+        //Activated Bus Information
+        const val busId = "bus_id"
+        const val busActive = "bus_active"
+        const val busKind = "bus_kind"
+        const val busPlateNumber = "bus_plateNumber"
+        const val busRouteId = "bus_routeId"
+        const val busRouteName = "bus_routeName"
+        const val busDestination = "bus_destination"
+        const val busPrice = "bus_price"
+        const val busDriverId = "bus_driverId"
+        const val busUserName = "bus_userName"
+        const val busPhoneNumber = "bus_phoneNumber"
+        const val busCompanyId = "bus_companyId"
+        const val busCompany = "bus_company"
+        const val busSecondId = "bus_secondId"
+
         //Carrier Information
         const val carrierInformationLastUpdate = "carrierInformationLastUpdate"
         const val carrierRouteNumber = "carrierRouteNumber"

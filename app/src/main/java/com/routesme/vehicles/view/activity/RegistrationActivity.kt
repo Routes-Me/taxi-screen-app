@@ -27,6 +27,7 @@ import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.ActivatedBusInfo
 import com.routesme.vehicles.uplevels.CarrierInformation
 import com.routesme.vehicles.viewmodel.BusActivationViewModel
 import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
@@ -247,7 +248,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             if (it != null) {
                 if (it.isSuccess) {
                     if (it.isBusActivatedSuccessfully) {
-                        saveActivatedBusInfoIntoSharedPreferences(it.activatedBusInformation)
+                        it.activatedBusInformation?.let { saveActivatedBusInfoIntoSharedPreferences(it) }
                         registerProcess()
                     }else{
                         operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusFailedMessage}")
@@ -269,8 +270,19 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun saveActivatedBusInfoIntoSharedPreferences(activatedBusInformation: ActivatedBusInformation?) {
-
+    private fun saveActivatedBusInfoIntoSharedPreferences(activatedBusInformation: ActivatedBusInformation) {
+       ActivatedBusInfo().apply {
+           busId = activatedBusInformation.id
+           busActive = activatedBusInformation.active
+           busKind = activatedBusInformation.kind
+           busPlateNumber = activatedBusInformation.palteNumber
+           busRouteId = activatedBusInformation.routeID
+           busRouteName = activatedBusInformation.routeName
+           busDestination = activatedBusInformation.distination
+           busPrice = activatedBusInformation.price
+           busCompany = activatedBusInformation.company
+           busSecondId = activatedBusInformation.socondID
+       }
     }
 
     private fun registerProcess() {

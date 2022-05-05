@@ -9,13 +9,13 @@ data class BusActivationCredentials(var api_key: String = BuildConfig.NEW_API_KE
 data class ActivateBusResponseDTO(val status: Boolean = false, val description: Any? = null)
 data class ActivatedBusInformation (
         val id          : String?  = null,
-        val active      : Boolean? = null,
+        val active      : Boolean = false,
         val kind        : String?  = null,
         val palteNumber : String?  = null,
         val routeID     : String?  = null,
         val routeName   : String?  = null,
         val distination : String?  = null,
-        val price       : Int?     = null,
+        val price       : Int     = 0,
         // val driverID    : String?  = null,
         // val userName    : String?  = null,
         // val phoneNumber : String?  = null,
