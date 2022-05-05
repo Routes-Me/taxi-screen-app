@@ -63,8 +63,8 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
       // showFragment(multiTicketsScanFirstFragment)
         showFragment(mainFragment)
-      //  startBusValidatorService()
-       // startBusPaymentService()
+        startBusValidatorService()
+        startBusPaymentService()
     }
 
     override fun onDestroy() {
