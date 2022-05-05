@@ -50,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
         android:fontFamily="sans-serif"
-        android:text="@string/scan_your_qr_code_or_nfc"
+        android:text="@string/scan_your_qr_code"
         android:textColor="?homeScreenTextColor"
         android:textSize="@dimen/_15ssp"
         android:textStyle="normal" />
