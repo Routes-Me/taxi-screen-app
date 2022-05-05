@@ -7,7 +7,7 @@ data class BusActivationCredentials(var api_key: String = BuildConfig.NEW_API_KE
 
 //Activate bus
 data class ActivateBusResponseDTO(val status: Boolean = false, val description: Any? = null)
-data class ActivateBusSuccessDescription (
+data class ActivatedBusInformation (
         val id          : String?  = null,
         val active      : Boolean? = null,
         val kind        : String?  = null,
@@ -23,7 +23,7 @@ data class ActivateBusSuccessDescription (
         val company     : String?  = null,
         val socondID    : String?  = null
 )
-class ActivateBusResponse(val activateBusSuccessDescription: ActivateBusSuccessDescription? = null, val activateBusFailedDescription: String? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
+class ActivateBusResponse(val activatedBusInformation: ActivatedBusInformation? = null, val activateBusFailedMessage: String? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
 /*
     var activateBusDescription: ActivateBusSuccessDescription? = null
@@ -35,8 +35,8 @@ class ActivateBusResponse(val activateBusSuccessDescription: ActivateBusSuccessD
     val isSuccess: Boolean
         get() = (mResponseErrors == null && mThrowable == null)
 
-    val isSuccessDescription: Boolean
-        get() = (activateBusSuccessDescription != null && activateBusFailedDescription == null)
+    val isBusActivatedSuccessfully: Boolean
+        get() = (activatedBusInformation != null && activateBusFailedMessage == null)
 }
 
 
