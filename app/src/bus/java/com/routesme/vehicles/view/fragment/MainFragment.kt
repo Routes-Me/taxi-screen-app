@@ -1,11 +1,13 @@
 package com.routesme.vehicles.view.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
+import com.routesme.vehicles.uplevels.ActivatedBusInfo
 import com.routesme.vehicles.uplevels.CarrierInformation
 import kotlinx.android.synthetic.bus.fragment_main.view.*
 
@@ -26,7 +28,7 @@ class MainFragment : Fragment() {
     }
 
     private fun initialize(){
-
+        displayTripInformation()
         priceFragment = PriceFragment()
         multiTicketsSelectFirstFragment = MultiTicketsSelectFirstFragment()
         val tickets = CarrierInformation().tickets
@@ -34,7 +36,15 @@ class MainFragment : Fragment() {
             if (it.size == 1) showFragment(priceFragment) else showFragment(multiTicketsSelectFirstFragment)
             if (it.size > 2) mainFragmentView.logo_layout.visibility =  View.GONE
         }
+    }
 
+    @SuppressLint("SetTextI18n")
+    private fun displayTripInformation() {
+        val activatedBusInfo = ActivatedBusInfo()
+        mainFragmentView.apply {
+            routeNumber_tv.text = "Route ${activatedBusInfo.busRouteName}"
+            routeWay_tv.text = activatedBusInfo.busDestination
+        }
     }
 
     private fun showFragment(fragment: Fragment) {
