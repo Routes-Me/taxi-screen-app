@@ -50,13 +50,16 @@ interface RestApiService {
 
 
 
-    //New server endpoints
+    //New server endpoints [Bus App]
 
     @POST("divice/ActiveBus")
     fun activateBus(@Body busActivationCredentials: BusActivationCredentials): Call<JsonElement>
 
     @POST("divice/UnActiveBus")
     fun deactivateBus(@Body busActivationCredentials: BusActivationCredentials): Call<JsonElement>
+
+    @POST("divice/PaymentBySecondID")
+    fun busPaymentProcess(@Body busPaymentProcessCredentials: BusPaymentProcessCredentials): Call<JsonElement>
 
     companion object {
 
