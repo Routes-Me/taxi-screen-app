@@ -41,7 +41,7 @@ class ActivateBusResponse(val activatedBusInformation: ActivatedBusInformation? 
 
 
 //Deactivate bus
-data class DeactivateBusResponseDTO(val status: Boolean = false, val deactivateBusDescription: DeactivateBusDescription? = null)
+data class DeactivateBusResponseDTO(val status: Boolean = false, val description: DeactivateBusDescription? = null)
 data class DeactivateBusDescription (val message : String?  = null, val status  : Boolean = false)
 class DeactivateBusResponse(deactivateBusDescription: DeactivateBusDescription? = null, val mResponseErrors: ResponseErrors? = null, val mThrowable: Throwable? = null): Response(mResponseErrors, mThrowable) {
 
@@ -50,7 +50,7 @@ class DeactivateBusResponse(deactivateBusDescription: DeactivateBusDescription? 
         this.deactivateBusDescription = deactivateBusDescription
     }
 
-    val descriptionStatus: Boolean?
+    val isBusDeactivatedSuccessfully: Boolean?
         get() = deactivateBusDescription?.status
 
     val isSuccess: Boolean

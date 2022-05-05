@@ -146,7 +146,7 @@ class AdminConsolePanel : AppCompatActivity() {
             dialog?.hide()
             if (it != null) {
                 if (it.isSuccess) {
-                    if (it.descriptionStatus == true) {
+                    if (it.isBusDeactivatedSuccessfully == true) {
                         adminConsoleHelper?.logOff()
                     }else{
                         operations.displayAlertDialog(this, getString(R.string.logout_error_title), "${it.deactivateBusDescription?.message}")

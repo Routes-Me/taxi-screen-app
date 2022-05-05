@@ -215,7 +215,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                             registerCredentials.VehicleId?.let { activateBus(it) }
                         } else{
                             dialog?.dismiss()
-                            registerProcess()
+                            registerationProcess()
                         }
                     } else {
                         dialog?.dismiss()
@@ -249,7 +249,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                 if (it.isSuccess) {
                     if (it.isBusActivatedSuccessfully) {
                         it.activatedBusInformation?.let { saveActivatedBusInfoIntoSharedPreferences(it) }
-                        registerProcess()
+                        registerationProcess()
                     }else{
                         operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusFailedMessage}")
                     }
@@ -285,7 +285,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
        }
     }
 
-    private fun registerProcess() {
+    private fun registerationProcess() {
         App.instance.startTrackingService()
         openModelPresenterScreen()
     }

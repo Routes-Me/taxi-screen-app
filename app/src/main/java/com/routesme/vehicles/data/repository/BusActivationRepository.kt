@@ -55,7 +55,7 @@ class BusActivationRepository(val context: Context) {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
                     val deactivateBusSuccessResponse = Gson().fromJson<DeactivateBusResponseDTO>(response.body(), DeactivateBusResponseDTO::class.java)
-                    deactivateBusResponse.value = DeactivateBusResponse(deactivateBusDescription = deactivateBusSuccessResponse.deactivateBusDescription)
+                    deactivateBusResponse.value = DeactivateBusResponse(deactivateBusDescription = deactivateBusSuccessResponse.description)
                 } else {
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                         val objError = JSONObject(response.errorBody()!!.string())
