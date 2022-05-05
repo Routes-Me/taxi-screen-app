@@ -25,8 +25,10 @@ class BusActivationRepository(val context: Context) {
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val activateBusSuccessResponse = Gson().fromJson<ActivateBusSuccessResponse>(response.body(), ActivateBusSuccessResponse::class.java)
-                    activateBusResponse.value = ActivateBusResponse(activateBusDescription = activateBusSuccessResponse.activateBusDescription)
+                    val activateBusResponseDTO = Gson().fromJson<ActivateBusResponseDTO>(response.body(), ActivateBusResponseDTO::class.java)
+                    activateBusResponse.value =
+                    if (activateBusResponseDTO.status) ActivateBusResponse(activateBusSuccessDescription = activateBusResponseDTO.description as ActivateBusSuccessDescription)
+                    else ActivateBusResponse(activateBusFailedDescription = activateBusResponseDTO.description as String)
                 } else {
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                         val objError = JSONObject(response.errorBody()!!.string())
@@ -52,7 +54,7 @@ class BusActivationRepository(val context: Context) {
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val deactivateBusSuccessResponse = Gson().fromJson<DeactivateBusSuccessResponse>(response.body(), DeactivateBusSuccessResponse::class.java)
+                    val deactivateBusSuccessResponse = Gson().fromJson<DeactivateBusResponseDTO>(response.body(), DeactivateBusResponseDTO::class.java)
                     deactivateBusResponse.value = DeactivateBusResponse(deactivateBusDescription = deactivateBusSuccessResponse.deactivateBusDescription)
                 } else {
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {

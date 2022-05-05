@@ -246,11 +246,11 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
-                    if (it.descriptionStatus == true) {
-                        saveBusInfoIntoSharedPreferences()
+                    if (it.isSuccessDescription) {
+                        saveBusInfoIntoSharedPreferences(it.activateBusSuccessDescription)
                         registerProcess()
                     }else{
-                        operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusDescription?.message}")
+                        operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusFailedDescription}")
                     }
                 } else {
                     if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
@@ -269,7 +269,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
         })
     }
 
-    private fun saveBusInfoIntoSharedPreferences() {
+    private fun saveBusInfoIntoSharedPreferences(activateBusSuccessDescription: ActivateBusSuccessDescription?) {
 
     }
 
