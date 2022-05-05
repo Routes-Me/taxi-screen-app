@@ -10,7 +10,7 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.IModeChanging
 import com.routesme.vehicles.data.model.ReadQrCode
 import com.routesme.vehicles.helper.*
-import com.routesme.vehicles.service.BusPaymentService
+//import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
 import com.routesme.vehicles.view.fragment.MainFragment
@@ -64,7 +64,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
       // showFragment(multiTicketsScanFirstFragment)
         showFragment(mainFragment)
         startBusValidatorService()
-        startBusPaymentService()
+        //startBusPaymentService()
     }
 
     override fun onDestroy() {
@@ -87,15 +87,17 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         ContextCompat.startForegroundService(this,Intent(this, BusValidatorService::class.java))
     }
 
+/*
     private fun startBusPaymentService() {
         ContextCompat.startForegroundService(this,Intent(this, BusPaymentService::class.java))
     }
+    */
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(readQrCode: ReadQrCode){
-        Log.d("BusValidator","Read new qr code: $readQrCode")
+        //Log.d("BusValidator","Read new qr code: $readQrCode")
          if (isDismissFragmentTimerAlive) {
-             Log.d("BusValidator","There's dismiss timer already running")
+             //Log.d("BusValidator","There's dismiss timer already running")
              dismissFragmentTimer?.apply {
                  cancel()
                  purge()
@@ -123,10 +125,10 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private fun dismissFragment(screenShowingTime: Long) {
         dismissFragmentTimer = Timer("dismissFragmentTimer", true).apply {
-            Log.d("BusValidator","Dismiss Fragment Timer, Calling, Timer: $this")
+            //Log.d("BusValidator","Dismiss Fragment Timer, Calling, Timer: $this")
             isDismissFragmentTimerAlive = true
             schedule(screenShowingTime) {
-                Log.d("BusValidator","Dismiss Fragment Timer, Executing")
+                //Log.d("BusValidator","Dismiss Fragment Timer, Executing")
                 hideFragments()
                 showFragment(mainFragment)
                 isDismissFragmentTimerAlive = false
@@ -138,7 +140,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         }
     }
     private fun hideFragments(){
-        Log.d("BusValidator","Hide Fragment")
+        //Log.d("BusValidator","Hide Fragment")
         supportFragmentManager.beginTransaction().apply {
             supportFragmentManager.fragments.forEach { hide(it) }
         }.commitAllowingStateLoss()

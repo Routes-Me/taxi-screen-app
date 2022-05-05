@@ -114,9 +114,12 @@
         <service
             android:name=".service.BusValidatorService"
             android:enabled="true" />
+
+        <!--
         <service
             android:name=".service.BusPaymentService"
             android:enabled="true" />
+        -->
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"

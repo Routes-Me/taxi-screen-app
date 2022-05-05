@@ -47,32 +47,18 @@
         app:layout_constraintVertical_chainStyle="packed"/>
 
     <TextView
-        android:id="@+id/price_tv"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:fontFamily="sans-serif"
-        android:text="300 fils"
-        android:textColor="@color/payment_approved_text_color"
-        android:textSize="@dimen/_13ssp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toTopOf="@id/approvedIcon_iv"
-        app:layout_constraintBottom_toTopOf="@id/approvedTitle_tv"
-        app:layout_constraintEnd_toStartOf="@id/approvedIcon_iv"/>
-
-    <TextView
         android:id="@+id/approvedTitle_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:text="@string/approved"
         android:textColor="@color/payment_approved_text_color"
-        android:textSize="@dimen/_13ssp"
-        android:textStyle="normal"
-        app:layout_constraintStart_toStartOf="@id/price_tv"
-        app:layout_constraintTop_toBottomOf="@id/price_tv"
+        android:textSize="@dimen/_17ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/approvedIcon_iv"
         app:layout_constraintBottom_toBottomOf="@id/approvedIcon_iv"
-        app:layout_constraintEnd_toEndOf="@id/price_tv"/>
+        app:layout_constraintEnd_toStartOf="@id/approvedIcon_iv"/>
 
     <TextView
         android:id="@+id/approvedMessage_tv"

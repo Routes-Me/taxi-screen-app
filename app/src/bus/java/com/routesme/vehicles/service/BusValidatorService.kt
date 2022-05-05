@@ -39,10 +39,10 @@ class BusValidatorService : Service(){
         if (!isPortOpened){
             isPortOpened = openPort()
             if (isPortOpened){
-                Log.d("BusValidator", "Open port.. Successfully")
+                //Log.d("BusValidator", "Open port.. Successfully")
                 runQRCodeReader()
             }else{
-                Log.d("BusValidator", "Open port.. Failed")
+                //Log.d("BusValidator", "Open port.. Failed")
             }
         }
 
@@ -69,12 +69,12 @@ class BusValidatorService : Service(){
     private fun readQrCodeContent(timeInMilliseconds: Long) {
         Timer("qrCodeReaderTimer", true).apply {
             schedule(TimeUnit.MILLISECONDS.toMillis(timeInMilliseconds), TimeUnit.MILLISECONDS.toMillis(timeInMilliseconds)) {
-                Log.d("BusValidator", "qrCodeReaderTimer .. after delay: $timeInMilliseconds MS")
-               Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
+                //Log.d("BusValidator", "qrCodeReaderTimer .. after delay: $timeInMilliseconds MS")
+               //Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 qrCodeReaderTimeoutInMilliseconds += timeInMilliseconds
-                Log.d("BusValidator", "qrCodeReaderTimer .. Timeout after add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
+                //Log.d("BusValidator", "qrCodeReaderTimer .. Timeout after add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 if (qrCodeReaderTimeoutInMilliseconds >= twoMinutesInMilliseconds) {
-                    Log.d("BusValidator", "qrCodeReaderTimer .. Timeout is over ,, $qrCodeReaderTimeoutInMilliseconds MS")
+                    //Log.d("BusValidator", "qrCodeReaderTimer .. Timeout is over ,, $qrCodeReaderTimeoutInMilliseconds MS")
                     qrCodeReaderTimeoutInMilliseconds = 0
                     this@apply.apply {
                         cancel()
@@ -87,12 +87,18 @@ class BusValidatorService : Service(){
                 if (resultArray.first() == ValidatorCodes.operationSuccess) {
                     val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
                    content?.let {
-                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
+                       //Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
+
+
+
+                      ////////////////////Call the payment process endpoint here...////////////////////////
                        //For testing of Approved or Rejected
                        val readQrCode =
                                if (it.startsWith("Expired")) ReadQrCode(it, false, PaymentRejectCauses.Expired)
                                else ReadQrCode(it, true)
                        EventBus.getDefault().post(readQrCode)
+
+
 
                        qrCodeReaderTimeoutInMilliseconds = 0
                        this@apply.apply {
