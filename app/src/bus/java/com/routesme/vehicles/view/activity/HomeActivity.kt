@@ -61,10 +61,10 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         rejectedPaymentFragment = RejectedPaymentFragment()
         multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
 
-       showFragment(multiTicketsScanFirstFragment)
-       // showFragment(mainFragment)
-        startBusValidatorService()
-        startBusPaymentService()
+      // showFragment(multiTicketsScanFirstFragment)
+        showFragment(mainFragment)
+      //  startBusValidatorService()
+       // startBusPaymentService()
     }
 
     override fun onDestroy() {

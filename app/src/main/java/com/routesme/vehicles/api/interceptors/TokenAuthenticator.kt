@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.util.Log
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.api.Constants
 import com.routesme.vehicles.api.Header
@@ -18,7 +19,7 @@ import okhttp3.Route
 
 
 class TokenAuthenticator(private val context: Context): Authenticator{
-    private val baseUrl = Helper.getConfigValue("baseUrl", R.raw.config)!!
+    private val baseUrl = BuildConfig.OLD_STAGING_BASE_URL
     override fun authenticate(route: Route?, response: Response): Request? = when {
 
 /*

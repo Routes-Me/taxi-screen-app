@@ -10,6 +10,7 @@ import androidx.core.app.ActivityCompat
 import com.andrognito.patternlockview.PatternLockView
 import com.andrognito.patternlockview.listener.PatternLockViewListener
 import com.andrognito.patternlockview.utils.PatternLockUtils
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.view.activity.AdminConsolePanel
 import kotlinx.android.synthetic.main.exit_pattern_dialog.*
@@ -62,5 +63,5 @@ class HomeScreenHelper(val activity: Activity) {
         activity.apply { startActivity(Intent(activity, AdminConsolePanel::class.java)); }
     }
 
-    private fun exitPassword(): String? = Helper.getConfigValue("exitPassword", R.raw.config)
+    private fun exitPassword(): String = BuildConfig.EXIT_PASSWORD
 }

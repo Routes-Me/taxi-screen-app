@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -304,6 +305,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun saveDeviceInfoIntoSharedPreferences(deviceId: String) {
+        Log.d("BusProcessTesting", "vehicleId: ${app.vehicleId}")
         editor.apply {
             putString(SharedPreferencesHelper.username, app.signInCredentials?.userName)
             putString(SharedPreferencesHelper.registration_date, DateOperations().registrationDate(Date()))

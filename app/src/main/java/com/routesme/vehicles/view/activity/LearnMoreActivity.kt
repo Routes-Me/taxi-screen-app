@@ -7,6 +7,7 @@ import android.view.MenuItem
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.Helper
 import kotlinx.android.synthetic.main.learn_more_screen.*
@@ -28,7 +29,7 @@ class LearnMoreActivity : AppCompatActivity() {
     @SuppressLint("SetJavaScriptEnabled")
     private fun showRoutesWebsite() {
         webView_routesWebsite.webViewClient = WebViewClient()
-        webView_routesWebsite.loadUrl(Helper.getConfigValue("routesWebsiteUrl", R.raw.config))
+        webView_routesWebsite.loadUrl(BuildConfig.ROUTES_WEBSITE_URL)
         val webSettings = webView_routesWebsite.settings
         webSettings.javaScriptEnabled = true
     }

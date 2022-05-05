@@ -27,19 +27,39 @@ android {
             jvmTarget = "1.8"
         }
     }
-/*
-    buildTypes {
-        debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
-        }
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
 
+    buildTypes {
+        debug{
+            //minifyEnabled true
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+
+            buildConfigField "String", "ROUTES_WEBSITE_URL", "\"http://www.routesme.com/\""
+            buildConfigField "String", "EXIT_PASSWORD", "\"043726518\""
+            buildConfigField "String", "STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"stage.location.hubs.routesme.com\""
+            buildConfigField "String", "PRODUCTION_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"location.hubs.routesme.com\""
+            buildConfigField "String", "OLD_STAGING_BASE_URL", "\"https://stage.api.routesme.com/v1.0/\""
+            buildConfigField "String", "OLD_PRODUCTION_BASE_URL", "\"https://api.routesme.com/v1.0/\""
+            buildConfigField "String", "NEW_PRODUCTION_BASE_URL", "\"https://route.click68.com/api/\""
+            buildConfigField "String", "NEW_API_KEY", "\"\$FhlF]3;.OIic&{>H;_DeW}|:wQ,A8\""
+            buildConfigField "String", "NEW_API_SECRET", "\"Z~P7-_/i!=}?BIwAd*S67LBzUo4O^G\""
+        }
+
+        release{
+            //minifyEnabled true
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+
+            buildConfigField "String", "ROUTES_WEBSITE_URL", "\"http://www.routesme.com/\""
+            buildConfigField "String", "EXIT_PASSWORD", "\"043726518\""
+            buildConfigField "String", "STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"stage.location.hubs.routesme.com\""
+            buildConfigField "String", "PRODUCTION_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"location.hubs.routesme.com\""
+            buildConfigField "String", "OLD_STAGING_BASE_URL", "\"https://stage.api.routesme.com/v1.0/\""
+            buildConfigField "String", "OLD_PRODUCTION_BASE_URL", "\"https://api.routesme.com/v1.0/\""
+            buildConfigField "String", "NEW_PRODUCTION_BASE_URL", "\"https://route.click68.com/api/\""
+            buildConfigField "String", "NEW_API_KEY", "\"\$FhlF]3;.OIic&{>H;_DeW}|:wQ,A8\""
+            buildConfigField "String", "NEW_API_SECRET", "\"Z~P7-_/i!=}?BIwAd*S67LBzUo4O^G\""
         }
     }
-    */
+
 
     lintOptions {
         checkReleaseBuilds false

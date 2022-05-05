@@ -18,6 +18,7 @@ import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.api.RestApiService
 import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.disposables.Disposable
@@ -147,7 +148,7 @@ class TrackingService : Service() {
     }
 
     private fun getTrackingUrl(): Uri {
-        val trackingAuthorityUrl = URI(Helper.getConfigValue("trackingWebSocketAuthorityUrl", R.raw.config)).toString()
+        val trackingAuthorityUrl = URI(BuildConfig.STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
       //  val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)

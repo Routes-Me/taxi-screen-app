@@ -4,6 +4,7 @@ import android.content.Context
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.helper.Helper
 import com.routesme.vehicles.data.model.RegistrationCredentials
 import com.routesme.vehicles.data.model.SignInCredentials
@@ -57,7 +58,7 @@ interface RestApiService {
 
         fun createCorService(context: Context): RestApiService {
             return Retrofit.Builder()
-                    .baseUrl(Helper.getConfigValue("baseUrl", R.raw.config)!!)
+                    .baseUrl(BuildConfig.OLD_STAGING_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(ApiWorker(context).gsonConverter!!)
                     .client(ApiWorker(context).client)
