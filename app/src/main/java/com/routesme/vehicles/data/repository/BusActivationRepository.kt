@@ -27,8 +27,8 @@ class BusActivationRepository(val context: Context) {
                 if (response.isSuccessful && response.body() != null) {
                     val activateBusResponseDTO = Gson().fromJson<ActivateBusResponseDTO>(response.body(), ActivateBusResponseDTO::class.java)
                     activateBusResponse.value =
-                    if (activateBusResponseDTO.status) ActivateBusResponse(isActivatedSuccessfully = activateBusResponseDTO.status, activatedBusInformation = activateBusResponseDTO.description as ActivatedBusInformation)
-                    else ActivateBusResponse(isActivatedSuccessfully = activateBusResponseDTO.status, activateBusFailedMessage = activateBusResponseDTO.description as String)
+                            if (activateBusResponseDTO.status) ActivateBusResponse(isActivatedSuccessfully = activateBusResponseDTO.status, activatedBusInformation = Gson().fromJson<ActivatedBusInformation>(response.body()!!.asJsonObject["description"], ActivatedBusInformation::class.java))
+                            else ActivateBusResponse(isActivatedSuccessfully = activateBusResponseDTO.status, activateBusFailedMessage = Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java))
                 } else {
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                         val objError = JSONObject(response.errorBody()!!.string())
@@ -42,6 +42,7 @@ class BusActivationRepository(val context: Context) {
                     }
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 activateBusResponse.value = ActivateBusResponse(mThrowable = throwable)
             }
@@ -69,6 +70,7 @@ class BusActivationRepository(val context: Context) {
                     }
                 }
             }
+
             override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
                 deactivateBusResponse.value = DeactivateBusResponse(mThrowable = throwable)
             }
