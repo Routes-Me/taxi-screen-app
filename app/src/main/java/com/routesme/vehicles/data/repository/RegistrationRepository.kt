@@ -16,7 +16,7 @@ class RegistrationRepository(val context: Context) {
     private val registrationResponse = MutableLiveData<RegistrationResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun register(registrationCredentials: RegistrationCredentials): MutableLiveData<RegistrationResponse> {

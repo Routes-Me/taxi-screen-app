@@ -28,6 +28,7 @@ import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformati
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.uplevels.CarrierInformation
+import com.routesme.vehicles.viewmodel.BusActivationViewModel
 import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
 import dmax.dialog.SpotsDialog
@@ -199,7 +200,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
             registrationViewModel.register(registerCredentials, this).observe(this, Observer<RegistrationResponse> {
-                dialog?.dismiss()
                 operations.enableNextButton(register_btn, true)
                 if (it != null) {
                     if (it.isSuccess) {
@@ -209,10 +209,16 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveDeviceInfoIntoSharedPreferences(deviceId)
-                        if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
-                        App.instance.startTrackingService()
-                        openModelPresenterScreen()
+                       // if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
+                        if (BuildConfig.FLAVOR == "bus"){
+                            registerCredentials.VehicleId?.let { activateBus(it) }
+                        } else{
+                            dialog?.dismiss()
+                            App.instance.startTrackingService()
+                            openModelPresenterScreen()
+                        }
                     } else {
+                        dialog?.dismiss()
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
                         } else if (it.mThrowable != null) {
@@ -224,12 +230,49 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 } else {
+                    dialog?.dismiss()
                     operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
                 }
             })
         } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
         }
+    }
+
+    private fun activateBus(vehicleId: String){
+        Log.d("BusProcessTesting", "vehicleId: $vehicleId")
+        val activateBusCredentials = ActivateBusCredentials(SecondID = vehicleId)
+        val busActivationViewModel: BusActivationViewModel by viewModels()
+        busActivationViewModel.activate(activateBusCredentials, this).observe(this, Observer<ActivateBusResponse> {
+            dialog?.dismiss()
+            if (it != null) {
+                if (it.isSuccess) {
+                    if (it.descriptionStatus == true) {
+                        saveBusInfoIntoSharedPreferences()
+                        App.instance.startTrackingService()
+                        openModelPresenterScreen()
+                    }else{
+                        operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.description?.message}")
+                    }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun saveBusInfoIntoSharedPreferences() {
+
     }
 
     private fun getCarrierInformation(vehicleId: String) {
@@ -305,7 +348,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun saveDeviceInfoIntoSharedPreferences(deviceId: String) {
-        Log.d("BusProcessTesting", "vehicleId: ${app.vehicleId}")
         editor.apply {
             putString(SharedPreferencesHelper.username, app.signInCredentials?.userName)
             putString(SharedPreferencesHelper.registration_date, DateOperations().registrationDate(Date()))

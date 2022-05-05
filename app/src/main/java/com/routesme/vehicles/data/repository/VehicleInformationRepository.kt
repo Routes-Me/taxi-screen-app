@@ -19,7 +19,7 @@ class VehicleInformationRepository(val context: Context) {
     private val vehiclesResponse = MutableLiveData<VehiclesResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun getInstitutions(offset: Int, limit: Int): MutableLiveData<InstitutionsResponse> {

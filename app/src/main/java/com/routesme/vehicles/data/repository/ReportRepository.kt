@@ -17,7 +17,7 @@ class ReportRepository(context: Context, data: JsonArray) {
     private val reportResponse = MutableLiveData<ReportResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun postReport(data: JsonArray, deviceId: String): MutableLiveData<ReportResponse> {

@@ -9,7 +9,6 @@ import androidx.annotation.NonNull
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
-import com.routesme.vehicles.helper.Helper
 import com.routesme.vehicles.service.receiver.LocationReceiver
 import com.routesme.vehicles.room.dao.LocationFeedsDao
 import com.routesme.vehicles.room.TrackingDatabase
@@ -43,7 +42,7 @@ class TrackingService : Service() {
     private lateinit var db: TrackingDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
     private var sendFeedsTimer: Timer? = null
-    private val thisApiCoreService by lazy { RestApiService.createCorService(this) }
+    private val thisApiCoreService by lazy { RestApiService.createOldCorService(this) }
     private var vehicleId: String? = null
 
     override fun onCreate() {

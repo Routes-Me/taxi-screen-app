@@ -17,7 +17,7 @@ class CarrierInformationRepository(val context: Context){
     private val carrierInformationResponse = MutableLiveData<CarrierInformationResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun getCarrierInformation(vehicleId: String, include: String): MutableLiveData<CarrierInformationResponse> {

@@ -6,11 +6,8 @@ import com.google.gson.JsonElement
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.helper.Helper
-import com.routesme.vehicles.data.model.RegistrationCredentials
-import com.routesme.vehicles.data.model.SignInCredentials
-import com.routesme.vehicles.data.model.SubmitApplicationVersionCredentials
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.RefreshTokenCredentials
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.room.entity.LocationCoordinate
 import org.json.JSONArray
 import retrofit2.Call
@@ -54,11 +51,26 @@ interface RestApiService {
     @POST("vehicles/{vehicleId}/coordinates")
     fun locationCoordinates (@Path("vehicleId") vehicleId: String, @Body coordinates: List<LocationCoordinate>): Call<String>
 
+    //New server endpoints
+
+    @POST("divice/ActiveBus")
+    fun activateBus(@Body activateBusCredentials: ActivateBusCredentials): Call<JsonElement>
+
     companion object {
 
-        fun createCorService(context: Context): RestApiService {
+        fun createOldCorService(context: Context): RestApiService {
             return Retrofit.Builder()
                     .baseUrl(BuildConfig.OLD_STAGING_BASE_URL)
+                    .addConverterFactory(ScalarsConverterFactory.create())
+                    .addConverterFactory(ApiWorker(context).gsonConverter!!)
+                    .client(ApiWorker(context).client)
+                    .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                    .build().create(RestApiService::class.java)
+        }
+
+        fun createNewCorService(context: Context): RestApiService {
+            return Retrofit.Builder()
+                    .baseUrl(BuildConfig.NEW_PRODUCTION_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(ApiWorker(context).gsonConverter!!)
                     .client(ApiWorker(context).client)

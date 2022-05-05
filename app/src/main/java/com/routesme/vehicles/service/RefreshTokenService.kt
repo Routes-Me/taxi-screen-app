@@ -28,7 +28,7 @@ import java.net.HttpURLConnection
 
 class RefreshTokenService: Service() {
 
-    private val thisApiCoreService by lazy { RestApiService.createCorService(this) }
+    private val thisApiCoreService by lazy { RestApiService.createOldCorService(this) }
 
     override fun onCreate() {
         super.onCreate()
