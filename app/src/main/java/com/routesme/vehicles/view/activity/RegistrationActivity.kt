@@ -214,8 +214,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                             registerCredentials.VehicleId?.let { activateBus(it) }
                         } else{
                             dialog?.dismiss()
-                            App.instance.startTrackingService()
-                            openModelPresenterScreen()
+                            registerProcess()
                         }
                     } else {
                         dialog?.dismiss()
@@ -240,17 +239,16 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     private fun activateBus(vehicleId: String){
-        Log.d("BusProcessTesting", "vehicleId: $vehicleId")
-        val activateBusCredentials = BusActivationCredentials(SecondID = vehicleId)
+        Log.d("BusProcessTesting", "Activate bus vehicleId: $vehicleId")
+        val busActivationCredentials = BusActivationCredentials(SecondID = vehicleId)
         val busActivationViewModel: BusActivationViewModel by viewModels()
-        busActivationViewModel.activate(activateBusCredentials, this).observe(this, Observer<ActivateBusResponse> {
+        busActivationViewModel.activate(busActivationCredentials, this).observe(this, Observer<ActivateBusResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
                     if (it.descriptionStatus == true) {
                         saveBusInfoIntoSharedPreferences()
-                        App.instance.startTrackingService()
-                        openModelPresenterScreen()
+                        registerProcess()
                     }else{
                         operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusDescription?.message}")
                     }
@@ -273,6 +271,11 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
 
     private fun saveBusInfoIntoSharedPreferences() {
 
+    }
+
+    private fun registerProcess() {
+        App.instance.startTrackingService()
+        openModelPresenterScreen()
     }
 
     private fun getCarrierInformation(vehicleId: String) {
