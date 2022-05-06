@@ -96,7 +96,7 @@ class BusValidatorService : Service(){
 
 
 
-                //QRCODE Content  0000|Expired   or    Expired
+                //QRCODE Content:  0000|Expired   or    Expired
                 val resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
                 if (resultArray.first() == ValidatorCodes.operationSuccess) {
                     val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
