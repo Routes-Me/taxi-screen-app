@@ -43,7 +43,7 @@ class BusPaymentService: Service(){
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(readQrCode: ReadQrCode){
-        Log.d("BusValidator", "From BusPaymentService, New QR Code , with Content: ${readQrCode.content}, isApproved: ${readQrCode.isApproved}, RejectCauses: ${readQrCode.rejectCauses?.message}")
+        Log.d("BusValidator", "From BusPaymentService, New QR Code , with Content: ${readQrCode.content}, isApproved: ${readQrCode.isApproved}, RejectCauses: ${readQrCode.rejectCauses}")
         if (readQrCode.isApproved){
             paymentOperations.add(readQrCode)
             Log.d("BusValidator", "From BusPaymentService, Payment Operations: $paymentOperations")

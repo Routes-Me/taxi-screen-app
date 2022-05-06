@@ -22,10 +22,10 @@ class BusPaymentProcessRepository(val context: Context) {
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
-                    val activateBusResponseDTO = Gson().fromJson<BusPaymentProcessDTO>(response.body(), BusPaymentProcessDTO::class.java)
+                    val busPaymentProcessDTO = Gson().fromJson<BusPaymentProcessDTO>(response.body(), BusPaymentProcessDTO::class.java)
                     busPaymentProcessResponse.value =
-                            if (activateBusResponseDTO.status) BusPaymentProcessResponse(isProcessedSuccessfully = activateBusResponseDTO.status, busPaymentProcessSuccessDTO = Gson().fromJson<BusPaymentProcessSuccessDTO>(response.body()!!.asJsonObject["description"], BusPaymentProcessSuccessDTO::class.java))
-                            else BusPaymentProcessResponse(isProcessedSuccessfully = activateBusResponseDTO.status, busPaymentProcessFailedDTO = Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java))
+                            if (busPaymentProcessDTO.status) BusPaymentProcessResponse(isProcessedSuccessfully = busPaymentProcessDTO.status, busPaymentProcessSuccessDTO = Gson().fromJson<BusPaymentProcessSuccessDTO>(response.body()!!.asJsonObject["description"], BusPaymentProcessSuccessDTO::class.java))
+                            else BusPaymentProcessResponse(isProcessedSuccessfully = busPaymentProcessDTO.status, busPaymentProcessFailedDTO = Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java))
                 } else {
                     if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                         val objError = JSONObject(response.errorBody()!!.string())
