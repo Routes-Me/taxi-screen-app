@@ -1,7 +1,7 @@
 package com.routesme.vehicles.data.model
 
 data class MasterItem(val id: Int, val type: String)
-enum class MasterItemType(val title: String) { Info("Info"), Account("Account"), Settings("Settings"), RoutesAndTickets("Routes & Tickets ") , Location_Feeds("Location Feeds") }
+enum class MasterItemType(val title: String) { Info("Info"), Account("Account"), Settings("Settings"), RoutesAndTickets("Routes & Tickets") , BusInformation("Bus Information") , Location_Feeds("Location Feeds") }
 
 interface ICell
 class LabelCell(val title: String) : ICell
