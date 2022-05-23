@@ -11,8 +11,8 @@ android {
         applicationId "com.routesme.vehicles"
         minSdkVersion 26
         targetSdkVersion 29
-        versionCode 39
-        versionName "4.6"
+        versionCode 41
+        versionName "4.8"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
@@ -85,8 +85,8 @@ android {
             dimension 'default'
             applicationId "com.routesme.vehicles"
             applicationIdSuffix ".bus"
-            versionCode 1
-            versionName "1.0"
+            versionCode 3
+            versionName "3.0"
         }
     }
     sourceSets {

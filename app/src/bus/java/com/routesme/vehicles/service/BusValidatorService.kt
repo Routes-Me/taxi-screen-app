@@ -6,6 +6,7 @@ import android.app.NotificationManager
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
+import android.util.Log
 import com.decard.NDKMethod.BasicOper
 import com.google.gson.Gson
 import com.google.gson.JsonElement
@@ -49,10 +50,10 @@ class BusValidatorService : Service(){
         if (!isPortOpened){
             isPortOpened = openPort()
             if (isPortOpened){
-                //Log.d("BusValidator", "Open port.. Successfully")
+                Log.d("BusValidator", "Open port.. Successfully")
                 runQRCodeReader()
             }else{
-                //Log.d("BusValidator", "Open port.. Failed")
+                Log.d("BusValidator", "Open port.. Failed")
             }
         }
 
@@ -79,12 +80,12 @@ class BusValidatorService : Service(){
     private fun readQrCodeContent(timeInMilliseconds: Long) {
         Timer("qrCodeReaderTimer", true).apply {
             schedule(TimeUnit.MILLISECONDS.toMillis(timeInMilliseconds), TimeUnit.MILLISECONDS.toMillis(timeInMilliseconds)) {
-                //Log.d("BusValidator", "qrCodeReaderTimer .. after delay: $timeInMilliseconds MS")
-               //Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
+                Log.d("BusValidator", "qrCodeReaderTimer .. after delay: $timeInMilliseconds MS")
+               Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 qrCodeReaderTimeoutInMilliseconds += timeInMilliseconds
-                //Log.d("BusValidator", "qrCodeReaderTimer .. Timeout after add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
+                Log.d("BusValidator", "qrCodeReaderTimer .. Timeout after add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 if (qrCodeReaderTimeoutInMilliseconds >= twoMinutesInMilliseconds) {
-                    //Log.d("BusValidator", "qrCodeReaderTimer .. Timeout is over ,, $qrCodeReaderTimeoutInMilliseconds MS")
+                    Log.d("BusValidator", "qrCodeReaderTimer .. Timeout is over ,, $qrCodeReaderTimeoutInMilliseconds MS")
                     qrCodeReaderTimeoutInMilliseconds = 0
                     this@apply.apply {
                         cancel()
@@ -93,7 +94,7 @@ class BusValidatorService : Service(){
                     readQrCodeContent(idleModeReadingInMilliseconds)
                 }
                 val result = BasicOper.dc_Scan2DBarcodeGetData()
-
+                Log.d("BusValidator", "Result: result")
 
 
                 //QRCODE Content:  0000|Expired   or    Expired
@@ -101,7 +102,7 @@ class BusValidatorService : Service(){
                 if (resultArray.first() == ValidatorCodes.operationSuccess) {
                     val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
                    content?.let { userId ->
-                       //Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
+                      // Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
 
 
 

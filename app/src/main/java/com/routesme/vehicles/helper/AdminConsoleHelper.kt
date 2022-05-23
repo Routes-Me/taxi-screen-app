@@ -75,7 +75,7 @@ class AdminConsoleHelper(val activity: Activity) {
             return null
         } else {
            return mutableListOf<ICell>().apply {
-               add(DetailCell("Device Serial Number", Build.getSerial(), true))
+              // add(DetailCell("Device Serial Number", Build.getSerial(), true))
                add(DetailCell("Device Model", Build.MODEL, false))
            }
         }
