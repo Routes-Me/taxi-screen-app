@@ -34,6 +34,20 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.8" />
 
+    <TextView
+        android:id="@+id/userName_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/payment_approved_text_color"
+        android:textSize="@dimen/_17ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintBottom_toTopOf="@id/approvedIcon_iv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintVertical_chainStyle="packed"/>
+
     <ImageView
         android:id="@+id/approvedIcon_iv"
         android:layout_width="0dp"
@@ -42,9 +56,8 @@
         app:layout_constraintBottom_toTopOf="@id/approvedMessage_tv"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        android:layout_marginBottom="@dimen/_16sdp"
-        app:layout_constraintVertical_chainStyle="packed"/>
+        app:layout_constraintTop_toBottomOf="@id/userName_tv"
+        android:layout_marginBottom="@dimen/_16sdp" />
 
     <TextView
         android:id="@+id/approvedTitle_tv"

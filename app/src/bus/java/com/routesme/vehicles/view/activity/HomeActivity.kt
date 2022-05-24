@@ -3,12 +3,11 @@ package com.routesme.vehicles.view.activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.IModeChanging
-import com.routesme.vehicles.data.model.ReadQrCode
+import com.routesme.vehicles.data.model.PaymentResult
 import com.routesme.vehicles.helper.*
 //import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
@@ -28,8 +27,8 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private var pressedTime: Long = 0
     private var clickTimes = 0
-    private val approvedScreenShowingTime = TimeUnit.MILLISECONDS.toMillis(1500)
-    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
+    private val approvedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
+    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(6)
     private lateinit var helper: HomeScreenHelper
     private lateinit var mainFragment: MainFragment
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
@@ -94,7 +93,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     */
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(readQrCode: ReadQrCode){
+    fun onEvent(paymentResult: PaymentResult){
         //Log.d("BusValidator","Read new qr code: $readQrCode")
          if (isDismissFragmentTimerAlive) {
              //Log.d("BusValidator","There's dismiss timer already running")
@@ -106,12 +105,13 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
              isDismissFragmentTimerAlive = false
          }
 
-      if (readQrCode.isApproved) {
-          showFragment(approvedPaymentFragment)
+        val bundle: Bundle  = Bundle().apply { putSerializable("PaymentResult", paymentResult) }
+      if (paymentResult.isApproved) {
+          showFragment(approvedPaymentFragment.apply { arguments = bundle })
           //showFragment(multiTicketsScanFirstFragment)
           dismissFragment(approvedScreenShowingTime)
       } else {
-          showFragment(rejectedPaymentFragment)
+          showFragment(rejectedPaymentFragment.apply { arguments = bundle })
           dismissFragment(rejectedScreenShowingTime)
       }
     }

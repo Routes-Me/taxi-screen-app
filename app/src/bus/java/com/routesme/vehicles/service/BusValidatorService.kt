@@ -28,9 +28,9 @@ import kotlin.concurrent.schedule
 class BusValidatorService : Service(){
     private var isPortOpened = false
     private var qrCodeReaderTimeoutInMilliseconds: Long  =0
-    private val twoMinutesInMilliseconds = TimeUnit.MINUTES.toMillis(2)
-    private val idleModeReadingInMilliseconds = TimeUnit.SECONDS.toMillis(3)
-    private val defaultReadingInMilliseconds = TimeUnit.MILLISECONDS.toMillis(500)
+    private val fourMinutesInMilliseconds = TimeUnit.MINUTES.toMillis(4)
+    private val idleModeReadingInMilliseconds = TimeUnit.SECONDS.toMillis(6)
+    private val defaultReadingInMilliseconds = TimeUnit.SECONDS.toMillis(1)
     private var activatedBusInfo: ActivatedBusInfo? = null
     private val thisApiCorService by lazy { RestApiService.createNewCorService(this) }
 
@@ -84,7 +84,7 @@ class BusValidatorService : Service(){
                Log.d("BusValidator", "qrCodeReaderTimer .. Timeout before add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
                 qrCodeReaderTimeoutInMilliseconds += timeInMilliseconds
                 Log.d("BusValidator", "qrCodeReaderTimer .. Timeout after add the delay: $qrCodeReaderTimeoutInMilliseconds MS")
-                if (qrCodeReaderTimeoutInMilliseconds >= twoMinutesInMilliseconds) {
+                if (qrCodeReaderTimeoutInMilliseconds >= fourMinutesInMilliseconds) {
                     Log.d("BusValidator", "qrCodeReaderTimer .. Timeout is over ,, $qrCodeReaderTimeoutInMilliseconds MS")
                     qrCodeReaderTimeoutInMilliseconds = 0
                     this@apply.apply {
@@ -94,16 +94,17 @@ class BusValidatorService : Service(){
                     readQrCodeContent(idleModeReadingInMilliseconds)
                 }
                 val result = BasicOper.dc_Scan2DBarcodeGetData()
-                Log.d("BusValidator", "Result: result")
+                Log.d("BusValidator", "Result: $result")
 
 
                 //QRCODE Content:  0000|Expired   or    Expired
                 val resultArray = result.split("|").dropLastWhile { it.isEmpty() }.toTypedArray()
                 if (resultArray.first() == ValidatorCodes.operationSuccess) {
                     val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
-                   content?.let { userId ->
-                      // Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $it ")
-
+                   content?.let { userPaymentQrcodeContent ->
+                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, userPaymentQrcodeContent: $userPaymentQrcodeContent")
+                       val userPaymentQrcodeData: UserPaymentQrcodeData = Gson().fromJson(userPaymentQrcodeContent, UserPaymentQrcodeData::class.java)
+                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, userPaymentQrcodeData: $userPaymentQrcodeData")
 
 
                       ////////////////////Call the payment process endpoint here...////////////////////////
@@ -114,16 +115,20 @@ class BusValidatorService : Service(){
                        */
 
                        activatedBusInfo?.let {
-                           val busPaymentProcessCredentials = BusPaymentProcessCredentials(SecondID = it.busSecondId, Value = it.busPrice, UserID = userId)
+                           val busPaymentProcessCredentials = BusPaymentProcessCredentials(SecondID = it.busSecondId, PaymentCode = userPaymentQrcodeData.paymentCode, Value = 1, UserID = userPaymentQrcodeData.userId)
+                           Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $busPaymentProcessCredentials ")
                            //processedBusPaymentProcess(busPaymentProcessCredentials)
                            val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials)
                            call.enqueue(object : Callback<JsonElement> {
                                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                    if (response.isSuccessful && response.body() != null) {
+
+                                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Response: ${response.body()} ")
+
                                        val busPaymentProcessDTO = Gson().fromJson<BusPaymentProcessDTO>(response.body(), BusPaymentProcessDTO::class.java)
                                        val message: String? = if (!busPaymentProcessDTO.status) Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java) else null
-                                       val readQrCode = ReadQrCode(busPaymentProcessCredentials.UserID!!, busPaymentProcessDTO.status, message)
-                                       EventBus.getDefault().post(readQrCode)
+                                       val paymentResult = PaymentResult(userID = busPaymentProcessCredentials.UserID!!, userName = userPaymentQrcodeData.userName, isApproved = busPaymentProcessDTO.status,  rejectedReason =  message)
+                                       EventBus.getDefault().post(paymentResult)
 
                                        qrCodeReaderTimeoutInMilliseconds = 0
                                        this@apply.apply {
@@ -138,6 +143,7 @@ class BusValidatorService : Service(){
                                                 else BusPaymentProcessResponse(isProcessedSuccessfully = activateBusResponseDTO.status, busPaymentProcessFailedDTO = Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java))
                                    */
                                    } else {
+                                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Code : ${response.code()} ")
                                        if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
                                            val objError = JSONObject(response.errorBody()!!.string())
                                            val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)

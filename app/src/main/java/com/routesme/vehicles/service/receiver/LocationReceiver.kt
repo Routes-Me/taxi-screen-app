@@ -56,9 +56,9 @@ class LocationReceiver : LocationListener {
         return null
     }
 
-    private val bestProvider = locationManager.getBestProvider(createFineCriteria(), true)
+    private val bestProvider: String = locationManager.getBestProvider(createFineCriteria(), true).toString()
 
-    override fun onLocationChanged(location: Location?) {
+    override fun onLocationChanged(location: Location) {
         location?.let {
             val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
             Log.d("LocationArchiving", "onLocationChanged")
@@ -66,9 +66,9 @@ class LocationReceiver : LocationListener {
         }
     }
 
-    override fun onStatusChanged(p0: String?, p1: Int, p2: Bundle?) {}
-    override fun onProviderEnabled(p0: String?) {}
-    override fun onProviderDisabled(p0: String?) {}
+    override fun onStatusChanged(p0: String, p1: Int, p2: Bundle) {}
+    override fun onProviderEnabled(p0: String) {}
+    override fun onProviderDisabled(p0: String) {}
     private fun createFineCriteria() = Criteria().apply {
         accuracy = Criteria.ACCURACY_FINE
         isAltitudeRequired = false
