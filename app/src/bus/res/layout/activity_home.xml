@@ -30,4 +30,27 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="@dimen/_70sdp">
+
+        <Button
+            android:id="@+id/ApprovedScreen_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="ApprovedScreen"
+            android:layout_marginEnd="@dimen/_50sdp"/>
+
+        <Button
+            android:id="@+id/RejectedScreen_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="RejectedScreen"/>
+
+    </LinearLayout>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

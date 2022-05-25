@@ -1,20 +1,23 @@
 package com.routesme.vehicles.view.activity
 
+//import com.routesme.vehicles.service.BusPaymentService
+
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.media.AudioManager
+import android.media.ToneGenerator
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.IModeChanging
 import com.routesme.vehicles.data.model.PaymentResult
 import com.routesme.vehicles.helper.*
-//import com.routesme.vehicles.service.BusPaymentService
 import com.routesme.vehicles.service.BusValidatorService
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
 import com.routesme.vehicles.view.fragment.MainFragment
-import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
 import com.routesme.vehicles.view.fragment.MultiTicketsScanFirstFragment
+import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
 import kotlinx.android.synthetic.bus.activity_home.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
@@ -23,12 +26,14 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
+
 class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private var pressedTime: Long = 0
     private var clickTimes = 0
     private val approvedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
     private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(6)
+    private val transactionTone = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 1000000)
     private lateinit var helper: HomeScreenHelper
     private lateinit var mainFragment: MainFragment
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
@@ -62,8 +67,11 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
       // showFragment(multiTicketsScanFirstFragment)
         showFragment(mainFragment)
-        startBusValidatorService()
+       // startBusValidatorService()
         //startBusPaymentService()
+
+
+        testing()
     }
 
     override fun onDestroy() {
@@ -83,7 +91,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     }
 
     private fun startBusValidatorService() {
-        ContextCompat.startForegroundService(this,Intent(this, BusValidatorService::class.java))
+        ContextCompat.startForegroundService(this, Intent(this, BusValidatorService::class.java))
     }
 
 /*
@@ -91,6 +99,20 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         ContextCompat.startForegroundService(this,Intent(this, BusPaymentService::class.java))
     }
     */
+
+    private fun testing(){
+        ApprovedScreen_btn.setOnClickListener {
+            val paymentResult = PaymentResult("7453597dj", "Ahmed", true, null)
+            val bundle: Bundle  = Bundle().apply { putSerializable("PaymentResult", paymentResult) }
+            executeApprovedProcess(bundle)
+        }
+
+        RejectedScreen_btn.setOnClickListener {
+            val paymentResult = PaymentResult("28246njjsh", "Ali", false, "No balance")
+            val bundle: Bundle  = Bundle().apply { putSerializable("PaymentResult", paymentResult) }
+            executeRejectedProcess(bundle)
+        }
+    }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(paymentResult: PaymentResult){
@@ -106,14 +128,19 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
          }
 
         val bundle: Bundle  = Bundle().apply { putSerializable("PaymentResult", paymentResult) }
-      if (paymentResult.isApproved) {
-          showFragment(approvedPaymentFragment.apply { arguments = bundle })
-          //showFragment(multiTicketsScanFirstFragment)
-          dismissFragment(approvedScreenShowingTime)
-      } else {
-          showFragment(rejectedPaymentFragment.apply { arguments = bundle })
-          dismissFragment(rejectedScreenShowingTime)
-      }
+        if (paymentResult.isApproved) { executeApprovedProcess(bundle) } else { executeRejectedProcess(bundle) }
+    }
+
+    private fun executeApprovedProcess(bundle: Bundle) {
+        showFragment(approvedPaymentFragment.apply { arguments = bundle })
+        dismissFragment(approvedScreenShowingTime)
+        transactionTone.startTone(ToneGenerator.TONE_PROP_BEEP, approvedScreenShowingTime.toInt())
+    }
+
+    private fun executeRejectedProcess(bundle: Bundle) {
+        showFragment(rejectedPaymentFragment.apply { arguments = bundle })
+        dismissFragment(rejectedScreenShowingTime)
+        transactionTone.startTone(ToneGenerator.TONE_CDMA_ANSWER, rejectedScreenShowingTime.toInt())
     }
 
     private fun showFragment(fragment: Fragment) {
