@@ -27,13 +27,13 @@ class RejectedPaymentFragment : Fragment() {
         return rejectedPaymentFragmentView
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        if(!hidden) getPaymentResult()
-        super.onHiddenChanged(hidden)
+    override fun onStart() {
+        Log.d("getPaymentResultTest", "RejectedPaymentFragment.. onStart")
+        super.onStart()
     }
 
     override fun onResume() {
-        getPaymentResult()
+        Log.d("getPaymentResultTest", "RejectedPaymentFragment.. onResume")
         super.onResume()
     }
 

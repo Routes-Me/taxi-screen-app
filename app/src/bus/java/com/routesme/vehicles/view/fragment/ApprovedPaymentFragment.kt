@@ -1,6 +1,7 @@
 package com.routesme.vehicles.view.fragment
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -23,13 +24,13 @@ class ApprovedPaymentFragment : Fragment() {
         return approvedPaymentFragmentView
     }
 
-    override fun onHiddenChanged(hidden: Boolean) {
-        if(!hidden) getPaymentResult()
-        super.onHiddenChanged(hidden)
+    override fun onStart() {
+        Log.d("getPaymentResultTest", "ApprovedPaymentFragment.. onStart")
+        super.onStart()
     }
 
     override fun onResume() {
-        getPaymentResult()
+        Log.d("getPaymentResultTest", "ApprovedPaymentFragment.. onResume")
         super.onResume()
     }
 
