@@ -15,7 +15,7 @@ data class ActivatedBusInformation (
         val routeID     : String?  = null,
         val routeName   : String?  = null,
         val distination : String?  = null,
-        val price       : Int     = 0,
+        val price       : Double     = 0.0,
         // val driverID    : String?  = null,
         // val userName    : String?  = null,
         // val phoneNumber : String?  = null,

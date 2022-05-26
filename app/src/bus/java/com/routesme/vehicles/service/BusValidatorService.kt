@@ -115,7 +115,7 @@ class BusValidatorService : Service(){
                        */
 
                        activatedBusInfo?.let {
-                           val busPaymentProcessCredentials = BusPaymentProcessCredentials(SecondID = it.busSecondId, PaymentCode = userPaymentQrcodeData.paymentCode, Value = 1, UserID = userPaymentQrcodeData.userId)
+                           val busPaymentProcessCredentials = BusPaymentProcessCredentials(SecondID = it.busSecondId, PaymentCode = userPaymentQrcodeData.paymentCode, Value = it.busPrice!!.trim().toDouble(), UserID = userPaymentQrcodeData.userId)
                            Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $busPaymentProcessCredentials ")
                            //processedBusPaymentProcess(busPaymentProcessCredentials)
                            val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials)

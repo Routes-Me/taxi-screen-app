@@ -279,7 +279,7 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
            busRouteId = activatedBusInformation.routeID
            busRouteName = activatedBusInformation.routeName
            busDestination = activatedBusInformation.distination
-           busPrice = activatedBusInformation.price
+           busPrice = activatedBusInformation.price.toString()
            busCompany = activatedBusInformation.company
            busSecondId = activatedBusInformation.socondID
        }
