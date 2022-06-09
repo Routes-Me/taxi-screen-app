@@ -189,4 +189,7 @@ dependencies {
     //Gif imageView
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.18'
     implementation 'com.github.pedrovgs:lynx:1.1.0'
+
+    //Bus validator E60Q SDK
+    implementation files("libs/E60QSDK-release.aar")
 }

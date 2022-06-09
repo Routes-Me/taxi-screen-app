@@ -25,7 +25,7 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
-class BusValidatorService : Service(){
+class BusValidatorServiceP18 : Service(){
     private var isPortOpened = false
     private var qrCodeReaderTimeoutInMilliseconds: Long  =0
     private val fourMinutesInMilliseconds = TimeUnit.MINUTES.toMillis(4)
@@ -45,6 +45,9 @@ class BusValidatorService : Service(){
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
         startForeground(ServiceInfo.BusValidator.serviceId, getNotification())
+
+        Log.d("BusValidator", "onStartCommand... BusValidatorService: BusValidatorServiceP18")
+
         activatedBusInfo = ActivatedBusInfo()
 
         if (!isPortOpened){
@@ -166,42 +169,6 @@ class BusValidatorService : Service(){
             }
         }
     }
-
-    /*
-    private fun processedBusPaymentProcess(busPaymentProcessCredentials: BusPaymentProcessCredentials) {
-        val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials)
-        call.enqueue(object : Callback<JsonElement> {
-            override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
-                if (response.isSuccessful && response.body() != null) {
-                    val busPaymentProcessDTO = Gson().fromJson<BusPaymentProcessDTO>(response.body(), BusPaymentProcessDTO::class.java)
-                    val message: String? = if (!busPaymentProcessDTO.status) Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java) else null
-                    val readQrCode = ReadQrCode(busPaymentProcessCredentials.UserID!!, busPaymentProcessDTO.status, message)
-                    EventBus.getDefault().post(readQrCode)
-
-                   /*
-                    busPaymentProcessResponse.value =
-                            if (activateBusResponseDTO.status) BusPaymentProcessResponse(isProcessedSuccessfully = activateBusResponseDTO.status, busPaymentProcessSuccessDTO = Gson().fromJson<BusPaymentProcessSuccessDTO>(response.body()!!.asJsonObject["description"], BusPaymentProcessSuccessDTO::class.java))
-                            else BusPaymentProcessResponse(isProcessedSuccessfully = activateBusResponseDTO.status, busPaymentProcessFailedDTO = Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java))
-               */
-                } else {
-                    if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
-                        val objError = JSONObject(response.errorBody()!!.string())
-                        val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
-                       // busPaymentProcessResponse.value = BusPaymentProcessResponse(mResponseErrors = errors)
-                    } else {
-                        val error = Error(detail = response.message(), statusCode = response.code())
-                        val errors = mutableListOf<Error>().apply { add(error) }.toList()
-                        val responseErrors = ResponseErrors(errors)
-                       // busPaymentProcessResponse.value = BusPaymentProcessResponse(mResponseErrors = responseErrors)
-                    }
-                }
-            }
-            override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
-               // busPaymentProcessResponse.value = BusPaymentProcessResponse(mThrowable = throwable)
-            }
-        })
-    }
-    */
 
     private fun hexStringToString(hexString: String): String {
         var result = hexString

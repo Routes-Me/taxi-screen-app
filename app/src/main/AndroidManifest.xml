@@ -112,7 +112,11 @@
             android:name=".service.RefreshTokenService"
             android:enabled="true" />
         <service
-            android:name=".service.BusValidatorService"
+            android:name=".service.BusValidatorServiceP18"
+            android:enabled="true" />
+
+        <service
+            android:name=".service.BusValidatorServiceE60Q"
             android:enabled="true" />
 
         <!--
