@@ -8,15 +8,16 @@ import android.media.AudioManager
 import android.media.ToneGenerator
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.sdkdemo.LibBarCode
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.DetailCell
-import com.routesme.vehicles.data.model.ICell
-import com.routesme.vehicles.data.model.IModeChanging
-import com.routesme.vehicles.data.model.PaymentResult
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.service.BusValidatorServiceE60Q
 import com.routesme.vehicles.service.BusValidatorServiceP18
@@ -28,6 +29,11 @@ import kotlinx.android.synthetic.bus.activity_home.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.net.HttpURLConnection
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
@@ -105,7 +111,18 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     }
 
     private fun startBusValidatorServiceE60Q() {
-        ContextCompat.startForegroundService(this, Intent(this, BusValidatorServiceE60Q::class.java))
+         val charset = Charsets.UTF_8
+
+        //ContextCompat.startForegroundService(this, Intent(this, BusValidatorServiceE60Q::class.java))
+        LibBarCode.getInstance().barCodeRead { barcode, len ->
+            // val contentString = hexStringToString(bytesToHex(barcode))
+            val contentString = barcode.toString(charset)
+            val userPaymentQrCodeData: UserPaymentQrcodeData = Gson().fromJson(contentString, UserPaymentQrcodeData::class.java)
+            Log.d("BusValidator", "userPaymentQrCodeData: $userPaymentQrCodeData")
+
+
+            0
+        }
     }
 
     override fun onDestroy() {
@@ -117,7 +134,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private fun openPattern() {
         clickTimes++
-        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
+        if (pressedTime + 500 > System.currentTimeMillis() && clickTimes >= 10) {
             helper.showAdminVerificationDialog()
             clickTimes = 0
         }

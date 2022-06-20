@@ -55,6 +55,13 @@ class ActivatedBusInfo {
         set(value) { sharedPrefs().edit().putString(SharedPreferencesHelper.busDestination, value).apply() }
 
     var busPrice: String?
+    get() {
+        sharedPrefs().getString(SharedPreferencesHelper.busPrice, null)?.let{ return it }
+        return null
+    }
+    set(value) { sharedPrefs().edit().putString(SharedPreferencesHelper.busPrice, value).apply() }
+
+    var busPriceByFils: String?
         get() {
             sharedPrefs().getString(SharedPreferencesHelper.busPrice, null)?.let{ return String.format("%.3f", it.toDouble()).split(".").last() }
             return null

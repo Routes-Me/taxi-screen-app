@@ -27,8 +27,8 @@ class PriceFragment : Fragment() {
 
     private fun initialize(){
         val activatedBusInfo = ActivatedBusInfo()
-        priceFragmentView.ticketPrice_tv.text = activatedBusInfo.busPrice.toString()
-        /*
+        priceFragmentView.ticketPrice_tv.text = activatedBusInfo.busPriceByFils.toString()
+    /*
         val tickets = CarrierInformation().tickets
         tickets?.let {
             priceFragmentView.ticketPrice_tv.text = it.first().amount.toString()
