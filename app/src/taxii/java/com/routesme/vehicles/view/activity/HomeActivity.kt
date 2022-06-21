@@ -30,7 +30,7 @@ import com.routesme.vehicles.viewmodel.SubmitApplicationVersionViewModel
 import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.SharedPreferencesHelper
-import kotlinx.android.synthetic.taxi.home_screen.*
+import kotlinx.android.synthetic.taxii.home_screen.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe

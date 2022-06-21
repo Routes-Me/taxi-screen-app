@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.vehicles.App
-import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
@@ -36,6 +35,7 @@ import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
 import java.util.*
+import com.routesme.vehicles.BuildConfig
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private val AUTHORIZATION_KAY = "authorization"
@@ -135,8 +135,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             return
         } else {
             registerCredentials.apply {
-                serialNumber = "sn1111kl"//telephonyManager.imei
-                SimSerialNumber = "ssn1111kl"//telephonyManager.simSerialNumber
+                serialNumber = telephonyManager.imei
+                SimSerialNumber = telephonyManager.simSerialNumber
                 deviceId_tv.text = serialNumber
                 SimSerialNumber_tv.text = SimSerialNumber
             }

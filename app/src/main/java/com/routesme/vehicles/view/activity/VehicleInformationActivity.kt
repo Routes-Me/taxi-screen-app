@@ -77,7 +77,7 @@ class VehicleInformationActivity : AppCompatActivity() {
     private fun getInstitutions() {
         dialog?.show()
         val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
-        vehicleInformationViewModel.getInstitutions(1, 100, this).observe(this, Observer<InstitutionsResponse> {
+        vehicleInformationViewModel.getInstitutions(1, 200, this).observe(this, Observer<InstitutionsResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {
@@ -135,7 +135,7 @@ class VehicleInformationActivity : AppCompatActivity() {
     private fun getVehicles() {
         dialog?.show()
         val vehicleInformationViewModel: VehicleInformationViewModel by viewModels()
-        vehicleInformationViewModel.getVehicles(app.institutionId.toString(), 1, 500, this).observe(this, Observer<VehiclesResponse> {
+        vehicleInformationViewModel.getVehicles(app.institutionId.toString(), 1, 1000, this).observe(this, Observer<VehiclesResponse> {
             dialog?.dismiss()
             if (it != null) {
                 if (it.isSuccess) {

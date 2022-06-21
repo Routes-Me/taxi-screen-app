@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Taxi Screen</string>
+    <string name="app_name">Vehicle App</string>
     <string name="please_wait">Please Wait...</string>
     <string name="intent_action_turnon">com.fitc.wifihotspot.TURN_ON</string>
     <string name="intent_action_turnoff">com.fitc.wifihotspot.TURN_OFF</string>

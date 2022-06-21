@@ -38,9 +38,9 @@ import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.view.utils.Type
 import com.routesme.vehicles.viewmodel.ContentViewModel
 import dmax.dialog.SpotsDialog
-import kotlinx.android.synthetic.taxi.content_fragment.*
-import kotlinx.android.synthetic.taxi.content_fragment.view.*
-import kotlinx.android.synthetic.taxi.date_cell.*
+import kotlinx.android.synthetic.taxii.content_fragment.*
+import kotlinx.android.synthetic.taxii.content_fragment.view.*
+import kotlinx.android.synthetic.taxii.date_cell.*
 import kotlinx.coroutines.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
