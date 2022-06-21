@@ -5,14 +5,14 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: "org.jetbrains.kotlin.kapt"
 android {
-    compileSdkVersion 29
-    buildToolsVersion '29.0.3'
+    compileSdkVersion 30
+    buildToolsVersion '30.0.3'
     defaultConfig {
         applicationId "com.routesme.vehicles"
         minSdkVersion 26
-        targetSdkVersion 29
-        versionCode 38
-        versionName "4.5"
+        targetSdkVersion 30
+        versionCode 50
+        versionName "5.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
@@ -27,19 +27,39 @@ android {
             jvmTarget = "1.8"
         }
     }
-/*
-    buildTypes {
-        debug {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
-        }
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
 
+    buildTypes {
+        debug{
+            //minifyEnabled true
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+
+            buildConfigField "String", "ROUTES_WEBSITE_URL", "\"http://www.routesme.com/\""
+            buildConfigField "String", "EXIT_PASSWORD", "\"043726518\""
+            buildConfigField "String", "STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"stage.location.hubs.routesme.com\""
+            buildConfigField "String", "PRODUCTION_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"location.hubs.routesme.com\""
+            buildConfigField "String", "OLD_STAGING_BASE_URL", "\"https://stage.api.routesme.com/v1.0/\""
+            buildConfigField "String", "OLD_PRODUCTION_BASE_URL", "\"https://api.routesme.com/v1.0/\""
+            buildConfigField "String", "NEW_PRODUCTION_BASE_URL", "\"https://route.click68.com/api/\""
+            buildConfigField "String", "NEW_API_KEY", "\"\$FhlF]3;.OIic&{>H;_DeW}|:wQ,A8\""
+            buildConfigField "String", "NEW_API_SECRET", "\"Z~P7-_/i!=}?BIwAd*S67LBzUo4O^G\""
+        }
+
+        release{
+            //minifyEnabled true
+            //proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), "proguard-rules.pro"
+
+            buildConfigField "String", "ROUTES_WEBSITE_URL", "\"http://www.routesme.com/\""
+            buildConfigField "String", "EXIT_PASSWORD", "\"043726518\""
+            buildConfigField "String", "STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"stage.location.hubs.routesme.com\""
+            buildConfigField "String", "PRODUCTION_TRACKING_WEBSOCKET_AUTHORITY_URL", "\"location.hubs.routesme.com\""
+            buildConfigField "String", "OLD_STAGING_BASE_URL", "\"https://stage.api.routesme.com/v1.0/\""
+            buildConfigField "String", "OLD_PRODUCTION_BASE_URL", "\"https://api.routesme.com/v1.0/\""
+            buildConfigField "String", "NEW_PRODUCTION_BASE_URL", "\"https://route.click68.com/api/\""
+            buildConfigField "String", "NEW_API_KEY", "\"\$FhlF]3;.OIic&{>H;_DeW}|:wQ,A8\""
+            buildConfigField "String", "NEW_API_SECRET", "\"Z~P7-_/i!=}?BIwAd*S67LBzUo4O^G\""
         }
     }
-    */
+
 
     lintOptions {
         checkReleaseBuilds false
@@ -53,20 +73,20 @@ android {
 
     flavorDimensions 'default'
     productFlavors {
-        taxi {
+        taxii {
             dimension 'default'
             applicationId "com.routesme.vehicles"
-            applicationIdSuffix ".taxi"
-            versionCode 38
-            versionName "4.5"
+            applicationIdSuffix ".taxii"
+            versionCode 50
+            versionName "5.0"
         }
 
         bus {
             dimension 'default'
             applicationId "com.routesme.vehicles"
             applicationIdSuffix ".bus"
-            versionCode 1
-            versionName "1.0"
+            versionCode 4
+            versionName "4.0"
         }
     }
     sourceSets {
@@ -74,9 +94,9 @@ android {
             res.srcDirs = ['src/bus/res', 'src/bus/res/']
             java.srcDirs = ['src/bus/java', 'src/bus/java/']
         }
-        taxi {
-            res.srcDirs = ['src/taxi/res', 'src/taxi/res/']
-            java.srcDirs = ['src/taxi/java', 'src/taxi/java/']
+        taxii {
+            res.srcDirs = ['src/taxii/res', 'src/taxii/res/']
+            java.srcDirs = ['src/taxii/java', 'src/taxii/java/']
         }
     }
 }
@@ -84,7 +104,7 @@ android {
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'com.android.support:design:29.0.3'
+    implementation 'com.android.support:design:30.0.3'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
@@ -139,7 +159,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.gms:play-services-location:17.1.0'
     //noinspection GradleDynamicVersion
-    implementation 'com.google.maps.android:android-maps-utils:0.4+'
+    //implementation 'com.google.maps.android:android-maps-utils:0.4+'
     //1-Room database
     //noinspection GradleDependency
     implementation "androidx.room:room-runtime:$room_version"
@@ -169,4 +189,7 @@ dependencies {
     //Gif imageView
     implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.18'
     implementation 'com.github.pedrovgs:lynx:1.1.0'
+
+    //Bus validator E60Q SDK
+    implementation files("libs/E60QSDK-release.aar")
 }

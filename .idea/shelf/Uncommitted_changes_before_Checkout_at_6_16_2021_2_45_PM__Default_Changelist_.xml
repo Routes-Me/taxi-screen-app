@@ -1,9 +1,0 @@
-<changelist name="Uncommitted_changes_before_Checkout_at_6_16_2021_2_45_PM_[Default_Changelist]" date="1623843945682" recycled="true" deleted="true">
-  <option name="PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_6_16_2021_2_45_PM_[Default_Changelist]/shelved.patch" />
-  <option name="DESCRIPTION" value="Uncommitted changes before Checkout at 6/16/2021 2:45 PM [Default Changelist]" />
-  <binary>
-    <option name="BEFORE_PATH" value="app/taxi/release/app-taxi-release.apk" />
-    <option name="AFTER_PATH" value="app/taxi/release/app-taxi-release.apk" />
-    <option name="SHELVED_PATH" value="$PROJECT_DIR$/.idea/shelf/Uncommitted_changes_before_Checkout_at_6_16_2021_2_45_PM_[Default_Changelist]/app-taxi-release.apk" />
-  </binary>
-</changelist>

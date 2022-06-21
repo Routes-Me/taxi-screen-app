@@ -59,6 +59,7 @@
             android:name=".view.activity.HomeActivity"
             android:theme="@style/FullScreen_Light_Mode"
             android:windowSoftInputMode="adjustNothing">
+
         </activity>
         <activity
             android:name=".view.activity.ModelPresenter"
@@ -112,11 +113,18 @@
             android:name=".service.RefreshTokenService"
             android:enabled="true" />
         <service
-            android:name=".service.BusValidatorService"
+            android:name=".service.BusValidatorServiceP18"
             android:enabled="true" />
+
+        <service
+            android:name=".service.BusValidatorServiceE60Q"
+            android:enabled="true" />
+
+        <!--
         <service
             android:name=".service.BusPaymentService"
             android:enabled="true" />
+        -->
 
         <meta-data
             android:name="com.google.android.nearby.messages.API_KEY"

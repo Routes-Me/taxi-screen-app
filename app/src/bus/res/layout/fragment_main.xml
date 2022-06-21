@@ -41,7 +41,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif-medium"
         android:gravity="center_horizontal"
-        android:text="Route 999"
         android:textColor="?homeScreenTextColor"
         android:textSize="@dimen/_15ssp"
         android:textStyle="normal"
@@ -55,7 +54,6 @@
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"
         android:gravity="center_horizontal"
-        android:text="Maliya to Fahaheel"
         android:textColor="?homeScreenTextColor"
         android:textSize="@dimen/_15ssp"
         android:textStyle="normal"
@@ -63,6 +61,21 @@
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/routeNumber_tv"
+        app:layout_constraintBottom_toTopOf="@id/companyName_tv"/>
+
+    <TextView
+        android:id="@+id/companyName_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif"
+        android:gravity="center_horizontal"
+        android:textColor="?homeScreenTextColor"
+        android:textSize="@dimen/_12ssp"
+        android:textStyle="normal"
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
         app:layout_constraintBottom_toTopOf="@id/main_fragment_container"/>
 
     <FrameLayout
@@ -70,38 +83,23 @@
         android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/logo_layout"
+        app:layout_constraintBottom_toTopOf="@id/qrcode_iv"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintTop_toBottomOf="@id/routeWay_tv"
-        android:layout_marginBottom="@dimen/_5sdp" />
+        app:layout_constraintTop_toBottomOf="@id/companyName_tv"
+        android:layout_marginBottom="@dimen/_8sdp" />
 
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/logo_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center"
-        android:layout_marginBottom="@dimen/_15sdp"
+    <ImageView
+        android:id="@+id/qrcode_iv"
+        android:layout_width="@dimen/_100sdp"
+        android:layout_height="0dp"
+        app:layout_constraintDimensionRatio="1:1"
+        android:src="@drawable/ic_routesme_qrcode"
+        android:layout_marginBottom="@dimen/_5sdp"
         app:layout_constraintTop_toBottomOf="@id/main_fragment_container"
         app:layout_constraintBottom_toTopOf="@id/date_tv"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintEnd_toEndOf="@id/guidelineStart">
-
-        <ImageView
-            android:id="@+id/qrcode_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/_50sdp"
-            android:layout_marginBottom="@dimen/_6sdp"
-            android:src="@drawable/ic_routesme_qrcode" />
-
-        <ImageView
-            android:id="@+id/routesPay_iv"
-            android:layout_width="@dimen/_87sdp"
-            android:layout_height="@dimen/_26sdp"
-            android:src="?routesPayIcon" />
-
-    </androidx.appcompat.widget.LinearLayoutCompat>
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"/>
 
     <TextClock
         android:id="@+id/date_tv"

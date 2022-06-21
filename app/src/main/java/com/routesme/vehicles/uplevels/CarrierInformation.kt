@@ -47,8 +47,8 @@ class CarrierInformation {
         get() {
             return listOf(
                     //Ticket(amount = 350, first_station = "Kuwait"),
-                    Ticket(amount = 350, first_station = "Kuwait"),
-                    Ticket(amount = 300, first_station = "Salmiya"),
+                   // Ticket(amount = 350, first_station = "Kuwait"),
+                   // Ticket(amount = 300, first_station = "Salmiya"),
                     Ticket(amount = 250, first_station = "Hawali")
             )
             /*

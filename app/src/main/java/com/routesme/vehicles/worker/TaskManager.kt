@@ -25,7 +25,7 @@ class TaskManager(context: Context, workerParams: WorkerParameters) : Worker(con
     private var sharedPreferences = context.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
     private var editior = sharedPreferences?.edit()
     val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     override fun doWork(): Result {

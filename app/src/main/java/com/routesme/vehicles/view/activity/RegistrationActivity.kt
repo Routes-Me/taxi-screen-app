@@ -12,6 +12,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.telephony.TelephonyManager
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -20,19 +21,21 @@ import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import com.google.firebase.analytics.FirebaseAnalytics
 import com.routesme.vehicles.App
-import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.data.model.VehicleInformationModel.VehicleInformationListType
 import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.uplevels.Account
+import com.routesme.vehicles.uplevels.ActivatedBusInfo
 import com.routesme.vehicles.uplevels.CarrierInformation
+import com.routesme.vehicles.viewmodel.BusActivationViewModel
 import com.routesme.vehicles.viewmodel.CarrierInformationViewModel
 import com.routesme.vehicles.viewmodel.RegistrationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.activity_registration.*
 import java.io.IOException
 import java.util.*
+import com.routesme.vehicles.BuildConfig
 
 class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
     private val AUTHORIZATION_KAY = "authorization"
@@ -198,7 +201,6 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             dialog?.show()
             val registrationViewModel: RegistrationViewModel by viewModels()
             registrationViewModel.register(registerCredentials, this).observe(this, Observer<RegistrationResponse> {
-                dialog?.dismiss()
                 operations.enableNextButton(register_btn, true)
                 if (it != null) {
                     if (it.isSuccess) {
@@ -208,10 +210,15 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                         FirebaseAnalytics.getInstance(this).setUserId(deviceId)
                         saveDeviceInfoIntoSharedPreferences(deviceId)
-                        if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
-                        App.instance.startTrackingService()
-                        openModelPresenterScreen()
+                       // if (BuildConfig.FLAVOR == "bus"){ registerCredentials.VehicleId?.let { getCarrierInformation(it) } }
+                        if (BuildConfig.FLAVOR == "bus"){
+                            registerCredentials.VehicleId?.let { activateBus(it) }
+                        } else{
+                            dialog?.dismiss()
+                            registerationProcess()
+                        }
                     } else {
+                        dialog?.dismiss()
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
                             it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
                         } else if (it.mThrowable != null) {
@@ -223,12 +230,64 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
                         }
                     }
                 } else {
+                    dialog?.dismiss()
                     operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
                 }
             })
         } else {
             operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.complete_required_data))
         }
+    }
+
+    private fun activateBus(vehicleId: String){
+        Log.d("BusProcessTesting", "Activate bus vehicleId: $vehicleId")
+        val busActivationCredentials = BusActivationCredentials(SecondID = vehicleId)
+        val busActivationViewModel: BusActivationViewModel by viewModels()
+        busActivationViewModel.activate(busActivationCredentials, this).observe(this, Observer<ActivateBusResponse> {
+            dialog?.dismiss()
+            if (it != null) {
+                if (it.isSuccess) {
+                    if (it.isActivatedSuccessfully) {
+                        it.activatedBusInformation?.let { saveActivatedBusInfoIntoSharedPreferences(it) }
+                        registerationProcess()
+                    }else{
+                        operations.displayAlertDialog(this, getString(R.string.registration_error_title), "${it.activateBusFailedMessage}")
+                    }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.registration_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun saveActivatedBusInfoIntoSharedPreferences(activatedBusInformation: ActivatedBusInformation) {
+       ActivatedBusInfo().apply {
+           busId = activatedBusInformation.id
+           busActive = activatedBusInformation.active
+           busKind = activatedBusInformation.kind
+           busPlateNumber = activatedBusInformation.palteNumber
+           busRouteId = activatedBusInformation.routeID
+           busRouteName = activatedBusInformation.routeName
+           busDestination = activatedBusInformation.distination
+           busPrice = activatedBusInformation.price.toString()
+           busCompany = activatedBusInformation.company
+           busSecondId = activatedBusInformation.socondID
+       }
+    }
+
+    private fun registerationProcess() {
+        App.instance.startTrackingService()
+        openModelPresenterScreen()
     }
 
     private fun getCarrierInformation(vehicleId: String) {

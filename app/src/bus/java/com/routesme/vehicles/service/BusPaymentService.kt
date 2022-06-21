@@ -8,14 +8,14 @@ import android.content.Intent
 import android.os.IBinder
 import android.util.Log
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.ReadQrCode
+import com.routesme.vehicles.data.model.PaymentResult
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
 
 class BusPaymentService: Service(){
 
-    private val paymentOperations = mutableSetOf<ReadQrCode>()
+    private val paymentOperations = mutableSetOf<PaymentResult>()
 
     override fun onCreate() {
         super.onCreate()
@@ -42,8 +42,8 @@ class BusPaymentService: Service(){
     override fun onBind(intent: Intent?): IBinder? = null
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(readQrCode: ReadQrCode){
-        Log.d("BusValidator", "From BusPaymentService, New QR Code , with Content: ${readQrCode.content}, isApproved: ${readQrCode.isApproved}, RejectCauses: ${readQrCode.rejectCauses?.message}")
+    fun onEvent(readQrCode: PaymentResult){
+        Log.d("BusValidator", "From BusPaymentService, New QR Code , with Content: ${readQrCode.userID}, isApproved: ${readQrCode.isApproved}, RejectCauses: ${readQrCode.rejectedReason}")
         if (readQrCode.isApproved){
             paymentOperations.add(readQrCode)
             Log.d("BusValidator", "From BusPaymentService, Payment Operations: $paymentOperations")

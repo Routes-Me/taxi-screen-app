@@ -17,7 +17,7 @@ import java.net.HttpURLConnection
 class UnlinkRepository(context: Context) {
     private val unlinkResponse = MutableLiveData<UnlinkResponse>()
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun unlink(vehicleId: String, deviceId: String): MutableLiveData<UnlinkResponse> {

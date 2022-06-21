@@ -7,9 +7,11 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import com.routesme.vehicles.App
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
 import com.routesme.vehicles.helper.AdvertisementsHelper
 import com.routesme.vehicles.helper.SharedPreferencesHelper
+import com.routesme.vehicles.uplevels.ActivatedBusInfo
 
 class ModelPresenter : AppCompatActivity() {
     private var bundle: Bundle? = null
@@ -29,7 +31,9 @@ class ModelPresenter : AppCompatActivity() {
     }
 
     private fun startActivity() {
-        val isRegistered: Boolean = !App.instance.account.vehicle.deviceId.isNullOrEmpty()
+        val isRegistered: Boolean =
+                if (BuildConfig.FLAVOR == "bus"){!App.instance.account.vehicle.deviceId.isNullOrEmpty() && ActivatedBusInfo().busActive}
+                else {!App.instance.account.vehicle.deviceId.isNullOrEmpty()}
         if (isRegistered) {
             openActivity(HomeActivity())
         } else {

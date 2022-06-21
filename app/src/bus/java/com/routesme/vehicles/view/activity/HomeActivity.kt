@@ -1,35 +1,50 @@
 package com.routesme.vehicles.view.activity
 
+import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
+import android.content.pm.PackageManager
+import android.media.AudioManager
+import android.media.ToneGenerator
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.sdkdemo.LibBarCode
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.IModeChanging
-import com.routesme.vehicles.data.model.ReadQrCode
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.helper.*
-import com.routesme.vehicles.service.BusPaymentService
-import com.routesme.vehicles.service.BusValidatorService
+import com.routesme.vehicles.service.BusValidatorServiceE60Q
+import com.routesme.vehicles.service.BusValidatorServiceP18
 import com.routesme.vehicles.view.fragment.ApprovedPaymentFragment
 import com.routesme.vehicles.view.fragment.MainFragment
-import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
 import com.routesme.vehicles.view.fragment.MultiTicketsScanFirstFragment
+import com.routesme.vehicles.view.fragment.RejectedPaymentFragment
 import kotlinx.android.synthetic.bus.activity_home.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.json.JSONObject
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.net.HttpURLConnection
 import java.util.*
 import java.util.concurrent.TimeUnit
 import kotlin.concurrent.schedule
 
 class HomeActivity : AppCompatActivity(), IModeChanging {
-
+    private val READ_PHONE_STATE_REQUEST_CODE = 303
     private var pressedTime: Long = 0
     private var clickTimes = 0
-    private val approvedScreenShowingTime = TimeUnit.MILLISECONDS.toMillis(1500)
-    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
+    private val approvedScreenShowingTime = TimeUnit.SECONDS.toMillis(3)
+    private val rejectedScreenShowingTime = TimeUnit.SECONDS.toMillis(6)
+    private val transactionTone = ToneGenerator(AudioManager.STREAM_NOTIFICATION, 100000) //h volume
     private lateinit var helper: HomeScreenHelper
     private lateinit var mainFragment: MainFragment
     private lateinit var approvedPaymentFragment: ApprovedPaymentFragment
@@ -42,7 +57,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         super.onCreate(savedInstanceState)
         DisplayManager.instance.registerActivity(this)
         if (DisplayManager.instance.isAnteMeridiem()) {
-           DisplayManager.instance.currentMode = Mode.Light
+            DisplayManager.instance.currentMode = Mode.Light
             setTheme(R.style.FullScreen_Light_Mode)
             ScreenBrightness.instance.setBrightnessValue(this, 80)
         } else {
@@ -61,10 +76,53 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         rejectedPaymentFragment = RejectedPaymentFragment()
         multiTicketsScanFirstFragment = MultiTicketsScanFirstFragment()
 
-       showFragment(multiTicketsScanFirstFragment)
-       // showFragment(mainFragment)
+        // showFragment(multiTicketsScanFirstFragment)
+        showFragment(mainFragment)
+
         startBusValidatorService()
-        startBusPaymentService()
+    }
+
+    private fun startBusValidatorService() {
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), READ_PHONE_STATE_REQUEST_CODE)
+            return
+        } else {
+            val deviceModel = Build.MODEL
+            if (deviceModel == BusValidatorModels.p18q_dual.toString()) startBusValidatorServiceP18() else startBusValidatorServiceE60Q()
+        }
+    }
+
+    @SuppressLint("HardwareIds")
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        when (requestCode) {
+            READ_PHONE_STATE_REQUEST_CODE -> if (grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), READ_PHONE_STATE_REQUEST_CODE)
+                    return
+                }
+                startBusValidatorService()
+            }
+            else -> super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        }
+    }
+
+    private fun startBusValidatorServiceP18() {
+        ContextCompat.startForegroundService(this, Intent(this, BusValidatorServiceP18::class.java))
+    }
+
+    private fun startBusValidatorServiceE60Q() {
+         val charset = Charsets.UTF_8
+
+        //ContextCompat.startForegroundService(this, Intent(this, BusValidatorServiceE60Q::class.java))
+        LibBarCode.getInstance().barCodeRead { barcode, len ->
+            // val contentString = hexStringToString(bytesToHex(barcode))
+            val contentString = barcode.toString(charset)
+            val userPaymentQrCodeData: UserPaymentQrcodeData = Gson().fromJson(contentString, UserPaymentQrcodeData::class.java)
+            Log.d("BusValidator", "userPaymentQrCodeData: $userPaymentQrCodeData")
+
+
+            0
+        }
     }
 
     override fun onDestroy() {
@@ -76,42 +134,46 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private fun openPattern() {
         clickTimes++
-        if (pressedTime + 1000 > System.currentTimeMillis() && clickTimes >= 10) {
+        if (pressedTime + 500 > System.currentTimeMillis() && clickTimes >= 10) {
             helper.showAdminVerificationDialog()
             clickTimes = 0
         }
         pressedTime = System.currentTimeMillis()
     }
 
-    private fun startBusValidatorService() {
-        ContextCompat.startForegroundService(this,Intent(this, BusValidatorService::class.java))
-    }
-
+/*
     private fun startBusPaymentService() {
         ContextCompat.startForegroundService(this,Intent(this, BusPaymentService::class.java))
     }
+    */
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    fun onEvent(readQrCode: ReadQrCode){
-        Log.d("BusValidator","Read new qr code: $readQrCode")
-         if (isDismissFragmentTimerAlive) {
-             Log.d("BusValidator","There's dismiss timer already running")
-             dismissFragmentTimer?.apply {
-                 cancel()
-                 purge()
-             }
-             hideFragments()
-             isDismissFragmentTimerAlive = false
-         }
+    fun onEvent(paymentResult: PaymentResult){
+        //Log.d("BusValidator","Read new qr code: $readQrCode")
+        if (isDismissFragmentTimerAlive) {
+            //Log.d("BusValidator","There's dismiss timer already running")
+            dismissFragmentTimer?.apply {
+                cancel()
+                purge()
+            }
+            hideFragments()
+            isDismissFragmentTimerAlive = false
+        }
 
-      if (readQrCode.isApproved) {
-          showFragment(approvedPaymentFragment)
-          //showFragment(multiTicketsScanFirstFragment)
-          dismissFragment(approvedScreenShowingTime)
-      } else {
-          showFragment(rejectedPaymentFragment)
-          dismissFragment(rejectedScreenShowingTime)
-      }
+        val bundle: Bundle  = Bundle().apply { putSerializable("PaymentResult", paymentResult) }
+        if (paymentResult.isApproved) { executeApprovedProcess(bundle) } else { executeRejectedProcess(bundle) }
+    }
+
+    private fun executeApprovedProcess(bundle: Bundle) {
+        showFragment(approvedPaymentFragment.apply { arguments = bundle })
+        dismissFragment(approvedScreenShowingTime)
+        transactionTone.startTone(ToneGenerator.TONE_PROP_BEEP, approvedScreenShowingTime.toInt())// sound for approved
+    }
+
+    private fun executeRejectedProcess(bundle: Bundle) {
+        showFragment(rejectedPaymentFragment.apply { arguments = bundle })
+        dismissFragment(rejectedScreenShowingTime)
+        transactionTone.startTone(ToneGenerator.TONE_CDMA_ANSWER, rejectedScreenShowingTime.toInt()) // sound for rejected
     }
 
     private fun showFragment(fragment: Fragment) {
@@ -123,10 +185,10 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
 
     private fun dismissFragment(screenShowingTime: Long) {
         dismissFragmentTimer = Timer("dismissFragmentTimer", true).apply {
-            Log.d("BusValidator","Dismiss Fragment Timer, Calling, Timer: $this")
+            //Log.d("BusValidator","Dismiss Fragment Timer, Calling, Timer: $this")
             isDismissFragmentTimerAlive = true
             schedule(screenShowingTime) {
-                Log.d("BusValidator","Dismiss Fragment Timer, Executing")
+                //Log.d("BusValidator","Dismiss Fragment Timer, Executing")
                 hideFragments()
                 showFragment(mainFragment)
                 isDismissFragmentTimerAlive = false
@@ -137,12 +199,14 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
             }
         }
     }
+
     private fun hideFragments(){
-        Log.d("BusValidator","Hide Fragment")
+        //Log.d("BusValidator","Hide Fragment")
         supportFragmentManager.beginTransaction().apply {
             supportFragmentManager.fragments.forEach { hide(it) }
         }.commitAllowingStateLoss()
     }
+
     private fun removeFragments() {
         supportFragmentManager.beginTransaction().apply {
             mainFragment.let { if (it.isAdded) remove(it) }
@@ -156,3 +220,5 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
         recreate()
     }
 }
+
+enum class BusValidatorModels{p18q_dual, kt11_64}

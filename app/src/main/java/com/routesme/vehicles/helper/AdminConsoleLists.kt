@@ -3,6 +3,7 @@ package com.routesme.vehicles.helper
 import android.app.Activity
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.data.model.*
+import com.routesme.vehicles.uplevels.ActivatedBusInfo
 import com.routesme.vehicles.uplevels.CarrierInformation
 
 class AdminConsoleLists(val activity: Activity) {
@@ -13,7 +14,7 @@ class AdminConsoleLists(val activity: Activity) {
         add(MasterItem(0, MasterItemType.Info.title))
         add(MasterItem(1, MasterItemType.Account.title))
         add(MasterItem(2, MasterItemType.Settings.title))
-        if (BuildConfig.FLAVOR == "bus") add(MasterItem(3, MasterItemType.RoutesAndTickets.title))
+        if (BuildConfig.FLAVOR == "bus") add(MasterItem(3, MasterItemType.BusInformation.title))
     }
 
     val infoCells = mutableListOf<ICell>().apply {
@@ -46,7 +47,14 @@ class AdminConsoleLists(val activity: Activity) {
     )
 
     val routesAndTicketsCells = mutableListOf<ICell>().apply {
-        add(LabelCell("Route"))
+        add(LabelCell("Bus Information"))
+        add(DetailCell("Company name", "${ActivatedBusInfo().busCompany}", true))
+        add(DetailCell("Plate number", "${ActivatedBusInfo().busPlateNumber}", true))
+        add(DetailCell("Kind", "${ActivatedBusInfo().busKind}", true))
+        add(DetailCell("Route number", "${ActivatedBusInfo().busRouteName}", true))
+        add(DetailCell("Destination", "${ActivatedBusInfo().busDestination}", true))
+        add(DetailCell("Trip price", "${ActivatedBusInfo().busPrice}", true))
+        /*
         add(DetailCell("Route Number", "${CarrierInformation().routeNumber}", true))
         add(DetailCell("Last Update", "${CarrierInformation().lastUpdateDate}", true))
         add(ActionCell(Actions.SyncAndUpdateCarrierInformation.title, ActionCellTextColor.Blue))
@@ -56,5 +64,6 @@ class AdminConsoleLists(val activity: Activity) {
                 add(DetailCell("${ticket.amount} files", "1 day", true))
             }
         }
+        */
     }
 }

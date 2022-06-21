@@ -5,8 +5,7 @@
     android:layout_height="match_parent"
     tools:context=".view.fragment.PriceFragment"
     android:orientation="vertical"
-    android:gravity="center"
-    android:layout_marginBottom="@dimen/_60sdp">
+    android:gravity="center">
 
     <TextView
         android:id="@+id/ticketPrice_keyword_tv"
@@ -51,7 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/_8sdp"
         android:fontFamily="sans-serif"
-        android:text="@string/scan_your_qr_code_or_nfc"
+        android:text="@string/scan_your_qr_code"
         android:textColor="?homeScreenTextColor"
         android:textSize="@dimen/_15ssp"
         android:textStyle="normal" />

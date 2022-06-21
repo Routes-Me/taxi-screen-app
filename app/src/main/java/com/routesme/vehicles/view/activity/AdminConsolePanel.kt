@@ -6,7 +6,6 @@ import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -15,12 +14,12 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.work.WorkManager
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject
+import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.R
-import com.routesme.vehicles.data.model.LogOff
-import com.routesme.vehicles.data.model.ReportResponse
-import com.routesme.vehicles.data.model.UnlinkResponse
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.helper.AdminConsoleHelper
 import com.routesme.vehicles.helper.AdminConsoleLists
+import com.routesme.vehicles.helper.Operations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.ResponseBody
@@ -30,6 +29,7 @@ import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
 import com.routesme.vehicles.view.adapter.MasterItemsAdapter
 import com.routesme.vehicles.view.fragment.ItemDetailFragment
+import com.routesme.vehicles.viewmodel.BusActivationViewModel
 import com.routesme.vehicles.viewmodel.ContentViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.admin_console_panel.*
@@ -37,9 +37,11 @@ import kotlinx.android.synthetic.main.item_list.*
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import java.io.IOException
 import java.sql.SQLException
 
 class AdminConsolePanel : AppCompatActivity() {
+    private val operations = Operations.instance
     private var twoPane: Boolean = false
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private var adminConsoleHelper: AdminConsoleHelper? = null
@@ -124,13 +126,50 @@ class AdminConsolePanel : AppCompatActivity() {
     private fun unlinkDeviceFromServer(deviceId: String, vehicleId: String) {
         contentViewModel.unlinkDevice(vehicleId, deviceId, this).observe(this, Observer<UnlinkResponse> {
             if (it.isSuccess) {
-                dialog?.hide()
-                WorkManager.getInstance().cancelAllWorkByTag(SEND_ANALYTICS_REPORT)
-                adminConsoleHelper?.logOff()
+                if (BuildConfig.FLAVOR == "bus") deactivateBus(vehicleId)
+                else {
+                    dialog?.hide()
+                    WorkManager.getInstance().cancelAllWorkByTag(SEND_ANALYTICS_REPORT)
+                    adminConsoleHelper?.logOff()
+                }
             } else {
                 dialog?.hide()
             }
         })
+    }
+
+    private fun deactivateBus(vehicleId: String){
+        Log.d("BusProcessTesting", "Deactivate bus vehicleId: $vehicleId")
+        val busActivationCredentials = BusActivationCredentials(SecondID = vehicleId)
+        val busActivationViewModel: BusActivationViewModel by viewModels()
+        busActivationViewModel.deactivate(busActivationCredentials, this).observe(this, Observer<DeactivateBusResponse> {
+            dialog?.hide()
+            if (it != null) {
+                if (it.isSuccess) {
+                    if (it.isBusDeactivatedSuccessfully == true) {
+                        adminConsoleHelper?.logOff()
+                    }else{
+                        operations.displayAlertDialog(this, getString(R.string.logout_error_title), "${it.deactivateBusDescription?.message}")
+                    }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(this, getString(R.string.logout_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(this, getString(R.string.logout_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(this, getString(R.string.logout_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun displayErrors(errors: List<Error>) {
+        for (error in errors) { operations.displayAlertDialog(this, getString(R.string.logout_error_title), "Error message: ${error.detail}") }
     }
 
     private fun observeAnalytics(deviceId: String, vehicleId: String) {

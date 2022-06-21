@@ -248,7 +248,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun readPatternFromTechnicalSupport() {
-        val patternPassword = Helper.getConfigValue("exitPassword", R.raw.config)
+        val patternPassword = BuildConfig.EXIT_PASSWORD
         val exitPatternDialog = Dialog(this)
         exitPatternDialog.setContentView(R.layout.exit_pattern_dialog)
         exitPatternDialog.show()

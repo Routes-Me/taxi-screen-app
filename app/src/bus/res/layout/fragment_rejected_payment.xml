@@ -33,6 +33,20 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.8" />
+
+    <TextView
+        android:id="@+id/userName_tv"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/payment_approved_text_color"
+        android:textSize="@dimen/_17ssp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@id/guidelineStart"
+        app:layout_constraintTop_toTopOf="@id/guidelineTop"
+        app:layout_constraintBottom_toTopOf="@id/rejectedIcon_iv"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintVertical_chainStyle="packed"/>
     
     <ImageView
         android:id="@+id/rejectedIcon_iv"
@@ -40,11 +54,10 @@
         android:layout_height="@dimen/_33sdp"
         android:layout_marginBottom="@dimen/_16sdp"
         android:src="@drawable/payment_rejected_icon"
-        app:layout_constraintBottom_toTopOf="@id/rejectedMessage_tv"
+        app:layout_constraintBottom_toTopOf="@id/rejectedReasonMessage_tv"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
-        app:layout_constraintTop_toTopOf="@id/guidelineTop"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintTop_toBottomOf="@id/userName_tv" />
 
     <TextView
         android:id="@+id/rejectedTitle_tv"
@@ -53,15 +66,15 @@
         android:fontFamily="sans-serif-medium"
         android:text="@string/rejected"
         android:textColor="@color/white"
-        android:textSize="@dimen/_13ssp"
-        android:textStyle="normal"
+        android:textSize="@dimen/_17ssp"
+        android:textStyle="bold"
         app:layout_constraintBottom_toBottomOf="@id/rejectedIcon_iv"
         app:layout_constraintEnd_toEndOf="@id/rejectedIcon_iv"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toTopOf="@id/rejectedIcon_iv" />
 
     <TextView
-        android:id="@+id/rejectedMessage_tv"
+        android:id="@+id/rejectedReasonMessage_tv"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:fontFamily="sans-serif"

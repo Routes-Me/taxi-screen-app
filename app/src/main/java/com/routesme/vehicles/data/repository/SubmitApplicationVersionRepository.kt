@@ -17,7 +17,7 @@ class SubmitApplicationVersionRepository(val context: Context) {
     private val submitApplicationVersionResponse = MutableLiveData<SubmitApplicationVersionResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun submitApplicationVersion(deviceId: String, submitApplicationVersionCredentials: SubmitApplicationVersionCredentials): MutableLiveData<SubmitApplicationVersionResponse> {

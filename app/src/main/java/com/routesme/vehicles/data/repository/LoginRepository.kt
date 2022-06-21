@@ -8,17 +8,15 @@ import com.google.gson.JsonElement
 import com.routesme.vehicles.api.RestApiService
 import com.routesme.vehicles.data.encryption.AesBase64Wrapper
 import com.routesme.vehicles.data.model.*
-import org.json.JSONObject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.net.HttpURLConnection
 
 class LoginRepository(val context: Context) {
     private val signInResponse = MutableLiveData<LoginResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
 
     fun signIn(signInCredentials: SignInCredentials): MutableLiveData<LoginResponse> {

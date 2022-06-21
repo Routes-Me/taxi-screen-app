@@ -18,10 +18,10 @@ class ContentRepository(val context: Context) {
     private val contentResponse = MutableLiveData<ContentResponse>()
 
     private val thisApiCorService by lazy {
-        RestApiService.createCorService(context)
+        RestApiService.createOldCorService(context)
     }
-    fun getContent(offset: Int, limit: Int): MutableLiveData<ContentResponse> {
-        val call = thisApiCorService.getContent(offset,limit)
+    fun getContent(offset: Int, limit: Int, institutionId: String, vehicleId: String, plateNumber: String): MutableLiveData<ContentResponse> {
+        val call = thisApiCorService.getContent(offset, limit, institutionId, vehicleId, plateNumber)
         call.enqueue(object : Callback<JsonElement> {
             override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                 if (response.isSuccessful && response.body() != null) {
