@@ -147,7 +147,7 @@ class TrackingService : Service() {
     }
 
     private fun getTrackingUrl(): Uri {
-        val trackingAuthorityUrl = URI(BuildConfig.PRODUCTION_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
+        val trackingAuthorityUrl = URI(BuildConfig.STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
       //  val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)

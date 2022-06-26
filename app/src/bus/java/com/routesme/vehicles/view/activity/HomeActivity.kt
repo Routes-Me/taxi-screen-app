@@ -111,18 +111,7 @@ class HomeActivity : AppCompatActivity(), IModeChanging {
     }
 
     private fun startBusValidatorServiceE60Q() {
-         val charset = Charsets.UTF_8
-
-        //ContextCompat.startForegroundService(this, Intent(this, BusValidatorServiceE60Q::class.java))
-        LibBarCode.getInstance().barCodeRead { barcode, len ->
-            // val contentString = hexStringToString(bytesToHex(barcode))
-            val contentString = barcode.toString(charset)
-            val userPaymentQrCodeData: UserPaymentQrcodeData = Gson().fromJson(contentString, UserPaymentQrcodeData::class.java)
-            Log.d("BusValidator", "userPaymentQrCodeData: $userPaymentQrCodeData")
-
-
-            0
-        }
+        ContextCompat.startForegroundService(this, Intent(this, BusValidatorServiceE60Q::class.java))
     }
 
     override fun onDestroy() {
