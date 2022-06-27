@@ -81,25 +81,27 @@
     <FrameLayout
         android:id="@+id/main_fragment_container"
         android:name="androidx.navigation.fragment.NavHostFragment"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@id/qrcode_iv"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintBottom_toTopOf="@id/date_tv"
         app:layout_constraintStart_toStartOf="@id/guidelineStart"
         app:layout_constraintTop_toBottomOf="@id/companyName_tv"
-        android:layout_marginBottom="@dimen/_8sdp" />
+        app:layout_constraintEnd_toStartOf="@id/qrcode_iv"
+        android:layout_marginBottom="@dimen/_8sdp"
+        app:layout_constraintHorizontal_chainStyle="spread"
+        android:layout_marginVertical="@dimen/_13sdp"/>
 
     <ImageView
         android:id="@+id/qrcode_iv"
-        android:layout_width="@dimen/_150sdp"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintDimensionRatio="1:1"
         android:src="@drawable/ic_routesme_qrcode"
-        android:layout_marginBottom="@dimen/_13sdp"
-        app:layout_constraintTop_toBottomOf="@id/main_fragment_container"
-        app:layout_constraintBottom_toTopOf="@id/date_tv"
-        app:layout_constraintStart_toStartOf="@id/guidelineStart"
-        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"/>
+        android:layout_marginBottom="@dimen/_5sdp"
+        app:layout_constraintEnd_toEndOf="@id/guidelineEnd"
+        app:layout_constraintStart_toEndOf="@id/main_fragment_container"
+        app:layout_constraintTop_toTopOf="@id/main_fragment_container"
+        app:layout_constraintBottom_toBottomOf="@id/main_fragment_container"/>
 
     <TextClock
         android:id="@+id/date_tv"
