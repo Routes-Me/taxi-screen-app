@@ -65,7 +65,7 @@ interface RestApiService {
 
         fun createOldCorService(context: Context): RestApiService {
             return Retrofit.Builder()
-                    .baseUrl(BuildConfig.OLD_STAGING_BASE_URL)
+                    .baseUrl(BuildConfig.OLD_PRODUCTION_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(ApiWorker(context).gsonConverter!!)
                     .client(ApiWorker(context).client)

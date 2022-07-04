@@ -11,8 +11,8 @@ android {
         applicationId "com.routesme.vehicles"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 50
-        versionName "5.0"
+        versionCode 51
+        versionName "5.1"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
@@ -105,8 +105,8 @@ android {
             dimension 'default'
             applicationId "com.routesme.vehicles"
             applicationIdSuffix ".taxii"
-            versionCode 50
-            versionName "5.0"
+            versionCode 51
+            versionName "5.1"
         }
 
         bus {

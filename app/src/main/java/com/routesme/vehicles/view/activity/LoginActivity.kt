@@ -346,7 +346,7 @@ class LoginActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_PHONE_STATE), READ_PHONE_STATE_REQUEST_CODE)
             return
         } else {
-            simSerialNumber_tv.text = "simSerialNumber3333"//telephonyManager.simSerialNumber
+            simSerialNumber_tv.text = telephonyManager.simSerialNumber
         }
     }
 
