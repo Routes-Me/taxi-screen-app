@@ -51,18 +51,21 @@ class BusValidatorServiceE60Q : Service(){
             Log.d("BusValidator", "userPaymentQrCodeData: $userPaymentQrCodeData")
 
             activatedBusInfo?.let {
-                val busPaymentProcessCredentials = BusPaymentProcessCredentials(SecondID = it.busSecondId, PaymentCode = userPaymentQrCodeData.paymentCode, Value = it.busPrice!!.trim().toDouble(), UserID = userPaymentQrCodeData.userId)
+                val busPaymentProcessCredentials = BusPaymentProcessCredentials(Value = it.busPrice!!.trim().toDouble(), paymentCode = userPaymentQrCodeData.paymentCode, SecondId = it.busSecondId)
                 Log.d("BusValidator", "busPaymentProcessCredentials: $busPaymentProcessCredentials")
 
-                val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials)
+                val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials, userToken = "Bearer ${userPaymentQrCodeData.lastToken}")
                 call.enqueue(object : Callback<JsonElement> {
                     override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                         if (response.isSuccessful && response.body() != null) {
+
                             Log.d("BusValidator", "busPaymentProcess.. response.isSuccessful ,, Response.body: ${response.body()} ")
                             val busPaymentProcessDTO = Gson().fromJson<BusPaymentProcessDTO>(response.body(), BusPaymentProcessDTO::class.java)
                             val message: String? = if (!busPaymentProcessDTO.status) Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java) else null
-                            val paymentResult = PaymentResult(userID = busPaymentProcessCredentials.UserID!!, userName = userPaymentQrCodeData.userName, isApproved = busPaymentProcessDTO.status,  rejectedReason =  message)
+                            val paymentResult = PaymentResult(userName = userPaymentQrCodeData.userName, isApproved = busPaymentProcessDTO.status,  rejectedReason =  message)
                             EventBus.getDefault().post(paymentResult)
+
+
                         } else {
                             Log.d("BusValidator", "busPaymentProcess.. !response.isSuccessful ,, Code : ${response.code()} ")
                             if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {

@@ -11,6 +11,7 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.scalars.ScalarsConverterFactory
 import retrofit2.http.*
+import retrofit2.http.Header
 
 interface RestApiService {
 
@@ -59,13 +60,13 @@ interface RestApiService {
     fun deactivateBus(@Body busActivationCredentials: BusActivationCredentials): Call<JsonElement>
 
     @POST("divice/PaymentBySecondID")
-    fun busPaymentProcess(@Body busPaymentProcessCredentials: BusPaymentProcessCredentials): Call<JsonElement>
+    fun busPaymentProcess(@Body busPaymentProcessCredentials: BusPaymentProcessCredentials, @Header("Authorization") userToken: String): Call<JsonElement>
 
     companion object {
 
         fun createOldCorService(context: Context): RestApiService {
             return Retrofit.Builder()
-                    .baseUrl(BuildConfig.OLD_PRODUCTION_BASE_URL)
+                    .baseUrl(BuildConfig.OLD_STAGING_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(ApiWorker(context).gsonConverter!!)
                     .client(ApiWorker(context).client)

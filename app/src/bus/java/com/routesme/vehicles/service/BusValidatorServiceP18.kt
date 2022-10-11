@@ -106,8 +106,8 @@ class BusValidatorServiceP18 : Service(){
                     val content = resultArray[1].let { if (it.isNotEmpty())hexStringToString(it) else null }
                    content?.let { userPaymentQrcodeContent ->
                        Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, userPaymentQrcodeContent: $userPaymentQrcodeContent")
-                       val userPaymentQrcodeData: UserPaymentQrcodeData = Gson().fromJson(userPaymentQrcodeContent, UserPaymentQrcodeData::class.java)
-                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, userPaymentQrcodeData: $userPaymentQrcodeData")
+                       val userPaymentQrCodeData: UserPaymentQrcodeData = Gson().fromJson(userPaymentQrcodeContent, UserPaymentQrcodeData::class.java)
+                       Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, userPaymentQrcodeData: $userPaymentQrCodeData")
 
 
                       ////////////////////Call the payment process endpoint here...////////////////////////
@@ -118,10 +118,10 @@ class BusValidatorServiceP18 : Service(){
                        */
 
                        activatedBusInfo?.let {
-                           val busPaymentProcessCredentials = BusPaymentProcessCredentials(SecondID = it.busSecondId, PaymentCode = userPaymentQrcodeData.paymentCode, Value = it.busPrice!!.trim().toDouble(), UserID = userPaymentQrcodeData.userId)
+                           val busPaymentProcessCredentials = BusPaymentProcessCredentials(Value = it.busPrice!!.trim().toDouble(), paymentCode = userPaymentQrCodeData.paymentCode, SecondId = it.busSecondId)
                            Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $busPaymentProcessCredentials ")
                            //processedBusPaymentProcess(busPaymentProcessCredentials)
-                           val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials)
+                           val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials, userToken = "Bearer ${userPaymentQrCodeData.lastToken}")
                            call.enqueue(object : Callback<JsonElement> {
                                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                    if (response.isSuccessful && response.body() != null) {
@@ -130,8 +130,9 @@ class BusValidatorServiceP18 : Service(){
 
                                        val busPaymentProcessDTO = Gson().fromJson<BusPaymentProcessDTO>(response.body(), BusPaymentProcessDTO::class.java)
                                        val message: String? = if (!busPaymentProcessDTO.status) Gson().fromJson<String>(response.body()!!.asJsonObject["description"], String::class.java) else null
-                                       val paymentResult = PaymentResult(userID = busPaymentProcessCredentials.UserID!!, userName = userPaymentQrcodeData.userName, isApproved = busPaymentProcessDTO.status,  rejectedReason =  message)
+                                       val paymentResult = PaymentResult(userName = userPaymentQrCodeData.userName, isApproved = busPaymentProcessDTO.status,  rejectedReason =  message)
                                        EventBus.getDefault().post(paymentResult)
+
 
                                        qrCodeReaderTimeoutInMilliseconds = 0
                                        this@apply.apply {
