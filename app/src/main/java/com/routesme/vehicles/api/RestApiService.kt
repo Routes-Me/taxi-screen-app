@@ -60,26 +60,26 @@ interface RestApiService {
     fun deactivateBus(@Body busActivationCredentials: BusActivationCredentials): Call<JsonElement>
 
     @POST("divice/PaymentBySecondID")
-    fun busPaymentProcess(@Body busPaymentProcessCredentials: BusPaymentProcessCredentials, @Header("Authorization") userToken: String): Call<JsonElement>
+    fun busPaymentProcess(@Header("Authorization") paymentToken: String, @Body busPaymentProcessCredentials: BusPaymentProcessCredentials): Call<JsonElement>
 
     companion object {
 
-        fun createOldCorService(context: Context): RestApiService {
+        fun createOldCorService(context: Context, withPaymentToken: Boolean = false): RestApiService {
             return Retrofit.Builder()
                     .baseUrl(BuildConfig.OLD_STAGING_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(ApiWorker(context).gsonConverter!!)
-                    .client(ApiWorker(context).client)
+                    .addConverterFactory(ApiWorker(context, withPaymentToken).gsonConverter!!)
+                    .client(ApiWorker(context, withPaymentToken).client)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build().create(RestApiService::class.java)
         }
 
-        fun createNewCorService(context: Context): RestApiService {
+        fun createNewCorService(context: Context, withPaymentToken: Boolean = false): RestApiService {
             return Retrofit.Builder()
                     .baseUrl(BuildConfig.NEW_PRODUCTION_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
-                    .addConverterFactory(ApiWorker(context).gsonConverter!!)
-                    .client(ApiWorker(context).client)
+                    .addConverterFactory(ApiWorker(context, withPaymentToken).gsonConverter!!)
+                    .client(ApiWorker(context, withPaymentToken).client)
                     .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                     .build().create(RestApiService::class.java)
         }

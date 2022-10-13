@@ -13,7 +13,7 @@ import java.security.NoSuchAlgorithmException
 import java.util.concurrent.TimeUnit
 
 
-class ApiWorker(val context: Context) {
+class ApiWorker(val context: Context, private val withPaymentToken: Boolean) {
 
     private var mClient: OkHttpClient? = null
     private var mGsonConverter: GsonConverterFactory? = null
@@ -28,7 +28,7 @@ class ApiWorker(val context: Context) {
                     readTimeout(30, TimeUnit.SECONDS)
                     writeTimeout(15, TimeUnit.SECONDS)
                     addInterceptor(interceptor.setLevel(HttpLoggingInterceptor.Level.BODY))
-                    addInterceptor(BasicAuthInterceptor())
+                    addInterceptor(BasicAuthInterceptor(withPaymentToken))
                     addInterceptor(ReceivedCookiesInterceptor())
                     addInterceptor(RedirectInterceptor())
                     followSslRedirects(false)

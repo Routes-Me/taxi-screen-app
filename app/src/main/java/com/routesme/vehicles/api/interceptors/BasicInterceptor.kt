@@ -20,16 +20,16 @@ import okhttp3.Response
 import java.io.IOException
 import java.net.HttpURLConnection
 
-internal class BasicAuthInterceptor() : Interceptor {
+internal class BasicAuthInterceptor(private val withPaymentToken: Boolean) : Interceptor {
 
     @TargetApi(Build.VERSION_CODES.N)
     override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().newBuilder()
-                .addHeader(Header.Authorization.toString(), Account().accessToken.toString())
-                .addHeader(Header.CountryCode.toString(), countryCode())
-                .addHeader(Header.AppVersion.toString(), appVersion())
-                .addHeader(Header.application.toString(), "screen")
-                .build()
+        val request = chain.request().newBuilder().apply {
+            if (!withPaymentToken) addHeader(Header.Authorization.toString(), Account().accessToken.toString())
+            addHeader(Header.CountryCode.toString(), countryCode())
+            addHeader(Header.AppVersion.toString(), appVersion())
+            addHeader(Header.application.toString(), "screen")
+        }.build()
         return chain.proceed(request)
     }
 

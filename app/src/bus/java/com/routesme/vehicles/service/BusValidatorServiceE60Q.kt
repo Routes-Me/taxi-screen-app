@@ -25,7 +25,7 @@ class BusValidatorServiceE60Q : Service(){
     private val charset = Charsets.UTF_8
     private val hexArray = "0123456789ABCDEF".toCharArray()
     private var activatedBusInfo: ActivatedBusInfo? = null
-    private val thisApiCorService by lazy { RestApiService.createNewCorService(this) }
+    private val thisApiCorService by lazy { RestApiService.createNewCorService(this, true) }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -54,7 +54,7 @@ class BusValidatorServiceE60Q : Service(){
                 val busPaymentProcessCredentials = BusPaymentProcessCredentials(Value = it.busPrice!!.trim().toDouble(), paymentCode = userPaymentQrCodeData.paymentCode, SecondId = it.busSecondId)
                 Log.d("BusValidator", "busPaymentProcessCredentials: $busPaymentProcessCredentials")
 
-                val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials, userToken = "Bearer ${userPaymentQrCodeData.lastToken}")
+                val call = thisApiCorService.busPaymentProcess("Bearer ${userPaymentQrCodeData.lastToken}", busPaymentProcessCredentials)
                 call.enqueue(object : Callback<JsonElement> {
                     override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                         if (response.isSuccessful && response.body() != null) {

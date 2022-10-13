@@ -32,7 +32,7 @@ class BusValidatorServiceP18 : Service(){
     private val idleModeReadingInMilliseconds = TimeUnit.SECONDS.toMillis(6)
     private val defaultReadingInMilliseconds = TimeUnit.SECONDS.toMillis(1)
     private var activatedBusInfo: ActivatedBusInfo? = null
-    private val thisApiCorService by lazy { RestApiService.createNewCorService(this) }
+    private val thisApiCorService by lazy { RestApiService.createNewCorService(this, true) }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -121,7 +121,7 @@ class BusValidatorServiceP18 : Service(){
                            val busPaymentProcessCredentials = BusPaymentProcessCredentials(Value = it.busPrice!!.trim().toDouble(), paymentCode = userPaymentQrCodeData.paymentCode, SecondId = it.busSecondId)
                            Log.d("BusValidator", "dc_Scan2DBarcodeGetData.. Success ,, Content: $busPaymentProcessCredentials ")
                            //processedBusPaymentProcess(busPaymentProcessCredentials)
-                           val call = thisApiCorService.busPaymentProcess(busPaymentProcessCredentials, userToken = "Bearer ${userPaymentQrCodeData.lastToken}")
+                           val call = thisApiCorService.busPaymentProcess("Bearer ${userPaymentQrCodeData.lastToken}", busPaymentProcessCredentials)
                            call.enqueue(object : Callback<JsonElement> {
                                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
                                    if (response.isSuccessful && response.body() != null) {
