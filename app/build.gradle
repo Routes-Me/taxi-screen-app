@@ -11,12 +11,16 @@ android {
         applicationId "com.routesme.vehicles"
         minSdkVersion 26
         targetSdkVersion 30
-        versionCode 50
-        versionName "5.0"
+        versionCode 52
+        versionName "5.2"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         multiDexEnabled true
         consumerProguardFiles 'proguard-consumer-rules.pro'
         buildConfigField "int", "OAUTH_RE_AUTH_RETRY_LIMIT", '1'
+
+        ndk {
+            abiFilters "arm64-v8a", "armeabi-v7a", "x86", "x86_64"
+        }
 
         javaCompileOptions {
             annotationProcessorOptions {
@@ -26,6 +30,30 @@ android {
         kotlinOptions {
             jvmTarget = "1.8"
         }
+
+        /*
+        ndk {
+            abiFilters "armeabi-v7a"
+        }
+        */
+
+        /*
+        ndk {
+            // Setting up Supported SO Library Architecture
+            abiFilters 'armeabi' //, 'x86', 'armeabi-v7a', 'x86_64', 'arm64-v8a'
+            moduleName "app"
+        }
+
+        splits {
+            abi {
+                enable true
+                reset()
+                include 'x86', 'armeabi-v7a', 'mips'
+                universalApk true
+            }
+        }
+        */
+
     }
 
     buildTypes {
@@ -77,8 +105,8 @@ android {
             dimension 'default'
             applicationId "com.routesme.vehicles"
             applicationIdSuffix ".taxii"
-            versionCode 50
-            versionName "5.0"
+            versionCode 52
+            versionName "5.2"
         }
 
         bus {
