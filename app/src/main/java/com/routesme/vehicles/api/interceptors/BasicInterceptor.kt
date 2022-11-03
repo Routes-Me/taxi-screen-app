@@ -57,7 +57,7 @@ internal class UnauthorizedInterceptor(val activity: Activity) : Interceptor {
 internal class NotAcceptableRefreshTokenInterceptor(val context: Context) : Interceptor {
     @Throws(IOException::class)
     override fun intercept(@NonNull chain: Interceptor.Chain): Response {
-        val baseUrl = BuildConfig.OLD_STAGING_BASE_URL
+        val baseUrl = BuildConfig.OLD_PRODUCTION_BASE_URL
         val response: Response = chain.proceed(chain.request())
         val request = response.request()
         if (response.code() == HttpURLConnection.HTTP_NOT_FOUND && request.url().toString() == baseUrl + "authentications/renewals") {

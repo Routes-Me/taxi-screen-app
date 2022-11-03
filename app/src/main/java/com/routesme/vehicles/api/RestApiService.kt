@@ -66,7 +66,7 @@ interface RestApiService {
 
         fun createOldCorService(context: Context, withPaymentToken: Boolean = false): RestApiService {
             return Retrofit.Builder()
-                    .baseUrl(BuildConfig.OLD_STAGING_BASE_URL)
+                    .baseUrl(BuildConfig.OLD_PRODUCTION_BASE_URL)
                     .addConverterFactory(ScalarsConverterFactory.create())
                     .addConverterFactory(ApiWorker(context, withPaymentToken).gsonConverter!!)
                     .client(ApiWorker(context, withPaymentToken).client)

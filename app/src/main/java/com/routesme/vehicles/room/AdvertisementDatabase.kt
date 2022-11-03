@@ -7,7 +7,7 @@ import androidx.room.RoomDatabase
 import com.routesme.vehicles.room.dao.AdvertisementDoa
 import com.routesme.vehicles.room.entity.AdvertisementTracking
 
-@Database(entities = [AdvertisementTracking::class], version = 20, exportSchema = false)
+@Database(entities = [AdvertisementTracking::class], version = 21, exportSchema = false)
 abstract class AdvertisementDatabase : RoomDatabase() {
     abstract fun advertisementTracking(): AdvertisementDoa
 
