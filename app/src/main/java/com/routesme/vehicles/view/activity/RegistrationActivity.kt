@@ -135,8 +135,8 @@ class RegistrationActivity : AppCompatActivity(), View.OnClickListener {
             return
         } else {
             registerCredentials.apply {
-                serialNumber = telephonyManager.imei
-                SimSerialNumber = telephonyManager.simSerialNumber
+                serialNumber = "imeiTrackingTesting"//telephonyManager.imei
+                SimSerialNumber = "simSerialNumberTrackingTesting"//telephonyManager.simSerialNumber
                 deviceId_tv.text = serialNumber
                 SimSerialNumber_tv.text = SimSerialNumber
             }

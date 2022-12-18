@@ -6,6 +6,8 @@ import android.net.Uri
 import android.os.IBinder
 import android.util.Log
 import androidx.annotation.NonNull
+import com.google.gson.Gson
+import com.google.gson.JsonElement
 import com.microsoft.signalr.HubConnection
 import com.microsoft.signalr.HubConnectionBuilder
 import com.microsoft.signalr.HubConnectionState
@@ -19,6 +21,9 @@ import com.routesme.vehicles.uplevels.Account
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.api.RestApiService
+import com.routesme.vehicles.data.model.*
+import com.routesme.vehicles.room.entity.LocationCoordinate
+import com.routesme.vehicles.uplevels.ActivatedBusInfo
 import io.reactivex.rxjava3.core.CompletableObserver
 import io.reactivex.rxjava3.disposables.Disposable
 import kotlinx.coroutines.Dispatchers
@@ -27,6 +32,7 @@ import kotlinx.coroutines.launch
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
+import org.json.JSONObject
 import java.net.URI
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -34,8 +40,12 @@ import kotlin.concurrent.schedule
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.net.HttpURLConnection
 
 class TrackingService : Service() {
+
+    private var activatedBusInfo: ActivatedBusInfo? = null
+    private val thisApiCorService by lazy { RestApiService.createNewCorService(this, true) }
 
     private lateinit var hubConnection: HubConnection
     private lateinit var locationReceiver: LocationReceiver
@@ -47,6 +57,7 @@ class TrackingService : Service() {
 
     override fun onCreate() {
         super.onCreate()
+        activatedBusInfo = ActivatedBusInfo()
         vehicleId = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.vehicle_id, null)
         hubConnection = prepareHubConnection()
         EventBus.getDefault().register(this)
@@ -147,7 +158,7 @@ class TrackingService : Service() {
     }
 
     private fun getTrackingUrl(): Uri {
-        val trackingAuthorityUrl = URI(BuildConfig.PRODUCTION_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
+        val trackingAuthorityUrl = URI(BuildConfig.STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
         val institutionId = sharedPref.getString(SharedPreferencesHelper.institution_id, null)
@@ -181,6 +192,7 @@ class TrackingService : Service() {
                         locationReceiver.getLastKnownLocationMessage()?.let {
                             val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
                             hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                            if (BuildConfig.FLAVOR == "bus") {sendBusLocation(feedCoordinates.last())}
                         }
                     }
                 })
@@ -195,12 +207,43 @@ class TrackingService : Service() {
                     val feeds = mutableListOf<LocationFeed>().apply { add(locationFeed) }.toList()
                     val feedCoordinates = feeds.map { it.coordinate }
                     if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates)
+                    if (BuildConfig.FLAVOR == "bus") {sendBusLocation(feedCoordinates.last())}
                     Log.d("LocationArchiving", "hubConnection connected... sent LocationFeed by signalR")
                 } else {
                     locationFeedsDao.insertLocation(locationFeed)
                     Log.d("LocationArchiving", "hubConnection not connected... inserted LocationFeed into room DB")
                 }
             }
+        }
+    }
+
+    private fun sendBusLocation(locationCoordinate: LocationCoordinate) {
+        activatedBusInfo?.let {
+            val busLiveTrackingCredentials = BusLiveTrackingCredentials(BusID = it.busId,Latitude = locationCoordinate.latitude, Longitude = locationCoordinate.longitude)
+            Log.d("BusLiveTracking", "busLiveTrackingCredentials: $busLiveTrackingCredentials")
+
+            val call = thisApiCorService.sendBusLocation(busLiveTrackingCredentials)
+            call.enqueue(object : Callback<JsonElement> {
+                override fun onResponse(call: Call<JsonElement>, response: Response<JsonElement>) {
+                    if (response.isSuccessful && response.body() != null) {
+                        val busLiveTrackingDTO = Gson().fromJson<BusLiveTrackingDTO>(response.body(), BusLiveTrackingDTO::class.java)
+                        Log.d("BusLiveTracking", "Successful... BusLiveTrackingDTO:${busLiveTrackingDTO.copy()}")
+                    } else {
+                        Log.d("BusLiveTracking", "Failed... Code : ${response.code()} ")
+                        if (response.errorBody() != null && response.code() == HttpURLConnection.HTTP_CONFLICT) {
+                            val objError = JSONObject(response.errorBody()!!.string())
+                            val errors = Gson().fromJson<ResponseErrors>(objError.toString(), ResponseErrors::class.java)
+                        } else {
+                            val error = Error(detail = response.message(), statusCode = response.code())
+                            val errors = mutableListOf<Error>().apply { add(error) }.toList()
+                            val responseErrors = ResponseErrors(errors)
+                        }
+                    }
+                }
+                override fun onFailure(call: Call<JsonElement>, throwable: Throwable) {
+                    Log.d("BusLiveTracking", "onFailure... Throwable: $throwable")
+                }
+            })
         }
     }
 }
