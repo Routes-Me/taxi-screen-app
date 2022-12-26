@@ -22,6 +22,7 @@ import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
 import com.routesme.vehicles.api.RestApiService
 import com.routesme.vehicles.data.model.*
+import com.routesme.vehicles.room.entity.BusLocationCoordinate
 import com.routesme.vehicles.room.entity.LocationCoordinate
 import com.routesme.vehicles.uplevels.ActivatedBusInfo
 import io.reactivex.rxjava3.core.CompletableObserver
@@ -47,19 +48,25 @@ class TrackingService : Service() {
     private var activatedBusInfo: ActivatedBusInfo? = null
     private val thisApiCorService by lazy { RestApiService.createNewCorService(this, true) }
 
-    private lateinit var hubConnection: HubConnection
+    private lateinit var oldHubConnection: HubConnection
+    private var newHubConnection: HubConnection? = null
     private lateinit var locationReceiver: LocationReceiver
     private lateinit var db: TrackingDatabase
     private lateinit var locationFeedsDao: LocationFeedsDao
     private var sendFeedsTimer: Timer? = null
     private val thisApiCoreService by lazy { RestApiService.createOldCorService(this) }
     private var vehicleId: String? = null
+    private var busId: String? = null
 
     override fun onCreate() {
         super.onCreate()
-        activatedBusInfo = ActivatedBusInfo()
         vehicleId = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE).getString(SharedPreferencesHelper.vehicle_id, null)
-        hubConnection = prepareHubConnection()
+        oldHubConnection = prepareOldHubConnection()
+        if (BuildConfig.FLAVOR == "bus") {
+            activatedBusInfo = ActivatedBusInfo()
+            busId = activatedBusInfo?.busId
+            newHubConnection = prepareNewHubConnection()
+        }
         EventBus.getDefault().register(this)
         locationReceiver = LocationReceiver()
         db = TrackingDatabase(App.instance)
@@ -75,7 +82,8 @@ class TrackingService : Service() {
         EventBus.getDefault().unregister(this)
         sendFeedsTimer?.cancel()
         db.apply { if (isOpen) close() }
-        hubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
+        oldHubConnection.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
+        newHubConnection?.apply { if (this.connectionState == HubConnectionState.CONNECTED) stop() }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -84,7 +92,8 @@ class TrackingService : Service() {
         locationReceiver.apply {
             if (isProviderEnabled()) {
                 startLocationUpdatesListener()
-                startHubConnection()
+                startOldHubConnection()
+                if (BuildConfig.FLAVOR == "bus") { startNewHubConnection() }
             }
             vehicleId?.let { scheduleLocationFeeds() }
         }
@@ -137,8 +146,8 @@ class TrackingService : Service() {
         })
     }
 
-    private fun prepareHubConnection(): HubConnection {
-        val trackingUrl = getTrackingUrl().toString()
+    private fun prepareOldHubConnection(): HubConnection {
+        val trackingUrl = getOldTrackingUrl().toString()
         Log.d("URL", "${trackingUrl}")
         return HubConnectionBuilder
                 .create(trackingUrl)
@@ -147,7 +156,7 @@ class TrackingService : Service() {
                     serverTimeout = TimeUnit.MINUTES.toMillis(6)
                     onClosed {
                         Log.d("SocketSrv", "onClosed, Exception: $it")
-                        startHubConnection()
+                        startOldHubConnection()
                     }
                     on("CommonMessage", { message: String? ->
                         message?.let {
@@ -157,7 +166,26 @@ class TrackingService : Service() {
                 }
     }
 
-    private fun getTrackingUrl(): Uri {
+    private fun prepareNewHubConnection(): HubConnection {
+        val trackingUrl = getNewTrackingUrl().toString()
+        Log.d("NewTrackingTest", "Url: ${trackingUrl}")
+        return HubConnectionBuilder
+                .create(trackingUrl)
+                .build().apply {
+                    serverTimeout = TimeUnit.MINUTES.toMillis(6)
+                    onClosed {
+                        Log.d("NewTrackingTest", "onClosed, Exception: $it")
+                        startNewHubConnection()
+                    }
+                    on("CommonMessage", { message: String? ->
+                        message?.let {
+                            Log.d("NewTrackingTest", "CommonMessage .. Message: $it")
+                        }
+                    }, String::class.java)
+                }
+    }
+
+    private fun getOldTrackingUrl(): Uri {
         val trackingAuthorityUrl = URI(BuildConfig.STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
         val sharedPref = applicationContext.getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
         val vehicleId = sharedPref.getString(SharedPreferencesHelper.vehicle_id, null)
@@ -173,16 +201,24 @@ class TrackingService : Service() {
             appendQueryParameter("deviceId", deviceId)
         }.build()
     }
+    private fun getNewTrackingUrl(): Uri {
+        val trackingAuthorityUrl = URI(BuildConfig.NEW_STAGING_TRACKING_WEBSOCKET_AUTHORITY_URL).toString()
+        return Uri.Builder().apply {
+            scheme("https")
+            encodedAuthority(trackingAuthorityUrl)
+            appendPath("ChatHub")
+        }.build()
+    }
 
-    private fun startHubConnection() {
-        hubConnection.start()
+    private fun startOldHubConnection() {
+        oldHubConnection.start()
                 .subscribe(object : CompletableObserver {
                     override fun onSubscribe(@NonNull d: Disposable) {}
                     override fun onError(@NonNull e: Throwable) {
                         Log.d("SocketSrv", "onError, Throwable: $e")
                         Timer("signalRReconnection", true).apply {
                             schedule(TimeUnit.MINUTES.toMillis(1)) {
-                                startHubConnection()
+                                startOldHubConnection()
                             }
                         }
                     }
@@ -191,8 +227,38 @@ class TrackingService : Service() {
                         Log.d("SocketSrv", "onComplete")
                         locationReceiver.getLastKnownLocationMessage()?.let {
                             val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
-                            hubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
-                            if (BuildConfig.FLAVOR == "bus") {sendBusLocation(feedCoordinates.last())}
+                            oldHubConnection.let { if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates) }
+                        }
+                    }
+                })
+    }
+
+    private fun startNewHubConnection() {
+        newHubConnection?.start()
+                ?.subscribe(object : CompletableObserver {
+                    override fun onSubscribe(@NonNull d: Disposable) {}
+                    override fun onError(@NonNull e: Throwable) {
+                        Log.d("NewTrackingTest", "onError, Throwable: $e")
+                        Timer("signalRReconnection", true).apply {
+                            schedule(TimeUnit.MINUTES.toMillis(1)) {
+                                startNewHubConnection()
+                            }
+                        }
+                    }
+                    override fun onComplete() {
+                        Log.d("NewTrackingTest", "onComplete")
+                        locationReceiver.getLastKnownLocationMessage()?.let {
+                            val feedCoordinates = mutableListOf<LocationFeed>().apply { add(it) }.map { it.coordinate }
+                            newHubConnection?.let { newHub ->
+                                if (newHub.connectionState == HubConnectionState.CONNECTED) {
+                                    busId?.let {
+                                        val feedCoordinate = feedCoordinates.last()
+                                        val busLocationCoordinate = BusLocationCoordinate(it, feedCoordinate.longitude, feedCoordinate.latitude)
+                                        newHub.send("SendBusLocation", busLocationCoordinate)
+                                        Log.d("NewTrackingTest", "hubConnection connected... sent last known LocationFeed by signalR... BusLocationCoordinate: ${busLocationCoordinate.copy()}")
+                                    }
+                                }
+                            }
                         }
                     }
                 })
@@ -201,17 +267,27 @@ class TrackingService : Service() {
     @Subscribe(threadMode = ThreadMode.MAIN)
     fun onEvent(locationFeed: LocationFeed) {
         Log.d("LocationArchiving", "EventBus... TrackingService... received LocationFeed: $locationFeed")
+        val feeds = mutableListOf<LocationFeed>().apply { add(locationFeed) }.toList()
+        val feedCoordinates = feeds.map { it.coordinate }
         GlobalScope.launch(Dispatchers.IO) {
-            hubConnection.let {
+            oldHubConnection.let {
                 if (it.connectionState == HubConnectionState.CONNECTED) {
-                    val feeds = mutableListOf<LocationFeed>().apply { add(locationFeed) }.toList()
-                    val feedCoordinates = feeds.map { it.coordinate }
                     if (it.connectionState == HubConnectionState.CONNECTED) it.send("SendLocations", feedCoordinates)
-                    if (BuildConfig.FLAVOR == "bus") {sendBusLocation(feedCoordinates.last())}
                     Log.d("LocationArchiving", "hubConnection connected... sent LocationFeed by signalR")
                 } else {
                     locationFeedsDao.insertLocation(locationFeed)
                     Log.d("LocationArchiving", "hubConnection not connected... inserted LocationFeed into room DB")
+                }
+            }
+
+            newHubConnection?.let { newHub ->
+                if (newHub.connectionState == HubConnectionState.CONNECTED) {
+                    busId?.let {
+                        val feedCoordinate = feedCoordinates.last()
+                        val busLocationCoordinate = BusLocationCoordinate(it, feedCoordinate.longitude, feedCoordinate.latitude)
+                        newHub.send("SendBusLocation", busLocationCoordinate)
+                        Log.d("NewTrackingTest", "hubConnection connected... sent LocationFeed by signalR... BusLocationCoordinate: ${busLocationCoordinate.copy()}")
+                    }
                 }
             }
         }

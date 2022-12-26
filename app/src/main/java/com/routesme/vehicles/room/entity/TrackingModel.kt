@@ -11,3 +11,7 @@ data class LocationFeed(@PrimaryKey(autoGenerate = true) var id: Int = 0, @Colum
 }
 
 data class LocationCoordinate(val latitude: Double, val longitude: Double, val timestamp: Long)
+
+
+
+data class BusLocationCoordinate(val BusID: String, val Longitude: Double, val Latitude: Double)
