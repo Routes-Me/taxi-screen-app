@@ -68,7 +68,7 @@ class TrackingService : Service() {
             newHubConnection = prepareNewHubConnection()
         }
         EventBus.getDefault().register(this)
-        locationReceiver = LocationReceiver()
+        locationReceiver = LocationReceiver.instance
         db = TrackingDatabase(App.instance)
         locationFeedsDao = db.locationFeedsDao()
         //insertTestFeeds()

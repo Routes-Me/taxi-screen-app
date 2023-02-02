@@ -2,6 +2,7 @@ package com.routesme.vehicles.view.adapter
 
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +15,8 @@ import com.google.zxing.BarcodeFormat
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.Data
 import com.routesme.vehicles.helper.ThemeColor
+import com.routesme.vehicles.room.entity.LocationCoordinate
+import com.routesme.vehicles.service.receiver.LocationReceiver
 import net.codecision.glidebarcode.model.Barcode
 
 class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -29,7 +32,7 @@ class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Ad
             promotion.let {
                 it?.link?.let { link ->
                     val color = ThemeColor(tintColor).getColor()
-                    generateQrCode(link, color).let {
+                    generateQrCode(link, LocationReceiver.instance.currentLocationCoordinate, color).let {
 
                         Glide.with(context).load(it).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(bannerQrCodeImage)
 
@@ -69,8 +72,10 @@ class WifiAndQRCodeAdapter(context: Context, list: List<Data>) : RecyclerView.Ad
         return position
     }
 
-    private fun generateQrCode(promotionLink: String, color: Int): Barcode {
-        return Barcode(promotionLink, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
+    private fun generateQrCode(promotionLink: String, locationCoordinate: LocationCoordinate, color: Int): Barcode {
+        val link = promotionLink + "?lat=${locationCoordinate.latitude}&lng=${locationCoordinate.longitude}"
+        Log.d("PromotionQRCode", "Banner .. generatedQRCode link: $link")
+        return Barcode(link, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
     }
 
 }

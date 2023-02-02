@@ -3,6 +3,7 @@ package com.routesme.vehicles.view.adapter
 import android.content.Context
 import android.graphics.Color
 import android.text.SpannedString
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +21,8 @@ import com.google.zxing.BarcodeFormat
 import com.routesme.vehicles.R
 import com.routesme.vehicles.data.model.Data
 import com.routesme.vehicles.helper.ThemeColor
+import com.routesme.vehicles.room.entity.LocationCoordinate
+import com.routesme.vehicles.service.receiver.LocationReceiver
 import net.codecision.glidebarcode.model.Barcode
 
 class BottomBannerAdapter(context: Context, list: List<Data>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -47,7 +50,7 @@ class BottomBannerAdapter(context: Context, list: List<Data>) : RecyclerView.Ada
             promotion?.let {
                 videoPromotionCard.setElevationShadowColor(color)
                 if (!it.link.isNullOrEmpty()) {
-                    generateQrCode(it.link, color).let { qrCode ->
+                    generateQrCode(it.link, LocationReceiver.instance.currentLocationCoordinate, color).let { qrCode ->
                         Glide.with(context).load(qrCode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(videoQrCodeImage)
                     }
                 }
@@ -98,8 +101,10 @@ class BottomBannerAdapter(context: Context, list: List<Data>) : RecyclerView.Ada
         return position
     }
 
-    private fun generateQrCode(promotionLink: String, color: Int): Barcode {
-        return Barcode(promotionLink, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
+    private fun generateQrCode(promotionLink: String, locationCoordinate: LocationCoordinate, color: Int): Barcode {
+        val link = promotionLink + "?lat=${locationCoordinate.latitude}&lng=${locationCoordinate.longitude}"
+        Log.d("PromotionQRCode", "Video .. generatedQRCode link: $link")
+        return Barcode(link, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
     }
 
     private fun getSubtitle(subtitle: String?, code: String?, color: Int): SpannedString {

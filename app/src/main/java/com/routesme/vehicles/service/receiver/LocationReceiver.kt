@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.os.HandlerThread
 import android.util.Log
 import com.routesme.vehicles.App
+import com.routesme.vehicles.room.entity.LocationCoordinate
 import com.routesme.vehicles.room.entity.LocationFeed
 import org.greenrobot.eventbus.EventBus
 import java.util.concurrent.TimeUnit
@@ -20,11 +21,18 @@ class LocationReceiver : LocationListener {
     private var isLocationUpdatesRequested = false
     private val minTime = TimeUnit.MINUTES.toMillis(1)
     private val minDistance = 27F
+    var currentLocationCoordinate = LocationCoordinate(0.00, 0.00, 0L)
+
+    companion object{
+        @get:Synchronized
+        var instance = LocationReceiver()
+    }
+
     fun startLocationUpdatesListener() {
         try {
             locationManagerThread = HandlerThread("LocationManagerThread").apply {
                 start()
-                locationManager.requestLocationUpdates(minTime, minDistance, createFineCriteria(), this@LocationReceiver, this.looper)
+                locationManager.requestLocationUpdates(minTime, minDistance, createFineCriteria(), instance, this.looper)
                 isLocationUpdatesRequested = true
             }
         } catch (ex: SecurityException) {
@@ -38,7 +46,7 @@ class LocationReceiver : LocationListener {
 
     fun stopLocationUpdatesListener() {
         if (isLocationUpdatesRequested) {
-            locationManager.removeUpdates(this@LocationReceiver)
+            locationManager.removeUpdates(instance)
             isLocationUpdatesRequested = false
         }
 
@@ -51,7 +59,9 @@ class LocationReceiver : LocationListener {
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): LocationFeed? {
         locationManager.getLastKnownLocation(bestProvider)?.let {
-            return LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+            val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+            currentLocationCoordinate = locationFeed.coordinate
+            return locationFeed
         }
         return null
     }
@@ -61,6 +71,7 @@ class LocationReceiver : LocationListener {
     override fun onLocationChanged(location: Location) {
         location?.let {
             val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+            currentLocationCoordinate = locationFeed.coordinate
             Log.d("LocationArchiving", "onLocationChanged")
             EventBus.getDefault().post(locationFeed)
         }
