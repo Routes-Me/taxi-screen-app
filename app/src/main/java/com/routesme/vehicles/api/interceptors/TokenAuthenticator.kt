@@ -19,7 +19,7 @@ import okhttp3.Route
 
 
 class TokenAuthenticator(private val context: Context): Authenticator{
-    private val baseUrl = BuildConfig.OLD_PRODUCTION_BASE_URL
+    private val baseUrl = BuildConfig.OLD_STAGING_BASE_URL
     override fun authenticate(route: Route?, response: Response): Request? = when {
 
 /*
