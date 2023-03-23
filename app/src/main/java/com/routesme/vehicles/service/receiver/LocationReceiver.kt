@@ -21,7 +21,7 @@ class LocationReceiver : LocationListener {
     private var isLocationUpdatesRequested = false
     private val minTime = TimeUnit.MINUTES.toMillis(1)
     private val minDistance = 27F
-    var currentLocationCoordinate = LocationCoordinate(0.00, 0.00, 0L)
+    var currentLocationCoordinate = LocationCoordinate(0.00, 0.00, 0.0F, 0.0F, 0L)
 
     companion object{
         @get:Synchronized
@@ -59,7 +59,7 @@ class LocationReceiver : LocationListener {
     @SuppressLint("MissingPermission")
     fun getLastKnownLocationMessage(): LocationFeed? {
         locationManager.getLastKnownLocation(bestProvider)?.let {
-            val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+            val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, bearing = it.bearing, bearingAccuracyDegrees = it.bearingAccuracyDegrees, timestamp = System.currentTimeMillis() / 1000)
             currentLocationCoordinate = locationFeed.coordinate
             return locationFeed
         }
@@ -70,7 +70,7 @@ class LocationReceiver : LocationListener {
 
     override fun onLocationChanged(location: Location) {
         location?.let {
-            val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, timestamp = System.currentTimeMillis() / 1000)
+            val locationFeed = LocationFeed(latitude = it.latitude, longitude = it.longitude, bearing = it.bearing, bearingAccuracyDegrees = it.bearingAccuracyDegrees, timestamp = System.currentTimeMillis() / 1000)
             currentLocationCoordinate = locationFeed.coordinate
             Log.d("LocationArchiving", "onLocationChanged")
             EventBus.getDefault().post(locationFeed)

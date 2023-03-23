@@ -109,7 +109,7 @@ class TrackingService : Service() {
     private fun insertTestFeeds() {
         GlobalScope.launch(Dispatchers.IO) {
             for (i in 1..100000) {
-                val locationFeed = LocationFeed(latitude = 28.313749, longitude = 48.0342295, timestamp = System.currentTimeMillis() / 1000)
+                val locationFeed = LocationFeed(latitude = 28.313749, longitude = 48.0342295, bearing = 0.0F, bearingAccuracyDegrees = 0.0F, timestamp = System.currentTimeMillis() / 1000)
                 locationFeedsDao.insertLocation(locationFeed)
             }
         }
@@ -253,7 +253,7 @@ class TrackingService : Service() {
                                 if (newHub.connectionState == HubConnectionState.CONNECTED) {
                                     busId?.let {
                                         val feedCoordinate = feedCoordinates.last()
-                                        val busLocationCoordinate = BusLocationCoordinate(it, feedCoordinate.longitude, feedCoordinate.latitude)
+                                        val busLocationCoordinate = BusLocationCoordinate(it, feedCoordinate.longitude, feedCoordinate.latitude, feedCoordinate.bearing, feedCoordinate.bearingAccuracyDegrees)
                                         newHub.send("SendBusLocation", busLocationCoordinate)
                                         Log.d("NewTrackingTest", "hubConnection connected... sent last known LocationFeed by signalR... BusLocationCoordinate: ${busLocationCoordinate.copy()}")
                                     }
@@ -284,7 +284,7 @@ class TrackingService : Service() {
                 if (newHub.connectionState == HubConnectionState.CONNECTED) {
                     busId?.let {
                         val feedCoordinate = feedCoordinates.last()
-                        val busLocationCoordinate = BusLocationCoordinate(it, feedCoordinate.longitude, feedCoordinate.latitude)
+                        val busLocationCoordinate = BusLocationCoordinate(it, feedCoordinate.longitude, feedCoordinate.latitude, feedCoordinate.bearing, feedCoordinate.bearingAccuracyDegrees)
                         newHub.send("SendBusLocation", busLocationCoordinate)
                         Log.d("NewTrackingTest", "hubConnection connected... sent LocationFeed by signalR... BusLocationCoordinate: ${busLocationCoordinate.copy()}")
                     }
