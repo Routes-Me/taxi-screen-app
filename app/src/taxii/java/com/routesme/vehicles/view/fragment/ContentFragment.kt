@@ -3,11 +3,14 @@ package com.routesme.vehicles.view.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -17,8 +20,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.dynamiclinks.DynamicLink
+import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.routesme.vehicles.App
 import com.routesme.vehicles.R
+import com.routesme.vehicles.api.Constants
 import com.routesme.vehicles.data.model.ContentResponse
 import com.routesme.vehicles.data.model.Data
 import com.routesme.vehicles.helper.AdminConsoleHelper
@@ -55,6 +61,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private var device_id: String = ""
+    private var vehiclePlateNumber: String? = null
     private val SEC: Long = 30
     private var position = 0
     private val MIL: Long = 1000
@@ -90,11 +97,22 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         glide = Glide.with(App.instance)
         imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+        vehiclePlateNumber = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
         viewModel = ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
         dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext))
         workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP, App.periodicWorkRequest)
         fetchContent()
+
+        generateSharingLink(
+               // deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
+                deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
+                previewImageLink = null //post.image.toUri()
+        ) { generatedLink ->
+            // Use this generated Link to share via Intent
+           // Log.d("GoRoutesAppQRCode","Link: $generatedLink")
+        }
+
     }
 
     @SuppressLint("SetTextI18n")
@@ -279,4 +297,37 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
 
     }
 
+    private fun generateSharingLink(deepLink: Uri, previewImageLink: Uri?, getShareableLink: (String) -> Unit = {}) {
+
+        FirebaseDynamicLinks.getInstance().createDynamicLink().run {
+            // What is this link parameter? You will get to know when we will actually use this function.
+            link = deepLink
+
+            // [domainUriPrefix] will be the domain name you added when setting up Dynamic Links at Firebase Console.
+            // You can find it in the Dynamic Links dashboard.
+            domainUriPrefix = Constants.FirebaseGoRoutesAppDomainPrefix
+
+            // Pass your preview Image Link here;
+            previewImageLink?.let { setSocialMetaTagParameters(DynamicLink.SocialMetaTagParameters.Builder().setImageUrl(it).build()) }
+
+            // Required
+            setAndroidParameters(DynamicLink.AndroidParameters.Builder(Constants.GoRoutesApp_AndroidPackageName).build())
+
+            // Finally
+            buildShortDynamicLink()
+        }.also {
+            it.addOnSuccessListener { dynamicLink ->
+                // This lambda will be triggered when short link generation is successful
+
+                // Retrieve the newly created dynamic link so that we can use it further for sharing via Intent.
+                Log.d("GoRoutesAppQRCode","Successfully... Link: $dynamicLink")
+                getShareableLink.invoke(dynamicLink.shortLink.toString())
+            }
+            it.addOnFailureListener {
+                // This lambda will be triggered when short link generation failed due to an exception
+                Log.d("GoRoutesAppQRCode","Failure... Exception: $it")
+                // Handle
+            }
+        }
+    }
 }
