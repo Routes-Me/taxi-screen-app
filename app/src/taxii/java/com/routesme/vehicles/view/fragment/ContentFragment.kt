@@ -3,6 +3,7 @@ package com.routesme.vehicles.view.fragment
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
+import android.graphics.Color
 import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
@@ -10,7 +11,6 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.net.toUri
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -22,15 +22,16 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.dynamiclinks.DynamicLink
 import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
+import com.google.zxing.BarcodeFormat
 import com.routesme.vehicles.App
 import com.routesme.vehicles.R
 import com.routesme.vehicles.api.Constants
 import com.routesme.vehicles.data.model.ContentResponse
 import com.routesme.vehicles.data.model.Data
-import com.routesme.vehicles.helper.AdminConsoleHelper
 import com.routesme.vehicles.helper.DateHelper
 import com.routesme.vehicles.helper.DateOperations
 import com.routesme.vehicles.helper.SharedPreferencesHelper
+import com.routesme.vehicles.helper.ThemeColor
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.factory.ViewModelFactory
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
@@ -48,6 +49,7 @@ import kotlinx.android.synthetic.taxii.content_fragment.*
 import kotlinx.android.synthetic.taxii.content_fragment.view.*
 import kotlinx.android.synthetic.taxii.date_cell.*
 import kotlinx.coroutines.*
+import net.codecision.glidebarcode.model.Barcode
 import org.greenrobot.eventbus.EventBus
 import org.greenrobot.eventbus.Subscribe
 import org.greenrobot.eventbus.ThreadMode
@@ -104,15 +106,25 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP, App.periodicWorkRequest)
         fetchContent()
 
-        generateSharingLink(
-               // deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
-                deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
-                previewImageLink = null //post.image.toUri()
-        ) { generatedLink ->
-            // Use this generated Link to share via Intent
-           // Log.d("GoRoutesAppQRCode","Link: $generatedLink")
-        }
+        val color = ThemeColor(null).getColor()
+        val barcode = Barcode(goRoutesAppQRCode(), BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
+        Glide.with(this).load(barcode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(goRoutesQRCode_iv)
 
+    }
+
+    private fun goRoutesAppQRCode(): String {
+        return Constants.goRoutesAppDeepLink
+
+        /*
+       generateSharingLink(
+              // deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
+               deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
+               previewImageLink = null //post.image.toUri()
+       ) { generatedLink ->
+           // Use this generated Link to share via Intent
+          // Log.d("GoRoutesAppQRCode","Link: $generatedLink")
+       }
+       */
     }
 
     @SuppressLint("SetTextI18n")

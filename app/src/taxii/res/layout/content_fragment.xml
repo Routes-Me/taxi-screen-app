@@ -66,15 +66,72 @@
 
         </carbon.widget.RelativeLayout>
 
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/viewPageSideBanner"
+        <carbon.widget.ConstraintLayout
+            android:id="@+id/goRoutesQRCode_cv"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="@dimen/_2sdp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHeight_percent="0.772"
+            app:layout_constraintHeight_percent="0.2"
             app:layout_constraintStart_toEndOf="@+id/Advertisement_Video_CardView"
             app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_percent="0.128"
+            android:layout_gravity="center"
+            android:background="?homeScreenBackground_color"
+            app:carbon_cornerRadius="@dimen/_4sdp">
+
+            <ImageView
+                android:id="@+id/goRoutesQRCode_iv"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                app:layout_constraintHeight_percent="0.8"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toTopOf="@id/driverReferalCode_ll" />
+
+            <LinearLayout
+                android:id="@+id/driverReferalCode_ll"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/goRoutesQRCode_iv"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:gravity="center">
+
+                <ImageView
+                    android:layout_width="@dimen/_12sdp"
+                    android:layout_height="@dimen/_12sdp"
+                    android:src="?driver_icon"
+                    android:layout_marginEnd="@dimen/_2sdp"/>
+
+                <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/driverReferalCodeTv"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:maxLines="1"
+                    android:text="iUjh1v"
+                    android:textColor="?text_color"
+                    android:textSize="@dimen/_10sdp"
+                    android:gravity="center" />
+
+            </LinearLayout>
+
+        </carbon.widget.ConstraintLayout>
+
+        <androidx.viewpager2.widget.ViewPager2
+            android:id="@+id/viewPageSideBanner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="@dimen/_2sdp"
+            app:layout_constraintEnd_toEndOf="@+id/goRoutesQRCode_cv"
+            app:layout_constraintHeight_percent="0.572"
+            app:layout_constraintStart_toStartOf="@+id/goRoutesQRCode_cv"
+            app:layout_constraintTop_toBottomOf="@+id/goRoutesQRCode_cv"
             app:layout_constraintWidth_percent="0.128">
 
         </androidx.viewpager2.widget.ViewPager2>

@@ -24,6 +24,7 @@
         <item name="text_color">@color/black</item>
         <item name="wifi_icon">@drawable/ic_wifi_light</item>
         <item name="key_icon">@drawable/ic_key_light</item>
+        <item name="driver_icon">@drawable/driver_icon_light</item>
         <item name="video_divider">@drawable/ic_promotion_divider_light</item>
         <item name="banner_divider">@drawable/ic_banner_divider_light</item>
         <item name="qrcode_divider">@drawable/ic_qrcode_divider_light</item>
@@ -49,6 +50,7 @@
         <item name="banner_divider">@drawable/ic_banner_divider_dark</item>
         <item name="qrcode_divider">@drawable/ic_qrcode_divider_dark</item>
         <item name="key_icon">@drawable/ic_key_dark</item>
+        <item name="driver_icon">@drawable/driver_icon_dark</item>
         <item name="pfBackground_color">@color/pf_darkBackground</item>
         <item name="pfTopBackground_color">@color/pf_darkBackground</item>
         <item name="pfText_color">@color/white</item>
