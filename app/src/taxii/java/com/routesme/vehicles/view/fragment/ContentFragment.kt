@@ -105,14 +105,16 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext))
         workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP, App.periodicWorkRequest)
         fetchContent()
-
-        val color = ThemeColor(null).getColor()
-        val barcode = Barcode(goRoutesAppQRCode(), BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
-        Glide.with(this).load(barcode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(goRoutesQRCode_iv)
-
+        displayGoRoutesQRCode(goRoutesAppLink())
     }
 
-    private fun goRoutesAppQRCode(): String {
+    private fun displayGoRoutesQRCode(goRoutesAppLink: String) {
+        val color = ThemeColor(null).getColor()
+        val barcode = Barcode(goRoutesAppLink, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
+        Glide.with(this).load(barcode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(goRoutesQRCode_iv)
+    }
+
+    private fun goRoutesAppLink(): String {
         return Constants.goRoutesAppDeepLink
 
         /*
