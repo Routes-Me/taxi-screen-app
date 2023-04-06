@@ -12,8 +12,9 @@ class AdminConsoleLists(val activity: Activity) {
 
     val masterItems = mutableListOf<MasterItem>().apply{
         add(MasterItem(0, MasterItemType.Info.title))
-        add(MasterItem(1, MasterItemType.Account.title))
-        add(MasterItem(2, MasterItemType.Settings.title))
+        add(MasterItem(1, MasterItemType.Driver.title))
+        add(MasterItem(2, MasterItemType.Account.title))
+        add(MasterItem(3, MasterItemType.Settings.title))
         if (BuildConfig.FLAVOR == "bus") add(MasterItem(3, MasterItemType.BusInformation.title))
     }
 
