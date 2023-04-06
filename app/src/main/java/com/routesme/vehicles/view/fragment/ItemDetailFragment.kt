@@ -43,6 +43,7 @@ class ItemDetailFragment(activity: Activity) : Fragment() {
                 val item = adminConsoleLists.masterItems[it.getInt(ARG_ITEM_ID)]
                 detailsList = when (item.type) {
                     MasterItemType.Account.title -> adminConsoleLists.accountCells
+                    MasterItemType.Driver.title -> adminConsoleLists.driverCells
                     MasterItemType.Settings.title -> adminConsoleLists.settingsCells
                     MasterItemType.Info.title -> adminConsoleLists.infoCells
                     else -> adminConsoleLists.routesAndTicketsCells
