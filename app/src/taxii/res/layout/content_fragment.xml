@@ -127,7 +127,7 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintWidth_percent="0.126"
-            app:cardBackgroundColor="?homeScreenBackground_color"
+            app:cardBackgroundColor="?cardViewBackground_color"
             app:cardCornerRadius="@dimen/_4sdp"
             app:layout_constraintDimensionRatio="H,53 : 55"
             app:layout_constraintStart_toEndOf="@id/bottomRightPromotion"
@@ -138,7 +138,8 @@
             <carbon.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_gravity="center">
+                android:layout_gravity="center"
+                android:background="?cardViewBackground_color">
 
                 <ImageView
                     android:id="@+id/goRoutesQRCode_iv"
@@ -174,7 +175,7 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="sans-serif-medium"
                         android:maxLines="1"
-                        android:text="56692403"
+                        android:text="56692566"
                         android:textColor="?text_color"
                         android:textSize="@dimen/_8sdp"
                         android:gravity="center" />
