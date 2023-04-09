@@ -47,6 +47,8 @@ class AdminConsoleHelper(val activity: Activity) {
     fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
     fun simSerialNumber() = sharedPreferences.getString(SharedPreferencesHelper.sim_serial_number, defaultValue)
     fun imei() = sharedPreferences.getString(SharedPreferencesHelper.device_serial_number, defaultValue)
+    fun driverName() = sharedPreferences.getString(SharedPreferencesHelper.driver_name, defaultValue)
+    fun driverPhoneNumber() = sharedPreferences.getString(SharedPreferencesHelper.driver_phoneNumber, defaultValue)
     fun technicalUserName() = sharedPreferences.getString(SharedPreferencesHelper.username, defaultValue)
     fun registrationDate() = sharedPreferences.getString(SharedPreferencesHelper.registration_date, defaultValue)
 

@@ -21,6 +21,10 @@ class SharedPreferencesHelper {
         const val call_api = "isCallingApi"
         const val isCacheClear = "isCacheClear"
 
+        //Driver Information
+        const val driver_name = "driver_name"
+        const val driver_phoneNumber = "driver_phoneNumber"
+
         //Activated Bus Information
         const val busId = "bus_id"
         const val busActive = "bus_active"

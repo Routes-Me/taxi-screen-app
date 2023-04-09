@@ -32,9 +32,11 @@ class AdminConsoleLists(val activity: Activity) {
         // DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)
         adminConsoleHelper.getBuildInfo()?.let { addAll(it) }
     }.toList()
-    val driverCells = listOf(
-            LabelCell("Profile")
-    )
+    val driverCells = mutableListOf<ICell>().apply{
+        add(LabelCell("Profile"))
+        add(DetailCell("Name","${adminConsoleHelper.driverName()}", true))
+        add(DetailCell("Phone Number","${adminConsoleHelper.driverPhoneNumber()}"))
+    }.toList()
     val accountCells = listOf(
             LabelCell("Technician"),
             DetailCell("User Name", "${adminConsoleHelper.technicalUserName()?.capitalize()}", true),
