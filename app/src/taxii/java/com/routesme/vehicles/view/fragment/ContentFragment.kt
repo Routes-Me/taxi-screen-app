@@ -32,6 +32,7 @@ import com.routesme.vehicles.room.factory.ViewModelFactory
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
 import com.routesme.vehicles.service.VideoService
+import com.routesme.vehicles.service.receiver.LocationReceiver
 import com.routesme.vehicles.uplevels.VehicleReferral
 import com.routesme.vehicles.view.adapter.BottomBannerAdapter
 import com.routesme.vehicles.view.adapter.ImageBannerAdapter
@@ -60,7 +61,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private lateinit var mContext: Context
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
-    private var device_id: String = ""
+    private var deviceId:String?=null
     private var vehiclePlateNumber: String? = null
     private  var vehicleId:String?=null
     private  var referralCode:String?=null
@@ -100,7 +101,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         editor= sharedPreferences?.edit()
         glide = Glide.with(App.instance)
         imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
-        device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
+        deviceId = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         vehiclePlateNumber = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
         vehicleId = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_id, null)
         referralCode = sharedPreferences?.getString(SharedPreferencesHelper.referral_code, null)
@@ -165,7 +166,10 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         }
         referralUrl?.let {
             val color = ThemeColor(null).getColor()
-            val barcode = Barcode(it, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
+            val currentLocationCoordinate = LocationReceiver.instance.currentLocationCoordinate
+            //http://links.routesme.com/{promotionId}/devices/{deviceId}?lat={lat}&lng={lng}
+            val qrcodeLink = "$it/devices/$deviceId?lat=${currentLocationCoordinate.latitude}&lng=${currentLocationCoordinate.longitude}"
+            val barcode = Barcode(qrcodeLink, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
             Glide.with(this).load(barcode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(goRoutesQRCode_iv)
         }
     }
