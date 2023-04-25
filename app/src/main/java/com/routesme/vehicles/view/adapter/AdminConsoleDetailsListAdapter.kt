@@ -27,6 +27,7 @@ class AdminConsoleDetailsListAdapter(private val activity: Activity, private val
             val actionCell = list[pos] as ActionCell
             when (actionCell.action) {
                 Actions.LogOff.title -> adminConsoleHelper.sendLogOffRequestToActvitiy()
+                Actions.UpdateReferralInfo.title -> adminConsoleHelper.sendUpdateReferralInfoRequestToActivity()
                 else -> Toast.makeText(activity,"Sync and Update Button clicked !", Toast.LENGTH_SHORT).show() //getCarrierInformation()
             }
         }

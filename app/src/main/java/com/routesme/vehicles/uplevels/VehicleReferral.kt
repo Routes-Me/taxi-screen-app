@@ -4,19 +4,19 @@ import android.content.Context
 import com.routesme.vehicles.App
 import com.routesme.vehicles.helper.SharedPreferencesHelper
 
-class Driver {
-    var driverName: String?
+class VehicleReferral {
+    var referralCode: String?
         get() {
-            sharedPrefs().getString(SharedPreferencesHelper.driver_name, null)?.let {
+            sharedPrefs().getString(SharedPreferencesHelper.referral_code, null)?.let {
                 return it
             }
             return null
         }
         set(value) {}
 
-    var driverPhoneNumber: String?
+    var referralUrl: String?
         get() {
-            sharedPrefs().getString(SharedPreferencesHelper.driver_phoneNumber, null)?.let {
+            sharedPrefs().getString(SharedPreferencesHelper.referral_url, null)?.let {
                 return it
             }
             return null

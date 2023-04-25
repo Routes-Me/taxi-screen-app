@@ -24,8 +24,10 @@
     <string name="search_plate_numbers">Search plate numbers</string>
     <string name="login_error_title">Login error</string>
     <string name="registration_error_title">Registration error</string>
+    <string name="action_error_title">Action error</string>
     <string name="logout_error_title">Logout error</string>
     <string name="vehicle_information_error_title">Vehicle information error</string>
+    <string name="vehicle_referral_information_error_title">Vehicle referral information error</string>
     <string name="content_error_title">Content error</string>
     <string name="token_is_null_value">Token is null value</string>
     <string name="device_id_is_null_value">Device ID is null value</string>

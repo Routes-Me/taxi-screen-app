@@ -49,7 +49,8 @@ interface RestApiService {
     @POST("vehicles/{vehicleId}/coordinates")
     fun locationCoordinates (@Path("vehicleId") vehicleId: String, @Body coordinates: List<LocationCoordinate>): Call<String>
 
-
+    @GET("vehicles/{vehicleId}")
+    fun getVehicleReferralInformation(@Path("vehicleId") vehicleId: String): Call<JsonElement>
 
     //New server endpoints [Bus App]
 

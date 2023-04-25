@@ -23,10 +23,7 @@ import com.github.pedrovgs.lynx.LynxActivity
 import com.github.pedrovgs.lynx.LynxConfig
 import com.routesme.vehicles.App
 import com.routesme.vehicles.BuildConfig
-import com.routesme.vehicles.data.model.DetailActionStatus
-import com.routesme.vehicles.data.model.DetailCell
-import com.routesme.vehicles.data.model.ICell
-import com.routesme.vehicles.data.model.LogOff
+import com.routesme.vehicles.data.model.*
 import com.routesme.vehicles.view.activity.LoginActivity
 import org.greenrobot.eventbus.EventBus
 
@@ -47,8 +44,8 @@ class AdminConsoleHelper(val activity: Activity) {
     fun appVersion() = "${BuildConfig.VERSION_NAME}.${BuildConfig.VERSION_CODE}"
     fun simSerialNumber() = sharedPreferences.getString(SharedPreferencesHelper.sim_serial_number, defaultValue)
     fun imei() = sharedPreferences.getString(SharedPreferencesHelper.device_serial_number, defaultValue)
-    fun driverName() = sharedPreferences.getString(SharedPreferencesHelper.driver_name, defaultValue)
-    fun driverPhoneNumber() = sharedPreferences.getString(SharedPreferencesHelper.driver_phoneNumber, defaultValue)
+    fun referralCode() = sharedPreferences.getString(SharedPreferencesHelper.referral_code, defaultValue)
+    fun referralUrl() = sharedPreferences.getString(SharedPreferencesHelper.referral_url, defaultValue)
     fun technicalUserName() = sharedPreferences.getString(SharedPreferencesHelper.username, defaultValue)
     fun registrationDate() = sharedPreferences.getString(SharedPreferencesHelper.registration_date, defaultValue)
 
@@ -146,6 +143,10 @@ class AdminConsoleHelper(val activity: Activity) {
             startActivity(Intent(this, LoginActivity::class.java).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_NEW_TASK))
             finish()
         }
+    }
+
+    fun sendUpdateReferralInfoRequestToActivity() {
+        EventBus.getDefault().post(UpdateReferralInfo(true))
     }
 
     fun isLocationProviderEnabled() = isGPSEnabled() || isNetworkEnabled()

@@ -12,7 +12,7 @@ class AdminConsoleLists(val activity: Activity) {
 
     val masterItems = mutableListOf<MasterItem>().apply{
         add(MasterItem(0, MasterItemType.Info.title))
-        add(MasterItem(1, MasterItemType.Driver.title))
+        add(MasterItem(1, MasterItemType.Referral.title))
         add(MasterItem(2, MasterItemType.Account.title))
         add(MasterItem(3, MasterItemType.Settings.title))
         if (BuildConfig.FLAVOR == "bus") add(MasterItem(3, MasterItemType.BusInformation.title))
@@ -32,10 +32,10 @@ class AdminConsoleLists(val activity: Activity) {
         // DetailCell("Device Serial Number", "${adminConsoleHelper.deviceSerialNumber()}", false)
         adminConsoleHelper.getBuildInfo()?.let { addAll(it) }
     }.toList()
-    val driverCells = mutableListOf<ICell>().apply{
-        add(LabelCell("Profile"))
-        add(DetailCell("Name","${adminConsoleHelper.driverName()}", true))
-        add(DetailCell("Phone Number","${adminConsoleHelper.driverPhoneNumber()}"))
+    val referralCells = mutableListOf<ICell>().apply{
+        add(DetailCell("Referral Code","${adminConsoleHelper.referralCode()}", true))
+        add(DetailCell("Referral URL","${adminConsoleHelper.referralUrl()}"))
+        add(ActionCell(Actions.UpdateReferralInfo.title, ActionCellTextColor.Blue))
     }.toList()
     val accountCells = listOf(
             LabelCell("Technician"),

@@ -4,10 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.*
 import android.graphics.Color
-import android.net.Uri
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,23 +18,21 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.RequestManager
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.bumptech.glide.request.RequestOptions
-import com.google.firebase.dynamiclinks.DynamicLink
-import com.google.firebase.dynamiclinks.FirebaseDynamicLinks
 import com.google.zxing.BarcodeFormat
 import com.routesme.vehicles.App
 import com.routesme.vehicles.R
 import com.routesme.vehicles.api.Constants
 import com.routesme.vehicles.data.model.ContentResponse
 import com.routesme.vehicles.data.model.Data
-import com.routesme.vehicles.helper.DateHelper
-import com.routesme.vehicles.helper.DateOperations
-import com.routesme.vehicles.helper.SharedPreferencesHelper
-import com.routesme.vehicles.helper.ThemeColor
+import com.routesme.vehicles.data.model.Error
+import com.routesme.vehicles.data.model.VehicleReferralInformationModel
+import com.routesme.vehicles.helper.*
 import com.routesme.vehicles.room.AdvertisementDatabase
 import com.routesme.vehicles.room.factory.ViewModelFactory
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
 import com.routesme.vehicles.service.VideoService
+import com.routesme.vehicles.uplevels.VehicleReferral
 import com.routesme.vehicles.view.adapter.BottomBannerAdapter
 import com.routesme.vehicles.view.adapter.ImageBannerAdapter
 import com.routesme.vehicles.view.adapter.WifiAndQRCodeAdapter
@@ -44,6 +40,7 @@ import com.routesme.vehicles.view.events.AnimateVideo
 import com.routesme.vehicles.view.events.DemoVideo
 import com.routesme.vehicles.view.utils.Type
 import com.routesme.vehicles.viewmodel.ContentViewModel
+import com.routesme.vehicles.viewmodel.VehicleReferralInformationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.taxii.content_fragment.*
 import kotlinx.android.synthetic.taxii.content_fragment.view.*
@@ -58,12 +55,16 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 class ContentFragment : Fragment(), CoroutineScope by MainScope() {
+    private val operations = Operations.instance
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private lateinit var mContext: Context
     private var sharedPreferences: SharedPreferences? = null
     private var editor: SharedPreferences.Editor? = null
     private var device_id: String = ""
     private var vehiclePlateNumber: String? = null
+    private  var vehicleId:String?=null
+    private  var referralCode:String?=null
+    private  var referralUrl:String?=null
     private val SEC: Long = 30
     private var position = 0
     private val MIL: Long = 1000
@@ -80,6 +81,7 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
     private lateinit var dbHelper : DatabaseHelperImpl
     private lateinit var glide: RequestManager
     private lateinit var contentViewModel: ContentViewModel
+    private lateinit var vehicleReferralInformationViewModel: VehicleReferralInformationViewModel
     private lateinit var imageOptions: RequestOptions
     private var workManager = WorkManager.getInstance()
     private lateinit var contentFragmentView: View
@@ -100,33 +102,72 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
         imageOptions = RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)
         device_id = sharedPreferences?.getString(SharedPreferencesHelper.device_id, null)!!
         vehiclePlateNumber = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_plate_number, null)
+        vehicleId = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_id, null)
+        referralCode = sharedPreferences?.getString(SharedPreferencesHelper.referral_code, null)
+        referralUrl = sharedPreferences?.getString(SharedPreferencesHelper.referral_url, null)
         viewModel = ViewModelProvider(this, ViewModelFactory(DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext)))).get(RoomDBViewModel::class.java)
         contentViewModel = ViewModelProvider(this.requireActivity()).get(ContentViewModel::class.java)
+        vehicleReferralInformationViewModel = ViewModelProvider(this.requireActivity()).get(VehicleReferralInformationViewModel::class.java)
         dbHelper = DatabaseHelperImpl(AdvertisementDatabase.invoke(mContext))
         workManager.enqueueUniquePeriodicWork(SEND_ANALYTICS_REPORT, ExistingPeriodicWorkPolicy.KEEP, App.periodicWorkRequest)
         fetchContent()
-        displayGoRoutesQRCode(goRoutesAppLink())
     }
 
-    private fun displayGoRoutesQRCode(goRoutesAppLink: String) {
-        val color = ThemeColor(null).getColor()
-        val barcode = Barcode(goRoutesAppLink, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
-        Glide.with(this).load(barcode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(goRoutesQRCode_iv)
+    override fun onResume() {
+        super.onResume()
+        vehicleId?.let { if(referralCode == null || referralUrl == null) getVehicleReferral(it) else displayReferralInfo() }
     }
 
-    private fun goRoutesAppLink(): String {
-        return Constants.goRoutesAppDeepLink
+    private fun getVehicleReferral(vehicleId: String) {
+        dialog?.show()
+        vehicleReferralInformationViewModel.getVehicleReferralInformation(vehicleId, mContext).observe(this, Observer<VehicleReferralInformationModel.VehicleReferralResponse> {
+            dialog?.dismiss()
+            if (it != null) {
+                if (it.isSuccess) {
+                    val list = it.data ?: run {
+                        operations.displayAlertDialog(mContext, getString(R.string.vehicle_referral_information_error_title), getString(R.string.no_data_found))
+                        return@Observer
+                    }
 
-        /*
-       generateSharingLink(
-              // deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
-               deepLink = "${Constants.FirebaseGoRoutesAppDomainPrefix}/vehicles?plateNumber=$vehiclePlateNumber".toUri(),
-               previewImageLink = null //post.image.toUri()
-       ) { generatedLink ->
-           // Use this generated Link to share via Intent
-          // Log.d("GoRoutesAppQRCode","Link: $generatedLink")
-       }
-       */
+                    it.data?.let { referralInfo ->
+                        saveReferralInfo(referralInfo)
+                        referralCode = referralInfo.referralCode
+                        referralUrl = referralInfo.referralURL
+                        displayReferralInfo()
+                    }
+                } else {
+                    if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                        it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                    } else if (it.mThrowable != null) {
+                        if (it.mThrowable is IOException) {
+                            operations.displayAlertDialog(mContext, getString(R.string.vehicle_referral_information_error_title), getString(R.string.network_Issue))
+                        } else {
+                            operations.displayAlertDialog(mContext, getString(R.string.vehicle_referral_information_error_title), getString(R.string.conversion_Issue))
+                        }
+                    }
+                }
+            } else {
+                operations.displayAlertDialog(mContext, getString(R.string.vehicle_referral_information_error_title), getString(R.string.unknown_error))
+            }
+        })
+    }
+
+    private fun saveReferralInfo(referralInfo: VehicleReferralInformationModel.VehicleData) {
+        VehicleReferral().apply {
+            referralCode = referralInfo.referralCode
+            referralUrl = referralInfo.referralURL
+        }
+    }
+
+    private fun displayReferralInfo() {
+        referralCode?.let {
+            driverReferralCodeTv.text = it
+        }
+        referralUrl?.let {
+            val color = ThemeColor(null).getColor()
+            val barcode = Barcode(it, BarcodeFormat.QR_CODE, color, Color.TRANSPARENT)
+            Glide.with(this).load(barcode).apply(RequestOptions().diskCacheStrategy(DiskCacheStrategy.AUTOMATIC)).into(goRoutesQRCode_iv)
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -308,40 +349,11 @@ class ContentFragment : Fragment(), CoroutineScope by MainScope() {
                 videoProgressbarRunnable()
             }
         }
-
     }
 
-    private fun generateSharingLink(deepLink: Uri, previewImageLink: Uri?, getShareableLink: (String) -> Unit = {}) {
-
-        FirebaseDynamicLinks.getInstance().createDynamicLink().run {
-            // What is this link parameter? You will get to know when we will actually use this function.
-            link = deepLink
-
-            // [domainUriPrefix] will be the domain name you added when setting up Dynamic Links at Firebase Console.
-            // You can find it in the Dynamic Links dashboard.
-            domainUriPrefix = Constants.FirebaseGoRoutesAppDomainPrefix
-
-            // Pass your preview Image Link here;
-            previewImageLink?.let { setSocialMetaTagParameters(DynamicLink.SocialMetaTagParameters.Builder().setImageUrl(it).build()) }
-
-            // Required
-            setAndroidParameters(DynamicLink.AndroidParameters.Builder(Constants.GoRoutesApp_AndroidPackageName).build())
-
-            // Finally
-            buildShortDynamicLink()
-        }.also {
-            it.addOnSuccessListener { dynamicLink ->
-                // This lambda will be triggered when short link generation is successful
-
-                // Retrieve the newly created dynamic link so that we can use it further for sharing via Intent.
-                Log.d("GoRoutesAppQRCode","Successfully... Link: $dynamicLink")
-                getShareableLink.invoke(dynamicLink.shortLink.toString())
-            }
-            it.addOnFailureListener {
-                // This lambda will be triggered when short link generation failed due to an exception
-                Log.d("GoRoutesAppQRCode","Failure... Exception: $it")
-                // Handle
-            }
+    private fun displayErrors(errors: List<Error>) {
+        for (error in errors) {
+            operations.displayAlertDialog(mContext, getString(R.string.vehicle_referral_information_error_title), "Error message: ${error.detail}")
         }
     }
 }

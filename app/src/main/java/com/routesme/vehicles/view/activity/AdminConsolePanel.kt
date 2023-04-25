@@ -27,10 +27,12 @@ import com.routesme.vehicles.room.entity.AdvertisementTracking
 import com.routesme.vehicles.room.factory.ViewModelFactory
 import com.routesme.vehicles.room.helper.DatabaseHelperImpl
 import com.routesme.vehicles.room.viewmodel.RoomDBViewModel
+import com.routesme.vehicles.uplevels.VehicleReferral
 import com.routesme.vehicles.view.adapter.MasterItemsAdapter
 import com.routesme.vehicles.view.fragment.ItemDetailFragment
 import com.routesme.vehicles.viewmodel.BusActivationViewModel
 import com.routesme.vehicles.viewmodel.ContentViewModel
+import com.routesme.vehicles.viewmodel.VehicleReferralInformationViewModel
 import dmax.dialog.SpotsDialog
 import kotlinx.android.synthetic.main.admin_console_panel.*
 import kotlinx.android.synthetic.main.item_list.*
@@ -46,6 +48,7 @@ class AdminConsolePanel : AppCompatActivity() {
     private val SEND_ANALYTICS_REPORT = "SEND_ANALYTICS_REPORT"
     private var adminConsoleHelper: AdminConsoleHelper? = null
     private var sharedPreferences: SharedPreferences? = null
+    private  var vehicleId:String?=null
     private var dialog: AlertDialog? = null
     val contentViewModel: ContentViewModel by viewModels()
     private lateinit var viewModel: RoomDBViewModel
@@ -59,6 +62,7 @@ class AdminConsolePanel : AppCompatActivity() {
     private fun initialize() {
         adminConsoleHelper = AdminConsoleHelper(this)
         sharedPreferences = getSharedPreferences(SharedPreferencesHelper.device_data, Activity.MODE_PRIVATE)
+        vehicleId = sharedPreferences?.getString(SharedPreferencesHelper.vehicle_id, null)
         dialog = SpotsDialog.Builder().setContext(this).setTheme(R.style.SpotsDialogStyle).setCancelable(false).build()
         toolbarSetUp()
 
@@ -123,6 +127,52 @@ class AdminConsolePanel : AppCompatActivity() {
         }
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    fun onEvent(updateReferralInfo: UpdateReferralInfo) {
+        if (updateReferralInfo.isUpdateReferralInfo) {
+        vehicleId?.let { vehicleId ->
+            dialog?.show()
+            val vehicleReferralInformationViewModel: VehicleReferralInformationViewModel by viewModels()
+            vehicleReferralInformationViewModel.getVehicleReferralInformation(vehicleId, this).observe(this, Observer<VehicleReferralInformationModel.VehicleReferralResponse> {
+                dialog?.dismiss()
+                if (it != null) {
+                    if (it.isSuccess) {
+                        val list = it.data ?: run {
+                            operations.displayAlertDialog(this, getString(R.string.vehicle_referral_information_error_title), getString(R.string.no_data_found))
+                            return@Observer
+                        }
+
+                        it.data?.let { referralInfo ->
+                            saveReferralInfo(referralInfo)
+                            recreate()
+                        }
+                    } else {
+                        if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
+                            it.mResponseErrors?.errors?.let { errors -> displayErrors(errors) }
+                        } else if (it.mThrowable != null) {
+                            if (it.mThrowable is IOException) {
+                                operations.displayAlertDialog(this, getString(R.string.vehicle_referral_information_error_title), getString(R.string.network_Issue))
+                            } else {
+                                operations.displayAlertDialog(this, getString(R.string.vehicle_referral_information_error_title), getString(R.string.conversion_Issue))
+                            }
+                        }
+                    }
+                } else {
+                    operations.displayAlertDialog(this, getString(R.string.vehicle_referral_information_error_title), getString(R.string.unknown_error))
+                }
+            })
+
+        }
+        }
+    }
+
+    private fun saveReferralInfo(referralInfo: VehicleReferralInformationModel.VehicleData) {
+        VehicleReferral().apply {
+            referralCode = referralInfo.referralCode
+            referralUrl = referralInfo.referralURL
+        }
+    }
+
     private fun unlinkDeviceFromServer(deviceId: String, vehicleId: String) {
         contentViewModel.unlinkDevice(vehicleId, deviceId, this).observe(this, Observer<UnlinkResponse> {
             if (it.isSuccess) {
@@ -169,7 +219,7 @@ class AdminConsolePanel : AppCompatActivity() {
     }
 
     private fun displayErrors(errors: List<Error>) {
-        for (error in errors) { operations.displayAlertDialog(this, getString(R.string.logout_error_title), "Error message: ${error.detail}") }
+        for (error in errors) { operations.displayAlertDialog(this, getString(R.string.action_error_title), "Error message: ${error.detail}") }
     }
 
     private fun observeAnalytics(deviceId: String, vehicleId: String) {
