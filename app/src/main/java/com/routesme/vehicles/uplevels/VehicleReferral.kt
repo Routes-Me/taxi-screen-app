@@ -12,7 +12,7 @@ class VehicleReferral {
             }
             return null
         }
-        set(value) {}
+        set(value) {sharedPrefs().edit().putString(SharedPreferencesHelper.referral_code, value).apply()}
 
     var referralUrl: String?
         get() {
@@ -21,7 +21,7 @@ class VehicleReferral {
             }
             return null
         }
-        set(value) {}
+        set(value) {sharedPrefs().edit().putString(SharedPreferencesHelper.referral_url, value).apply()}
 
 
     private fun sharedPrefs() = App.instance.getSharedPreferences(SharedPreferencesHelper.device_data, Context.MODE_PRIVATE)

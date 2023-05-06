@@ -144,7 +144,6 @@ class AdminConsolePanel : AppCompatActivity() {
 
                         it.data?.let { referralInfo ->
                             saveReferralInfo(referralInfo)
-                            recreate()
                         }
                     } else {
                         if (!it.mResponseErrors?.errors.isNullOrEmpty()) {
